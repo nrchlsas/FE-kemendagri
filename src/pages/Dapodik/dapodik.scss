@@ -1,0 +1,24 @@
+.custom-table {
+    border: 1px solid #d3cece
+  }
+  
+  .custom-table th {
+    border: 1px solid #d3cece /* Border di semua cell */
+  }
+
+  .custom-table td {
+    border: 1px solid #d3cece /* Border di semua cell */    
+  }
+
+  .click-data:hover {
+    color: blue;
+    background-color: #f7f7f7;
+    cursor: pointer;
+  }
+
+  .icon-clicked {
+    :hover{
+      cursor:"pointer"
+    }
+  }
+  

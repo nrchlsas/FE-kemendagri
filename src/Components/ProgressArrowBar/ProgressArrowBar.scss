@@ -1,0 +1,102 @@
+.step-container {
+    width: 100%;
+    height: 30px;
+    z-index: 0 ;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  
+  .step-container div:first-child {
+    margin-left: -2%;
+  }
+  
+  .step-item {
+    margin: 0;
+    margin-left: 0.5%;
+    height: 30px;
+    width: 15%;
+    position: relative;
+    display: inline-block;
+    text-align: center;
+    line-height: 30px;
+    font-size: 10px;
+    font-weight: 600;
+    transition: all 0.8s;
+    transform: skew(0deg) scale(1.01);
+    &:hover{
+        cursor: pointer;
+    }
+  }
+  
+  .step-item:before,
+  .step-item:after {
+    content: "";
+    position: absolute;
+    transition: all 0.8s;
+    z-index: -1;
+  }
+  
+  .step-item:before {
+    height: 50%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.1);
+    -webkit-transform: skew(45deg);
+    -moz-transform: skew(45deg);
+    transform: skew(45deg);
+  }
+  
+  .step-item:after {
+    height: 50%;
+    width: 100%;
+    top: 50%;
+    left: 0;
+    background: rgba(0, 0, 0, 0.1);
+    -webkit-transform: skew(-45deg);
+    -moz-transform: skew(-45deg);
+    transform: skew(-45deg);
+  }
+  
+  .step-item.persiapan:before,
+  .step-item.persiapan:after {
+  background: #7CB9E8;
+  }
+
+  .step-item.ranwal:before,
+  .step-item.ranwal:after {
+  background: #7CB9E8;
+  }
+
+  .step-item.rancangan:before,
+  .step-item.rancangan:after {
+  background: #7CB9E8;
+  }
+
+  .step-item.musrenbang:before,
+  .step-item.musrenbang:after {
+  background: #7CB9E8;
+  }
+
+  .step-item.rankhir:before,
+  .step-item.rankhir:after {
+  background: #7CB9E8;
+  }
+
+  .step-item.penetapan:before,
+  .step-item.penetapan:after {
+  background: #7CB9E8;
+  }
+  
+  .step-item.disabled:hover {      
+    cursor: default;
+    &.step-item.disabled:hover:after, &.step-item.disabled:hover:before{
+        background:rgba(0, 0, 0, 0.1);
+    }
+  }
+  .step-item:hover:before,
+  .step-item:hover:after { 
+    background: #4682B4;    
+  }
+
+  
