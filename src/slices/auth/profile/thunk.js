@@ -3,7 +3,7 @@ import { getFirebaseBackend } from "../../../helpers/firebase_helper";
 import { postFakeProfile, postJwtProfile } from "../../../helpers/fakebackend_helper";
 
 // action
-import { profileSuccess, profileError, resetProfileFlagChange } from "./reducer";
+import { profileSuccess, profileError, resetProfileFlagChange, update_list_menu } from "./reducer";
 
 import { APIClient } from "../../../helpers/api_helper";
 
@@ -55,11 +55,97 @@ export const resetProfileFlag = () => {
 };
 
 export const load_menu_by_profile = (user) => async (dispatch) => {
-    console.log('load_menu_by_profile', user);
-    let response = api.create(`${API_9007_URI}/rbac/list-menu`, {
-        "nama-saya": "Bon Bon Saja"
-    });
-    console.log('response', response);
+    let response = api.get(`${API_9007_URI}/rbac/list-menu`);
     let data = await response;
-    console.log({ data });
+
+    let list_menu = [];
+    if (data.code == 200) {
+        list_menu = data.list;
+    }
+
+    dispatch(update_list_menu(list_menu));
+}
+
+export const calculate_menu_by_login = (menus = [], login_menus = []) => {
+    const final_menus = [];
+    const menus_only = login_menus.filter(d => d.is_menu === true);
+    let check_menus = [];
+
+    if (menus_only.length == 0) {
+        // debug with dummy data
+
+        // menu beranda
+        check_menus.push({
+            id: 99,
+            is_menu: true,
+            nama_menu: "Beranda",
+            nama_sub_menu: null,
+            url: "/beranda"
+        });
+
+        // menu kependudukan
+        check_menus.push({
+            id: 99,
+            is_menu: true,
+            nama_menu: "Kependudukan",
+            nama_sub_menu: "",
+            url: "/kependudukan"
+        });
+
+        // menu sipd
+        check_menus.push({
+            id: 99,
+            is_menu: true,
+            nama_menu: "SIPD",
+            nama_sub_menu: "Perencanaan",
+            url: "/perencanaan"
+        });
+
+        // menu rbac
+        check_menus.push({
+            id: 999,
+            is_menu: true,
+            nama_menu: "rbac",
+            nama_sub_menu: "menu",
+            url: "/menu"
+        });
+        check_menus.push({
+            id: 999,
+            is_menu: true,
+            nama_menu: "rbac",
+            nama_sub_menu: "Pengguna",
+            url: "/pengguna"
+        });
+    } else {
+        check_menus = menus_only;
+    }
+
+    menus.forEach(d => {
+        if (d.subItems && d.subItems.length) {
+            let add_parent = false;
+            // mempunya anak, yang harus di check adalah anaknya
+            const clone_subItems = JSON.parse(JSON.stringify(d.subItems));
+
+            d.subItems = [];
+            clone_subItems.forEach(sub => {
+                const found = check_menus.find(i => i.url == sub.link);
+                if (found) {
+                    add_parent = true;
+                    d.subItems.push(sub);
+                }
+            })
+            if (add_parent) {
+                final_menus.push(d);
+            }
+        } else {
+            // tidak memiliki anak, ini adalah link
+            const found = check_menus.find(i => i.url == d.link);
+            if (found) {
+                final_menus.push(d);
+            }
+        }
+    })
+
+    // return menus;
+    return final_menus;
 }

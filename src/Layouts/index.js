@@ -67,9 +67,11 @@ const Layout = (props) => {
     // first load layout
     // hook first time renbder
     useEffect(() => {
+        // load detail user
+        dispatch(get_user_detail());
+
         // load menu by login
-        // dispatch(load_menu_by_profile());
-        dispatch(get_user_detail())
+        dispatch(load_menu_by_profile());
     }, [])
 
     /*

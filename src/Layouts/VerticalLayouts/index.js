@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { Collapse } from 'reactstrap';
@@ -9,15 +9,30 @@ import { withTranslation } from "react-i18next";
 import withRouter from "../../Components/Common/withRouter";
 import { useSelector } from "react-redux";
 import { createSelector } from 'reselect';
+import { calculate_menu_by_login } from '../../slices/thunks';
 
 const VerticalLayout = (props) => {
-    const navData = navdata().props.children;
+    const template_nav = navdata().props.children;
+    const [navData, setNavData] = useState([]);
     const path = props.router.location.pathname;
 
-    /*
- layout settings
- */
+    const listMenusState = (state) => state.Profile;
+    const listMenusProperties = createSelector(
+        listMenusState,
+        (state) => ({
+            list_menus: state.list_menus,
+        })
+    );
+    const { list_menus } = useSelector(listMenusProperties);
+    useEffect(() => {
+        if (list_menus && list_menus.length) {
+            setTimeout(() => {
+                setNavData(calculate_menu_by_login(template_nav, list_menus));
+            }, 500);
+        }
+    }, [list_menus]);
 
+    /* layout settings */
     const selectLayoutState = (state) => state.Layout;
     const selectLayoutProperties = createSelector(
         selectLayoutState,
@@ -108,7 +123,6 @@ const VerticalLayout = (props) => {
         anchorTag.classList.add("active");
 
         let parentCollapseDiv = anchorTag.nextElementSibling;
-        console.log("parentCollapseDiv", parentCollapseDiv);
         if (parentCollapseDiv) {
 
             // Add 'show' class to the clicked menu's parent collapse div
@@ -162,7 +176,6 @@ const VerticalLayout = (props) => {
     }
 
     const removeActivation = (items) => {
-        console.log("items", items);
         let actiItems = items.filter((x) => x.classList.contains("active"));
 
         actiItems.forEach((item) => {
