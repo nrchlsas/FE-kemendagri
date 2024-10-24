@@ -557,7 +557,7 @@ const ContentPerencanaanDaerah = () => {
             <div className="page-title-right">
                 <ol className="breadcrumb mb-2 ms-2" style={{fontWeight:600}}>
                     <li className="breadcrumb-item"><Link to="/Perencanaan">Perencanaan</Link></li>
-                    <li className="breadcrumb-item active">Detail Se-Provinsi {namaDaerah}</li>
+                    <li className="breadcrumb-item active">Detail Se-{namaDaerah}</li>
                 </ol>
             </div>
         </div>
@@ -742,12 +742,21 @@ const ContentPerencanaanDaerah = () => {
                                     {tahapData[customActiveTab]}
                                 </div> */}
                                   <div className="step-container">
-                                    <div onClick={()=>{item.persiapan=='SUDAH'? console.log('menyala abangkuu'):''}} className={`step-item ${item.persiapan=='SUDAH'? 'persiapan':'disabled'}`}>Persiapan</div>
-                                    <div onClick={()=>{item.rancangan_awal=='SUDAH'? console.log('menyala abangkuu'):''}} className={`step-item ${item.rancangan_awal=='SUDAH'? 'ranwal':'disabled'}`}>Ranwal</div>
+                                    {selectedSingleTahapan=="1" ? 
+                                    (<>
+                                    <div onClick={()=>{item.persiapan=='SUDAH'? alert('menyala abangkuu'):''}} className={`step-item ${item.persiapan=='SUDAH'? 'persiapan':'disabled'}`}>Persiapan</div>
+                                    <div onClick={()=>{item.rancangan_awal=='SUDAH'? alert('masih menyala abangkuu'):''}} className={`step-item ${item.rancangan_awal=='SUDAH'? 'ranwal':'disabled'}`}>Ranwal</div>
                                     <div onClick={()=>{item.rancangan=='SUDAH'? '':''}} className={`step-item ${item.rancangan=='SUDAH'? 'rancangan':'disabled'}`}>Rancangan</div>
                                     <div onClick={()=>{item.musrenbang=='SUDAH'? '':''}} className={`step-item ${item.musrenbang=='SUDAH'? 'musrenbang':'disabled'}`}>Musrenbang</div>
                                     <div onClick={()=>{item.rancangan_akhir=='SUDAH'? '':''}} className={`step-item ${item.rancangan_akhir=='SUDAH'? 'rankhir':'disabled'}`}>Rankhir</div>
                                     <div onClick={()=>{item.penetapan=='SUDAH'? '':''}} className={`step-item ${item.penetapan=='SUDAH'? 'penetapan':'disabled'}`}>Penetapan</div>
+                                    </>) : 
+                                    (<>
+                                    <div onClick={()=>{item.rancangan=='SUDAH'? '':''}} className={`step-item ${item.rancangan=='SUDAH'? 'rancangan':'disabled'}`}>Rancangan</div>
+                                    <div onClick={()=>{item.rancangan_akhir=='SUDAH'? '':''}} className={`step-item ${item.rancangan_akhir=='SUDAH'? 'rankhir':'disabled'}`}>Rankhir</div>
+                                    <div onClick={()=>{item.penetapan=='SUDAH'? '':''}} className={`step-item ${item.penetapan=='SUDAH'? 'penetapan':'disabled'}`}>Penetapan</div>
+                                    </>)}
+                                    
                                   </div>
                               </td>
                               <td

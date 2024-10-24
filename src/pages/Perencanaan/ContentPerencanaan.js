@@ -188,7 +188,7 @@ const ContentPerencanaan = () => {
     setDataShowSumberUsulan(value);
   };
 
-  const [namaTahapan, setNamaTahapan] = useState("Persiapan")
+  const [namaTahapan, setNamaTahapan] = useState("Penetapan")
   
 
   const handleSelectChange = (e) => {

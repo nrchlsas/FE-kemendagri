@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Card, CardBody, Col, Row,Nav, NavItem, NavLink } from 'reactstrap'
+import { Card, CardBody, Col, Row,Nav, NavItem, NavLink, Modal, ModalHeader, ModalBody } from 'reactstrap'
 import classnames from "classnames";
 import Pagination from "../../../Components/Pagination/Pagination";
 import PolygonMaps from "../../../Components/MapIndo/PolygonMaps";
@@ -10,6 +10,7 @@ import '../../../Components/ProgressArrowBar/ProgressArrowBar.scss'
 import BreadCrumb from '../../../Components/Common/BreadCrumb';
 import logoKemendagri from "../../../assets/images/logo-kemendagri/logo-kemendagri-home.png"
 import CountUp from 'react-countup';
+import "./../../Kependudukan/kependudukan.scss";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
@@ -30,6 +31,7 @@ const ContentPerencanaanDetailDaerah = () => {
     };
     const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
     const [selectedSingleTahapan, setSelectedSingleTahapan] = useState('1'); // Set default value
+    const [selectedSingleSubTahapan, setSelectedSingleSubTahapan] = useState('6'); // Set default value
     const [dataPerencanaan, setDataPerencanaan] = useState([]);
     const [dataPerencanaanPersentase, setDataPerencanaanPersentase] = useState(
       []
@@ -132,17 +134,96 @@ const ContentPerencanaanDetailDaerah = () => {
       getDataPerencanaanRkpdNasional();
       getDataPerencanaanRkpdNasionalPersentase();
     }, []);
+
+    const [dataDetailUnitSkpd, setDataDetailUnitSkpd] = useState([]);    
+    const [loadingDetailUnitSkpd, setLoadingDetailUnitSkpd] = useState([]);
+    const [errorDetailUnitSkpd, setErrorDetailUnitSkpd] = useState([]);    
   
+    const getDataDetailUnitSkpd = ({
+      tahun= "2024",
+      kodeDdn=_id,
+      kodeUnitSkpd="",
+      idTahap="1"
+    }      
+    ) => {
+      const fetchData = async () => {
+        setLoadingDetailUnitSkpd(true); // Set loading state to true when starting the fetch
+        try {
+          const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              kode_ddn: kodeDdn,
+              kode_unit_skpd: kodeUnitSkpd,
+              id_tahap: idTahap,
+              tahun : tahun,
+            }),
+          };
+  
+          const response = await fetch(
+            `${API_URI}/dashboard_perencanaan_3_detail_sub_giat`,
+            requestOptions
+          );
+  
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+  
+          const dataDetailUnitSkpd = await response.json();
+  
+          setDataDetailUnitSkpd(dataDetailUnitSkpd.data)    
+
+          setModall(true);            
+          setCurrentPageDetail(1);        
+          // Open the modal only after data is successfully fetched
+        } catch (errorDetailUnitSkpd) {
+          setErrorDetailUnitSkpd(errorDetailUnitSkpd);
+        } finally {
+          setLoadingDetailUnitSkpd(false);
+        }
+      };
+  
+      fetchData();
+    };
+  
+    const [modall, setModall] = useState(false);
+    const [dataRincianDetail, setDataRincianDetail] = useState(0);
+    const [dataDetailNamaUnitSkpd, setDataDetailNamaUnitSkpd] = useState("");
+
+    const handleOpen = ({idTahap,
+      kodeDdn = "",
+      kodeUnitSkpd = "",
+      tahun = "",
+      namaUnitSkpd="",
+      paguValidasi=0
+    }
+    ) => {
+      getDataDetailUnitSkpd({idTahap: idTahap, kodeDdn: kodeDdn, kodeUnitSkpd:kodeUnitSkpd, tahun:tahun})
+      setDataDetailNamaUnitSkpd(namaUnitSkpd);    
+      setDataRincianDetail(paguValidasi) 
+      setCardHead(null);
+    };
+  
+    const [cardhead, setCardHead] = useState();    
+  
+    const handleClose = () => {
+      setModall(false); // Close modal by setting modall to false
+    };
     
     const [currentPage, setCurrentPage] = useState(1);
+    const [currentPageDetail, setCurrentPageDetail] = useState(1);
     const [itemsPerPage] = useState(10); // Set items per page
-    const [sortConfig, setSortConfig] = useState({
+    const [itemsPerPageDetail] = useState(10);
+    const [sortConfig, setSortConfig] = useState({      
       key: null,
       direction: "ascending",
     });
   
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+    const indexOfLastItemDetail = currentPageDetail * itemsPerPageDetail;
+    const indexOfFirstItemDetail = indexOfLastItemDetail - itemsPerPageDetail;
   
     const sortedItems = React.useMemo(() => {
       let sortableItems = [...(dataPerencanaanPersentase || [])];
@@ -162,20 +243,47 @@ const ContentPerencanaanDetailDaerah = () => {
       }
       return sortableItems;
     }, [dataPerencanaanPersentase, sortConfig]);
+
+    const sortedItemsDetail = React.useMemo(() => {
+      let sortableItems = [...(dataDetailUnitSkpd || [])];
+      if (sortConfig.key !== null) {
+        sortableItems.sort((a, b) => {
+          const aValue = a[sortConfig.key] || 0;
+          const bValue = b[sortConfig.key] || 0;
+  
+          if (aValue < bValue) {
+            return sortConfig.direction === "ascending" ? -1 : 1;
+          }
+          if (aValue > bValue) {
+            return sortConfig.direction === "ascending" ? 1 : -1;
+          }
+          return 0;
+        });
+      }
+      return sortableItems;
+    }, [dataDetailUnitSkpd, sortConfig]);
   
     const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItemsDetail = sortedItemsDetail.slice(
+      indexOfFirstItemDetail,
+      indexOfLastItemDetail
+    );
+    
     const totalPages = Math.ceil(
       (dataPerencanaanPersentase?.length || 0) / itemsPerPage
     );
+    const totalPagesDetail = Math.ceil(
+      (dataDetailUnitSkpd?.length || 0) / itemsPerPage
+    );
   
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    const paginateDetail = (pageNumber) => setCurrentPageDetail(pageNumber);
   
     const [dataShowSumberUsulan, setDataShowSumberUsulan] = useState(false);
     const handleShowDataSumberUsulan = (value) => {
       setDataShowSumberUsulan(value);
     };
-  
-  
+
     const [namaTahapan, setNamaTahapan] = useState("Persiapan")  
     const handleSelectChange = (e) => {
       const { name, value } = e.target;
@@ -185,16 +293,23 @@ const ContentPerencanaanDetailDaerah = () => {
           setSelectedSingleTahun(value); // Misalnya, untuk dropdown tahun
       } else if (name === 'tahap') {
           setSelectedSingleTahapan(value); // Misalnya, untuk dropdown jenis dokumen
+      }else{
+        setSelectedSingleSubTahapan(value);
       }
   
+    };
+
+    const getSortIcon = (key) => {
+      if (sortConfig.key === key) {
+        return sortConfig.direction === "ascending" ? "▲" : "▼";
+      }
+      return "↕"; // Default icon for unsorted
     };
     
     const navigate = useNavigate();
     const goToDetail = (_id) => {
       navigate(`/perencanaan-detail/${_id}`);
-    };
-    
-  
+    }; 
       
       return (
       <React.Fragment>
@@ -223,8 +338,8 @@ const ContentPerencanaanDetailDaerah = () => {
               <div className="page-title-right">
                   <ol className="breadcrumb mb-2 ms-2" style={{fontWeight:600}}>
                       <li className="breadcrumb-item"><Link to="/Perencanaan">Perencanaan</Link></li>
-                      <li className="breadcrumb-item"><Link to={`/perencanaan/perencanaan-detail/${idProv}?namaDaerah=${namaProv}`}>Detail Se-Provinsi {namaProv}</Link></li>
-                      <li className="breadcrumb-item active">Detail SKPD Daerah {namaDaerah}</li>
+                      <li className="breadcrumb-item"><Link to={`/perencanaan/perencanaan-detail/${idProv}?namaDaerah=${namaProv}`}>Detail Se-{namaProv}</Link></li>
+                      <li className="breadcrumb-item active">Detail SKPD {namaDaerah}</li>
                   </ol>
               </div>
           </div>
@@ -240,104 +355,88 @@ const ContentPerencanaanDetailDaerah = () => {
                   </Col>
                   <Col md={8}>
                     <div className='d-flex justify-content-start align-items-start mb-2' style={{fontSize: "30px", fontWeight:600}}>
-                      Nama Daerah
+                      {namaDaerah}
                     </div>
                     {/* <div className="d-flex mb-3">
                       <div style={{ flexBasis: "180px" }}>Daerah</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
-                        <CountUp
-                            start={0}
-                            end={232}
-                            // decimal=","
-                            // decimals={2}
-                            // separator="."
-                            // prefix="Rp "
-                            // suffix=" T"
-                            duration={3}
-                          />
+                        Data Belum Tersedia
                       </div>
                     </div> */}
                     <div className="d-flex mb-3">
                       <div style={{ flexBasis: "180px", color:"#929FB1" }}>Kepala Daerah</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
-                        <CountUp
-                            start={0}
-                            end={232}
-                            // decimal=","
-                            // decimals={2}
-                            // separator="."
-                            // prefix="Rp "
-                            // suffix=" T"
-                            duration={3}
-                          />
+                        Data Belum Tersedia
                       </div>
                     </div>
                     <div className="d-flex mb-3">
                       <div style={{ flexBasis: "180px", color:"#929FB1" }}>Wakil Kepala Daerah</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
-                        <CountUp
-                            start={0}
-                            end={232}
-                            // decimal=","
-                            // decimals={2}
-                            // separator="."
-                            // prefix="Rp "
-                            // suffix=" T"
-                            duration={3}
-                          />
+                        Data Belum Tersedia
                       </div>
                     </div>
                     <div className="d-flex mb-3">
                       <div style={{ flexBasis: "180px", color:"#929FB1" }}>Sekretaris Daerah</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
-                        <CountUp
-                            start={0}
-                            end={232}
-                            // decimal=","
-                            // decimals={2}
-                            // separator="."
-                            // prefix="Rp "
-                            // suffix=" T"
-                            duration={3}
-                          />
+                        Data Belum Tersedia
                       </div>
                     </div>
                     <div className="d-flex mb-3">
                       <div style={{ flexBasis: "180px", color:"#929FB1" }}>Jumlah SKPD & Unit SKPD</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
-                        <CountUp
-                            start={0}
-                            end={232}
-                            // decimal=","
-                            // decimals={2}
-                            // separator="."
-                            // prefix="Rp "
-                            // suffix=" T"
-                            duration={3}
-                          />
+                        Data Belum Tersedia
                       </div>
                     </div>
                     <div className="d-flex mb-3">
                       <div style={{ flexBasis: "180px", color:"#929FB1" }}>Total Pagu</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
-                        <CountUp
-                            start={0}
-                            end={232}
-                            // decimal=","
-                            // decimals={2}
-                            // separator="."
-                            // prefix="Rp "
-                            // suffix=" T"
-                            duration={3}
-                          />
+                        Data Belum Tersedia
                       </div>
                     </div>
+                  </Col>
+                </Row>
+                <div className='separator mb-3'>
+                </div>
+                <Row>
+                  <Col>
+                  <div className='d-flex justify-content-between'>
+                    <div className='d-flex justify-content-start align-items-start mb-2' style={{fontSize: "20px", fontWeight:600}}>
+                        Sumber Usulan RKPD
+                    </div>
+                    <select
+                        name="subtahap"
+                          style={{
+                            padding: "10px 30px 10px 10px",
+                            fontSize: "16px",
+                            borderRadius: "5px",
+                            border: "1px solid #ccc",
+                            backgroundColor: "#ffffff",                          
+                            cursor: "pointer",                          
+                            marginLeft: "10px"
+                          }}
+                          value={selectedSingleSubTahapan}
+                          onChange={handleSelectChange}
+                        >                        
+                        <option value="1">Persiapan</option>
+                        <option value="2">Ranwal</option>
+                        <option value="3">Rancangan</option>
+                        <option value="4">Musrenbang</option>
+                        <option value="5">Rankhir</option>
+                        <option value="6">Penetapan</option>                                                                                                                  
+                        </select>
+                  </div>
+                  
+                  <PieChartNew 
+                  dataChart={dataPerencanaan}
+                  categoryName={['Eksekutif', 'Legislatif', 'Masyarakat']}
+                  dataColors='["#57E7B4", "#FCAD24", "#2DAED4"]'
+                  />                  
                   </Col>
                 </Row>
               </CardBody>
@@ -427,8 +526,7 @@ const ContentPerencanaanDetailDaerah = () => {
                                 verticalAlign: "middle",
                                 cursor: "pointer",
                                 whiteSpace: "normal",
-                                overflowWrap: "break-word",
-                                width: "600px"
+                                overflowWrap: "break-word",                                
                               }}
                               scope="col"
                             >
@@ -440,8 +538,7 @@ const ContentPerencanaanDetailDaerah = () => {
                                 verticalAlign: "middle",
                                 cursor: "pointer",
                                 whiteSpace: "normal",
-                                overflowWrap: "break-word",
-                                width: "600px"
+                                overflowWrap: "break-word",                                
                               }}
                               scope="col"
                             >
@@ -457,7 +554,7 @@ const ContentPerencanaanDetailDaerah = () => {
                               }}
                               scope="col"
                             >
-                              PAGU VALIDASI
+                              PAGU VALIDASI (Rp)
                             </th>
                             <th
                               style={{
@@ -489,7 +586,7 @@ const ContentPerencanaanDetailDaerah = () => {
                                   {/* style={{ verticalAlign: "middle", textAlign: "center" }} */}
                                 <td >{item.kode_skpd}</td>
                                 <td>{item.nama_skpd}</td>
-                                <td className='d-flex justify-content-center align-items-center' style={{ verticalAlign: "middle", textAlign: "center"}}>                               
+                                <td>                               
                                     {item.kode_unit_skpd}
                                 </td>
                                 <td>{item.nama_unit_skpd}</td>
@@ -511,6 +608,7 @@ const ContentPerencanaanDetailDaerah = () => {
                                   }}
                                 >
                                   <i
+                                  onClick={()=> handleOpen({idTahap: item.id_tahap, tahun:item.tahun, kodeUnitSkpd: item.kode_unit_skpd, kodeDdn: item.kode_ddn, namaUnitSkpd:item.nama_unit_skpd, paguValidasi: item.pagu_validasi})}
                                     style={{
                                       padding: "5px 10px",
                                       cursor: "pointer",
@@ -537,6 +635,128 @@ const ContentPerencanaanDetailDaerah = () => {
             </Card>
           </Col>          
         </Row>
+
+        <Modal
+        size="xl"
+        isOpen={modall}
+        toggle={handleOpen}
+        centered={true}
+        backdrop="static"
+      >
+        <div className="modal-content border-0">
+          <ModalHeader className=" p-3 bg-info-subtle" toggle={handleClose}>
+            Detail Unit SKPD {dataDetailNamaUnitSkpd} {" "}            
+          </ModalHeader>
+          <ModalBody>
+            {/* <div>
+              Total Anggaran: {dataRincianDetail}
+            </div> */}
+            <Row>
+              <Col md={4}>
+                <Card className="card-animate card-height-100">
+                  <CardBody>
+                    <div className="d-flex flex-column title-custom-card">
+                      <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                        <span>Total Anggaran</span>
+                      </div>
+                      <div className="d-flex">
+                        {/* <div className="avatar-xs-half flex-shrink-0">
+                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                          <i className=" ri-women-line text-danger"></i>
+                        </span>
+                      </div> */}
+                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                          <span>
+                            <CountUp
+                              start={0}
+                              end={
+                                // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                                dataRincianDetail
+                              }
+                              separator="."
+                              // prefix=""
+                              suffix=""
+                              duration={3}
+                            />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+            </Row>
+
+            {/* <div style={{ overflowY: "scroll", maxHeight: "500px" }}> */}
+              <table
+                className="table table-bordered table-nowrap align-middle mb-0"
+                style={{ width: "100%" }}
+              >
+                <thead
+                  className="table-light"
+                  style={{ position: "sticky", top: 0, zIndex: 2 }}
+                >
+                  <tr>                  
+                    <th
+                      onClick={() => requestSort("kode_sub_giat")}
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Kode Sub Giat {getSortIcon("kode_sub_giat")}
+                    </th>
+                    <th
+                      onClick={() => requestSort("nama_sub_giat")}
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Nama Sub Giat {getSortIcon("nama_sub_giat")}
+                    </th>
+                    {/* <th onClick={() => requestSort("")}
+                        style={{ cursor: "pointer", textAlign: "center" }}>
+                        Rincian Sub Giat
+                      </th>                       */}
+                    <th
+                      onClick={() => requestSort("pagu_validasi")}
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Pagu Validasi (Rp){" "}
+                      {getSortIcon("pagu_validasi")}
+                    </th>                                  
+                  </tr>
+                </thead>
+                <tbody style={{ minHeight: "500px" }}>
+                  {currentItemsDetail.map((item, index) => (
+                    <tr key={index}>
+                      {/* <td>{item.kode_prop}</td> */}
+                      <td
+                        style={{ textAlign: "center", verticalAlign: "middle" }}
+                      >
+                        {item.kode_sub_giat}
+                      </td>                      
+                      <td>
+                        {item.nama_sub_giat}
+                      </td>                      
+                      <td>
+                         <span style={{ float: "right" }}>
+                          {item.pagu_validasi
+                            ? parseInt(item.pagu_validasi).toLocaleString(
+                                "id-ID"
+                              )
+                            : "-"}
+                        </span>                        
+                      </td>                      
+                    </tr>
+                  ))}
+                  
+                </tbody>
+              </table>
+            {/* </div> */}
+            <Pagination
+              currentPage={currentPageDetail}
+              totalPages={totalPagesDetail}
+              onPageChange={paginateDetail}
+            />
+          </ModalBody>
+        </div>
+      </Modal>
       </React.Fragment>
     )
 }
