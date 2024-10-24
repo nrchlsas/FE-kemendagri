@@ -1107,7 +1107,7 @@ const BerandaV2 = () => {
                   <div style={{ fontWeight: 650 }}>
                     <CountUp
                         start={0}
-                        end={dataBerandaPenganggaran.jumlah_daerah}                      
+                        end={dataBerandaPenganggaran?.jumlah_daerah}                      
                         duration={1}
                       />
                   </div>
@@ -1119,7 +1119,7 @@ const BerandaV2 = () => {
                     <CountUp
                       start={0}
                       end={
-                        dataBerandaPenganggaran.apbd_belanja / 1000000000000
+                        dataBerandaPenganggaran?.apbd_belanja / 1000000000000
                       }
                       decimal=","
                       decimals={2}
@@ -1136,7 +1136,7 @@ const BerandaV2 = () => {
                     <div style={{ fontWeight: 650 }}>
                     <CountUp
                         start={0}
-                        end={dataBerandaPenganggaran.apbd_jumlah_urusan}
+                        end={dataBerandaPenganggaran?.apbd_jumlah_urusan}
                         // decimal=","
                         // decimals={2}
                         separator="."
@@ -1172,7 +1172,7 @@ const BerandaV2 = () => {
                     <CountUp
                       start={0}
                       end={
-                        dataBerandaPenganggaran.apdb_jumlah_giat
+                        dataBerandaPenganggaran?.apdb_jumlah_giat
                       }
                       // decimal=","
                       // decimals={2}
@@ -1246,7 +1246,7 @@ const BerandaV2 = () => {
                     <CountUp
                       start={0}
                       end={
-                        dataBerandaPenganggaran.apdb_pagu_spm / 1000000000000
+                        dataBerandaPenganggaran?.apdb_pagu_spm / 1000000000000
                       }
                       decimal=","
                       decimals={2}

@@ -205,8 +205,8 @@ const ContentPerencanaan = () => {
   
   const navigate = useNavigate();
   const goToDetail = (_id, namaDaerah) => {
-    const encodedNamaDaerah = encodeURIComponent(namaDaerah); 
-    navigate(`/perencanaan-detail/${_id}?namaDaerah=${encodedNamaDaerah}`);  
+    const encodedNamaDaerah = encodeURIComponent(namaDaerah);
+    navigate(`/perencanaan/perencanaan-detail/${_id}?namaDaerah=${encodedNamaDaerah}`);
   };
 
 

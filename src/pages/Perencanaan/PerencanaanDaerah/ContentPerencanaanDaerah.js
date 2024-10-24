@@ -196,12 +196,12 @@ const ContentPerencanaanDaerah = () => {
   };
   
   const navigate = useNavigate();
-  const goToDetail = (_id) => {
-    navigate(`/perencanaan-detail/${_id}`);
+  const goToDetail = (id, namaDaerah, namaProv) => {
+    const encodedNamaDaerah = encodeURIComponent(namaDaerah); 
+    const encodedNamaProv = encodeURIComponent(namaProv); 
+    navigate(`/perencanaan/perencanaan-detail/perencanaan-detail-skpd/${id}?namaDaerah=${encodedNamaDaerah}&namaProv=${encodedNamaProv}&idProv=${_id}`);
   };
-  
 
-    
     return (
     <React.Fragment>
         <Row>
@@ -758,7 +758,7 @@ const ContentPerencanaanDaerah = () => {
                                   overflowWrap: "break-word",
                                 }}
                               >
-                                <i
+                                <i onClick={()=> goToDetail(item.kode_ddn, item.nama_daerah, namaDaerah)}
                                   style={{
                                     padding: "5px 10px",
                                     cursor: "pointer",
