@@ -74,48 +74,48 @@ export const calculate_menu_by_login = (menus = [], login_menus = []) => {
     if (menus_only.length == 0) {
         // debug with dummy data
 
-        // menu beranda
-        check_menus.push({
-            id: 99,
-            is_menu: true,
-            nama_menu: "Beranda",
-            nama_sub_menu: null,
-            url: "/beranda"
-        });
+        // // menu beranda
+        // check_menus.push({
+        //     id: 99,
+        //     is_menu: true,
+        //     nama_menu: "Beranda",
+        //     nama_sub_menu: null,
+        //     url: "/beranda"
+        // });
 
-        // menu kependudukan
-        check_menus.push({
-            id: 99,
-            is_menu: true,
-            nama_menu: "Kependudukan",
-            nama_sub_menu: "",
-            url: "/kependudukan"
-        });
+        // // menu kependudukan
+        // check_menus.push({
+        //     id: 99,
+        //     is_menu: true,
+        //     nama_menu: "Kependudukan",
+        //     nama_sub_menu: "",
+        //     url: "/kependudukan"
+        // });
 
-        // menu sipd
-        check_menus.push({
-            id: 99,
-            is_menu: true,
-            nama_menu: "SIPD",
-            nama_sub_menu: "Perencanaan",
-            url: "/perencanaan"
-        });
+        // // menu sipd
+        // check_menus.push({
+        //     id: 99,
+        //     is_menu: true,
+        //     nama_menu: "SIPD",
+        //     nama_sub_menu: "Perencanaan",
+        //     url: "/perencanaan"
+        // });
 
-        // menu rbac
-        check_menus.push({
-            id: 999,
-            is_menu: true,
-            nama_menu: "rbac",
-            nama_sub_menu: "menu",
-            url: "/menu"
-        });
-        check_menus.push({
-            id: 999,
-            is_menu: true,
-            nama_menu: "rbac",
-            nama_sub_menu: "Pengguna",
-            url: "/pengguna"
-        });
+        // // menu rbac
+        // check_menus.push({
+        //     id: 999,
+        //     is_menu: true,
+        //     nama_menu: "rbac",
+        //     nama_sub_menu: "menu",
+        //     url: "/menu"
+        // });
+        // check_menus.push({
+        //     id: 999,
+        //     is_menu: true,
+        //     nama_menu: "rbac",
+        //     nama_sub_menu: "Pengguna",
+        //     url: "/pengguna"
+        // });
     } else {
         check_menus = menus_only;
     }
