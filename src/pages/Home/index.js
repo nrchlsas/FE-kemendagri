@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import Welcome from "./welcome";
 import { Card, CardBody, Col, Nav, NavItem, NavLink, Row, TabContent } from "reactstrap";
 import classnames from "classnames";
@@ -6,6 +6,9 @@ import { SimplePie } from "../Charts/ApexCharts/PieCharts/PieCharts";
 import Beranda from "./beranda";
 import Filter from "./Filter";
 import BerandaV2 from "./BerandaV2";
+import { get_permission_by_url } from "../../slices/thunks";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 // import { Card, CardBody, Col, Label, Row, Container } from 'reactstrap';
 // import FilterWilayah from './filterWilayah';
 // import ContentApbd from './contentApbd'
@@ -13,6 +16,29 @@ import BerandaV2 from "./BerandaV2";
 const Home = () => {
   document.title = "BERANDA | SIPD-HUB";
   const [count, setCount] = useState(0);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log('useEffect')
+  }, []);
+
+
+  useLayoutEffect(() => {
+    console.log("useLayoutEffect");
+    const permit = get_permission_by_url('/beranda', true, () => {
+      navigate('/auth-404-basic', { replace: true });
+      // history.push('/auth-404-basic', { shallow: true });
+    });
+    dispatch(permit);
+  }, []);
+
+  const constructor = () => {
+    console.log('constructor')
+  };
+
+  constructor();
+  console.log("afterconstructor ");
 
   const handleClick = () => {
     setCount(count - 1);
@@ -64,9 +90,9 @@ const Home = () => {
       <div className="page-content">
         <Row>
           <Col>
-              <BerandaV2 />
-           </Col>
-           {/* <Col md={3}>
+            <BerandaV2 />
+          </Col>
+          {/* <Col md={3}>
               <Filter />
            </Col> */}
         </Row>
