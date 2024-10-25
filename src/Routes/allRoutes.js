@@ -266,6 +266,7 @@ import Pengguna from "../pages/RBAC/Pengguna";
 import Perencanaan from "../pages/Perencanaan";
 import PerencanaanDaerah from "../pages/Perencanaan/PerencanaanDaerah";
 import PerencanaanDetailDaerah from "../pages/Perencanaan/PerencanaanDetailDaerah";
+import Realisasi from "../pages/Realisasi";
 
 //home
 
@@ -278,6 +279,7 @@ const authProtectedRoutes = [
   { path: "/perencanaan/perencanaan-detail/:_id", component: <PerencanaanDaerah />},
   { path: "/perencanaan/perencanaan-detail/perencanaan-detail-skpd/:_id", component: <PerencanaanDetailDaerah />},
   { path: "/kependudukan", component: <Kependudukan />},
+  { path: "realisasi", component: <Realisasi />},
   { path: "/dapodik", component: <Dapodik />},
   { path: "/uhc", component: <Uhc />},
   { path: "/miskin-ekstrim", component: <MiskinEkstrim />},

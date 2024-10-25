@@ -668,7 +668,6 @@ const ContentPerencanaanDetailDaerah = () => {
             </Card>
           </Col>          
         </Row>
-
         <Modal
         size="xl"
         isOpen={modall}

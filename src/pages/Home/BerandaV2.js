@@ -1124,7 +1124,7 @@ const BerandaV2 = () => {
                       decimal=","
                       decimals={2}
                       separator="."
-                      prefix=""
+                      prefix="Rp "
                       suffix=" T"
                       duration={1}
                     />

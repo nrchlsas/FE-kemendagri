@@ -176,12 +176,12 @@ const Navdata = () => {
         //   link: "/pages-development",
         //   parentId: "sipd",
         // },
-        // {
-        //   id: "realisasi",
-        //   label: "Realisasi",
-        //   link: "/pages-development",
-        //   parentId: "sipd",
-        // },
+        {
+          id: "realisasi",
+          label: "Realisasi",
+          link: "/realisasi",
+          parentId: "sipd",
+        },
       ],
     },
     // {

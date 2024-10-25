@@ -20,7 +20,11 @@ const Home = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('useEffect')
+    // const permit = get_permission_by_url('/beranda', true, () => {
+    //   navigate('/auth-404-basic', { replace: true });
+    //   // history.push('/auth-404-basic', { shallow: true });
+    // });
+    // dispatch(permit);
   }, []);
 
 

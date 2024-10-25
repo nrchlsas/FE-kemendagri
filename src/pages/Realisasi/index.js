@@ -1,14 +1,14 @@
 import React from 'react'
-import ContentPerencanaan from './ContentPerencanaan'
+import ContentRealisasi from './ContentRealisasi'
 import { Col, Row } from 'reactstrap'
 
-const Perencanaan = () => {
+const Realisasi = () => {
   return (
     <React.Fragment>
         <div className='page-content'>
           <Row>
             <Col>
-              <ContentPerencanaan />
+              <ContentRealisasi />
             </Col>
           </Row>          
         </div>
@@ -16,4 +16,4 @@ const Perencanaan = () => {
   )
 }
 
-export default Perencanaan
+export default Realisasi
