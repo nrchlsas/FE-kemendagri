@@ -218,13 +218,17 @@ const ContentPerencanaanDetailDaerah = () => {
       key: null,
       direction: "ascending",
     });
+    const [sortConfigDetail, setSortConfigDetail] = useState({      
+      key: null,
+      direction: "ascending",
+    });
   
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
     const indexOfLastItemDetail = currentPageDetail * itemsPerPageDetail;
     const indexOfFirstItemDetail = indexOfLastItemDetail - itemsPerPageDetail;
-  
+    
     const sortedItems = React.useMemo(() => {
       let sortableItems = [...(dataPerencanaanPersentase || [])];
       if (sortConfig.key !== null) {
@@ -298,6 +302,14 @@ const ContentPerencanaanDetailDaerah = () => {
       }
   
     };
+      
+    const requestSort = (key) => {
+      let direction = "ascending";
+      if (sortConfig.key === key && sortConfig.direction === "ascending") {
+        direction = "descending";
+      }
+      setSortConfig({ key, direction });
+    };
 
     const getSortIcon = (key) => {
       if (sortConfig.key === key) {
@@ -305,11 +317,20 @@ const ContentPerencanaanDetailDaerah = () => {
       }
       return "↕"; // Default icon for unsorted
     };
-    
-    const navigate = useNavigate();
-    const goToDetail = (_id) => {
-      navigate(`/perencanaan-detail/${_id}`);
-    }; 
+    const requestSortDetail = (key) => {
+      let direction = "ascending";
+      if (sortConfigDetail.key === key && sortConfigDetail.direction === "ascending") {
+        direction = "descending";
+      }
+      setSortConfigDetail({ key, direction });
+    };
+
+    const getSortIconDetail = (key) => {
+      if (sortConfigDetail.key === key) {
+        return sortConfigDetail.direction === "ascending" ? "▲" : "▼";
+      }
+      return "↕"; // Default icon for unsorted
+    };     
       
       return (
       <React.Fragment>
@@ -350,11 +371,12 @@ const ContentPerencanaanDetailDaerah = () => {
             <Card className='card-height-100'>
               <CardBody>
                 <Row>
-                  <Col md={4}>
-                    <img src={logoKemendagri} alt="" width="200" height="240" />
+                  <Col xs={12} md={12} xl={4}>
+                    <img src={logoKemendagri} alt="" width="200" height="210" />
                   </Col>
-                  <Col md={8}>
-                    <div className='d-flex justify-content-start align-items-start mb-2' style={{fontSize: "30px", fontWeight:600}}>
+                  <Col xs={12} md={12} xl={8}>
+                  <div className='ms-3'>
+                  <div className='d-flex justify-content-start align-items-start mb-2' style={{fontSize: "30px", fontWeight:600}}>
                       {namaDaerah}
                     </div>
                     {/* <div className="d-flex mb-3">
@@ -399,6 +421,7 @@ const ContentPerencanaanDetailDaerah = () => {
                         Data Belum Tersedia
                       </div>
                     </div>
+                  </div>                    
                   </Col>
                 </Row>
                 <div className='separator mb-3'>
@@ -449,11 +472,7 @@ const ContentPerencanaanDetailDaerah = () => {
                   <h4 className="card-title mb-1">
                     List Progress Perencanaan 
                   </h4>                  
-                </div>
-                <Row>
-                  <Col>                                        
-                  </Col>
-                </Row>
+                </div>                
                 <Row>
                   <Col>                
                     <select
@@ -496,7 +515,22 @@ const ContentPerencanaanDetailDaerah = () => {
                       <table className="table table-nowrap mb-2 " style={{width:"1000px"}} >
                         <thead className="table-light">
                           <tr>
+                      
                             <th
+                              onClick={() => requestSort("kode_skpd")}
+                              style={{
+                                textAlign: "center",
+                                verticalAlign: "middle",
+                                cursor: "pointer",
+                                whiteSpace: "normal",
+                                overflowWrap: "break-word",
+                              }}                              
+                              scope="col"
+                            >
+                              KODE SKPD {getSortIcon("kode_skpd")}
+                            </th>
+                            <th
+                              onClick={() => requestSort("nama_skpd")}
                               style={{
                                 textAlign: "center",
                                 verticalAlign: "middle",
@@ -506,21 +540,10 @@ const ContentPerencanaanDetailDaerah = () => {
                               }}
                               scope="col"
                             >
-                              KODE SKPD
+                              NAMA SKPD {getSortIcon("nama_skpd")}
                             </th>
                             <th
-                              style={{
-                                textAlign: "center",
-                                verticalAlign: "middle",
-                                cursor: "pointer",
-                                whiteSpace: "normal",
-                                overflowWrap: "break-word",
-                              }}
-                              scope="col"
-                            >
-                              NAMA SKPD
-                            </th>
-                            <th
+                            onClick={() => requestSort("kode_unit_skpd")}
                               style={{
                                 textAlign: "center",
                                 verticalAlign: "middle",
@@ -530,9 +553,10 @@ const ContentPerencanaanDetailDaerah = () => {
                               }}
                               scope="col"
                             >
-                              KODE UNIT SKPD
+                              KODE UNIT SKPD {getSortIcon("kode_sub_giat")}
                             </th>
                             <th
+                            onClick={() => requestSort("nama_unit_skpd")}
                               style={{
                                 textAlign: "center",
                                 verticalAlign: "middle",
@@ -542,9 +566,10 @@ const ContentPerencanaanDetailDaerah = () => {
                               }}
                               scope="col"
                             >
-                              NAMA UNIT SKPD
+                              NAMA UNIT SKPD {getSortIcon("nama_unit_skpd")}
                             </th>
                             <th
+                            onClick={() => requestSort("pagu_validasi")}
                               style={{
                                 textAlign: "center",
                                 verticalAlign: "middle",
@@ -554,7 +579,7 @@ const ContentPerencanaanDetailDaerah = () => {
                               }}
                               scope="col"
                             >
-                              PAGU VALIDASI (Rp)
+                              PAGU VALIDASI (Rp) {getSortIcon("pagu_validasi")}
                             </th>
                             <th
                               style={{
@@ -585,11 +610,19 @@ const ContentPerencanaanDetailDaerah = () => {
                               <tr key={index}>
                                   {/* style={{ verticalAlign: "middle", textAlign: "center" }} */}
                                 <td >{item.kode_skpd}</td>
-                                <td>{item.nama_skpd}</td>
+                                <td style={{
+                          whiteSpace: "normal",
+                          wordWrap: "break-word",
+                          maxWidth: "200px",
+                        }}>{item.nama_skpd}</td>
                                 <td>                               
                                     {item.kode_unit_skpd}
                                 </td>
-                                <td>{item.nama_unit_skpd}</td>
+                                <td style={{
+                          whiteSpace: "normal", 
+                          wordWrap: "break-word", 
+                          maxWidth: "200px", 
+                        }}>{item.nama_unit_skpd}</td>
                                 <td>
                                   <span style={{ float: "right" }}>
                                   {item.pagu_validasi
@@ -698,27 +731,27 @@ const ContentPerencanaanDetailDaerah = () => {
                 >
                   <tr>                  
                     <th
-                      onClick={() => requestSort("kode_sub_giat")}
+                      onClick={() => requestSortDetail("kode_sub_giat")}
                       style={{ cursor: "pointer", textAlign: "center" }}
                     >
-                      Kode Sub Giat {getSortIcon("kode_sub_giat")}
+                      Kode Sub Giat {getSortIconDetail("kode_sub_giat")}
                     </th>
                     <th
-                      onClick={() => requestSort("nama_sub_giat")}
+                      onClick={() => requestSortDetail("nama_sub_giat")}
                       style={{ cursor: "pointer", textAlign: "center" }}
                     >
-                      Nama Sub Giat {getSortIcon("nama_sub_giat")}
+                      Nama Sub Giat {getSortIconDetail("nama_sub_giat")}
                     </th>
-                    {/* <th onClick={() => requestSort("")}
+                    {/* <th onClick={() => requestSortDetail("")}
                         style={{ cursor: "pointer", textAlign: "center" }}>
                         Rincian Sub Giat
                       </th>                       */}
                     <th
-                      onClick={() => requestSort("pagu_validasi")}
+                      onClick={() => requestSortDetail("pagu_validasi")}
                       style={{ cursor: "pointer", textAlign: "center" }}
                     >
                       Pagu Validasi (Rp){" "}
-                      {getSortIcon("pagu_validasi")}
+                      {getSortIconDetail("pagu_validasi")}
                     </th>                                  
                   </tr>
                 </thead>
@@ -726,12 +759,14 @@ const ContentPerencanaanDetailDaerah = () => {
                   {currentItemsDetail.map((item, index) => (
                     <tr key={index}>
                       {/* <td>{item.kode_prop}</td> */}
-                      <td
-                        style={{ textAlign: "center", verticalAlign: "middle" }}
-                      >
+                      <td>
                         {item.kode_sub_giat}
                       </td>                      
-                      <td>
+                      <td style={{
+                          whiteSpace: "normal", // Membolehkan teks turun ke baris berikutnya
+                          wordWrap: "break-word", // Memastikan teks panjang terpotong dan turun ke bawah
+                          maxWidth: "200px", // Menetapkan lebar maksimum sel (sesuaikan dengan kebutuhan)
+                        }}>
                         {item.nama_sub_giat}
                       </td>                      
                       <td>

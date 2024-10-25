@@ -575,44 +575,7 @@ const ContentPerencanaanDaerah = () => {
                 {/* <h4 className="card-title">
                     {namaTahapan}
                 </h4>                 */}
-              </div>
-              <Row>
-                <Col>
-                  
-                  {/* <select
-                        style={{
-                          padding: "10px 30px 10px 10px",
-                          fontSize: "16px",
-                          borderRadius: "5px",
-                          border: "1px solid #ccc",
-                          backgroundColor: "#ffffff",                          
-                          cursor: "pointer",                          
-                          marginLeft: "10px"
-                        }}
-                        value={selectedSingle}
-                        onChange={handleSelectChange}
-                      >                        
-                        <option value="2024">2024</option>
-                        <option value="2025">2025</option>
-                      </select>
-                      <select
-                        style={{
-                          padding: "10px 30px 10px 10px",
-                          fontSize: "16px",
-                          borderRadius: "5px",
-                          border: "1px solid #ccc",
-                          backgroundColor: "#ffffff",                          
-                          cursor: "pointer",                          
-                          marginLeft: "10px"
-                        }}
-                        value={selectedSingle}
-                        onChange={handleSelectChange}
-                      >                        
-                        <option value="2024">RKPD</option>
-                        <option value="2025">RKPD Perubahan</option>
-                      </select> */}
-                </Col>
-              </Row>
+              </div>              
               <Row>
                 <Col>
                 {/* <input
@@ -744,8 +707,8 @@ const ContentPerencanaanDaerah = () => {
                                   <div className="step-container">
                                     {selectedSingleTahapan=="1" ? 
                                     (<>
-                                    <div onClick={()=>{item.persiapan=='SUDAH'? alert('menyala abangkuu'):''}} className={`step-item ${item.persiapan=='SUDAH'? 'persiapan':'disabled'}`}>Persiapan</div>
-                                    <div onClick={()=>{item.rancangan_awal=='SUDAH'? alert('masih menyala abangkuu'):''}} className={`step-item ${item.rancangan_awal=='SUDAH'? 'ranwal':'disabled'}`}>Ranwal</div>
+                                    <div onClick={()=>{item.persiapan=='SUDAH'? '':''}} className={`step-item ${item.persiapan=='SUDAH'? 'persiapan':'disabled'}`}>Persiapan</div>
+                                    <div onClick={()=>{item.rancangan_awal=='SUDAH'? '':''}} className={`step-item ${item.rancangan_awal=='SUDAH'? 'ranwal':'disabled'}`}>Ranwal</div>
                                     <div onClick={()=>{item.rancangan=='SUDAH'? '':''}} className={`step-item ${item.rancangan=='SUDAH'? 'rancangan':'disabled'}`}>Rancangan</div>
                                     <div onClick={()=>{item.musrenbang=='SUDAH'? '':''}} className={`step-item ${item.musrenbang=='SUDAH'? 'musrenbang':'disabled'}`}>Musrenbang</div>
                                     <div onClick={()=>{item.rancangan_akhir=='SUDAH'? '':''}} className={`step-item ${item.rancangan_akhir=='SUDAH'? 'rankhir':'disabled'}`}>Rankhir</div>
