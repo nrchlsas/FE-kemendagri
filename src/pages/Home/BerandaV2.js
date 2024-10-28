@@ -11,6 +11,7 @@ import {
   TabContent,
   TabPane,
   CardHeader,
+  CardFooter,
 } from "reactstrap";
 import classnames from "classnames";
 import getChartColorsArray from "../../Components/Common/ChartsDynamicColor";
@@ -844,7 +845,6 @@ const BerandaV2 = () => {
                 </NavItem>
               </Nav>
             </CardHeader>
-
             <CardBody>
               <div className="d-flex flex-column align-items-center">
                 <div
@@ -858,6 +858,7 @@ const BerandaV2 = () => {
                   Perencanaan
                 </div>
               </div>
+              
               <div style={{ fontSize: "20px" }}>
                 <div className="d-flex mb-3">
                   <div style={{ flexBasis: "220px" }}>Jumlah Daerah</div>
@@ -1020,8 +1021,14 @@ const BerandaV2 = () => {
                     />
                   </div>
                 </div>
-              </div>
+              </div>              
+                
             </CardBody>
+            <CardFooter>
+                <div className="d-flex justify-content-end align-items-end" style={{color:"#929FB1"}}>
+                  *update date: {dataBerandaPerencanaan?.execute_time ? dataBerandaPerencanaan?.execute_time : "-"}
+                </div>                                                               
+            </CardFooter>
           </Card>
         </Col>
         <Col md={4}>
@@ -1318,8 +1325,13 @@ const BerandaV2 = () => {
                     />
                   </div>
                 </div>
-              </div>
+              </div>              
             </CardBody>
+            <CardFooter>
+              <div className="d-flex justify-content-end align-items-end" style={{color:"#929FB1"}}>
+                *update date: {dataBerandaPenganggaran?.execute_time ? dataBerandaPenganggaran?.execute_time : "-"}
+              </div>              
+            </CardFooter>              
           </Card>
         </Col>
 
@@ -1521,6 +1533,11 @@ const BerandaV2 = () => {
                 </div>
               </div>
             </CardBody>
+            <CardFooter>
+              <div className="d-flex justify-content-end align-items-end" style={{color:"#929FB1"}}>
+                *update time : -
+              </div>              
+            </CardFooter>              
           </Card>
         </Col>
       </Row>

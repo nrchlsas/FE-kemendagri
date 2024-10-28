@@ -17,6 +17,7 @@ import "./../Kependudukan/kependudukan.scss";
 import "leaflet/dist/leaflet.css";
 import classnames from "classnames";
 import PolygonMaps from "../../Components/MapIndo/PolygonMaps";
+import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 import VerticalBarChart from "../../Components/Chart/VerticalBarChart";
 import HorizontalBarChart from "../../Components/Chart/HorizontalBarChart";
 import CountUp from "react-countup";
@@ -745,7 +746,7 @@ const ContentDapodikV2 = () => {
         <Col md={6}>
           <Card className="card-height-100">
             <CardBody>
-              <PolygonMaps />
+              <MapIndoChart />
             </CardBody>
           </Card>
         </Col>
@@ -841,7 +842,7 @@ const ContentDapodikV2 = () => {
                           <i className=" ri-women-line text-danger"></i>
                         </span>
                       </div> */}
-                              <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                              <div className="d-flex justify-content-center align-items-center title-body">
                                 <span>
                                   <CountUp
                                     start={0}
@@ -881,7 +882,7 @@ const ContentDapodikV2 = () => {
                           <i className=" ri-women-line text-danger"></i>
                         </span>
                       </div> */}
-                              <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                              <div className="d-flex justify-content-center align-items-center title-body">
                                 <span>
                                   <CountUp
                                     start={0}
@@ -1479,7 +1480,7 @@ const ContentDapodikV2 = () => {
                                     "",
                                     "",
                                     "",
-                                    item.totalanggaran
+                                    item.total_pendidikan
                                   )
                                 }
                                 className="bx bx-list-ul text-primary"
@@ -1851,7 +1852,7 @@ const ContentDapodikV2 = () => {
                                     "",
                                     item.kode_ddn,
                                     item.jns_pemda,
-                                    item.totalanggaran
+                                    item.total_pendidikan
                                   )
                                 }
                                 className="bx bx-list-ul text-primary"
@@ -2260,7 +2261,7 @@ const ContentDapodikV2 = () => {
                                     item.kode_ddn,
                                     "",
                                     item.jns_pemda,
-                                    item.totalanggaran
+                                    item.total_pendidikan
                                   )
                                 }
                                 className="bx bx-list-ul text-primary"
