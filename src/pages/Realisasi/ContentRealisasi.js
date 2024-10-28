@@ -51,9 +51,8 @@ const ContentRealisasi = () => {
   const [loadingRealisasi, setLoadingRealisasi] = useState([]);
   const [errorRealisasi, setErrorRealisasi] = useState([]);
 
-  const getDataRealisasiRkpdNasional = ({
+  const getDataRealisasiNasional = ({
     tahun = "2024",
-    tahapan = "1",
   } = {}) => {
     const fetchData = async () => {
       try {
@@ -61,12 +60,11 @@ const ContentRealisasi = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            id_tahap: tahapan,
             tahun: tahun,
           }),
         };
         const response = await fetch(
-          `${API_URI}/dashboard_Realisasi_1_rkpd_nasional`,
+          `${API_URI}/realisasi_level_1_`,
           requestOptions
         );
 
@@ -74,10 +72,10 @@ const ContentRealisasi = () => {
           throw new Error("Network response was not ok");
         }
 
-        const dataRealisasiRkpdNasional = await response.json();
+        const dataRealisasiNasional = await response.json();
 
         const dataResultChartTahapan =
-          dataRealisasiRkpdNasional.data.dashboard_Realisasi_1_rkpd_nasional.list.reduce(
+          dataRealisasiNasional.data.dashboard_Realisasi_1__nasional.list.reduce(
             (acc, item) => {
               acc[0].push(item.value);
               acc[1].push(item.tahapan);
@@ -96,9 +94,9 @@ const ContentRealisasi = () => {
     fetchData();
   };
 
-  const getDataRealisasiRkpdNasionalPersentase = ({
-    tahun = "2024",
-    tahapan = "1",    
+  const getDataRealisasiNasionalPersentase = ({
+    tahun = "",
+    // tahapan = "1",    
   } = {}) => {
     const fetchData = async () => {
       try {
@@ -106,12 +104,12 @@ const ContentRealisasi = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            id_tahap: tahapan,
+            // id_tahap: tahapan,
             tahun: tahun,
           }),
         };
         const response = await fetch(
-          `${API_URI}/dashboard_Realisasi_1_list_persentase`,
+          `${API_URI}/realisasi_level_1`,
           requestOptions
         );
 
@@ -119,10 +117,12 @@ const ContentRealisasi = () => {
           throw new Error("Network response was not ok");
         }
 
-        const dataRealisasiRkpdNasionalPersentase = await response.json();
+        const dataRealisasiNasionalPersentase = await response.json();
+
+        console.log(dataRealisasiNasionalPersentase,'ini data realisasi')
 
         setDataRealisasiPersentase(
-          dataRealisasiRkpdNasionalPersentase.data
+          dataRealisasiNasionalPersentase.data.realisasi_level_1
         );
       } catch (errorRealisasi) {
         setErrorRealisasi(errorRealisasi);
@@ -135,7 +135,7 @@ const ContentRealisasi = () => {
 
     // Memanggil fungsi API setiap kali dropdown berubah
     useEffect(() => {
-    getDataRealisasiRkpdNasionalPersentase({
+    getDataRealisasiNasionalPersentase({
         tahun: selectedSingleTahun,
         tahapan: selectedSingleTahapan,
     });
@@ -143,8 +143,8 @@ const ContentRealisasi = () => {
 
 
     useEffect(() => {
-        getDataRealisasiRkpdNasional();
-        getDataRealisasiRkpdNasionalPersentase();
+      getDataRealisasiNasional();
+      getDataRealisasiNasionalPersentase();
     }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -215,18 +215,19 @@ const ContentRealisasi = () => {
     
     <Row>
         <Col>
-          <Card className="card-custom">
             <div className="d-flex justify-content-between">
               <div className="d-flex title-page">
-                <div className="d-flex justify-content-center align-items-center avatar-sm">
+                {/* <div className="d-flex justify-content-center align-items-center avatar-sm">
                   <span className="logo-sm">
-                    {/* <img src={logoKemenkoPmk} alt="" width="40" height="40" /> */}
+                    <img src={logoKemenkoPmk} alt="" width="40" height="40" />
                   </span>
-                </div>
+                </div> */}
                 <div className="d-flex justify-content-center align-items-center">
-                  <span>Realisasi (RKPD)</span>
+                  <span>Realisasi</span>
                 </div>
               </div>
+              </div>
+          {/* <Card className="card-custom">
               <div className="d-flex justify-content-center align-items-center">
                 <div className="nav-beranda d-flex justify-content-center align-items-center">
                   <Nav tabs className="nav nav-tabs nav-success nav-justified">
@@ -317,8 +318,8 @@ const ContentRealisasi = () => {
                   </Nav>
                 </div>
               </div>
-            </div>
-          </Card>
+            
+          </Card> */}
         </Col>        
     </Row>    
       <Row>
@@ -388,11 +389,11 @@ const ContentRealisasi = () => {
             <CardBody>
               <div className="separator">
                 <h4 className="card-title mb-1">
-                  List Progress Realisasi 
+                  Realisasi Belanja
                 </h4>
-                <h4 className="card-title">
+                {/* <h4 className="card-title">
                     {namaTahapan}
-                </h4>                
+                </h4>                 */}
               </div>
               <Row>
                 <Col>
@@ -411,7 +412,7 @@ const ContentRealisasi = () => {
                     // onKeyDown={(e) => handleKeyDown(e, "provinsi")}
                     placeholder="Cari Daerah"
                   /> */}
-                  <select
+                  {/* <select
                   name="tahun"
                         style={{
                           padding: "10px 30px 10px 10px",
@@ -429,8 +430,8 @@ const ContentRealisasi = () => {
                       >                        
                         <option value="2024">2024</option>
                         <option value="2025">2025</option>
-                      </select>
-                      <select
+                      </select> */}
+                      {/* <select
                       name="tahap"
                         style={{
                           padding: "10px 30px 10px 10px",
@@ -446,12 +447,12 @@ const ContentRealisasi = () => {
                       >                        
                         <option value="1">RKPD</option>
                         <option value="3">RKPD Perubahan</option>
-                      </select>
+                      </select> */}
                 </Col>
               </Row>
               <Row>
                 <Col>
-                  <div className="table-responsive table-card">
+                  <div className="table-responsive table-card mt-2">
                     <table className="table table-nowrap mb-2 ">
                       <thead className="table-light">
                         <tr>
@@ -518,8 +519,8 @@ const ContentRealisasi = () => {
 
                           return (
                             <tr key={index}>
-                              <td>{item.kode_ddn}</td>
-                              <td>{item.nama_daerah}</td>
+                              <td>{item.kode_prov}</td>
+                              <td>{item.nama_prov}</td>
                               <td>
                                 <div
                                   className="progress"
@@ -529,31 +530,27 @@ const ContentRealisasi = () => {
                                     className="progress-bar"
                                     role="progressbar"
                                     style={{
-                                      width: `${tahapData[customActiveTab]}%`,
-                                      backgroundColor: tahapData[customActiveTab] === 100
+                                      width: `${item.persenrealisasianggaran}%`,
+                                      backgroundColor: item.persenrealisasianggaran === 100
                                       ? "#57E7B4" // Hijau jika 100%
-                                      : (tahapData[customActiveTab] > 5 && tahapData[customActiveTab] < 100)
+                                      : (item.persenrealisasianggaran > 5 && item.persenrealisasianggaran < 100)
                                       ? "#FCAD24" // Kuning jika 1%-99%
                                       : "#F35F52", // Merah jika 0%,
                                       color: "black",
                                     }}
-                                    aria-valuenow={tahapData[customActiveTab]}
+                                    aria-valuenow={item.persenrealisasianggaran}
                                     aria-valuemin="0"
                                     aria-valuemax="100"
                                   >
-                                    {tahapData[customActiveTab] > 30 &&
-                                      `${tahapData[
-                                        customActiveTab
-                                      ].toLocaleString("id-ID", {
+                                    {item.persenrealisasianggaran > 30 &&
+                                      `${item.persenrealisasianggaran.toLocaleString("id-ID", {
                                         minimumFractionDigits: 2,
                                         maximumFractionDigits: 2,
                                       })}%`}
                                   </div>
-                                  {tahapData[customActiveTab] <= 30 && (
+                                  {item.persenrealisasianggaran <= 30 && (
                                     <div className="d-flex justify-content-center ms-1 align-items-center">
-                                      {tahapData[
-                                        customActiveTab
-                                      ].toLocaleString("id-ID", {
+                                      {item.persenrealisasianggaran.toLocaleString("id-ID", {
                                         minimumFractionDigits: 2,
                                         maximumFractionDigits: 2,
                                       })}
