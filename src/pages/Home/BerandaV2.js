@@ -872,7 +872,7 @@ const BerandaV2 = () => {
                         // separator="."
                         // prefix="Rp "
                         // suffix=" T"
-                        duration={3}
+                        duration={1}
                       />
                   </div>
                 </div>
@@ -890,7 +890,7 @@ const BerandaV2 = () => {
                       separator="."
                       prefix="Rp "
                       suffix=" T"
-                      duration={3}
+                      duration={1}
                     />
                   </div>
                 </div>
@@ -906,7 +906,7 @@ const BerandaV2 = () => {
                         separator="."
                         prefix=""
                         // suffix=" T"
-                        duration={3}
+                        duration={1}
                       />
                      
                     </div>
@@ -925,7 +925,7 @@ const BerandaV2 = () => {
                       separator="."
                       prefix=""
                       // suffix=" T"
-                      duration={3}
+                      duration={1}
                     />
                   </div>
                 </div>
@@ -943,7 +943,7 @@ const BerandaV2 = () => {
                       separator="."
                       prefix=""
                       // suffix=" T"
-                      duration={3}
+                      duration={1}
                     />
                   </div>
                 </div>
@@ -961,7 +961,7 @@ const BerandaV2 = () => {
                       separator="."
                       prefix=""
                       // suffix=" T"
-                      duration={3}
+                      duration={1}
                     />
                   </div>
                 </div>
@@ -981,7 +981,7 @@ const BerandaV2 = () => {
                       separator="."
                       prefix="Rp "
                       suffix=" T"
-                      duration={3}
+                      duration={1}
                     />
                   </div>
                 </div>
@@ -999,7 +999,7 @@ const BerandaV2 = () => {
                       separator="."
                       prefix="Rp "
                       suffix=" T"
-                      duration={3}
+                      duration={1}
                     />
                   </div>
                 </div>
@@ -1017,7 +1017,7 @@ const BerandaV2 = () => {
                       separator="."
                       prefix="Rp "
                       suffix=" T"
-                      duration={3}
+                      duration={1}
                     />
                   </div>
                 </div>
@@ -1149,7 +1149,7 @@ const BerandaV2 = () => {
                         separator="."
                         prefix=""
                         // suffix=" T"
-                        duration={3}
+                        duration={1}
                       />
                    
                     </div>
@@ -1361,7 +1361,7 @@ const BerandaV2 = () => {
                   <CountUp
                         start={0}
                         end={dataBerandaRealisasi?.jumlah_daerah}                      
-                        duration={3}
+                        duration={1}
                       />
                   </div>
                 </div>
@@ -1379,8 +1379,9 @@ const BerandaV2 = () => {
                       separator="."
                       prefix="Rp "
                       suffix=" T"
-                      duration={3}
+                      duration={1}
                     />
+                      {/* {` (${((dataBerandaRealisasi?.total_belanja/dataBerandaPenganggaran?.apbd_belanja) * 100).toFixed(2)}%)`} */}
                   </div>
                 </div>
                 {/* <div className="d-flex mb-3">
@@ -1395,7 +1396,7 @@ const BerandaV2 = () => {
                         separator="."
                         prefix=""
                         // suffix=" T"
-                        duration={3}
+                        duration={1}
                       />
                     
                     </div>
@@ -1412,8 +1413,9 @@ const BerandaV2 = () => {
                       separator="."
                       prefix=""
                       // suffix=" T"
-                      duration={3}
+                      duration={1}
                     />
+                    
                   </div>
                 </div>
                 <div className="d-flex mb-3">
@@ -1428,7 +1430,7 @@ const BerandaV2 = () => {
                       separator="."
                       prefix=""
                       // suffix=" T"
-                      duration={3}
+                      duration={1}
                     />
                   </div>
                 </div>
@@ -1444,7 +1446,7 @@ const BerandaV2 = () => {
                       separator="."
                       prefix=""
                       // suffix=" T"
-                      duration={3}
+                      duration={1}
                     />
                   </div>
                 </div>
@@ -1465,8 +1467,9 @@ const BerandaV2 = () => {
                       separator="."
                       prefix="Rp "
                       suffix=" T"
-                      duration={3}
+                      duration={1}
                     />
+                    {/* {` (${((dataBerandaRealisasi?.total_realisasi_miskin_nas/dataBerandaPenganggaran?.apbd_pagu_miskin) * 100).toFixed(2)}%)`} */}
                   </div>
                 </div>
                 <div className="d-flex mb-3">
@@ -1484,8 +1487,9 @@ const BerandaV2 = () => {
                       separator="."
                       prefix="Rp "
                       suffix=" T"
-                      duration={3}
+                      duration={1}
                     />
+                    {/* {` (${((dataBerandaRealisasi?.total_realisasi_stunting_nas/dataBerandaPenganggaran?.apdb_pagu_stunting) * 100).toFixed(2)}%)`} */}
                   </div>
                 </div>
                 <div className="d-flex mb-3">
@@ -1503,8 +1507,9 @@ const BerandaV2 = () => {
                       separator="."
                       prefix="Rp "
                       suffix=" T"
-                      duration={3}
+                      duration={1}
                     />
+                    {/* {` (${((dataBerandaRealisasi?.total_realisasi_spm_nas/dataBerandaPenganggaran?.apdb_pagu_spm) * 100).toFixed(2)}%)`} */}
                   </div>
                 </div>
                 <div className="d-flex mb-3">
@@ -1522,15 +1527,16 @@ const BerandaV2 = () => {
                       separator="."
                       prefix="Rp "
                       suffix=" T"
-                      duration={3}
+                      duration={1}
                     />
+                    {/* {` (${((dataBerandaRealisasi?.total_realisasi_pendapatan_nas/dataBerandaPenganggaran?.apdb_pagu_spm) * 100).toFixed(2)}%)`} */}
                   </div>
                 </div>
-                <div className="d-flex mb-3">
+                {/* <div className="d-flex mb-3">
                   <div style={{ flexBasis: "220px" }}>Realisasi Pembiayaan</div>
                   <div>:&nbsp;</div>
                   <div style={{ fontWeight: 650 }}></div>
-                </div>
+                </div> */}
               </div>
             </CardBody>
             <CardFooter>

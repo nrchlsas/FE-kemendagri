@@ -250,22 +250,22 @@ const ContentPerencanaanDetailDaerah = () => {
 
     const sortedItemsDetail = React.useMemo(() => {
       let sortableItems = [...(dataDetailUnitSkpd || [])];
-      if (sortConfig.key !== null) {
+      if (sortConfigDetail.key !== null) {
         sortableItems.sort((a, b) => {
-          const aValue = a[sortConfig.key] || 0;
-          const bValue = b[sortConfig.key] || 0;
+          const aValue = a[sortConfigDetail.key] || 0;
+          const bValue = b[sortConfigDetail.key] || 0;
   
           if (aValue < bValue) {
-            return sortConfig.direction === "ascending" ? -1 : 1;
+            return sortConfigDetail.direction === "ascending" ? -1 : 1;
           }
           if (aValue > bValue) {
-            return sortConfig.direction === "ascending" ? 1 : -1;
+            return sortConfigDetail.direction === "ascending" ? 1 : -1;
           }
           return 0;
         });
       }
       return sortableItems;
-    }, [dataDetailUnitSkpd, sortConfig]);
+    }, [dataDetailUnitSkpd, sortConfigDetail]);
   
     const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);
     const currentItemsDetail = sortedItemsDetail.slice(
@@ -317,6 +317,7 @@ const ContentPerencanaanDetailDaerah = () => {
       }
       return "↕"; // Default icon for unsorted
     };
+
     const requestSortDetail = (key) => {
       let direction = "ascending";
       if (sortConfigDetail.key === key && sortConfigDetail.direction === "ascending") {
@@ -778,8 +779,7 @@ const ContentPerencanaanDetailDaerah = () => {
                         </span>                        
                       </td>                      
                     </tr>
-                  ))}
-                  
+                  ))}                  
                 </tbody>
               </table>
             {/* </div> */}

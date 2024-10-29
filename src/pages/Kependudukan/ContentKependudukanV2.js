@@ -19,6 +19,7 @@ import classnames from "classnames";
 import CountUp from "react-countup";
 import HorizontalBarChart from "../../Components/Chart/HorizontalBarChart";
 import VerticalBarChart from "../../Components/Chart/VerticalBarChart";
+import PyramidChart from "../../Components/Chart/PyramidChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
@@ -1075,9 +1076,15 @@ const ContentKependudukanV2 = () => {
                 </TabPane>
                 <TabPane tabId="5" id="provinsi">
                 <div className="">
-                <h4 className="card-title mb-0 d-flex justify-content-center">Kelompok Umur</h4>
+                <h4 className="card-title mb-2 d-flex justify-content-center">Kelompok Umur</h4>
               </div>
-              <div className="nav-beranda">
+              <PyramidChart 
+                    firstValue={dataChartLakiLaki[0]}
+                    secondValue={dataChartPerempuan[0]}
+                    category={dataChartPerempuan[1]}
+                  />
+              {/* <div className="nav-beranda">
+                
                 <Nav
                   tabs
                   className="nav nav-tabs-custom card-header-tabs border-bottom-0 ms-2 mb-3"
@@ -1114,6 +1121,7 @@ const ContentKependudukanV2 = () => {
                 activeTab={customActiveTabKelompokUmur}
                 className="text-muted"
               >
+                  
                 <TabPane tabId="1" id="lakiLaki">
                   <VerticalBarChart
                     valueChart={dataChartLakiLaki[0]}
@@ -1128,7 +1136,7 @@ const ContentKependudukanV2 = () => {
                     dataColors='["#FFA0BE"]'
                   />
                 </TabPane>
-              </TabContent>
+              </TabContent> */}
                 </TabPane>                
               </TabContent>
           </CardBody>        

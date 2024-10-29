@@ -13807,7 +13807,7 @@
         "type": "Feature",
         "id": 19,
         "properties": {
-          "name": "KEP. BANGKA BELITUNG",
+          "name": "KEPULAUAN BANGKA BELITUNG",
           "key": "19"
         },
         "geometry": {
@@ -15252,7 +15252,7 @@
         "type": "Feature",
         "id": 21,
         "properties": {
-          "name": "KEP. RIAU",
+          "name": "KEPULAUAN RIAU",
           "key": "21"
         },
         "geometry": {
@@ -21172,11 +21172,11 @@
         "type": "Feature",
         "id": 34,
         "properties": {
-          "name": "DI YOGYAKARTA",
+          "name": "DAERAH ISTIMEWA YOGYAKARTA",
           "key": "34"
         },
         "geometry": {
-          "type": "Polygon",
+          "type": "MultiPolygon",
           "coordinates": [
             [
               [
@@ -79339,7 +79339,7 @@
         "type": "Feature",
         "id": 94,
         "properties": {
-          "name": "PAPUA",
+          "name": "P A P U A",
           "key": "94"
         },
         "geometry": {

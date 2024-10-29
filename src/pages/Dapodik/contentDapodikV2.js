@@ -93,6 +93,8 @@ const ContentDapodikV2 = () => {
     dataChartRincianDapodikKabupaten,
     setDataChartRincianDapodikKabupaten,
   ] = useState([[], []]);
+
+  const [dataSdMap, setDataSdMap] = useState([])
   const getDataDapodik = () => {
     const fetchData = async () => {
       try {
@@ -228,6 +230,16 @@ const ContentDapodikV2 = () => {
         }
 
         const dataDapodikTabelSeProvinsi = await response.json();
+
+        const dataSd = dataDapodikTabelSeProvinsi.data.map(item => ({
+          name: item.nama_prov,
+          value: Number(item.sd)
+        })                
+        )
+
+        console.log(dataSd, 'ini')
+
+        setDataSdMap(dataSd);
 
         setDataDapodikTabelSeProvinsi(dataDapodikTabelSeProvinsi.data);
       } catch (errorDapodikTabel) {
@@ -393,9 +405,9 @@ const ContentDapodikV2 = () => {
   };
 
   useEffect(() => {
+    getDataTabelDapodikSeProv();
     getDataDapodik();
     getDataTabelDapodikProv();
-    getDataTabelDapodikSeProv();
     getDataTabelDapodikKab();
   }, []);
 
@@ -724,6 +736,9 @@ const ContentDapodikV2 = () => {
     setCurrentPage(1);
     setSearchTerm(""); // Kosongkan isi input
   };
+
+  const [dataWidth, setDataWidth] = useState(6)  
+
   return (
     <React.Fragment>
       <Row>
@@ -741,16 +756,26 @@ const ContentDapodikV2 = () => {
             </div>
           </Card>
         </Col>
-      </Row>
+      </Row>      
       <Row>
-        <Col md={6}>
+        <Col md={dataWidth}>        
           <Card className="card-height-100">
             <CardBody>
-              <MapIndoChart />
+            {dataWidth==6 ? (<><button onClick={()=>{
+          setDataWidth(12)
+        }}>
+          Full Screen
+        </button></>) : (<><button onClick={()=>{
+          setDataWidth(6)
+        }}>
+          Back Screen
+        </button></>)}        
+              {/* <MapIndoChart />             */}
+              <PolygonMaps />
             </CardBody>
           </Card>
         </Col>
-        <Col md={6}>
+        <Col md={dataWidth}>
           <Card className="card-height-100">
             <CardBody>
               <Row>
@@ -826,12 +851,12 @@ const ContentDapodikV2 = () => {
                 {dataDapodik?.dapodik_jumlah_anak_sekolah
                   ?.slice(0, 2)
                   .map((item, index) => (
-                    <Col md={6}>
+                    <Col md={6} key={`first-${index}`}>
                       <Card className="card-animate card-height-100">
                         <CardBody>
                           <div
                             className="d-flex flex-column title-custom-card"
-                            key={index}
+                            
                           >
                             <div className="d-flex justify-content-between align-items-start mb-1 title-card">
                               <span>{item.bentuk_pendidikan}</span>
@@ -869,7 +894,7 @@ const ContentDapodikV2 = () => {
                   ?.slice(2, 4)
                   .reverse()
                   .map((item, index) => (
-                    <Col md={6} key={index}>
+                    <Col md={6} key={`second-${index}`}>
                       <Card className="card-animate card-height-100">
                         <CardBody>
                           <div className="d-flex flex-column title-custom-card">
