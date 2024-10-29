@@ -36,7 +36,7 @@ const Home = () => {
       navigate('/auth-404-basic', { replace: true });
     });
     dispatch(permit);
-  }, []);
+  }, [list_menus]);
 
   const handleClick = () => {
     setCount(count - 1);
