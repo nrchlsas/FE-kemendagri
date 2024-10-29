@@ -9,6 +9,8 @@ import BerandaV2 from "./BerandaV2";
 import { get_permission_by_url } from "../../slices/thunks";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { createSelector } from "reselect";
+import { useSelector } from "react-redux";
 // import { Card, CardBody, Col, Label, Row, Container } from 'reactstrap';
 // import FilterWilayah from './filterWilayah';
 // import ContentApbd from './contentApbd'
@@ -19,30 +21,22 @@ const Home = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const permissionState = (state) => state.Profile;
+  const permissionProperties = createSelector(
+    permissionState,
+    (d) => ({
+      list_menus: d.list_menus
+    })
+  );
+  const { list_menus } = useSelector(permissionProperties);
+
   useEffect(() => {
-    // const permit = get_permission_by_url('/beranda', true, () => {
-    //   navigate('/auth-404-basic', { replace: true });
-    //   // history.push('/auth-404-basic', { shallow: true });
-    // });
-    // dispatch(permit);
-  }, []);
-
-
-  useLayoutEffect(() => {
-    console.log("useLayoutEffect");
+    if (list_menus.length == 0) return;
     const permit = get_permission_by_url('/beranda', true, () => {
       navigate('/auth-404-basic', { replace: true });
-      // history.push('/auth-404-basic', { shallow: true });
     });
     dispatch(permit);
   }, []);
-
-  const constructor = () => {
-    console.log('constructor')
-  };
-
-  constructor();
-  console.log("afterconstructor ");
 
   const handleClick = () => {
     setCount(count - 1);
