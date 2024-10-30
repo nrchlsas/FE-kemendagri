@@ -379,8 +379,8 @@ const ContentDapodikV2 = () => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
-
-        
+        const dataDapodikTabelProvinsi = await response.json();
+        setDataDapodikTabelProvinsi(dataDapodikTabelProvinsi.data);
 
       } catch (errorDapodikTabel) {
         setErrorDapodikTabel(errorDapodikTabel);
