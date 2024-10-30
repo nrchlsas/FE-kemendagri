@@ -63,7 +63,7 @@ export const loginUser = (user, history) => async (dispatch) => {
             "token": data.data.token,
             "data": {
               "_id": "629f15c770a470a230cc5d5a",
-              "first_name": "Not Provided",
+              "first_name": "SIPD-HUB",
               "email": user.email,
               "password": null,
               "confirm_password": null,
@@ -162,7 +162,7 @@ export const get_user_detail = () => async (dispatch) => {
 
   // update session storage
   const user_login = getLoggedinUser();
-  user_login.data.first_name = data.first_name || 'Nama Kosong';
+  user_login.data.first_name = data.first_name || 'SIPD-HUB';
   user_login.roles = data.roles;
 
   sessionStorage.setItem("authUser", JSON.stringify(user_login));

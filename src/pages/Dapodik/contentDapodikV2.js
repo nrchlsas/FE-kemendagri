@@ -27,6 +27,7 @@ import { useNavigate } from "react-router-dom";
 import Pagination from "../../Components/Pagination/Pagination";
 import logoKemendikbud from "../../assets/images/logo-kemendagri/logo-kemendikbud.png";
 import "./dapodik.scss";
+import IDPopulationDensityChart from "../../Components/MapIndo/MapToChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
@@ -738,6 +739,12 @@ const ContentDapodikV2 = () => {
   };
 
   const [dataWidth, setDataWidth] = useState(6)  
+  const handleResize = (chartRef) => {
+    if (chartRef.current) {
+      chartRef.current.getEchartsInstance().resize();
+    }
+  };
+
 
   return (
     <React.Fragment>
@@ -761,17 +768,17 @@ const ContentDapodikV2 = () => {
         <Col md={dataWidth}>        
           <Card className="card-height-100">
             <CardBody>
-            {dataWidth==6 ? (<><button onClick={()=>{
-          setDataWidth(12)
-        }}>
-          Full Screen
-        </button></>) : (<><button onClick={()=>{
-          setDataWidth(6)
-        }}>
-          Back Screen
-        </button></>)}        
-              {/* <MapIndoChart />             */}
-              <PolygonMaps />
+              {dataWidth==6 ? (<><button onClick={()=>{
+                  setDataWidth(12)
+                  }}>
+                    Full Screen
+                  </button></>) : (<><button onClick={()=>{
+                    setDataWidth(6)
+                  }}>
+                    Back Screen
+                  </button></>)}        
+              <MapIndoChart />              
+              {/* <PolygonMaps /> */}
             </CardBody>
           </Card>
         </Col>

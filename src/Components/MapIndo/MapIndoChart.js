@@ -176,63 +176,142 @@
 // export default MapIndoChart;
 
 
-import React, { useEffect } from 'react';
+// import React, { useEffect } from 'react';
+// import ReactEcharts from 'echarts-for-react';
+// import * as echarts from 'echarts/core';
+// import { MapChart } from 'echarts/charts';
+// import { GeoComponent } from 'echarts/components';
+// import geoJsonIndo from '../../data/geoJsonNasional.json'; // Adjust path as needed
+
+// // Use MapChart and GeoComponent
+// echarts.use([MapChart, GeoComponent]);
+
+// const MapIndoChart = () => {
+      
+//       useEffect(() => {
+//         // Log the GeoJSON to verify its structure            
+//         if (geoJsonIndo && geoJsonIndo.type === 'FeatureCollection' && Array.isArray(geoJsonIndo.features)) {
+//           echarts.registerMap('Indonesia', geoJsonIndo);
+//         } else {
+//           console.error("Invalid geoJSON format:", geoJsonIndo);
+//         }
+//       }, [geoJsonIndo]);
+
+//   const getOption = () => ({
+//     title: {
+//       text: 'Population Density of Indonesia',
+//       left: 'center'
+//     },
+//     tooltip: {
+//       trigger: 'item',
+//       formatter: '{b}<br/> total anak SD: {c} '
+//     },
+//     visualMap: {
+//       left: 'left',
+//       bottom: '20%', // Adjust as needed
+//       min: 0,
+//       max: 5000000,
+//       orient: 'horizontal', // Set orientation to horizontal
+//       inRange: {
+//         color: ['#abd9e9','#74add1','#4575b4','#313695']
+//       },
+//       text: ['High Population', 'Low Population'],
+//       calculable: true
+//     },
+//     series: [
+//       {
+//         name: 'Population Density',
+//         type: 'map',
+//         map: 'Indonesia', // Reference to the registered map name
+//         label: {
+//           show: false
+//         },
+//         layoutSize: '100%', // Increase size for better visibility
+//         zoom: 2, // Adjust zoom level
+  
+//         layoutCenter: ['-10%', '30%'], // Memusatkan peta
+//         // layoutSize: '120%', // Menentukan ukuran peta relatif terhadap kontainer
+//         data: [
+//           { name: 'ACEH', value: 2200000 },
+//           { name: 'KEP. BANGKA BELITUNG', value: 1400000 },
+//           { name: 'KEP. RIAU', value: 2000000 },
+//           { name: 'SUMATERA UTARA', value: 2400000 },
+//           { name: 'SUMATERA BARAT', value: 1800000 },
+//           { name: 'RIAU', value: 2500000 },
+//           { name: 'JAMBI', value: 1500000 },
+//           { name: 'SUMATERA SELATAN', value: 3000000 },
+//           { name: 'BENGKULU', value: 1000000 },
+//           { name: 'LAMPUNG', value: 2800000 },
+//           { name: 'DKI JAKARTA', value: 9000000 },
+//           { name: 'JAWA BARAT', value: 50000000 },
+//           { name: 'JAWA TENGAH', value: 35000000 },
+//           { name: 'DI YOGYAKARTA', value: 4000000 },
+//           { name: 'JAWA TIMUR', value: 50000000 },
+//           { name: 'BANTEN', value: 2400000 },
+//           { name: 'BALI', value: 3500000 },
+//           { name: 'NUSA TENGGARA BARAT', value: 1800000 },
+//           { name: 'NUSA TENGGARA TIMUR', value: 1300000 },
+//           { name: 'KALIMANTAN BARAT', value: 2200000 },
+//           { name: 'KALIMANTAN TENGAH', value: 1700000 },
+//           { name: 'KALIMANTAN SELATAN', value: 2000000 },
+//           { name: 'KALIMANTAN TIMUR', value: 2400000 },
+//           { name: 'KALIMANTAN UTARA', value: 1500000 },
+//           { name: 'SULAWESI UTARA', value: 1900000 },
+//           { name: 'SULAWESI TENGAH', value: 1700000 },
+//           { name: 'SULAWESI SELATAN', value: 2000000 },
+//           { name: 'SULAWESI TENGGARA', value: 1600000 },
+//           { name: 'SULAWESI BARAT', value: 1400000 },
+//           { name: 'GORONTALO', value: 1100000 },
+//           { name: 'MALUKU', value: 1500000 },
+//           { name: 'MALUKU UTARA', value: 1200000 },
+//           { name: 'PAPUA BARAT', value: 1500000 },
+//           { name: 'P A P U A', value: 3000000 },
+//           { name: 'PAPUA BARAT DAYA', value: 1300000 },
+//           { name: 'PAPUA SELATAN', value: 1100000 },
+//           { name: 'PAPUA TENGAH', value: 900000 },
+//           { name: 'PAPUA PEGUNUNGAN', value: 800000 }
+//         ],        
+//         emphasis: {
+//           label: {
+//             show: true,
+//             color: '#000'
+//           }
+//         }
+//       }
+//     ]
+//   });
+
+//   return (
+//     <ReactEcharts
+//       option={getOption()}
+//       style={{ height: '600px', width: '100%' }}
+//     />
+//   );
+// };
+
+// export default MapIndoChart;
+
+
+import React, { useEffect, useRef, useState } from 'react';
 import ReactEcharts from 'echarts-for-react';
 import * as echarts from 'echarts';
-import geoJsonIndo from '../../data/geoJsonNasional.json'; // Adjust path as needed
+import { MapChart } from 'echarts/charts';
+import { GeoComponent } from 'echarts/components';
+import geoJsonIndo from '../../data/geoJsonNasional.json';
 
-const MapIndoChart = () => {
-  const dataValue = [
-        { name: 'ACEH', value: 2200000 },
-        { name: 'KEP. BANGKA BELITUNG', value: 1400000 },
-        { name: 'KEP. RIAU', value: 2000000 },
-        { name: 'SUMATERA UTARA', value: 2400000 },
-        { name: 'SUMATERA BARAT', value: 1800000 },
-        { name: 'RIAU', value: 2500000 },
-        { name: 'JAMBI', value: 1500000 },
-        { name: 'SUMATERA SELATAN', value: 3000000 },
-        { name: 'BENGKULU', value: 1000000 },
-        { name: 'LAMPUNG', value: 2800000 },
-        { name: 'DKI JAKARTA', value: 9000000 },
-        { name: 'JAWA BARAT', value: 50000000 },
-        { name: 'JAWA TENGAH', value: 35000000 },
-        { name: 'DI YOGYAKARTA', value: 4000000 },
-        { name: 'JAWA TIMUR', value: 50000000 },
-        { name: 'BANTEN', value: 2400000 },
-        { name: 'BALI', value: 3500000 },
-        { name: 'NUSA TENGGARA BARAT', value: 1800000 },
-        { name: 'NUSA TENGGARA TIMUR', value: 1300000 },
-        { name: 'KALIMANTAN BARAT', value: 2200000 },
-        { name: 'KALIMANTAN TENGAH', value: 1700000 },
-        { name: 'KALIMANTAN SELATAN', value: 2000000 },
-        { name: 'KALIMANTAN TIMUR', value: 2400000 },
-        { name: 'KALIMANTAN UTARA', value: 1500000 },
-        { name: 'SULAWESI UTARA', value: 1900000 },
-        { name: 'SULAWESI TENGAH', value: 1700000 },
-        { name: 'SULAWESI SELATAN', value: 2000000 },
-        { name: 'SULAWESI TENGGARA', value: 1600000 },
-        { name: 'SULAWESI BARAT', value: 1400000 },
-        { name: 'GORONTALO', value: 1100000 },
-        { name: 'MALUKU', value: 1500000 },
-        { name: 'MALUKU UTARA', value: 1200000 },
-        { name: 'PAPUA BARAT', value: 1500000 },
-        { name: 'PAPUA', value: 3000000 },
-        { name: 'PAPUA BARAT DAYA', value: 1300000 },
-        { name: 'PAPUA SELATAN', value: 1100000 },
-        { name: 'PAPUA TENGAH', value: 900000 },
-        { name: 'PAPUA PEGUNUNGAN', value: 800000 }
-      ]
+echarts.use([MapChart, GeoComponent]);
 
-      useEffect(() => {
-        // Log the GeoJSON to verify its structure
-        console.log(geoJsonIndo);
-    
-        if (geoJsonIndo && geoJsonIndo.type === 'FeatureCollection' && Array.isArray(geoJsonIndo.features)) {
-          echarts.registerMap('Indonesia', geoJsonIndo);
-        } else {
-          console.error("Invalid geoJSON format:", geoJsonIndo);
-        }
-      }, []);
+const MapIndoChart = () => {  
+  const [isMapRegistered, setIsMapRegistered] = useState(false);
+
+  useEffect(() => {
+    if (geoJsonIndo && geoJsonIndo.type === 'FeatureCollection') {
+      echarts.registerMap('Indonesia', geoJsonIndo);
+      setIsMapRegistered(true);
+    } else {
+      console.error("Invalid geoJSON format:", geoJsonIndo);
+    }
+  }, []);
 
   const getOption = () => ({
     title: {
@@ -245,10 +324,10 @@ const MapIndoChart = () => {
     },
     visualMap: {
       left: 'left',
-      bottom: '20%', // Adjust as needed
+      bottom: '20%',
       min: 0,
       max: 5000000,
-      orient: 'horizontal', // Set orientation to horizontal
+      orient: 'horizontal',
       inRange: {
         color: ['#abd9e9','#74add1','#4575b4','#313695']
       },
@@ -259,50 +338,50 @@ const MapIndoChart = () => {
       {
         name: 'Population Density',
         type: 'map',
-        map: 'Indonesia', // Reference to the registered map name
-        label: {
-          show: false
-        },
+        map: 'Indonesia',
+        layoutCenter: ['50%', '35%'],
+        layoutSize: '100%',
+        roam: false, // Menonaktifkan zoom dan geser        
         data: [
           { name: 'ACEH', value: 2200000 },
-          { name: 'KEP. BANGKA BELITUNG', value: 1400000 },
-          { name: 'KEP. RIAU', value: 2000000 },
-          { name: 'SUMATERA UTARA', value: 2400000 },
-          { name: 'SUMATERA BARAT', value: 1800000 },
-          { name: 'RIAU', value: 2500000 },
-          { name: 'JAMBI', value: 1500000 },
-          { name: 'SUMATERA SELATAN', value: 3000000 },
-          { name: 'BENGKULU', value: 1000000 },
-          { name: 'LAMPUNG', value: 2800000 },
-          { name: 'DKI JAKARTA', value: 9000000 },
-          { name: 'JAWA BARAT', value: 50000000 },
-          { name: 'JAWA TENGAH', value: 35000000 },
-          { name: 'DI YOGYAKARTA', value: 4000000 },
-          { name: 'JAWA TIMUR', value: 50000000 },
-          { name: 'BANTEN', value: 2400000 },
-          { name: 'BALI', value: 3500000 },
-          { name: 'NUSA TENGGARA BARAT', value: 1800000 },
-          { name: 'NUSA TENGGARA TIMUR', value: 1300000 },
-          { name: 'KALIMANTAN BARAT', value: 2200000 },
-          { name: 'KALIMANTAN TENGAH', value: 1700000 },
-          { name: 'KALIMANTAN SELATAN', value: 2000000 },
-          { name: 'KALIMANTAN TIMUR', value: 2400000 },
-          { name: 'KALIMANTAN UTARA', value: 1500000 },
-          { name: 'SULAWESI UTARA', value: 1900000 },
-          { name: 'SULAWESI TENGAH', value: 1700000 },
-          { name: 'SULAWESI SELATAN', value: 2000000 },
-          { name: 'SULAWESI TENGGARA', value: 1600000 },
-          { name: 'SULAWESI BARAT', value: 1400000 },
-          { name: 'GORONTALO', value: 1100000 },
-          { name: 'MALUKU', value: 1500000 },
-          { name: 'MALUKU UTARA', value: 1200000 },
-          { name: 'PAPUA BARAT', value: 1500000 },
-          { name: 'PAPUA', value: 3000000 },
-          { name: 'PAPUA BARAT DAYA', value: 1300000 },
-          { name: 'PAPUA SELATAN', value: 1100000 },
-          { name: 'PAPUA TENGAH', value: 900000 },
-          { name: 'PAPUA PEGUNUNGAN', value: 800000 }
-        ],        
+            { name: 'KEP. BANGKA BELITUNG', value: 1400000 },
+            { name: 'KEP. RIAU', value: 2000000 },
+            { name: 'SUMATERA UTARA', value: 2400000 },
+            { name: 'SUMATERA BARAT', value: 1800000 },
+            { name: 'RIAU', value: 2500000 },
+            { name: 'JAMBI', value: 1500000 },
+            { name: 'SUMATERA SELATAN', value: 3000000 },
+            { name: 'BENGKULU', value: 1000000 },
+            { name: 'LAMPUNG', value: 2800000 },
+            { name: 'DKI JAKARTA', value: 9000000 },
+            { name: 'JAWA BARAT', value: 50000000 },
+            { name: 'JAWA TENGAH', value: 35000000 },
+            { name: 'DI YOGYAKARTA', value: 4000000 },
+            { name: 'JAWA TIMUR', value: 50000000 },
+            { name: 'BANTEN', value: 2400000 },
+            { name: 'BALI', value: 3500000 },
+            { name: 'NUSA TENGGARA BARAT', value: 1800000 },
+            { name: 'NUSA TENGGARA TIMUR', value: 1300000 },
+            { name: 'KALIMANTAN BARAT', value: 2200000 },
+            { name: 'KALIMANTAN TENGAH', value: 1700000 },
+            { name: 'KALIMANTAN SELATAN', value: 2000000 },
+            { name: 'KALIMANTAN TIMUR', value: 2400000 },
+            { name: 'KALIMANTAN UTARA', value: 1500000 },
+            { name: 'SULAWESI UTARA', value: 1900000 },
+            { name: 'SULAWESI TENGAH', value: 1700000 },
+            { name: 'SULAWESI SELATAN', value: 2000000 },
+            { name: 'SULAWESI TENGGARA', value: 1600000 },
+            { name: 'SULAWESI BARAT', value: 1400000 },
+            { name: 'GORONTALO', value: 1100000 },
+            { name: 'MALUKU', value: 1500000 },
+            { name: 'MALUKU UTARA', value: 1200000 },
+            { name: 'PAPUA BARAT', value: 1500000 },
+            { name: 'PAPUA', value: 3000000 },
+            { name: 'PAPUA BARAT DAYA', value: 1300000 },
+            { name: 'PAPUA SELATAN', value: 1100000 },
+            { name: 'PAPUA TENGAH', value: 900000 },
+            { name: 'PAPUA PEGUNUNGAN', value: 800000 }
+        ],
         emphasis: {
           label: {
             show: true,
@@ -314,10 +393,14 @@ const MapIndoChart = () => {
   });
 
   return (
-    <ReactEcharts
-      option={getOption()}
-      style={{ height: '600px', width: '100%' }}
-    />
+    isMapRegistered ? (
+      <ReactEcharts        
+        option={getOption()}
+        style={{ height: '600px', width: '100%' }}
+      />
+    ) : (
+      <div>Loading map...</div>
+    )
   );
 };
 

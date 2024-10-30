@@ -206,7 +206,7 @@ const ContentRealisasi = () => {
   const navigate = useNavigate();
   const goToDetail = (_id, namaDaerah) => {
     const encodedNamaDaerah = encodeURIComponent(namaDaerah);
-    navigate(`/Realisasi/Realisasi-detail/${_id}?namaDaerah=${encodedNamaDaerah}`);
+    navigate(`/realisasi/realisasi-detail/${_id}?namaDaerah=${encodedNamaDaerah}`);
   };
 
 
@@ -216,7 +216,7 @@ const ContentRealisasi = () => {
     <Row>
         <Col>
             <div className="d-flex justify-content-between">
-              <div className="d-flex title-page">
+              <div className="d-flex title-page" style={{padding:"0 0 13px 0"}}>
                 {/* <div className="d-flex justify-content-center align-items-center avatar-sm">
                   <span className="logo-sm">
                     <img src={logoKemenkoPmk} alt="" width="40" height="40" />
@@ -567,7 +567,7 @@ const ContentRealisasi = () => {
                                   overflowWrap: "break-word",
                                 }}
                               >
-                                <i onClick={()=> goToDetail(item.kode_ddn, item.nama_daerah)}
+                                <i onClick={()=> goToDetail(item.kode_prov, item.nama_prov)}
                                   style={{
                                     padding: "5px 10px",
                                     cursor: "pointer",

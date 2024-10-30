@@ -985,14 +985,14 @@ const ContentStunting = () => {
         </Col>
       </Row>
       <Row>
-        <Col xl={6}>
+        <Col md={6}>
           <Card className="card-height-100">
             <CardBody>
               <PolygonMaps />
             </CardBody>
           </Card>
         </Col>
-        <Col xl={6}>
+        <Col md={6}>
           <Card className="card-height-100">
             <CardBody>
               <Row>
@@ -2404,7 +2404,7 @@ const ContentStunting = () => {
                   />
                 </TabPane>
                 <TabPane tabId="3">
-                  <div className="">
+                  <div>
                     <h4 className="card-title">
                       Perbandingan Keluarga Sasaran yang Berisiko dan Tidak
                       Berisiko Stunting
