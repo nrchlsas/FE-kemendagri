@@ -1547,7 +1547,7 @@ const BerandaV2 = () => {
           </Card>
         </Col>
       </Row>
-      <Row>
+      {/* <Row>
         <Col md={4}>
           <Card className="card-animate card-height-100">
             <div className="d-flex flex-column justify-content-center align-items-center">
@@ -1575,17 +1575,17 @@ const BerandaV2 = () => {
                 // legendHorizontal={true}
                 heightChart="350px"
               />
-              {/* <Button
+              <Button
                 type="button"
                 color="success"
                 className="btn w-100"
                 onClick={handleClick}
               >
                 Lihat Detail
-              </Button> */}
-              {/* <button className="btn" onClick={handleClick}>
+              </Button>
+              <button className="btn" onClick={handleClick}>
                 Lihat Detail
-              </button> */}
+              </button>
             </CardBody>
           </Card>
         </Col>
@@ -1616,14 +1616,14 @@ const BerandaV2 = () => {
                 // legendHorizontal={true}
                 heightChart="350px"
               />
-              {/* <Button
+              <Button
                 type="button"
                 color="success"
                 className="btn w-100"
                 onClick={handleClick}
               >
                 Lihat Detail
-              </Button> */}
+              </Button>
             </CardBody>
           </Card>
         </Col>
@@ -1654,14 +1654,14 @@ const BerandaV2 = () => {
                 // legendHorizontal={true}
                 heightChart="350px"
               />
-              {/* <Button
+              <Button
                 type="button"
                 color="success"
                 className="btn w-100"
                 onClick={handleClick}
               >
                 Lihat Detail
-              </Button> */}
+              </Button>
             </CardBody>
           </Card>
         </Col>
@@ -1694,14 +1694,14 @@ const BerandaV2 = () => {
                 // legendHorizontal={true}
                 heightChart="350px"
               />
-              {/* <Button
+              <Button
                 type="button"
                 color="success"
                 className="btn w-100"
                 onClick={handleClick}
               >
                 Lihat Detail
-              </Button> */}
+              </Button>
             </CardBody>
           </Card>
         </Col>
@@ -1732,14 +1732,14 @@ const BerandaV2 = () => {
                 // legendHorizontal={true}
                 heightChart="350px"
               />
-              {/* <Button
+              <Button
                 type="button"
                 color="success"
                 className="btn w-100"
                 onClick={handleClick}
               >
                 Lihat Detail
-              </Button> */}
+              </Button>
             </CardBody>
           </Card>
         </Col>
@@ -1770,18 +1770,18 @@ const BerandaV2 = () => {
                 // legendHorizontal={true}
                 heightChart="350px"
               />
-              {/* <Button
+              <Button
                 type="button"
                 color="success"
                 className="btn w-100"
                 onClick={handleClick}
               >
                 Lihat Detail
-              </Button> */}
+              </Button>
             </CardBody>
           </Card>
         </Col>
-      </Row>
+      </Row> */}
 
       {/* </TabContent> */}
     </React.Fragment>
