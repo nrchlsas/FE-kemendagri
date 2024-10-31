@@ -20,6 +20,7 @@ import CountUp from "react-countup";
 import HorizontalBarChart from "../../Components/Chart/HorizontalBarChart";
 import VerticalBarChart from "../../Components/Chart/VerticalBarChart";
 import PyramidChart from "../../Components/Chart/PyramidChart";
+import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
@@ -252,10 +253,13 @@ const ContentKependudukanV2 = () => {
     };
     fetchData();
   };
-
+  const [handleCardClick, setHandleCardClick] = useState(() => () => {});
   const [dataKependudukanTabel, setDataKependudukanTabel] = useState([]);
   const [loadingKependudukanTabel, setLoadingKependudukanTabel] = useState([]);
   const [errorKependudukanTabel, setErrorKependudukanTabel] = useState([]);
+  const [titleMap, setTitleMap] = useState("Total Penduduk")
+  const [valueMap, setValueMap] = useState([]);
+  const [maxValueMap, setmaxValueMap] = useState(0)
   const getDataTabelKependudukanProv = () => {
     const fetchData = async () => {
       try {
@@ -282,7 +286,81 @@ const ContentKependudukanV2 = () => {
         const dataKependudukanTabel = await response.json();
         setDataKependudukanTabel(dataKependudukanTabel.data)
 
-        setDataKependudukanTabel(dataKependudukanTabel.data);
+        const valueTotalPenduduk = dataKependudukanTabel.data.map(item => ({
+          name: item.nama_daerah,
+          value: item.jumlahpenduduk
+        }));
+
+        const valueTotalKK = dataKependudukanTabel.data.map(item => ({
+          name: item.nama_daerah,
+          value: item.jmlkk
+        }));
+
+        const valueTotalLakiLaki = dataKependudukanTabel.data.map(item => ({
+          name: item.nama_daerah,
+          value: item.jumlahlakilaki
+        }));
+
+        const valueTotalPerempuan = dataKependudukanTabel.data.map(item => ({
+          name: item.nama_daerah,
+          value: item.jumlahperempuan
+        }));
+
+        const valueTotalKepadatan = dataKependudukanTabel.data.map(item => ({
+          name: item.nama_daerah,
+          value: item.kepadatan
+        }));
+
+        const valueTotalLuasWilayah = dataKependudukanTabel.data.map(item => ({
+          name: item.nama_daerah,
+          value: item.luas_wilayah
+        }));
+
+        const maxPenduduk = Math.max(...valueTotalPenduduk.map(item => item.value));
+        const maxKK = Math.max(...valueTotalKK.map(item => item.value));
+        const maxLakiLaki = Math.max(...valueTotalLakiLaki.map(item => item.value));
+        const maxPerempuan = Math.max(...valueTotalPerempuan.map(item => item.value));
+        const maxKepadatan = Math.max(...valueTotalKepadatan.map(item => item.value));
+        const maxLuasWilayah = Math.max(...valueTotalLuasWilayah.map(item => item.value));
+
+        setValueMap(valueTotalPenduduk);
+        setmaxValueMap(maxPenduduk)
+
+        const handleCardClick = (valueType) => {
+          switch(valueType) {
+            case 'totalPenduduk':
+              setValueMap(valueTotalPenduduk);
+              setmaxValueMap(maxPenduduk)
+              break;
+            case 'totalKK':
+              setValueMap(valueTotalKK);
+              setmaxValueMap(maxKK)
+              break;
+            case 'totalLakiLaki':
+              setValueMap(valueTotalLakiLaki);
+              setmaxValueMap(maxLakiLaki)
+              break;
+            case 'totalPerempuan':
+              setValueMap(valueTotalPerempuan);
+              setmaxValueMap(maxPerempuan)
+              break;
+            case 'totalKepadatan':
+              setValueMap(valueTotalKepadatan);
+              setmaxValueMap(maxKepadatan)
+              break;
+            case 'totalLuasWilayah':
+              setValueMap(valueTotalLuasWilayah);
+              setmaxValueMap(maxLuasWilayah)
+              break;
+            default:
+              
+              break;
+          }
+        };
+  
+        // Simpan `handleCardClick` di dalam state atau panggil langsung pada setiap card
+        setHandleCardClick(() => handleCardClick);
+
       } catch (errorKependudukanTabel) {
         setErrorKependudukanTabel(errorKependudukanTabel);
       } finally {
@@ -296,6 +374,7 @@ const ContentKependudukanV2 = () => {
     getDataKependudukan();
     getDataTabelKependudukanProv();
   }, []);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10); // Set items per page
   const [sortConfig, setSortConfig] = useState({
@@ -365,6 +444,9 @@ const ContentKependudukanV2 = () => {
     return "↕"; // Default icon for unsorted
   };
 
+  const [dataWidth, setDataWidth] = useState(6)  
+  const [roam, setRoam] = useState(false)
+
   return (
     <React.Fragment>
       <Row>
@@ -382,21 +464,52 @@ const ContentKependudukanV2 = () => {
         </Col>
       </Row>
       <Row>
-        <Col md={6}>
+        <Col md={dataWidth}>
           <Card className="card-height-100">
             <CardBody>
-              <PolygonMaps />
+              {/* <PolygonMaps /> */}
+              {dataWidth==6 ? (<><button onClick={()=>{
+                  setDataWidth(12)
+                  setRoam(true)
+                  }} style={{
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    padding: "5px 10px",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontSize: "16px",
+                  }}>
+                    Wide Screen
+                  </button></>) : (<><button onClick={()=>{
+                    setDataWidth(6)
+                    setRoam(false)
+                  }} style={{
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    padding: "5px 10px",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontSize: "16px",
+                  }}>
+                    Back
+                  </button></>)}   
+              <MapIndoChart chartTitle={titleMap} roam={roam} maxValue={maxValueMap} colorData={["#FFD47A", "#FFC04D", "#FCAD24", "#E69B20", "#CC891C", "#B27717"]} valueSeries={valueMap}/>
             </CardBody>
           </Card>
         </Col>
-        <Col md={6}>
+        <Col md={dataWidth}>
           <Card className="card-height-100">
             <CardBody>
               <Row>
                 <Col xl={6}>
                   <Row>
                     <Col>
-                      <Card className="card-animate card-height-100">
+                      <Card style={{cursor: "pointer"}} className="card-animate card-height-100" onClick={()=> {
+                        handleCardClick('totalPenduduk')
+                        setTitleMap("Total Penduduk")
+                      }}>
                         <CardBody>
                           <div className="d-flex flex-column title-custom-card">
                             <div className="d-flex justify-content-start align-items-start mb-1 title-card">
@@ -430,7 +543,10 @@ const ContentKependudukanV2 = () => {
                   </Row>
                   <Row>
                     <Col>
-                      <Card className="card-animate card-height-100">
+                      <Card style={{cursor: "pointer"}} className="card-animate card-height-100" onClick={()=> {
+                        handleCardClick('totalLakiLaki')
+                        setTitleMap("Total Laki-Laki")
+                      }}>
                         <CardBody>
                           <div className="d-flex flex-column title-custom-card">
                             <div className="d-flex justify-content-between align-items-start mb-1 title-card">
@@ -465,7 +581,10 @@ const ContentKependudukanV2 = () => {
                   </Row>
                   <Row>
                     <Col>
-                      <Card className="card-animate card-height-100">
+                      <Card style={{cursor: "pointer"}} className="card-animate card-height-100" onClick={()=> {
+                        handleCardClick('totalPerempuan')
+                        setTitleMap("Total Perempuan")
+                      }}>
                         <CardBody>
                           <div className="d-flex flex-column title-custom-card">
                             <div className="d-flex justify-content-between align-items-start mb-1 title-card">
@@ -504,7 +623,10 @@ const ContentKependudukanV2 = () => {
                 <Col xl={6}>
                   <Row>
                     <Col>
-                      <Card className="card-animate card-height-100">
+                      <Card style={{cursor: "pointer"}} className="card-animate card-height-100" onClick={()=> {
+                        handleCardClick('totalKK')
+                        setTitleMap("Total Kartu Keluarga")
+                      }}>
                         <CardBody>
                           <div className="d-flex flex-column title-custom-card">
                             <div className="d-flex justify-content-start align-items-start mb-1 title-card">
@@ -540,7 +662,10 @@ const ContentKependudukanV2 = () => {
                   </Row>
                   <Row>
                     <Col>
-                      <Card className="card-animate card-height-100">
+                      <Card style={{cursor: "pointer"}} className="card-animate card-height-100" onClick={()=> {
+                       handleCardClick('totalKepadatan')
+                       setTitleMap("Total Kepadatan Penduduk")
+                      }}>
                         <CardBody>
                           <div className="d-flex flex-column title-custom-card">
                             <div className="d-flex justify-content-between align-items-start mb-1 title-card">
@@ -576,7 +701,10 @@ const ContentKependudukanV2 = () => {
                   </Row>
                   <Row>
                     <Col>
-                      <Card className="card-animate card-height-100">
+                      <Card style={{cursor: "pointer"}} className="card-animate card-height-100" onClick={()=> {
+                        handleCardClick('totalLuasWilayah')
+                        setTitleMap("Total Luas Wilayah")
+                      }}>
                         <CardBody>
                           <div className="d-flex flex-column title-custom-card">
                             <div className="d-flex justify-content-between align-items-start mb-1 title-card">

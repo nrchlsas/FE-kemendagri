@@ -27,7 +27,6 @@ import { useNavigate } from "react-router-dom";
 import Pagination from "../../Components/Pagination/Pagination";
 import logoKemendikbud from "../../assets/images/logo-kemendagri/logo-kemendikbud.png";
 import "./dapodik.scss";
-import IDPopulationDensityChart from "../../Components/MapIndo/MapToChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
@@ -207,6 +206,11 @@ const ContentDapodikV2 = () => {
     fetchData();
   };
 
+  const [titleMap, setTitleMap] = useState("Total Anak Sekolah")
+  const [valueMap, setValueMap] = useState([]);
+  const [maxValueMap, setmaxValueMap] = useState(0)
+  const [handleCardClick, setHandleCardClick] = useState(() => () => {});
+
   const getDataTabelDapodikSeProv = (searchTerm) => {
     const fetchData = async () => {
       try {
@@ -231,18 +235,82 @@ const ContentDapodikV2 = () => {
         }
 
         const dataDapodikTabelSeProvinsi = await response.json();
-
-        const dataSd = dataDapodikTabelSeProvinsi.data.map(item => ({
-          name: item.nama_prov,
-          value: Number(item.sd)
-        })                
-        )
-
-        console.log(dataSd, 'ini')
-
-        setDataSdMap(dataSd);
-
         setDataDapodikTabelSeProvinsi(dataDapodikTabelSeProvinsi.data);
+
+        const valueTotalAnakSekolah = dataDapodikTabelSeProvinsi.data.map(item => {
+          const total = 
+            parseInt(item.sd) + 
+            parseInt(item.smp) + 
+            parseInt(item.sma) + 
+            parseInt(item.smk);
+          
+          return {
+            name: item.nama_prov,
+            value: total
+          };
+        });
+
+        console.log(valueTotalAnakSekolah, 'kwkww')
+
+        const valueTotalSd = dataDapodikTabelSeProvinsi.data.map(item => ({
+          name: item.nama_prov,
+          value: parseInt(item.sd)
+        }));
+
+        const valueTotalSmp = dataDapodikTabelSeProvinsi.data.map(item => ({
+          name: item.nama_prov,
+          value: parseInt(item.sma)
+        }));
+
+        const valueTotalSma = dataDapodikTabelSeProvinsi.data.map(item => ({
+          name: item.nama_prov,
+          value: parseInt(item.smp)
+        }));
+
+        const valueTotalSmk = dataDapodikTabelSeProvinsi.data.map(item => ({
+          name: item.nama_prov,
+          value: parseInt(item.smk)
+        }));
+
+        const maxAnakSekolah  = Math.max(...valueTotalAnakSekolah.map(item => item.value));
+        const maxSd = Math.max(...valueTotalSd.map(item => item.value));
+        const maxSmp = Math.max(...valueTotalSmp.map(item => item.value));
+        const maxSma = Math.max(...valueTotalSma.map(item => item.value));
+        const maxSmk = Math.max(...valueTotalSmk.map(item => item.value));
+
+        setValueMap(valueTotalAnakSekolah);
+        setmaxValueMap(maxAnakSekolah)
+
+        const handleCardClick = (valueType) => {
+          switch(valueType) {
+            case 'totalAnakSekolah':
+              setValueMap(valueTotalAnakSekolah);
+              setmaxValueMap(maxAnakSekolah)
+              break;
+            case 'totalSD':
+              setValueMap(valueTotalSd);
+              setmaxValueMap(maxSd)
+              break;
+            case 'totalSMP':
+              setValueMap(valueTotalSmp);
+              setmaxValueMap(maxSmp)
+              break;
+            case 'totalSMA':
+              setValueMap(valueTotalSma);
+              setmaxValueMap(maxSma)
+              break;
+            case 'totalSMK':
+              setValueMap(valueTotalSmk);
+              setmaxValueMap(maxSmk)
+              break;            
+            default:
+              break;
+          }
+        };
+  
+        // Simpan `handleCardClick` di dalam state atau panggil langsung pada setiap card
+        setHandleCardClick(() => handleCardClick);
+ 
       } catch (errorDapodikTabel) {
         setErrorDapodikTabel(errorDapodikTabel);
       } finally {
@@ -287,6 +355,8 @@ const ContentDapodikV2 = () => {
     fetchData();
   };
 
+
+
   const getDataTabelDapodikProv = (searchTerm) => {
     const fetchData = async () => {
       try {
@@ -309,10 +379,9 @@ const ContentDapodikV2 = () => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
-
         const dataDapodikTabelProvinsi = await response.json();
-
         setDataDapodikTabelProvinsi(dataDapodikTabelProvinsi.data);
+
       } catch (errorDapodikTabel) {
         setErrorDapodikTabel(errorDapodikTabel);
       } finally {
@@ -635,6 +704,7 @@ const ContentDapodikV2 = () => {
   const [dataJenisPemda, setDataJenisPemda] = useState("");
   const [dataRincianDetail, setDataRincianDetail] = useState(0);
   const [dataRincianDetailSub, setDataRincianDetailSub] = useState(0);
+
   const handleOpen = (
     kodeProv,
     namaDaerah = "",
@@ -739,11 +809,7 @@ const ContentDapodikV2 = () => {
   };
 
   const [dataWidth, setDataWidth] = useState(6)  
-  const handleResize = (chartRef) => {
-    if (chartRef.current) {
-      chartRef.current.getEchartsInstance().resize();
-    }
-  };
+  const [roam, setRoam] = useState(false)
 
 
   return (
@@ -770,14 +836,32 @@ const ContentDapodikV2 = () => {
             <CardBody>
               {dataWidth==6 ? (<><button onClick={()=>{
                   setDataWidth(12)
+                  setRoam(true)
+                  }} style={{
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    padding: "5px 10px",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontSize: "16px",
                   }}>
-                    Full Screen
+                    Wide Screen
                   </button></>) : (<><button onClick={()=>{
                     setDataWidth(6)
+                    setRoam(false)
+                  }} style={{
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    padding: "5px 10px",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontSize: "16px",
                   }}>
-                    Back Screen
+                    Back
                   </button></>)}        
-              <MapIndoChart />              
+                  <MapIndoChart chartTitle={titleMap} roam={roam} maxValue={maxValueMap} colorData={['#B3E0E5', '#69D6E8', '#0092B3', '#1B8BA6']} valueSeries={valueMap}/>
               {/* <PolygonMaps /> */}
             </CardBody>
           </Card>
@@ -787,7 +871,10 @@ const ContentDapodikV2 = () => {
             <CardBody>
               <Row>
                 <Col>
-                  <Card className="card-animate card-height-100">
+                  <Card style={{cursor:"pointer"}} className="card-animate card-height-100" onClick={()=> {
+                        handleCardClick('totalAnakSekolah')
+                        setTitleMap("Total Anak Sekolah")
+                      }}>
                     <CardBody>
                       <div className="d-flex flex-column title-custom-card">
                         <div className="d-flex justify-content-start align-items-start mb-1 title-card">
@@ -859,7 +946,10 @@ const ContentDapodikV2 = () => {
                   ?.slice(0, 2)
                   .map((item, index) => (
                     <Col md={6} key={`first-${index}`}>
-                      <Card className="card-animate card-height-100">
+                      <Card style={{cursor:"pointer"}} className="card-animate card-height-100" onClick={()=> {
+                        handleCardClick(`total${item.bentuk_pendidikan}`)
+                        setTitleMap(`Total ${item.bentuk_pendidikan}`)
+                      }}>
                         <CardBody>
                           <div
                             className="d-flex flex-column title-custom-card"
@@ -902,7 +992,10 @@ const ContentDapodikV2 = () => {
                   .reverse()
                   .map((item, index) => (
                     <Col md={6} key={`second-${index}`}>
-                      <Card className="card-animate card-height-100">
+                      <Card style={{cursor:"pointer"}} className="card-animate card-height-100" onClick={()=> {
+                        handleCardClick(`total${item.bentuk_pendidikan}`)
+                        setTitleMap(`Total ${item.bentuk_pendidikan}`)
+                      }}>
                         <CardBody>
                           <div className="d-flex flex-column title-custom-card">
                             <div className="d-flex justify-content-between align-items-start mb-1 title-card">
