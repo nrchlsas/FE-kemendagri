@@ -25,6 +25,7 @@ import Pagination from "../../Components/Pagination/Pagination";
 import BarWithPercentageModifiedStunting from "../../Components/Chart/BarWithPercentageModifiedStunting";
 import logoBkkbn from "../../assets/images/logo-kemendagri/logo-bkkbn.png";
 import "./../Dapodik/dapodik.scss";
+import VerticalBarChart from "../../Components/Chart/VerticalBarChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
@@ -155,6 +156,8 @@ const ContentStunting = () => {
     dataChartRincianStuntingKabupaten,
     setDataChartRincianStuntingKabupaten,
   ] = useState([[], []]);
+
+  const [dataChartPus4Terlalu, setDataChartPus4Terlalu] = useState([])
 
   const [dataTotalBelanjaNasional, setDataTotalBelanjaNasional] = useState([]);
   const [dataChartPerbandinganSpm, seDataChartPerbandinganSpm] = useState([]);
@@ -512,6 +515,26 @@ const ContentStunting = () => {
         } catch (error) {
           console.error("Error processing top 5 akun belanja", error);
         }
+
+        try {
+
+          const keys = Object.keys(dataStunting.data.pus_4_terlalu).map(key => {
+            return key
+              .split('_') // Pisahkan berdasarkan underscore
+              .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Kapitalisasi huruf pertama setiap kata
+              .join(' '); // Gabungkan kembali dengan spasi
+          });
+
+          const values = Object.values(dataStunting.data.pus_4_terlalu);
+
+          const resultChartPus4Terlalu = [values, keys]
+          // const resultChartPus4Terlalu = [dataStunting.data.pus_4_terlalu.jumlah_terlalu_banyak, dataStunting.data.pus_4_terlalu.jumlah_terlalu_dekat, dataStunting.data.pus_4_terlalu.jumlah_terlalu_muda, dataStunting.data.pus_4_terlalu.jumlah_terlalu_tua]
+          console.log(resultChartPus4Terlalu, 'ini isi result')
+            setDataChartPus4Terlalu(resultChartPus4Terlalu)
+        } catch (error) {
+          console.error("Error processing top 5 akun belanja", error);
+        }
+
       } catch (error) {
         console.error("Error fetching dashboard_stunting data", error);
       }
@@ -2248,6 +2271,19 @@ const ContentStunting = () => {
                     <NavLink
                       style={{ cursor: "pointer" }}
                       className={classnames("h-100", {
+                        active: customActiveTabAll === "9",
+                      })}
+                      onClick={() => {
+                        toggleCustomTabAll("9");
+                      }}
+                    >
+                      PASANGAN USIA SUBUR (PUS)
+                    </NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink
+                      style={{ cursor: "pointer" }}
+                      className={classnames("h-100", {
                         active: customActiveTabAll === "7",
                       })}
                       onClick={() => {
@@ -2613,6 +2649,18 @@ const ContentStunting = () => {
                     seriesName={["Baduta", "Balita", "Pus Hamil"]}
                     dataColors='["#2DAED4","#2DAED4C4","#2DAED47B","#2DAED43B"]'
                   />
+                </TabPane>
+                <TabPane tabId="9">
+                  <div className="separator">
+                    <h4 className="card-title mb-0">
+                      PASANGAN USIA SUBUR (PUS) 4T
+                    </h4>
+                  </div>
+                  <VerticalBarChart
+                        valueChart={dataChartPus4Terlalu[0]}
+                        categoryChart={['Terlalu Banyak', 'Terlalu Dekat', 'Terlalu Muda', 'Terlalu Tua']}
+                        dataColors='["#57E7B4"]'
+                      />
                 </TabPane>
                 <TabPane tabId="7">
                   <div className="separator">
@@ -3144,7 +3192,7 @@ const ContentStunting = () => {
         <div className="modal-content border-0">
           <ModalHeader className=" p-3 bg-info-subtle" toggle={handleClose}>
             Detail Anggaran{" "}
-            {dataJenisPemda == "kab" ? "Kabupaten/Kota" : "Provinsi"}{" "}
+            {dataJenisPemda == "kab" ? "Kabupaten/Kota" : "Provinsi"}
             {dataDetailNamaDaerah}
           </ModalHeader>
           <ModalBody>
