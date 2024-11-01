@@ -1879,7 +1879,7 @@ const ContentMiskinEkstremV2 = () => {
                       {indexOfFirstItem + index + 1}
                     </td>
                     <td className={showNextData ? "click-data" : ""} style={{ minWidth: "270px" }} onClick={(e)=> {showNextData ?  getDataMiskinEkstremTabelKab(item.kode_prov, e) : "", showNextData ? setNamaDaerahDetail(item.nama_prov) : ""}}>                      
-                      {item.nama_prov ? item.nama_prov : item.nama_daerah}
+                      {item.nama_prov ? item.nama_prov=="Aceh"? "Provinsi Aceh": item.nama_prov : item.nama_daerah=="Aceh"? "Provinsi Aceh": item.nama_daerah}
                     </td>
                     <td>
                       {item.jumlah_keluarga_desil_all
@@ -3378,7 +3378,7 @@ const ContentMiskinEkstremV2 = () => {
 
       <Modal size="xl" isOpen={modall} toggle={handleOpen} centered={true} backdrop="static">
       <div className="modal-content border-0">
-        <ModalHeader className=" p-3 bg-info-subtle" toggle={handleClose}>Detail Anggaran {dataJenisPemda == "kab" ? "" : "Provinsi"} {dataDetailNamaDaerah}
+        <ModalHeader className=" p-3 bg-info-subtle" toggle={handleClose}>Detail Anggaran {dataDetailNamaDaerah=="Aceh" ? "Provinsi Aceh" : dataDetailNamaDaerah}
         </ModalHeader>
         <ModalBody>
         <Row>

@@ -1625,7 +1625,7 @@ const ContentStunting = () => {
                               requestSort("peringkat_kesejahteraan_1")
                             }
                           >
-                            PERINGKAT KESEJAHTERAAN 1{" "}
+                            DESIL 1{" "}
                             {getSortIcon("peringkat_kesejahteraan_1")}
                           </th>
                           <th
@@ -1641,7 +1641,7 @@ const ContentStunting = () => {
                               requestSort("peringkat_kesejahteraan_2")
                             }
                           >
-                            PERINGKAT KESEJAHTERAAN 2{" "}
+                            DESIL 2{" "}
                             {getSortIcon("peringkat_kesejahteraan_2")}
                           </th>
                           <th
@@ -1657,7 +1657,7 @@ const ContentStunting = () => {
                               requestSort("peringkat_kesejahteraan_3")
                             }
                           >
-                            PERINGKAT KESEJAHTERAAN 3{" "}
+                            DESIL 3{" "}
                             {getSortIcon("peringkat_kesejahteraan_3")}
                           </th>
                           <th
@@ -1673,7 +1673,7 @@ const ContentStunting = () => {
                               requestSort("peringkat_kesejahteraan_4")
                             }
                           >
-                            PERINGKAT KESEJAHTERAAN 4{" "}
+                            DESIL 4{" "}
                             {getSortIcon("peringkat_kesejahteraan_4")}
                           </th>
                           <th
@@ -1689,7 +1689,7 @@ const ContentStunting = () => {
                               requestSort("peringkat_kesejahteraan_diatas_4")
                             }
                           >
-                            PERINGKAT KESEJAHTERAAN &gt;4{" "}
+                            DESIL &gt;4{" "}
                             {getSortIcon("peringkat_kesejahteraan_diatas_4")}
                           </th>
                           <th
@@ -1730,8 +1730,8 @@ const ContentStunting = () => {
                               }
                             >
                               {item.nama_kabupaten
-                                ? item.nama_kabupaten || "-"
-                                : item.nama_prov || "-"}
+                                ? item.nama_kabupaten =="Aceh"? "Provinsi Aceh": item.nama_kabupaten || "-"
+                                : item.nama_prov=="Aceh"? "Provinsi Aceh": item.nama_prov || "-"}
                             </td>
                             <td>
                               {item.jumlah_keluarga
@@ -2013,7 +2013,7 @@ const ContentStunting = () => {
                       }}
                       onClick={() => requestSort("peringkat_kesejahteraan_1")}
                     >
-                      PERINGKAT KESEJAHTERAAN 1 {getSortIcon("peringkat_kesejahteraan_1")}
+                      DESIL 1 {getSortIcon("peringkat_kesejahteraan_1")}
                     </th>
                     <th
                       style={{
@@ -3192,8 +3192,8 @@ const ContentStunting = () => {
         <div className="modal-content border-0">
           <ModalHeader className=" p-3 bg-info-subtle" toggle={handleClose}>
             Detail Anggaran{" "}
-            {dataJenisPemda == "kab" ? "Kabupaten/Kota" : "Provinsi"}
-            {dataDetailNamaDaerah}
+            {/* {dataJenisPemda == "kab" ? "Kabupaten/Kota" : "Provinsi"} */}
+            {dataDetailNamaDaerah == "Aceh"? "Provinsi Aceh" : dataDetailNamaDaerah}
           </ModalHeader>
           <ModalBody>
             <Row>
