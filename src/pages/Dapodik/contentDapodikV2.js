@@ -36,11 +36,18 @@ const ContentDapodikV2 = () => {
   const [customActiveTabChartAnggaran, setcustomActiveTabChartAnggaran] =
     useState("1");
   const [customActiveTabTabel, setcustomActiveTabTabel] = useState("1");
+  const [customActiveTabJenisData, setcustomActiveTabJenisData] = useState("1");
   const [titleChartAnggaran, setTitleChartAnggaran] = useState("");
 
   const toggleCustom = (tab) => {
     if (customActiveTab !== tab) {
       setcustomActiveTab(tab);
+    }
+  };
+
+  const toggleCustomJenis = (tab) => {
+    if (customActiveTabJenisData !== tab) {
+      setcustomActiveTabJenisData(tab);
     }
   };
 
@@ -123,17 +130,23 @@ const ContentDapodikV2 = () => {
         const mappedDataSd = Object.values(
           dataDapodik.data.dapodik_do_sd
         ).filter((value) => typeof value === "number");
-        setDataDropOutSd(mappedDataSd);
+
+        const totalValueSd = [mappedDataSd, mappedDataSd.reduce((accumulator, value) => accumulator + value, 0)];
+        setDataDropOutSd(totalValueSd);
 
         const mappedDataSmp = Object.values(
           dataDapodik.data.dapodik_do_smp
         ).filter((value) => typeof value === "number");
-        setDataDropOutSmp(mappedDataSmp);
+        const totalValueSmp = [mappedDataSmp, mappedDataSmp.reduce((accumulator, value) => accumulator + value, 0)];
+        setDataDropOutSmp(totalValueSmp);
+
 
         const mappedDataSma = Object.values(
           dataDapodik.data.dapodik_do_sma
         ).filter((value) => typeof value === "number");
-        setDataDropOutSma(mappedDataSma);
+        const totalValueSma = [mappedDataSma, mappedDataSma.reduce((accumulator, value) => accumulator + value, 0)];
+        setDataDropOutSma(totalValueSma);
+
 
         const mappedDataByUsia = Object.values(
           dataDapodik.data.dapodik_jumlah_belum_pernah_sekolah_by_usia
@@ -149,8 +162,7 @@ const ContentDapodikV2 = () => {
           dataDapodik.data.dapodik_jumlah_anak_sekolah.reduce(
             (acc, item) => acc + item.jumlah_siswa,
             0
-          );
-        console.log(totalJumlahSiswa, "ini total");
+          );        
         setDataTotalTkSdSmpSma(totalJumlahSiswa);
 
         // setDataDropOutPaud(mappedDataPaud);
@@ -243,19 +255,22 @@ const ContentDapodikV2 = () => {
             parseInt(item.smp) + 
             parseInt(item.sma) + 
             parseInt(item.smk);
-          
           return {
             name: item.nama_prov,
             value: total
           };
-        });
-
-        console.log(valueTotalAnakSekolah, 'kwkww')
+        }); 
+               
+        // const valueTotalAnakDropOutSd = dataDapodikTabelSeProvinsi.data.reduce((accumulate, item) => 
+        //   accumulate + parseInt(item.totsd_do), 0
+        // )        
 
         const valueTotalSd = dataDapodikTabelSeProvinsi.data.map(item => ({
           name: item.nama_prov,
-          value: parseInt(item.sd)
+          value: parseInt(item.sd)          
         }));
+
+        // const totalValue = valueTotalSd.reduce((accumulator, item) => accumulator + item.value, 0); /aggregate     
 
         const valueTotalSmp = dataDapodikTabelSeProvinsi.data.map(item => ({
           name: item.nama_prov,
@@ -1201,6 +1216,7 @@ const ContentDapodikV2 = () => {
         <Col>
           <Card>
             <CardBody>
+                  <div>                  
               <Nav tabs className="nav nav-tabs nav-success nav-justified mb-3">
                 <NavItem>
                   <NavLink
@@ -1246,6 +1262,39 @@ const ContentDapodikV2 = () => {
                 </NavItem>
               </Nav>
               <TabContent activeTab={customActiveTabTabel}>
+              <div className="nav-beranda">
+                    <Nav
+                      tabs
+                      className="nav nav-tabs-custom card-header-tabs border-bottom-0 ms-2 mb-3"
+                    >                      
+                      <NavItem>
+                        <NavLink
+                          style={{ cursor: "pointer" }}
+                          className={classnames({
+                            active: customActiveTabJenisData === "1",
+                          })}
+                          onClick={() => {
+                            toggleCustomJenis("1");
+                          }}
+                        >
+                          DATA POKOK
+                        </NavLink>
+                      </NavItem>
+                      <NavItem>
+                        <NavLink
+                          style={{ cursor: "pointer" }}
+                          className={classnames({
+                            active: customActiveTabJenisData === "2",
+                          })}
+                          onClick={() => {
+                            toggleCustomJenis("2");
+                          }}
+                        >
+                          ANAK TIDAK SEKOLAH
+                        </NavLink>
+                      </NavItem>
+                    </Nav>
+                  </div>
                 <TabPane tabId="1" id="paud">
                   <div className="mb-2 d-flex">
                     <div
@@ -1346,7 +1395,7 @@ const ContentDapodikV2 = () => {
                               backgroundColor: "#f7f7ff"
                             }}
                           >
-                            Anak Sekolah
+                            Peserta Didik
                           </th>
                           <th colSpan="6" style={{ textAlign: "center" }}>
                             Anak Tidak Sekolah
@@ -1685,7 +1734,7 @@ const ContentDapodikV2 = () => {
                         search
                       </button>
                     </div>
-                  </div>
+                  </div>                  
                   <div style={{ overflowX: "auto" }}>
                     {/* Render Table */}
                     <table
@@ -1722,7 +1771,7 @@ const ContentDapodikV2 = () => {
                               backgroundColor: "#f7f7ff"
                             }}
                           >
-                            Anak Sekolah
+                            Peserta Didik
                           </th>
                           <th colSpan="2" style={{ textAlign: "center" }}>
                             Anak Tidak Sekolah
@@ -2126,7 +2175,7 @@ const ContentDapodikV2 = () => {
                               backgroundColor: "#f7f7ff"
                             }}
                           >
-                            Anak Sekolah
+                            Peserta Didik
                           </th>
                           <th colSpan="4" style={{ textAlign: "center" }}>
                             Anak Tidak Sekolah
@@ -2405,6 +2454,7 @@ const ContentDapodikV2 = () => {
                   />
                 </TabPane>
               </TabContent>
+              </div>                                                                           
             </CardBody>
           </Card>
         </Col>
@@ -2774,7 +2824,12 @@ const ContentDapodikV2 = () => {
                     activeTab={customActiveTab}
                     className="text-muted"
                   >
-                    <TabPane tabId="1" id="paud">
+                    {/* <TabPane tabId="1" id="paud">
+                      <Card>
+                        <CardBody>
+
+                        </CardBody>
+                      </Card>
                       <VerticalBarChart
                         valueChart={dataDropOutPaud}
                         categoryChart={[
@@ -2786,10 +2841,42 @@ const ContentDapodikV2 = () => {
                         ]}
                         dataColors='["#66CDAA"]'
                       />
-                    </TabPane>
+                    </TabPane> */}
                     <TabPane tabId="2" id="sd">
+                      <Row>
+                        <Col md={4}>
+                        <Card>
+                        <CardBody>
+                        <div className="d-flex flex-column title-custom-card">
+                          <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                            <span>
+                              Total Drop Out SD
+                            </span>
+                          </div>
+                          <div className="d-flex">
+                            <div className="d-flex justify-content-center align-items-center title-body">
+                              <span>
+                                <CountUp
+                                  start={0}
+                                  end={
+                                    dataDropOutSd[1]
+                                  }                                 
+                                  separator="."
+                                  // prefix="Rp "
+                                  // suffix=" T"
+                                  duration={1}
+                                />
+                              </span>
+                            </div>
+                          </div>
+                        </div>                          
+                        </CardBody>
+                      </Card>
+                        </Col>
+                      </Row>
+                    
                       <VerticalBarChart
-                        valueChart={dataDropOutSd}
+                        valueChart={dataDropOutSd[0]}
                         categoryChart={[
                           "Kelas 1",
                           "Kelas 2",
@@ -2802,15 +2889,78 @@ const ContentDapodikV2 = () => {
                       />
                     </TabPane>
                     <TabPane tabId="3" id="smp">
+                      <Row>
+                        <Col md={4}>
+                        <Card>
+                        <CardBody>
+                        <div className="d-flex flex-column title-custom-card">
+                          <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                            <span>
+                              Total Drop Out SMP
+                            </span>
+                          </div>
+                          <div className="d-flex">
+                            <div className="d-flex justify-content-center align-items-center title-body">
+                              <span>
+                                <CountUp
+                                  start={0}
+                                  end={
+                                    dataDropOutSmp[1]
+                                  }
+                                  separator="."
+                                  // prefix="Rp "
+                                  // suffix=" T"
+                                  duration={1}
+                                />
+                              </span>
+                            </div>
+                          </div>
+                        </div>   
+                        </CardBody>
+                      </Card>
+                        </Col>
+                      </Row>
+                    
                       <VerticalBarChart
-                        valueChart={dataDropOutSmp}
+                        valueChart={dataDropOutSmp[0]}
                         categoryChart={["Kelas 7", "Kelas 8", "Kelas 9"]}
                         dataColors='["#7CCCE4"]'
                       />
                     </TabPane>
                     <TabPane tabId="4" id="sma/smk">
+                    <Row>
+                      <Col md={4}>
+                      <Card>
+                        <CardBody>
+                        <div className="d-flex flex-column title-custom-card">
+                          <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                            <span>
+                              Total Drop Out SMA
+                            </span>
+                          </div>
+                          <div className="d-flex">
+                            <div className="d-flex justify-content-center align-items-center title-body">
+                              <span>
+                                <CountUp
+                                  start={0}
+                                  end={
+                                    dataDropOutSma[1]
+                                  }                                  
+                                  separator="."
+                                  // prefix="Rp "
+                                  // suffix=" T"
+                                  duration={1}
+                                />
+                              </span>
+                            </div>
+                          </div>
+                        </div>   
+                        </CardBody>
+                      </Card>
+                      </Col>
+                    </Row>                    
                       <VerticalBarChart
-                        valueChart={dataDropOutSma}
+                        valueChart={dataDropOutSma[0]}
                         categoryChart={[
                           "Kelas 10",
                           "Kelas 11",
