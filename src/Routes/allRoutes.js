@@ -268,6 +268,7 @@ import PerencanaanDaerah from "../pages/Perencanaan/PerencanaanDaerah";
 import PerencanaanDetailDaerah from "../pages/Perencanaan/PerencanaanDetailDaerah";
 import Realisasi from "../pages/Realisasi";
 import RealisasiDaerah from "../pages/Realisasi/RealisasiDaerah";
+import RealisasiDetailDaerah from "../pages/Realisasi/RealisasiDetailDaerah";
 
 //home
 
@@ -282,7 +283,7 @@ const authProtectedRoutes = [
   { path: "/kependudukan", component: <Kependudukan />},
   { path: "realisasi", component: <Realisasi />},
   { path: "/realisasi/realisasi-detail/:_id", component: <RealisasiDaerah />},
-  // { path: "/realisasi/realisasi-detail/realisasi-detail-skpd/:_id", component: <RealisasiDetailDaerah />},
+  { path: "/realisasi/realisasi-detail/realisasi-detail-skpd/:_id", component: <RealisasiDetailDaerah />},
   { path: "/dapodik", component: <Dapodik />},
   { path: "/uhc", component: <Uhc />},
   { path: "/miskin-ekstrim", component: <MiskinEkstrim />},

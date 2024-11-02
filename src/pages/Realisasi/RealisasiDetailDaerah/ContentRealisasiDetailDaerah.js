@@ -33,54 +33,10 @@ const ContentRealisasiDetailDaerah = () => {
     const [selectedSingleTahapan, setSelectedSingleTahapan] = useState('1'); // Set default value
     const [selectedSingleSubTahapan, setSelectedSingleSubTahapan] = useState('6'); // Set default value
     const [dataRealisasi, setDataRealisasi] = useState([]);
-    const [dataRealisasiPersentase, setDataRealisasiPersentase] = useState(
-      []
-    );
     const [loadingRealisasi, setLoadingRealisasi] = useState([]);
     const [errorRealisasi, setErrorRealisasi] = useState([]);
   
-    const getDataRealisasiRkpdNasional = ({
-      // tahun = "2024",
-      // tahapan = "1",
-      kodeDdn=_id
-    } = {}) => {
-      const fetchData = async () => {
-        try {
-          const requestOptions = {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              // id_tahap: tahapan,
-              // tahun: tahun,
-              kode_ddn: kodeDdn
-            }),
-          };
-          const response = await fetch(
-            `${API_URI}/dashboard_Realisasi_2_komposisi_rkpd`,
-            requestOptions
-          );
-  
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-  
-          const dataRealisasiRkpdNasional = await response.json();
-  
-          const dataResultChartTahapan = [dataRealisasiRkpdNasional.data.eksekutif, dataRealisasiRkpdNasional.data.legislatif, dataRealisasiRkpdNasional.data.masyarakat]
-
-          console.log(dataResultChartTahapan, "ini");
-  
-          setDataRealisasi(dataResultChartTahapan);
-        } catch (errorRealisasi) {
-          setErrorRealisasi(errorRealisasi);
-        } finally {
-          setLoadingRealisasi(false);
-        }
-      };
-      fetchData();
-    };
-  
-    const getDataRealisasiRkpdNasionalPersentase = ({
+    const getDataRealisasiNasional = ({
       tahun = "2024",
       tahapan = "1",
       kodeDdn= _id
@@ -97,7 +53,7 @@ const ContentRealisasiDetailDaerah = () => {
             }),
           };
           const response = await fetch(
-            `${API_URI}/dashboard_Realisasi_3_list_tabel`,
+            `${API_URI}/realisasi_level_3`,
             requestOptions
           );
   
@@ -105,12 +61,12 @@ const ContentRealisasiDetailDaerah = () => {
             throw new Error("Network response was not ok");
           }
   
-          const dataRealisasiRkpdNasionalPersentase = await response.json();
+          const dataRealisasiNasional = await response.json();
 
-          console.log(dataRealisasiRkpdNasionalPersentase);
+          console.log(dataRealisasiNasional);
   
-          setDataRealisasiPersentase(
-            dataRealisasiRkpdNasionalPersentase.data
+          setDataRealisasi(
+            dataRealisasiNasional.data.realisasi_level_3
           );
         } catch (errorRealisasi) {
           setErrorRealisasi(errorRealisasi);
@@ -123,7 +79,7 @@ const ContentRealisasiDetailDaerah = () => {
   
       // Memanggil fungsi API setiap kali dropdown berubah
       useEffect(() => {
-      getDataRealisasiRkpdNasionalPersentase({
+      getDataRealisasiNasional({
           tahun: selectedSingleTahun,
           tahapan: selectedSingleTahapan,
       });
@@ -131,8 +87,8 @@ const ContentRealisasiDetailDaerah = () => {
     
   
     useEffect(() => {
-      getDataRealisasiRkpdNasional();
-      getDataRealisasiRkpdNasionalPersentase();
+      // getDataRealisasiNasional();
+      getDataRealisasiNasional();
     }, []);
 
     const [dataDetailUnitSkpd, setDataDetailUnitSkpd] = useState([]);    
@@ -143,25 +99,23 @@ const ContentRealisasiDetailDaerah = () => {
       tahun= "2024",
       kodeDdn=_id,
       kodeUnitSkpd="",
-      idTahap="1"
     }      
     ) => {
       const fetchData = async () => {
-        setLoadingDetailUnitSkpd(true); // Set loading state to true when starting the fetch
+        // setLoadingDetailUnitSkpd(true); // Set loading state to true when starting the fetch
         try {
           const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               kode_ddn: kodeDdn,
-              kode_unit_skpd: kodeUnitSkpd,
-              id_tahap: idTahap,
+              kode_skpd: kodeUnitSkpd,
               tahun : tahun,
             }),
           };
   
           const response = await fetch(
-            `${API_URI}/dashboard_Realisasi_3_detail_sub_giat`,
+            `${API_URI}/realisasi_level_3_subgiat`,
             requestOptions
           );
   
@@ -171,10 +125,10 @@ const ContentRealisasiDetailDaerah = () => {
   
           const dataDetailUnitSkpd = await response.json();
   
-          setDataDetailUnitSkpd(dataDetailUnitSkpd.data)    
+          setDataDetailUnitSkpd(dataDetailUnitSkpd.data.realisasi_level_3_subgiat)
 
           setModall(true);            
-          setCurrentPageDetail(1);        
+          setCurrentPageDetail(1);     
           // Open the modal only after data is successfully fetched
         } catch (errorDetailUnitSkpd) {
           setErrorDetailUnitSkpd(errorDetailUnitSkpd);
@@ -185,22 +139,69 @@ const ContentRealisasiDetailDaerah = () => {
   
       fetchData();
     };
+
+    const [dataDetailUnitSkpdSro, setDataDetailUnitSkpdSro] = useState([]);    
+    const [loadingDetailUnitSkpdSro, setLoadingDetailUnitSkpdSro] = useState([]);
+    const [errorDetailUnitSkpdSro, setErrorDetailUnitSkpdSro] = useState([]);    
+  
+    const getDataDetailUnitSkpdSro = ({
+      tahun= "2024",
+      kodeDdn=_id,
+      kodeSubGiat="",
+    }      
+    ) => {
+      const fetchData = async () => {
+        // setLoadingDetailUnitSkpdSro(true); // Set loading state to true when starting the fetch
+        try {
+          const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              kode_ddn: kodeDdn,
+              kode_sub_giat: kodeSubGiat,
+              tahun : tahun,
+            }),
+          };
+  
+          const response = await fetch(
+            `${API_URI}/realisasi_level_3_sro`,
+            requestOptions
+          );
+  
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+  
+          const dataDetailUnitSkpdSro = await response.json();
+  
+          setDataDetailUnitSkpdSro(dataDetailUnitSkpdSro.data.realisasi_level_3_sro)
+
+          setModall(true);            
+          setCurrentPageDetail(1);     
+          // Open the modal only after data is successfully fetched
+        } catch (errorDetailUnitSkpdSro) {
+          setErrorDetailUnitSkpdSro(errorDetailUnitSkpdSro);
+        } finally {
+          setLoadingDetailUnitSkpdSro(false);
+        }
+      };
+  
+      fetchData();
+    };
   
     const [modall, setModall] = useState(false);
     const [dataRincianDetail, setDataRincianDetail] = useState(0);
     const [dataDetailNamaUnitSkpd, setDataDetailNamaUnitSkpd] = useState("");
 
-    const handleOpen = ({idTahap,
-      kodeDdn = "",
+    const handleOpen = ({
       kodeUnitSkpd = "",
-      tahun = "",
       namaUnitSkpd="",
-      paguValidasi=0
+      realisasi=0
     }
     ) => {
-      getDataDetailUnitSkpd({idTahap: idTahap, kodeDdn: kodeDdn, kodeUnitSkpd:kodeUnitSkpd, tahun:tahun})
+      getDataDetailUnitSkpd({ kodeUnitSkpd:kodeUnitSkpd })
       setDataDetailNamaUnitSkpd(namaUnitSkpd);    
-      setDataRincianDetail(paguValidasi) 
+      setDataRincianDetail(realisasi) 
       setCardHead(null);
     };
   
@@ -212,8 +213,10 @@ const ContentRealisasiDetailDaerah = () => {
     
     const [currentPage, setCurrentPage] = useState(1);
     const [currentPageDetail, setCurrentPageDetail] = useState(1);
+    const [currentPageDetailSub, setCurrentPageDetailSub] = useState(1);
     const [itemsPerPage] = useState(10); // Set items per page
     const [itemsPerPageDetail] = useState(10);
+    const [itemsPerPageDetailSub] = useState(10); // Set items per page
     const [sortConfig, setSortConfig] = useState({      
       key: null,
       direction: "ascending",
@@ -228,9 +231,12 @@ const ContentRealisasiDetailDaerah = () => {
 
     const indexOfLastItemDetail = currentPageDetail * itemsPerPageDetail;
     const indexOfFirstItemDetail = indexOfLastItemDetail - itemsPerPageDetail;
+
+    const indexOfLastItemDetailSub = currentPageDetailSub * itemsPerPageDetailSub;
+    const indexOfFirstItemDetailSub = indexOfLastItemDetailSub - itemsPerPageDetailSub;
     
     const sortedItems = React.useMemo(() => {
-      let sortableItems = [...(dataRealisasiPersentase || [])];
+      let sortableItems = [...(dataRealisasi || [])];
       if (sortConfig.key !== null) {
         sortableItems.sort((a, b) => {
           const aValue = a[sortConfig.key] || 0;
@@ -246,7 +252,7 @@ const ContentRealisasiDetailDaerah = () => {
         });
       }
       return sortableItems;
-    }, [dataRealisasiPersentase, sortConfig]);
+    }, [dataRealisasi, sortConfig]);
 
     const sortedItemsDetail = React.useMemo(() => {
       let sortableItems = [...(dataDetailUnitSkpd || [])];
@@ -266,22 +272,52 @@ const ContentRealisasiDetailDaerah = () => {
       }
       return sortableItems;
     }, [dataDetailUnitSkpd, sortConfigDetail]);
+
+    const sortedItemsDetailSub = React.useMemo(() => {
+      let sortableItems = [...(dataDetailUnitSkpdSro || [])];
+      if (sortConfig.key !== null) {
+        sortableItems.sort((a, b) => {
+          const aValue = a[sortConfig.key] || 0;
+          const bValue = b[sortConfig.key] || 0;
+  
+          if (aValue < bValue) {
+            return sortConfig.direction === "ascending" ? -1 : 1;
+          }
+          if (aValue > bValue) {
+            return sortConfig.direction === "ascending" ? 1 : -1;
+          }
+          return 0;
+        });
+      }
+      return sortableItems;
+    }, [dataDetailUnitSkpdSro, sortConfig]);
+
+
   
     const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);
     const currentItemsDetail = sortedItemsDetail.slice(
       indexOfFirstItemDetail,
       indexOfLastItemDetail
     );
+    const currentItemsDetailSub = sortedItemsDetailSub.slice(
+      indexOfFirstItemDetailSub,
+      indexOfLastItemDetailSub
+    );    
     
     const totalPages = Math.ceil(
-      (dataRealisasiPersentase?.length || 0) / itemsPerPage
+      (dataRealisasi?.length || 0) / itemsPerPage
     );
     const totalPagesDetail = Math.ceil(
       (dataDetailUnitSkpd?.length || 0) / itemsPerPage
     );
+
+    const totalPagesDetailSub = Math.ceil(
+      (dataDetailUnitSkpdSro?.length || 0) / itemsPerPage
+    );
   
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
     const paginateDetail = (pageNumber) => setCurrentPageDetail(pageNumber);
+    const paginateDetailSub = (pageNumber) => setCurrentPageDetailSub(pageNumber);
   
     const [dataShowSumberUsulan, setDataShowSumberUsulan] = useState(false);
     const handleShowDataSumberUsulan = (value) => {
@@ -332,6 +368,23 @@ const ContentRealisasiDetailDaerah = () => {
       }
       return "↕"; // Default icon for unsorted
     };     
+
+    const [modal, setModal] = useState(false);
+    const [dataRincianDetailSub, setDataRincianDetailSub] = useState(0);
+
+    const handleOpenNextModal = ({
+      kodeSubGiat = "",
+      rincianDetail = ""
+    }
+    ) => {
+      getDataDetailUnitSkpdSro({kodeSubGiat : kodeSubGiat})
+      // setModal(true);
+      setDataRincianDetailSub(rincianDetail);
+      setCardHead(null);
+    };
+    const handleCloseNextModal = () => {
+      setModal(false);
+    };
       
       return (
       <React.Fragment>
@@ -345,7 +398,7 @@ const ContentRealisasiDetailDaerah = () => {
                     </span>
                   </div> */}
                   <div className="d-flex justify-content-center align-items-center">
-                    <span>Realisasi (RKPD)</span>
+                    <span>Realisasi</span>
                   </div>
                 </div>
                 <div className="d-flex justify-content-center align-items-center">                  
@@ -369,7 +422,7 @@ const ContentRealisasiDetailDaerah = () => {
         </Row>           
         <Row>
           <Col md={6}> 
-            <Card className='card-height-100'>
+            <Card>
               <CardBody>
                 <Row>
                   <Col xs={12} md={12} xl={4}>
@@ -425,9 +478,9 @@ const ContentRealisasiDetailDaerah = () => {
                   </div>                    
                   </Col>
                 </Row>
-                <div className='separator mb-3'>
-                </div>
-                <Row>
+                {/* <div className='separator mb-3'>
+                </div> */}
+                {/* <Row>
                   <Col>
                   <div className='d-flex justify-content-between'>
                     <div className='d-flex justify-content-start align-items-start mb-2' style={{fontSize: "20px", fontWeight:600}}>
@@ -462,7 +515,7 @@ const ContentRealisasiDetailDaerah = () => {
                   dataColors='["#57E7B4", "#FCAD24", "#2DAED4"]'
                   />                  
                   </Col>
-                </Row>
+                </Row> */}
               </CardBody>
             </Card>
           </Col>
@@ -470,13 +523,13 @@ const ContentRealisasiDetailDaerah = () => {
           <Card className="card-height-100">
               <CardBody>
                 <div className="separator">
-                  <h4 className="card-title mb-1">
-                    List Progress Realisasi 
+                  <h4 className="card-title mb-3">
+                    Realisasi Belanja Daerah {namaDaerah}
                   </h4>                  
                 </div>                
                 <Row>
                   <Col>                
-                    <select
+                    {/* <select
                     name="tahun"
                           style={{
                             padding: "10px 30px 10px 10px",
@@ -511,7 +564,7 @@ const ContentRealisasiDetailDaerah = () => {
                         >                        
                           <option value="1">RKPD</option>
                           <option value="3">RKPD Perubahan</option>
-                        </select>
+                        </select> */}
                     <div className="table-responsive table-card" style={{ overflowX: "auto" }}>                    
                       <table className="table table-nowrap mb-2 " style={{width:"1000px"}} >
                         <thead className="table-light">
@@ -543,7 +596,7 @@ const ContentRealisasiDetailDaerah = () => {
                             >
                               NAMA SKPD {getSortIcon("nama_skpd")}
                             </th>
-                            <th
+                            {/* <th
                             onClick={() => requestSort("kode_unit_skpd")}
                               style={{
                                 textAlign: "center",
@@ -555,7 +608,7 @@ const ContentRealisasiDetailDaerah = () => {
                               scope="col"
                             >
                               KODE UNIT SKPD {getSortIcon("kode_sub_giat")}
-                            </th>
+                            </th> */}
                             <th
                             onClick={() => requestSort("nama_unit_skpd")}
                               style={{
@@ -570,7 +623,7 @@ const ContentRealisasiDetailDaerah = () => {
                               NAMA UNIT SKPD {getSortIcon("nama_unit_skpd")}
                             </th>
                             <th
-                            onClick={() => requestSort("pagu_validasi")}
+                            onClick={() => requestSort("realisasi")}
                               style={{
                                 textAlign: "center",
                                 verticalAlign: "middle",
@@ -580,7 +633,20 @@ const ContentRealisasiDetailDaerah = () => {
                               }}
                               scope="col"
                             >
-                              PAGU VALIDASI (Rp) {getSortIcon("pagu_validasi")}
+                              REALISASI (Rp) {getSortIcon("realisasi")}
+                            </th>
+                            <th
+                            onClick={() => requestSort("anggarangeser")}
+                              style={{
+                                textAlign: "center",
+                                verticalAlign: "middle",
+                                cursor: "pointer",
+                                whiteSpace: "normal",
+                                overflowWrap: "break-word",                                
+                              }}
+                              scope="col"
+                            >
+                              ANGGARAN (Rp) {getSortIcon("anggarangeser")}
                             </th>
                             <th
                               style={{
@@ -598,36 +664,35 @@ const ContentRealisasiDetailDaerah = () => {
                         </thead>
                         <tbody>
                           {currentItems.map((item, index) => {
-                            const tahapData = {
-                              1: item.persiapan,
-                              2: item.rancangan_awal,
-                              3: item.rancangan,
-                              4: item.musrenbang,
-                              5: item.rancangan_akhir,
-                              6: item.penetapan,
-                            };
-  
                             return (
                               <tr key={index}>
                                   {/* style={{ verticalAlign: "middle", textAlign: "center" }} */}
                                 <td >{item.kode_skpd}</td>
                                 <td style={{
-                          whiteSpace: "normal",
-                          wordWrap: "break-word",
-                          maxWidth: "200px",
-                        }}>{item.nama_skpd}</td>
-                                <td>                               
-                                    {item.kode_unit_skpd}
+                                    whiteSpace: "normal",
+                                    wordWrap: "break-word",
+                                    maxWidth: "200px",
+                                  }}>{item.nama_unit_skpd}
                                 </td>
                                 <td style={{
-                          whiteSpace: "normal", 
-                          wordWrap: "break-word", 
-                          maxWidth: "200px", 
-                        }}>{item.nama_unit_skpd}</td>
+                                    whiteSpace: "normal", 
+                                    wordWrap: "break-word", 
+                                    maxWidth: "200px", 
+                                  }}>{item.nama_unit_skpd}
+                                </td>
                                 <td>
                                   <span style={{ float: "right" }}>
-                                  {item.pagu_validasi
-                                    ? parseInt(item.pagu_validasi).toLocaleString(
+                                  {item.realisasi
+                                    ? parseInt(item.realisasi).toLocaleString(
+                                        "id-ID"
+                                      )
+                                    : "-"}
+                                  </span>
+                                </td>
+                                <td>
+                                  <span style={{ float: "right" }}>
+                                  {item.anggarangeser
+                                    ? parseInt(item.anggarangeser).toLocaleString(
                                         "id-ID"
                                       )
                                     : "-"}
@@ -642,7 +707,7 @@ const ContentRealisasiDetailDaerah = () => {
                                   }}
                                 >
                                   <i
-                                  onClick={()=> handleOpen({idTahap: item.id_tahap, tahun:item.tahun, kodeUnitSkpd: item.kode_unit_skpd, kodeDdn: item.kode_ddn, namaUnitSkpd:item.nama_unit_skpd, paguValidasi: item.pagu_validasi})}
+                                  onClick={()=> handleOpen({ kodeUnitSkpd: item.kode_skpd, namaUnitSkpd:item.nama_unit_skpd, realisasi: item.realisasi })}
                                     style={{
                                       padding: "5px 10px",
                                       cursor: "pointer",
@@ -669,6 +734,7 @@ const ContentRealisasiDetailDaerah = () => {
             </Card>
           </Col>          
         </Row>
+
         <Modal
         size="xl"
         isOpen={modall}
@@ -698,7 +764,7 @@ const ContentRealisasiDetailDaerah = () => {
                           <i className=" ri-women-line text-danger"></i>
                         </span>
                       </div> */}
-                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                        <div className="d-flex justify-content-center align-items-center title-body">
                           <span>
                             <CountUp
                               start={0}
@@ -750,22 +816,33 @@ const ContentRealisasiDetailDaerah = () => {
                       onClick={() => requestSortDetail("pagu_validasi")}
                       style={{ cursor: "pointer", textAlign: "center" }}
                     >
-                      Pagu Validasi (Rp){" "}
+                      Pagu (Rp){" "}
                       {getSortIconDetail("pagu_validasi")}
-                    </th>                                  
+                    </th>             
+                    <th
+                      onClick={() => requestSortDetail("realisasi")}
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Realisasi (Rp){" "}
+                      {getSortIconDetail("realisasi")}
+                    </th>           
+                    <th
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Action
+                    </th>                        
                   </tr>
                 </thead>
                 <tbody style={{ minHeight: "500px" }}>
                   {currentItemsDetail.map((item, index) => (
                     <tr key={index}>
-                      {/* <td>{item.kode_prop}</td> */}
                       <td>
                         {item.kode_sub_giat}
                       </td>                      
                       <td style={{
-                          whiteSpace: "normal", // Membolehkan teks turun ke baris berikutnya
-                          wordWrap: "break-word", // Memastikan teks panjang terpotong dan turun ke bawah
-                          maxWidth: "200px", // Menetapkan lebar maksimum sel (sesuaikan dengan kebutuhan)
+                          whiteSpace: "normal",
+                          wordWrap: "break-word",
+                          maxWidth: "200px",
                         }}>
                         {item.nama_sub_giat}
                       </td>                      
@@ -777,7 +854,25 @@ const ContentRealisasiDetailDaerah = () => {
                               )
                             : "-"}
                         </span>                        
-                      </td>                      
+                      </td>   
+                      <td
+                      style={{
+                        textAlign: "center",
+                        verticalAlign: "middle",
+                        whiteSpace: "normal",
+                        overflowWrap: "break-word",
+                      }}
+                    >
+                      <i
+                      onClick={()=> handleOpenNextModal({ kodeUnitSkpd: item.kode_skpd, namaUnitSkpd:item.nama_unit_skpd, realisasi: item.realisasi })}
+                        style={{
+                          padding: "5px 10px",
+                          cursor: "pointer",
+                          fontSize: "20px",
+                        }}
+                        className="bx bx-list-ul text-primary"
+                      ></i>
+                    </td>                   
                     </tr>
                   ))}                  
                 </tbody>
@@ -787,6 +882,182 @@ const ContentRealisasiDetailDaerah = () => {
               currentPage={currentPageDetail}
               totalPages={totalPagesDetail}
               onPageChange={paginateDetail}
+            />
+          </ModalBody>
+        </div>
+      </Modal>
+
+      <Modal
+        size="xl"
+        isOpen={modal}
+        toggle={handleOpenNextModal}
+        centered={true}
+        backdrop="static"
+      >
+        <div className="modal-content border-0">
+          <ModalHeader
+            className=" p-3 bg-info-subtle"
+            toggle={handleCloseNextModal}
+          >
+            Sub Rincian Objek
+          </ModalHeader>
+          <ModalBody>
+            <Row>
+              <Col md={4}>
+                <Card className="card-animate card-height-100">
+                  <CardBody>
+                    <div className="d-flex flex-column title-custom-card">
+                      <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                        <span>Total Anggaran Sub Kegiatan</span>
+                      </div>
+                      <div className="d-flex">
+                        {/* <div className="avatar-xs-half flex-shrink-0">
+                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                          <i className=" ri-women-line text-danger"></i>
+                        </span>
+                      </div> */}
+                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                          <span>
+                            <CountUp
+                              start={0}
+                              end={
+                                // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                                dataRincianDetailSub
+                              }
+                              separator="."
+                              // prefix=""
+                              suffix=""
+                              duration={3}
+                            />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+            </Row>
+
+            <div style={{ overflowY: "scroll", maxHeight: "500px" }}>
+              <table
+                className="table table-bordered table-nowrap align-middle mb-0"
+                style={{ width: "100%" }}
+              >
+                <thead className="table-light">
+                  <tr>
+                    <th
+                      style={{ verticalAlign: "middle", textAlign: "center" }}
+                    >
+                      NO
+                    </th>
+                    <th
+                      onClick={() => requestSort("nama_daerah")}
+                      style={{ cursor: "pointer", verticalAlign: "middle" }}
+                    >
+                      Kode Sub Rincian Objek {getSortIcon("nama_daerah")}
+                    </th>
+                    <th
+                      onClick={() => requestSort("nama_sro")}
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Nama Sub Rincian Objek {getSortIcon("nama_sro")}
+                    </th>
+                    <th
+                      onClick={() => requestSort("total_rinciansro")}
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Pagu (Rp) {getSortIcon("total_rinciansro")}
+                    </th>
+                    <th
+                      onClick={() => requestSort("total_rinciansro")}
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Realisasi {getSortIcon("total_rinciansro")}
+                    </th>
+                    <th
+                      onClick={() => requestSort("persentase")}
+                      style={{
+                        cursor: "pointer",
+                        textAlign: "center",
+                        whiteSpace: "normal",
+                        overflowWrap: "break-word",
+                      }}
+                    >
+                      Persentase {getSortIcon("persentase")}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody style={{ minHeight: "500px" }}>
+                  {currentItemsDetailSub.map((item, index) => (
+                    <tr key={index}>
+                      {/* <td>{item.kode_prop}</td> */}
+                      <td
+                        style={{ textAlign: "center", verticalAlign: "middle" }}
+                      >
+                        {index + 1}
+                      </td>
+                      <td>{item.kode_sro}</td>
+                      <td
+                        style={{
+                          whiteSpace: "normal", // Membolehkan teks turun ke baris berikutnya
+                          wordWrap: "break-word", // Memastikan teks panjang terpotong dan turun ke bawah
+                          maxWidth: "200px", // Menetapkan lebar maksimum sel (sesuaikan dengan kebutuhan)
+                        }}
+                      >
+                        {" "}
+                        {item.nama_sro || "-"}
+                      </td>
+                      {/* <td>
+                         Rp {item.rincian_sub_giat ? parseInt(item.rincian_sub_giat).toLocaleString("id-ID")
+                            : "-"}
+                        </td> */}
+                      <td>
+                      <span style={{ float: "right" }}>
+                        {item.anggarangeser
+                          ? parseInt(item.anggarangeser).toLocaleString(
+                              "id-ID"
+                            )
+                          : "-"}
+                      </span>
+                    </td>
+                      <td>
+                        <span style={{ float: "right" }}>
+                          {item.realisasi
+                            ? parseInt(item.realisasi).toLocaleString(
+                                "id-ID"
+                              )
+                            : "-"}
+                        </span>
+                      </td>
+                      <td>
+                        <span style={{ float: "right" }}>
+                          {item.persentase
+                            ? item.persentase >= 1
+                              ? `${Number(item.persentase).toLocaleString(
+                                  "id-ID",
+                                  {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  }
+                                )}%`
+                              : `${Number(item.persentase).toLocaleString(
+                                  "id-ID",
+                                  {
+                                    minimumFractionDigits: 4,
+                                  }
+                                )}%`
+                            : "-"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <Pagination
+              currentPage={currentPageDetailSub}
+              totalPages={totalPagesDetailSub}
+              onPageChange={paginateDetailSub}
             />
           </ModalBody>
         </div>

@@ -1,14 +1,14 @@
 import React from 'react'
-import ContentRealisaiDetailDaerah from './ContentRealisaiDetailDaerah'
+import ContentRealisasiDetailDaerah from './ContentRealisasiDetailDaerah'
 import { Col, Row } from 'reactstrap'
 
-const RealisaiDetailDaerah = () => {
+const RealisasiDetailDaerah = () => {
   return (
     <React.Fragment>
       <div className='page-content'>
         <Row>
           <Col>
-            <ContentRealisaiDetailDaerah />
+            <ContentRealisasiDetailDaerah />
           </Col>          
         </Row>          
       </div>  
@@ -16,4 +16,4 @@ const RealisaiDetailDaerah = () => {
   )
 }
 
-export default RealisaiDetailDaerah
+export default RealisasiDetailDaerah

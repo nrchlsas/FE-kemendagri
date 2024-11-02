@@ -26,10 +26,21 @@ import BarWithPercentageModifiedStunting from "../../Components/Chart/BarWithPer
 import logoBkkbn from "../../assets/images/logo-kemendagri/logo-bkkbn.png";
 import "./../Dapodik/dapodik.scss";
 import VerticalBarChart from "../../Components/Chart/VerticalBarChart";
+import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
 const ContentStunting = () => {
+
+ 
+
+  const [selectedSingle, setSelectedSingle] = useState('6'); // Set default value
+  const handleSelectChange = (e) => {
+    const { name, value } = e.target;
+    console.log(`${name}: ${value}`, 'ini isi selected value');
+    setSelectedSingle(value);
+  };
+
   const [customActiveTab, setcustomActiveTab] = useState("1");
 
   const toggleCustom = (tab) => {    
@@ -543,6 +554,12 @@ const ContentStunting = () => {
   };
 
   const [dataStuntingTabel, setDataStuntingTabel] = useState([], []);
+  const [titleMap, setTitleMap] = useState("Berisiko Stunting Desil 1")
+  const [valueMap, setValueMap] = useState([]);
+  const [maxValueMap, setmaxValueMap] = useState(0)
+  const [dataWidth, setDataWidth] = useState(6)  
+  const [roam, setRoam] = useState(false)
+  const [handleCardClick, setHandleCardClick] = useState(() => () => {});
 
   const getDataStuntingTabel = () => {
     const fetchData = async () => {
@@ -567,10 +584,74 @@ const ContentStunting = () => {
 
         const dataStuntingTabel = await response.json();
 
+        const valueDesil1 = dataStuntingTabel.data.map(item => ({
+          name: item.nama_prov,
+          value: parseInt(item.peringkat_kesejahteraan_1)          
+        }));
+        setValueMap(valueDesil1);
+
+        console.log(valueDesil1)
+
+        // const valueDesil2 = dataStuntingTabel.data.map(item => ({
+        //   name: item.nama_prov,
+        //   value: parseInt(item.peringkat_kesejahteraan_2)          
+        // }));
+
+        // const valueDesil3 = dataStuntingTabel.data.map(item => ({
+        //   name: item.nama_prov,
+        //   value: parseInt(item.peringkat_kesejahteraan_3)          
+        // }));
+
+        // const valueDesil4 = dataStuntingTabel.data.map(item => ({
+        //   name: item.nama_prov,
+        //   value: parseInt(item.peringkat_kesejahteraan_4)          
+        // }));
+
+        // const valueDesilLebihDari4 = dataStuntingTabel.data.map(item => ({
+        //   name: item.nama_prov,
+        //   value: parseInt(item.peringkat_kesejahteraan_diatas_4)          
+        // }));
+
+        const maxDesil1 = Math.max(...valueDesil1.map(item => item.value));
+        // const maxDesil2  = Math.max(...valueDesil2.map(item => item.value));
+        // const maxDesil3  = Math.max(...valueDesil3.map(item => item.value));
+        // const maxDesil4  = Math.max(...valueDesil4.map(item => item.value));
+        // const maxDesilLebiDari4  = Math.max(...valueDesilLebihDari4.map(item => item.value));
+
+     
+        setmaxValueMap(maxDesil1);
+
         setShowNextData(true);
         setDataStuntingTabel(dataStuntingTabel.data);
         setCurrentPage(1);
         setDataKolomNamaDaerah("Se-Provinsi");
+
+        // const handleCardClick = (valueType) => {
+        //   switch(valueType) {
+        //     case 'totalAnakSekolah':
+        //       setValueMap(valueTotalAnakSekolah);
+        //       setmaxValueMap(maxAnakSekolah)
+        //       break;
+        //     case 'totalSD':
+        //       setValueMap(valueTotalSd);
+        //       setmaxValueMap(maxSd)
+        //       break;
+        //     case 'totalSMP':
+        //       setValueMap(valueTotalSmp);
+        //       setmaxValueMap(maxSmp)
+        //       break;
+        //     case 'totalSMA':
+        //       setValueMap(valueTotalSma);
+        //       setmaxValueMap(maxSma)
+        //       break;
+        //     case 'totalSMK':
+        //       setValueMap(valueTotalSmk);
+        //       setmaxValueMap(maxSmk)
+        //       break;            
+        //     default:
+        //       break;
+        //   }
+        // };
       } catch (errorStunting) {
         setErrorStunting(errorStunting);
       } finally {
@@ -686,6 +767,8 @@ const ContentStunting = () => {
 
         setCurrentPageDetail(1);
         setCurrentPageDetailSub(1);
+
+        
         // Open the modal only after data is successfully fetched
       } catch (errorDetailAnggaran) {
         setErrorDetailAnggaran(errorDetailAnggaran);
@@ -1008,14 +1091,71 @@ const ContentStunting = () => {
         </Col>
       </Row>
       <Row>
-        <Col md={6}>
+        <Col md={dataWidth}>
           <Card className="card-height-100">
             <CardBody>
-              <PolygonMaps />
+              <div className="d-flex justify-content-between mb-2">
+              <div className="d-flex justify-content-center align-items-center">
+              {dataWidth==6 ? (<><button onClick={()=>{
+                  setDataWidth(12)
+                  setRoam(true)
+                  }} style={{
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    padding: "5px 10px",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontSize: "16px",
+                  }}>
+                    Wide Screen
+                  </button></>) : (<><button onClick={()=>{
+                    setDataWidth(6)
+                    setRoam(false)
+                  }} style={{
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    padding: "5px 10px",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontSize: "16px",
+                  }}>
+                    Back
+                  </button></>)}
+              </div>
+              
+              <div className="d-flex nav-beranda">
+              <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                Keluarga Berisiko Stunting:
+              </div>
+                  <select
+                    name="desil"
+                      style={{
+                        padding: "10px 30px 10px 10px",
+                        fontSize: "16px",
+                        borderRadius: "5px",
+                        border: "1px solid #ccc",
+                        backgroundColor: "#ffffff",
+                        cursor: "pointer",
+                        marginLeft: "10px"
+                      }}
+                      value={selectedSingle}
+                      onChange={handleSelectChange}
+                    >
+                    <option value="1">DESIL 1</option>
+                    <option value="2">DESIL 2</option>
+                    <option value="3">DESIL 3</option>
+                    <option value="4">DESIL 4</option>
+                    <option value="5">DESIL &gt;4</option>
+                    </select>
+                </div>
+              </div>
+              <MapIndoChart chartTitle={titleMap} roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#FFCDD2", "#FF9EA7", "#FF7380", "#FF4B5C", "#FF2438", "#FF0017"]} />
             </CardBody>
           </Card>
         </Col>
-        <Col md={6}>
+        <Col md={dataWidth}>
           <Card className="card-height-100">
             <CardBody>
               <Row>
@@ -2477,32 +2617,6 @@ const ContentStunting = () => {
                           KABUPATEN
                         </NavLink>
                       </NavItem>
-                      {/* <NavItem>
-                    <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames({
-                        active: customActiveTab === "3",
-                      })}
-                      onClick={() => {
-                        toggleCustom("3");
-                      }}
-                    >
-                      KECAMATAN
-                    </NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames({
-                        active: customActiveTab === "4",
-                      })}
-                      onClick={() => {
-                        toggleCustom("4");
-                      }}
-                    >
-                      KELURAHAN
-                    </NavLink>
-                  </NavItem> */}
                     </Nav>
                   </div>
                   <TabContent

@@ -385,7 +385,7 @@ const ContentRealisasi = () => {
           </Card>
         </Col>
         <Col md={6} xl={6}>
-          <Card>
+          <Card className="card-height-100">
             <CardBody>
               <div className="separator">
                 <h4 className="card-title mb-1">

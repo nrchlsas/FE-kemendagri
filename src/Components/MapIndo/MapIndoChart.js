@@ -40,7 +40,7 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
       inRange: {
         color: colorData ? colorData : ['#abd9e9','#74add1','#4575b4','#313695']
       },
-      text: ['High Population', 'Low Population'],
+      text: ['Tinggi', 'Rendah'],
       calculable: true
     },
     series: [
