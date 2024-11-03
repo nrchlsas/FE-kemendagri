@@ -300,7 +300,6 @@ const ContentPerencanaanDetailDaerah = () => {
       }else{
         setSelectedSingleSubTahapan(value);
       }
-  
     };
       
     const requestSort = (key) => {
@@ -698,7 +697,7 @@ const ContentPerencanaanDetailDaerah = () => {
                           <i className=" ri-women-line text-danger"></i>
                         </span>
                       </div> */}
-                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                        <div className="d-flex justify-content-center align-items-center title-body">
                           <span>
                             <CountUp
                               start={0}
@@ -707,7 +706,7 @@ const ContentPerencanaanDetailDaerah = () => {
                                 dataRincianDetail
                               }
                               separator="."
-                              // prefix=""
+                              prefix="Rp "
                               suffix=""
                               duration={3}
                             />

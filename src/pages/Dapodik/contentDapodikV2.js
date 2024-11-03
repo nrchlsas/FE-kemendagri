@@ -3217,7 +3217,7 @@ const ContentDapodikV2 = () => {
                           <i className=" ri-women-line text-danger"></i>
                         </span>
                       </div> */}
-                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                        <div className="d-flex justify-content-center align-items-center title-body">
                           <span>
                             <CountUp
                               start={0}
@@ -3226,7 +3226,7 @@ const ContentDapodikV2 = () => {
                                 dataRincianDetail
                               }
                               separator="."
-                              // prefix=""
+                              prefix="Rp "
                               suffix=""
                               duration={3}
                             />
@@ -3500,7 +3500,7 @@ const ContentDapodikV2 = () => {
                           <i className=" ri-women-line text-danger"></i>
                         </span>
                       </div> */}
-                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                        <div className="d-flex justify-content-center align-items-center title-body">
                           <span>
                             <CountUp
                               start={0}
@@ -3509,7 +3509,7 @@ const ContentDapodikV2 = () => {
                                 dataRincianDetailSub
                               }
                               separator="."
-                              // prefix=""
+                              prefix="Rp "
                               suffix=""
                               duration={3}
                             />

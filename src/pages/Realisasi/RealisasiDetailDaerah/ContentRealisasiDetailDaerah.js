@@ -190,18 +190,21 @@ const ContentRealisasiDetailDaerah = () => {
     };
   
     const [modall, setModall] = useState(false);
-    const [dataRincianDetail, setDataRincianDetail] = useState(0);
+    const [dataRincianDetailAnggaran, setDataRincianDetailAnggaran] = useState(0);
+    const [dataRincianDetailRealisasi, setDataRincianDetailRealisasi] = useState(0);
     const [dataDetailNamaUnitSkpd, setDataDetailNamaUnitSkpd] = useState("");
 
     const handleOpen = ({
       kodeUnitSkpd = "",
       namaUnitSkpd="",
-      realisasi=0
+      realisasi=0,
+      anggaran=0
     }
     ) => {
       getDataDetailUnitSkpd({ kodeUnitSkpd:kodeUnitSkpd })
       setDataDetailNamaUnitSkpd(namaUnitSkpd);    
-      setDataRincianDetail(realisasi) 
+      setDataRincianDetailAnggaran(anggaran)
+      setDataRincianDetailRealisasi(realisasi)
       setCardHead(null);
     };
   
@@ -370,16 +373,22 @@ const ContentRealisasiDetailDaerah = () => {
     };     
 
     const [modal, setModal] = useState(false);
-    const [dataRincianDetailSub, setDataRincianDetailSub] = useState(0);
+    const [dataRincianDetailAnggaranSub, setDataRincianDetailAnggaranSub] = useState(0);
+    const [dataRincianDetailRealisasiSub, setDataRincianDetailRealisasiSub] = useState(0);
+    const [dataDetailNamaSubRincinianObjek, setDataDetailNamaSubRincinianObjek] = useState("");
 
     const handleOpenNextModal = ({
       kodeSubGiat = "",
-      rincianDetail = ""
+      namaSubGiat = "",
+      anggaran = "",
+      realisasi="",
     }
     ) => {
-      getDataDetailUnitSkpdSro({kodeSubGiat : kodeSubGiat})
-      // setModal(true);
-      setDataRincianDetailSub(rincianDetail);
+      getDataDetailUnitSkpdSro( {kodeSubGiat : kodeSubGiat} )
+      setModal(true);
+      setDataDetailNamaSubRincinianObjek(namaSubGiat)
+      setDataRincianDetailAnggaranSub(anggaran);
+      setDataRincianDetailRealisasiSub(realisasi);
       setCardHead(null);
     };
     const handleCloseNextModal = () => {
@@ -412,8 +421,8 @@ const ContentRealisasiDetailDaerah = () => {
           <div className="d-sm-flex align-items-center justify-content-between">            
               <div className="page-title-right">
                   <ol className="breadcrumb mb-2 ms-2" style={{fontWeight:600}}>
-                      <li className="breadcrumb-item"><Link to="/Realisasi">Realisasi</Link></li>
-                      <li className="breadcrumb-item"><Link to={`/Realisasi/Realisasi-detail/${idProv}?namaDaerah=${namaProv}`}>Detail Se-{namaProv}</Link></li>
+                      <li className="breadcrumb-item"><Link to="/realisasi">Realisasi</Link></li>
+                      <li className="breadcrumb-item"><Link to={`/realisasi/realisasi-detail/${idProv}?namaDaerah=${namaProv}`}>Detail Se-{namaProv}</Link></li>
                       <li className="breadcrumb-item active">Detail SKPD {namaDaerah}</li>
                   </ol>
               </div>
@@ -596,7 +605,7 @@ const ContentRealisasiDetailDaerah = () => {
                             >
                               NAMA SKPD {getSortIcon("nama_skpd")}
                             </th>
-                            {/* <th
+                            <th
                             onClick={() => requestSort("kode_unit_skpd")}
                               style={{
                                 textAlign: "center",
@@ -608,7 +617,7 @@ const ContentRealisasiDetailDaerah = () => {
                               scope="col"
                             >
                               KODE UNIT SKPD {getSortIcon("kode_sub_giat")}
-                            </th> */}
+                            </th>
                             <th
                             onClick={() => requestSort("nama_unit_skpd")}
                               style={{
@@ -672,8 +681,9 @@ const ContentRealisasiDetailDaerah = () => {
                                     whiteSpace: "normal",
                                     wordWrap: "break-word",
                                     maxWidth: "200px",
-                                  }}>{item.nama_unit_skpd}
+                                  }}>{item.nama_skpd}
                                 </td>
+                                <td >{item.kode_unit_skpd}</td>
                                 <td style={{
                                     whiteSpace: "normal", 
                                     wordWrap: "break-word", 
@@ -707,7 +717,7 @@ const ContentRealisasiDetailDaerah = () => {
                                   }}
                                 >
                                   <i
-                                  onClick={()=> handleOpen({ kodeUnitSkpd: item.kode_skpd, namaUnitSkpd:item.nama_unit_skpd, realisasi: item.realisasi })}
+                                  onClick={()=> handleOpen({ kodeUnitSkpd: item.kode_skpd, namaUnitSkpd:item.nama_unit_skpd, realisasi: item.realisasi, anggaran:item.anggarangeser })}
                                     style={{
                                       padding: "5px 10px",
                                       cursor: "pointer",
@@ -748,7 +758,7 @@ const ContentRealisasiDetailDaerah = () => {
           </ModalHeader>
           <ModalBody>
             {/* <div>
-              Total Anggaran: {dataRincianDetail}
+              Total Anggaran: {dataRincianDetailAnggaran}
             </div> */}
             <Row>
               <Col md={4}>
@@ -770,10 +780,43 @@ const ContentRealisasiDetailDaerah = () => {
                               start={0}
                               end={
                                 // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
-                                dataRincianDetail
+                                dataRincianDetailAnggaran
                               }
                               separator="."
-                              // prefix=""
+                              prefix="Rp "
+                              suffix=""
+                              duration={3}
+                            />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+              <Col md={4}>
+                <Card className="card-animate card-height-100">
+                  <CardBody>
+                    <div className="d-flex flex-column title-custom-card">
+                      <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                        <span>Total Realisasi</span>
+                      </div>
+                      <div className="d-flex">
+                        {/* <div className="avatar-xs-half flex-shrink-0">
+                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                          <i className=" ri-women-line text-danger"></i>
+                        </span>
+                      </div> */}
+                        <div className="d-flex justify-content-center align-items-center title-body">
+                          <span>
+                            <CountUp
+                              start={0}
+                              end={
+                                // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                                dataRincianDetailRealisasi
+                              }
+                              separator="."
+                              prefix="Rp "
                               suffix=""
                               duration={3}
                             />
@@ -848,13 +891,22 @@ const ContentRealisasiDetailDaerah = () => {
                       </td>                      
                       <td>
                          <span style={{ float: "right" }}>
-                          {item.pagu_validasi
-                            ? parseInt(item.pagu_validasi).toLocaleString(
+                          {item.anggarangeser
+                            ? parseInt(item.anggarangeser).toLocaleString(
                                 "id-ID"
                               )
                             : "-"}
                         </span>                        
                       </td>   
+                      <td>
+                         <span style={{ float: "right" }}>
+                          {item.realisasi
+                            ? parseInt(item.realisasi).toLocaleString(
+                                "id-ID"
+                              )
+                            : "-"}
+                        </span>                        
+                      </td>
                       <td
                       style={{
                         textAlign: "center",
@@ -862,9 +914,9 @@ const ContentRealisasiDetailDaerah = () => {
                         whiteSpace: "normal",
                         overflowWrap: "break-word",
                       }}
-                    >
+                      >
                       <i
-                      onClick={()=> handleOpenNextModal({ kodeUnitSkpd: item.kode_skpd, namaUnitSkpd:item.nama_unit_skpd, realisasi: item.realisasi })}
+                      onClick={()=> handleOpenNextModal({ kodeSubGiat: item.kode_sub_giat, namaSubGiat:item.nama_sub_giat, realisasi: item.realisasi, anggaran: item.anggarangeser })}
                         style={{
                           padding: "5px 10px",
                           cursor: "pointer",
@@ -899,7 +951,7 @@ const ContentRealisasiDetailDaerah = () => {
             className=" p-3 bg-info-subtle"
             toggle={handleCloseNextModal}
           >
-            Sub Rincian Objek
+            Sub Rincian Objek {dataDetailNamaSubRincinianObjek}
           </ModalHeader>
           <ModalBody>
             <Row>
@@ -922,10 +974,43 @@ const ContentRealisasiDetailDaerah = () => {
                               start={0}
                               end={
                                 // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
-                                dataRincianDetailSub
+                                dataRincianDetailAnggaranSub
                               }
                               separator="."
-                              // prefix=""
+                              prefix="Rp "
+                              suffix=""
+                              duration={3}
+                            />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+              <Col md={4}>
+                <Card className="card-animate card-height-100">
+                  <CardBody>
+                    <div className="d-flex flex-column title-custom-card">
+                      <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                        <span>Total Realisasi</span>
+                      </div>
+                      <div className="d-flex">
+                        {/* <div className="avatar-xs-half flex-shrink-0">
+                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                          <i className=" ri-women-line text-danger"></i>
+                        </span>
+                      </div> */}
+                        <div className="d-flex justify-content-center align-items-center title-body">
+                          <span>
+                            <CountUp
+                              start={0}
+                              end={
+                                // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                                dataRincianDetailRealisasiSub
+                              }
+                              separator="."
+                              prefix="Rp "
                               suffix=""
                               duration={3}
                             />
@@ -1031,7 +1116,14 @@ const ContentRealisasiDetailDaerah = () => {
                       </td>
                       <td>
                         <span style={{ float: "right" }}>
-                          {item.persentase
+                          {`${((item.realisasi/item.anggarangeser)*100).toLocaleString(
+                                  "id-ID",
+                                  {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  }
+                                )}%`}
+                          {/* {item.persentase
                             ? item.persentase >= 1
                               ? `${Number(item.persentase).toLocaleString(
                                   "id-ID",
@@ -1046,7 +1138,7 @@ const ContentRealisasiDetailDaerah = () => {
                                     minimumFractionDigits: 4,
                                   }
                                 )}%`
-                            : "-"}
+                            : "-"} */}
                         </span>
                       </td>
                     </tr>

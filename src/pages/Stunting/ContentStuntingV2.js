@@ -31,15 +31,33 @@ import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
 const ContentStunting = () => {
-
- 
-
-  const [selectedSingle, setSelectedSingle] = useState('6'); // Set default value
+  const [selectedDesil, setSelectedDesil] = useState("1"); // State untuk menyimpan pilihan dropdown
   const handleSelectChange = (e) => {
     const { name, value } = e.target;
-    console.log(`${name}: ${value}`, 'ini isi selected value');
-    setSelectedSingle(value);
+    const selectedValue = value;
+    setSelectedDesil(selectedValue); // Update state dengan pilihan yang dipilih
+    if(selectedValue == "5"){
+      setTitleMap(`Keluarga Berisiko Stunting ${name} >4`)
+    }else{
+      setTitleMap(`Keluarga Berisiko Stunting ${name} ${value}`)
+    }
+  
+    // Ambil data desil yang sesuai dan update valueMap
+    const selectedData = dataDesil[`desil${selectedValue}`]; // Ambil data sesuai pilihan
+    console.log(selectedData,'ini')
+    if (selectedData) {
+      setValueMap(selectedData);
+      const maxValue = Math.max(...selectedData.map(item => item.value));
+      setmaxValueMap(maxValue);
+    }
   };
+
+  // const [selectedSingle, setSelectedSingle] = useState('1'); // Set default value
+  // const handleSelectChange = (e) => {
+  //   const { name, value } = e.target;
+  //   console.log(`${name}: ${value}`, 'ini isi selected value');
+  //   setSelectedSingle(value);
+  // };
 
   const [customActiveTab, setcustomActiveTab] = useState("1");
 
@@ -558,8 +576,8 @@ const ContentStunting = () => {
   const [valueMap, setValueMap] = useState([]);
   const [maxValueMap, setmaxValueMap] = useState(0)
   const [dataWidth, setDataWidth] = useState(6)  
-  const [roam, setRoam] = useState(false)
-  const [handleCardClick, setHandleCardClick] = useState(() => () => {});
+  const [roam, setRoam] = useState(false);
+  const [dataDesil, setDataDesil] = useState({}); 
 
   const getDataStuntingTabel = () => {
     const fetchData = async () => {
@@ -583,14 +601,47 @@ const ContentStunting = () => {
         }
 
         const dataStuntingTabel = await response.json();
+        setDataStuntingTabel(dataStuntingTabel.data);
+        setShowNextData(true);
+        setCurrentPage(1);
+        setDataKolomNamaDaerah("Se-Provinsi");
 
-        const valueDesil1 = dataStuntingTabel.data.map(item => ({
+              // Menyimpan semua data desil ke dalam state dataDesil
+      const desilData = {
+        desil1: dataStuntingTabel.data.map(item => ({
           name: item.nama_prov,
-          value: parseInt(item.peringkat_kesejahteraan_1)          
-        }));
-        setValueMap(valueDesil1);
+          value: parseInt(item.peringkat_kesejahteraan_1)
+        })),
+        desil2: dataStuntingTabel.data.map(item => ({
+          name: item.nama_prov,
+          value: parseInt(item.peringkat_kesejahteraan_2)
+        })),
+        desil3: dataStuntingTabel.data.map(item => ({
+          name: item.nama_prov,
+          value: parseInt(item.peringkat_kesejahteraan_3)
+        })),
+        desil4: dataStuntingTabel.data.map(item => ({
+          name: item.nama_prov,
+          value: parseInt(item.peringkat_kesejahteraan_4)
+        })),
+        desil5: dataStuntingTabel.data.map(item => ({
+          name: item.nama_prov,
+          value: parseInt(item.peringkat_kesejahteraan_diatas_4)
+        }))
+      };
 
-        console.log(valueDesil1)
+      setDataDesil(desilData); // Simpan semua desil ke dalam state
+      setValueMap(desilData.desil1);
+      const maxDesil1 = Math.max(...desilData.desil1.map(item => item.value));
+      setmaxValueMap(maxDesil1);
+      
+        // const valueDesil1 = dataStuntingTabel.data.map(item => ({
+        //   name: item.nama_prov,
+        //   value: parseInt(item.peringkat_kesejahteraan_1)          
+        // }));
+        // setValueMap(valueDesil1);
+
+        // console.log(valueDesil1)
 
         // const valueDesil2 = dataStuntingTabel.data.map(item => ({
         //   name: item.nama_prov,
@@ -612,46 +663,12 @@ const ContentStunting = () => {
         //   value: parseInt(item.peringkat_kesejahteraan_diatas_4)          
         // }));
 
-        const maxDesil1 = Math.max(...valueDesil1.map(item => item.value));
+        // const maxDesil1 = Math.max(...valueDesil1.map(item => item.value));
         // const maxDesil2  = Math.max(...valueDesil2.map(item => item.value));
         // const maxDesil3  = Math.max(...valueDesil3.map(item => item.value));
         // const maxDesil4  = Math.max(...valueDesil4.map(item => item.value));
         // const maxDesilLebiDari4  = Math.max(...valueDesilLebihDari4.map(item => item.value));
 
-     
-        setmaxValueMap(maxDesil1);
-
-        setShowNextData(true);
-        setDataStuntingTabel(dataStuntingTabel.data);
-        setCurrentPage(1);
-        setDataKolomNamaDaerah("Se-Provinsi");
-
-        // const handleCardClick = (valueType) => {
-        //   switch(valueType) {
-        //     case 'totalAnakSekolah':
-        //       setValueMap(valueTotalAnakSekolah);
-        //       setmaxValueMap(maxAnakSekolah)
-        //       break;
-        //     case 'totalSD':
-        //       setValueMap(valueTotalSd);
-        //       setmaxValueMap(maxSd)
-        //       break;
-        //     case 'totalSMP':
-        //       setValueMap(valueTotalSmp);
-        //       setmaxValueMap(maxSmp)
-        //       break;
-        //     case 'totalSMA':
-        //       setValueMap(valueTotalSma);
-        //       setmaxValueMap(maxSma)
-        //       break;
-        //     case 'totalSMK':
-        //       setValueMap(valueTotalSmk);
-        //       setmaxValueMap(maxSmk)
-        //       break;            
-        //     default:
-        //       break;
-        //   }
-        // };
       } catch (errorStunting) {
         setErrorStunting(errorStunting);
       } finally {
@@ -1130,7 +1147,7 @@ const ContentStunting = () => {
                 Keluarga Berisiko Stunting:
               </div>
                   <select
-                    name="desil"
+                    name="Desil"
                       style={{
                         padding: "10px 30px 10px 10px",
                         fontSize: "16px",
@@ -1140,7 +1157,7 @@ const ContentStunting = () => {
                         cursor: "pointer",
                         marginLeft: "10px"
                       }}
-                      value={selectedSingle}
+                      value={selectedDesil}
                       onChange={handleSelectChange}
                     >
                     <option value="1">DESIL 1</option>
@@ -3324,7 +3341,7 @@ const ContentStunting = () => {
                           <i className=" ri-women-line text-danger"></i>
                         </span>
                       </div> */}
-                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                        <div className="d-flex justify-content-center align-items-center title-body">
                           <span>
                             <CountUp
                               start={0}
@@ -3333,7 +3350,7 @@ const ContentStunting = () => {
                                 dataRincianDetail
                               }
                               separator="."
-                              // prefix=""
+                              prefix="Rp "
                               suffix=""
                               duration={3}
                             />
@@ -3563,7 +3580,7 @@ const ContentStunting = () => {
                           <i className=" ri-women-line text-danger"></i>
                         </span>
                       </div> */}
-                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                        <div className="d-flex justify-content-center align-items-center title-body">
                           <span>
                             <CountUp
                               start={0}
@@ -3572,7 +3589,7 @@ const ContentStunting = () => {
                                 dataRincianDetailSub
                               }
                               separator="."
-                              // prefix=""
+                              prefix="Rp "
                               suffix=""
                               duration={3}
                             />

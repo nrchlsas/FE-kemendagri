@@ -25,6 +25,7 @@ import PieChartNew from "../../Components/Chart/PieChart";
 import Pagination from "../../Components/Pagination/Pagination";
 import logoKemenkoPmk from "../../assets/images/logo-kemendagri/logo-kemenko-pmk.png"
 import "./../Dapodik/dapodik.scss"
+import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
@@ -128,6 +129,8 @@ const ContentMiskinEkstremV2 = () => {
       setcustomActiveTabChartJenisPekerjaan(tab);
     }
   };
+
+
 
   const [dataKemiskinanEkstrem, setDataKemiskinanEkstrem] = useState([]);
   const [dataKemiskinanEkstremTahun, setDataKemiskinanEkstremTahun] = useState([]);
@@ -665,6 +668,37 @@ const ContentMiskinEkstremV2 = () => {
   };
   const [dataShowKeluargaDesil1, setDataShowKeluargaDesil1] = useState(false);
   const [dataShowIndividuDesil1, setDataShowIndividuDesil1] = useState(false);
+  const [titleMap, setTitleMap] = useState("Keluarga Desil 1")
+  const [valueMap, setValueMap] = useState([]);
+  const [maxValueMap, setmaxValueMap] = useState(0)
+  const [dataWidth, setDataWidth] = useState(6)  
+  const [roam, setRoam] = useState(false);
+  const [dataDesil, setDataDesil] = useState({}); 
+
+  const [selectedDesil, setSelectedDesil] = useState("1"); // State untuk menyimpan pilihan dropdown
+  const handleSelectChange = (e) => {
+    const { name, value } = e.target;
+    const selectedValue = value;
+    console.log(selectedValue, 'ini selected vlue')
+    setSelectedDesil(selectedValue); // Update state dengan pilihan yang dipilih
+    if(selectedValue <= "4"){
+      setTitleMap(`Keluarga ${name} ${value}`)
+    }else{
+      setTitleMap(`Individu ${name} ${value-4}`)
+    }
+  
+    // Ambil data desil yang sesuai dan update valueMap
+    const selectedData = dataDesil[`desil${selectedValue}`]; // Ambil data sesuai pilihan
+    console.log(selectedData,'ini')
+    if (selectedData) {
+      setValueMap(selectedData);
+      const maxValue = Math.max(...selectedData.map(item => item.value));
+      setmaxValueMap(maxValue);
+    }
+  };
+
+ 
+
   const handleShowDataKeluargaDesil1 = (value) => {
     setDataShowKeluargaDesil1(value);
   };
@@ -702,6 +736,45 @@ const ContentMiskinEkstremV2 = () => {
         setCurrentPage(1)
         setDataKolomNamaDaerah("Se-Provinsi")
         
+        const desilData = {
+          desil1: dataMiskinEkstremTabel.data.map(item => ({
+            name: item.nama_prov,
+            value: parseInt(item. jumlah_keluarga_desil_1)
+          })),
+          desil2: dataMiskinEkstremTabel.data.map(item => ({
+            name: item.nama_prov,
+            value: parseInt(item.jumlah_keluarga_desil_2)
+          })),
+          desil3: dataMiskinEkstremTabel.data.map(item => ({
+            name: item.nama_prov,
+            value: parseInt(item.jumlah_keluarga_desil_3)
+          })),
+          desil4: dataMiskinEkstremTabel.data.map(item => ({
+            name: item.nama_prov,
+            value: parseInt(item.jumlah_keluarga_desil_4)
+          })),
+          desil5: dataMiskinEkstremTabel.data.map(item => ({
+            name: item.nama_prov,
+            value: parseInt(item.jumlah_individu_desil_1)
+          })),
+          desil6: dataMiskinEkstremTabel.data.map(item => ({
+            name: item.nama_prov,
+            value: parseInt(item.jumlah_individu_desil_2)
+          })),
+          desil7: dataMiskinEkstremTabel.data.map(item => ({
+            name: item.nama_prov,
+            value: parseInt(item.jumlah_individu_desil_3)
+          })),
+          desil8: dataMiskinEkstremTabel.data.map(item => ({
+            name: item.nama_prov,
+            value: parseInt(item.jumlah_individu_desil_4)
+          })),
+        };
+  
+        setDataDesil(desilData); // Simpan semua desil ke dalam state
+        setValueMap(desilData.desil1);
+        const maxDesil1 = Math.max(...desilData.desil1.map(item => item.value));
+        setmaxValueMap(maxDesil1);
         
       } catch (errorKemiskinanEkstrem) {
         setErrorKemiskinanEkstrem(errorKemiskinanEkstrem);
@@ -1080,14 +1153,74 @@ const ContentMiskinEkstremV2 = () => {
         </Col>
       </Row>
       <Row>
-        <Col md={6}>
+        <Col md={dataWidth}>
           <Card className="card-height-100">
             <CardBody>
-              <PolygonMaps />
+            <div className="d-flex justify-content-between mb-2">
+              <div className="d-flex justify-content-center align-items-center">
+              {dataWidth==6 ? (<><button onClick={()=>{
+                  setDataWidth(12)
+                  setRoam(true)
+                  }} style={{
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    padding: "5px 10px",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontSize: "16px",
+                  }}>
+                    Wide Screen
+                  </button></>) : (<><button onClick={()=>{
+                    setDataWidth(6)
+                    setRoam(false)
+                  }} style={{
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    padding: "5px 10px",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontSize: "16px",
+                  }}>
+                    Back
+                  </button></>)}
+              </div>
+              
+              <div className="d-flex nav-beranda">
+              <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                Miskin Ekstrem:
+              </div>
+                  <select
+                    name="Desil"
+                      style={{
+                        padding: "10px 30px 10px 10px",
+                        fontSize: "16px",
+                        borderRadius: "5px",
+                        border: "1px solid #ccc",
+                        backgroundColor: "#ffffff",
+                        cursor: "pointer",
+                        marginLeft: "10px"
+                      }}
+                      value={selectedDesil}
+                      onChange={handleSelectChange}
+                    >
+                    <option value="1">KELUARGA DESIL 1</option>
+                    <option value="2">KELUARGA DESIL 2</option>
+                    <option value="3">KELUARGA DESIL 3</option>
+                    <option value="4">KELUARGA DESIL 4</option>
+                    <option value="5">INDIVIDU DESIL 1</option>
+                    <option value="6">INDIVIDU DESIL 2</option>
+                    <option value="7">INDIVIDU DESIL 3</option>
+                    <option value="8">INDIVIDU DESIL 4</option>
+                    </select>
+                </div>
+              </div>
+              <MapIndoChart chartTitle={titleMap} roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#D1ED87","#B9D676","#A1BF66","#89A855","#719145","#597A34"]} />
             </CardBody>
           </Card>
         </Col>
-        <Col md={6}>
+        <Col md={dataWidth}>
           {/* <Card>
             <CardBody>
               <div className="separator">
@@ -3396,7 +3529,7 @@ const ContentMiskinEkstremV2 = () => {
                           <i className=" ri-women-line text-danger"></i>
                         </span>
                       </div> */}
-                              <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                              <div className="d-flex justify-content-center align-items-center title-body">
                                 <span>
                                   <CountUp
                                     start={0}
@@ -3405,7 +3538,7 @@ const ContentMiskinEkstremV2 = () => {
                                       dataRincianDetail
                                     }
                                     separator="."
-                                    // prefix=""
+                                    prefix="Rp "
                                     suffix=""
                                     duration={3}
                                   />
@@ -3560,7 +3693,7 @@ const ContentMiskinEkstremV2 = () => {
                           <i className=" ri-women-line text-danger"></i>
                         </span>
                       </div> */}
-                              <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                              <div className="d-flex justify-content-center align-items-center title-body">
                                 <span>
                                   <CountUp
                                     start={0}
@@ -3569,7 +3702,7 @@ const ContentMiskinEkstremV2 = () => {
                                       dataRincianDetailSub
                                     }
                                     separator="."
-                                    // prefix=""
+                                    prefix="Rp "
                                     suffix=""
                                     duration={3}
                                   />
