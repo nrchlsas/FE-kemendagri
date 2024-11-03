@@ -1125,7 +1125,7 @@ const ContentStunting = () => {
                     cursor: "pointer",
                     fontSize: "16px",
                   }}>
-                    Wide Screen
+                    Maximize Map
                   </button></>) : (<><button onClick={()=>{
                     setDataWidth(6)
                     setRoam(false)
@@ -1138,7 +1138,7 @@ const ContentStunting = () => {
                     cursor: "pointer",
                     fontSize: "16px",
                   }}>
-                    Back
+                    Minimize Map
                   </button></>)}
               </div>
               
@@ -1168,7 +1168,7 @@ const ContentStunting = () => {
                     </select>
                 </div>
               </div>
-              <MapIndoChart chartTitle={titleMap} roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#FFCDD2", "#FF9EA7", "#FF7380", "#FF4B5C", "#FF2438", "#FF0017"]} />
+              <MapIndoChart roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#FFCDD2", "#FF9EA7", "#FF7380", "#FF4B5C", "#FF2438", "#FF0017"]} />
             </CardBody>
           </Card>
         </Col>

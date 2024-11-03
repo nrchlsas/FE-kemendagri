@@ -1170,7 +1170,7 @@ const ContentMiskinEkstremV2 = () => {
                     cursor: "pointer",
                     fontSize: "16px",
                   }}>
-                    Wide Screen
+                    Maximize Map
                   </button></>) : (<><button onClick={()=>{
                     setDataWidth(6)
                     setRoam(false)
@@ -1183,13 +1183,13 @@ const ContentMiskinEkstremV2 = () => {
                     cursor: "pointer",
                     fontSize: "16px",
                   }}>
-                    Back
+                    Minimize Map
                   </button></>)}
               </div>
               
               <div className="d-flex nav-beranda">
               <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
-                Miskin Ekstrem:
+                Penanganan Miskin Ekstrem:
               </div>
                   <select
                     name="Desil"
@@ -1216,7 +1216,7 @@ const ContentMiskinEkstremV2 = () => {
                     </select>
                 </div>
               </div>
-              <MapIndoChart chartTitle={titleMap} roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#D1ED87","#B9D676","#A1BF66","#89A855","#719145","#597A34"]} />
+              <MapIndoChart roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#D1ED87","#B9D676","#A1BF66","#89A855","#719145","#597A34"]} />
             </CardBody>
           </Card>
         </Col>
@@ -1287,7 +1287,7 @@ const ContentMiskinEkstremV2 = () => {
             <CardBody>
               <div className="separator mb-2">
                 <h4 className="card-title">
-                  Perbandingan Total Anggaran Untuk Kasus Miskin Ekstrem
+                  Perbandingan Total Anggaran Untuk Penanganan Miskin Ekstrem
                   Berdasarkan Total Belanja {customActiveTitleAnggaran}
                 </h4>
               </div>

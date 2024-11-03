@@ -861,7 +861,7 @@ const ContentDapodikV2 = () => {
                     cursor: "pointer",
                     fontSize: "16px",
                   }}>
-                    Wide Screen
+                    Maximize Map
                   </button></>) : (<><button onClick={()=>{
                     setDataWidth(6)
                     setRoam(false)
@@ -874,7 +874,7 @@ const ContentDapodikV2 = () => {
                     cursor: "pointer",
                     fontSize: "16px",
                   }}>
-                    Back
+                    Minimize Map
                   </button></>)}        
                   <MapIndoChart chartTitle={titleMap} roam={roam} maxValue={maxValueMap} colorData={['#B3E0E5', '#69D6E8', '#0092B3', '#1B8BA6']} valueSeries={valueMap}/>
               {/* <PolygonMaps /> */}

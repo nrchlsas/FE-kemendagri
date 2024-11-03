@@ -480,7 +480,7 @@ const ContentKependudukanV2 = () => {
                     cursor: "pointer",
                     fontSize: "16px",
                   }}>
-                    Wide Screen
+                    Maximize Map
                   </button></>) : (<><button onClick={()=>{
                     setDataWidth(6)
                     setRoam(false)
@@ -493,7 +493,7 @@ const ContentKependudukanV2 = () => {
                     cursor: "pointer",
                     fontSize: "16px",
                   }}>
-                    Back
+                    Minimize Map
                   </button></>)}   
               <MapIndoChart chartTitle={titleMap} roam={roam} maxValue={maxValueMap} colorData={["#FFD47A", "#FFC04D", "#FCAD24", "#E69B20", "#CC891C", "#B27717"]} valueSeries={valueMap}/>
             </CardBody>

@@ -369,14 +369,14 @@ const ContentRealisasi = () => {
                         <span style={{fontStyle:"poppins", color:"#929FB1"}}>Ketika 0% Pemda</span>
                     </div>
                     </div>
-                    <div className="d-flex mt-4 align-items-end">
+                    {/* <div className="d-flex mt-4 align-items-end">
                         <span
                         onClick={() => handleShowDataSumberUsulan(true)}
                         style={{ cursor: "pointer", color: "#2DAED4" }}
                         >
                         Lihat Sumber Usulan
                         </span>
-                    </div>
+                    </div> */}
                   </div>
                   
                 </>

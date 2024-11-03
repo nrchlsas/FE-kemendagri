@@ -200,7 +200,7 @@ const ContentRealisasiDaerah = () => {
   const goToDetail = (id, namaDaerah, namaProv) => {
     const encodedNamaDaerah = encodeURIComponent(namaDaerah); 
     const encodedNamaProv = encodeURIComponent(namaProv); 
-    navigate(`/Realisasi/Realisasi-detail/Realisasi-detail-skpd/${id}?namaDaerah=${encodedNamaDaerah}&namaProv=${encodedNamaProv}&idProv=${_id}`);
+    navigate(`/realisasi/realisasi-detail/realisasi-detail-skpd/${id}?namaDaerah=${encodedNamaDaerah}&namaProv=${encodedNamaProv}&idProv=${_id}`);
   };
 
     return (
