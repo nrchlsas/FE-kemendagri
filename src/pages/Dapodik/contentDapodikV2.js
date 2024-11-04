@@ -1366,7 +1366,8 @@ const ContentDapodikV2 = () => {
                       style={{ width: "100%" }}
                     >
                       <thead className="table-light">
-                        <tr>
+                        {customActiveTabJenisData == "1" ? (<>
+                          <tr>
                           <th
                             rowSpan="2"
                             style={{
@@ -1397,9 +1398,9 @@ const ContentDapodikV2 = () => {
                           >
                             Peserta Didik
                           </th>
-                          <th colSpan="6" style={{ textAlign: "center" }}>
+                          {/* <th colSpan="6" style={{ textAlign: "center" }}>
                             Anak Tidak Sekolah
-                          </th>
+                          </th> */}
                           <th
                             rowSpan="2"
                             style={{
@@ -1475,6 +1476,155 @@ const ContentDapodikV2 = () => {
                           >
                             SMK {getSortIcon("smk")}
                           </th>
+                          {/* <th
+                            onClick={() => requestSort("totsd_do")}
+                            style={{ cursor: "pointer" }}
+                          >
+                            Drop Out SD {getSortIcon("totsd_do")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("totsmp_do")}
+                            style={{ cursor: "pointer" }}
+                          >
+                            Drop Out SMP {getSortIcon("totsmp_do")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("totsma_do")}
+                            style={{ cursor: "pointer", borderRight: "2px solid #A9A9A9" }}
+                          >
+                            Drop Out SMA/SMK {getSortIcon("totsma_do")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("tkt_6_ltm")}
+                            style={{ cursor: "pointer" }}
+                          >
+                            Tidak Lanjut ke SMP {getSortIcon("tkt_6_ltm")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("tkt_9_ltm")}
+                            style={{ cursor: "pointer", borderRight: "2px solid #A9A9A9" }}
+                          >
+                            Tidak Lanjut ke SMA {getSortIcon("tkt_9_ltm")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("tkt_bpb")}
+                            style={{ cursor: "pointer" }}
+                          >
+                            Anak Belum Pernah Bersekolah{" "}
+                            {getSortIcon("tkt_bpb")}
+                          </th> */}
+                        </tr>
+                        </>) : (
+                        <>
+                        <tr>
+                          <th
+                            rowSpan="2"
+                            style={{
+                              cursor: "pointer",
+                              verticalAlign: "middle",
+                            }}
+                          >
+                            No
+                          </th>
+                          <th
+                            rowSpan="2"
+                            onClick={() => requestSort("nama_prov")}
+                            style={{
+                              cursor: "pointer",
+                              verticalAlign: "middle",
+                              textAlign: "center",
+                            }}
+                          >
+                            Se-Provinsi {getSortIcon("nama_prov")}
+                          </th>
+                          {/* <th
+                            colSpan="4"
+                            style={{
+                              textAlign: "center",
+                              borderRight: "2px solid #A9A9A9",
+                              backgroundColor: "#f7f7ff"
+                            }}
+                          >
+                            Peserta Didik
+                          </th> */}
+                          <th colSpan="6" style={{ textAlign: "center" }}>
+                            Anak Tidak Sekolah
+                          </th>
+                          <th
+                            rowSpan="2"
+                            style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => requestSort("totalanggaran")}
+                          >
+                            Total Anggaran (Rp){" "}
+                            {getSortIcon("totalanggaran")}
+                          </th>
+                          <th
+                            rowSpan="2"
+                            style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => requestSort("total_pendidikan ")}
+                          >
+                            Total Anggaran Pendidikan (Rp){" "}
+                            {getSortIcon("total_pendidikan ")}
+                          </th>
+                          <th
+                            rowSpan="2"
+                            style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => requestSort("persentase_anggaran")}
+                          >
+                            Persentase {" "}
+                            {getSortIcon("persentase_anggaran")}
+                          </th>
+                          <th
+                            rowSpan="2"
+                            style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                            }}
+                          >
+                            Detail Anggaran Pendidikan
+                          </th>
+                        </tr>
+                        <tr>
+                          {/* <th
+                            onClick={() => requestSort("sd")}
+                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
+                          >
+                            SD {getSortIcon("sd")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("smp")}
+                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
+                          >
+                            SMP {getSortIcon("smp")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("sma")}
+                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
+                          >
+                            SMA {getSortIcon("sma")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("smk")}
+                            style={{
+                              cursor: "pointer",
+                              borderRight: "2px solid #A9A9A9",
+                              backgroundColor: "#f7f7ff"
+                            }}
+                          >
+                            SMK {getSortIcon("smk")}
+                          </th> */}
                           <th
                             onClick={() => requestSort("totsd_do")}
                             style={{ cursor: "pointer" }}
@@ -1513,6 +1663,7 @@ const ContentDapodikV2 = () => {
                             {getSortIcon("tkt_bpb")}
                           </th>
                         </tr>
+                        </>)}                        
                       </thead>
                       <tbody style={{ minHeight: "500px" }}>
                         {currentItems.map((item, index) => (
@@ -1530,7 +1681,7 @@ const ContentDapodikV2 = () => {
                               {" "}
                               {`${item.nama_prov}` || "-"}
                             </td>
-                            <td style={{ backgroundColor: "#f7f7ff" }}>
+                            {customActiveTabJenisData == "1" ? (<><td style={{ backgroundColor: "#f7f7ff" }}>
                               {item.sd
                                 ? parseInt(item.sd).toLocaleString("id-ID")
                                 : "-"}
@@ -1549,8 +1700,8 @@ const ContentDapodikV2 = () => {
                               {item.smk
                                 ? parseInt(item.smk).toLocaleString("id-ID")
                                 : "-"}
-                            </td>
-                            <td style={{ backgroundColor: "#f7f7f7" }}>
+                            </td></>):(<>
+                              <td style={{ backgroundColor: "#f7f7f7" }}>
                               {item.totsd_do
                                 ? parseInt(item.totsd_do).toLocaleString(
                                     "id-ID"
@@ -1590,6 +1741,7 @@ const ContentDapodikV2 = () => {
                                 ? parseInt(item.tkt_bpb).toLocaleString("id-ID")
                                 : "-"}
                             </td>
+                            </>)}                                                        
                             <td>
                               <span style={{ float: "right" }}>
                                 {item.totalanggaran
