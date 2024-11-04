@@ -360,7 +360,7 @@ const ContentDapodikV2 = () => {
 
         const dataDapodikTabelKabupaten = await response.json();
 
-        setDataDapodikTabelKabupaten(dataDapodikTabelKabupaten.data);
+        setDataDapodikTabelKabupaten(dataDapodikTabelKabupaten?.data);
       } catch (errorDapodikTabel) {
         setErrorDapodikTabel(errorDapodikTabel);
       } finally {
@@ -395,7 +395,7 @@ const ContentDapodikV2 = () => {
           throw new Error("Network response was not ok");
         }
         const dataDapodikTabelProvinsi = await response.json();
-        setDataDapodikTabelProvinsi(dataDapodikTabelProvinsi.data);
+        setDataDapodikTabelProvinsi(dataDapodikTabelProvinsi?.data?.tabel_dapodik_provinsi);
 
       } catch (errorDapodikTabel) {
         setErrorDapodikTabel(errorDapodikTabel);
@@ -444,34 +444,34 @@ const ContentDapodikV2 = () => {
 
         if (kodeSeProvinsi != "" && kodeSubGiat == "") {
           setDataDetailAnggaran(
-            dataDetailAnggaran.data.detail_tabel_dapodik_seprovinsi
+            dataDetailAnggaran?.data?.detail_tabel_dapodik_seprovinsi
           );
           setModall(true);
         } else if (kodeDdnProvinsi != "" && kodeSubGiat == "") {
           setDataDetailAnggaran(
-            dataDetailAnggaran.data.detail_tabel_dapodik_byprovinsi
+            dataDetailAnggaran?.data?.detail_tabel_dapodik_byprovinsi
           );
           setModall(true);
         } else if (kodeDdnKabupaten != "" && kodeSubGiat == "") {
           setDataDetailAnggaran(
-            dataDetailAnggaran.data.detail_tabel_dapodik_bykabupaten
+            dataDetailAnggaran?.data?.detail_tabel_dapodik_bykabupaten
           );
           setModall(true);
         }
 
         if (kodeSeProvinsi != "" && kodeSubGiat != "") {
           setDataDetailAnggaranSub(
-            dataDetailAnggaran.data.detail_tabel_dapodik_seprovinsi_sro
+            dataDetailAnggaran?.data?.detail_tabel_dapodik_seprovinsi_sro
           );
           setModal(true);
         } else if (kodeDdnProvinsi != "" && kodeSubGiat != "") {
           setDataDetailAnggaranSub(
-            dataDetailAnggaran.data.detail_tabel_dapodik_provinsi_sro
+            dataDetailAnggaran?.data?.detail_tabel_dapodik_provinsi_sro
           );
           setModal(true);
         } else if (kodeDdnKabupaten != "" && kodeSubGiat != "") {
           setDataDetailAnggaranSub(
-            dataDetailAnggaran.data.detail_tabel_dapodik_provinsi_sro
+            dataDetailAnggaran?.data?.detail_tabel_dapodik_provinsi_sro
           );
           setModal(true);
         }
