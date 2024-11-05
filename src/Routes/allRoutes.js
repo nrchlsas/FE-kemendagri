@@ -247,7 +247,6 @@ import RangeArea from "../pages/Charts/ApexCharts/RangeAreaCharts";
 import FunnelCharts from "../pages/Charts/ApexCharts/FunnelCharts";
 
 import Home from "../pages/Home";
-import Apbd from "../pages/APDB";
 import Kependudukan from "../pages/Kependudukan";
 import Dapodik from "../pages/Dapodik";
 import Uhc from "../pages/UHC"
@@ -269,6 +268,7 @@ import PerencanaanDetailDaerah from "../pages/Perencanaan/PerencanaanDetailDaera
 import Realisasi from "../pages/Realisasi";
 import RealisasiDaerah from "../pages/Realisasi/RealisasiDaerah";
 import RealisasiDetailDaerah from "../pages/Realisasi/RealisasiDetailDaerah";
+import Penganggaran from "../pages/Penganggaran";
 
 //home
 
@@ -276,7 +276,7 @@ import RealisasiDetailDaerah from "../pages/Realisasi/RealisasiDetailDaerah";
 const authProtectedRoutes = [
 
   { path: "/beranda", component: <Home />},
-  { path: "/apbd", component: <Apbd />},
+  { path: "/penganggaran", component: <Penganggaran />},
   { path: "/perencanaan", component: <Perencanaan />},
   { path: "/perencanaan/perencanaan-detail/:_id", component: <PerencanaanDaerah />},
   { path: "/perencanaan/perencanaan-detail/perencanaan-detail-skpd/:_id", component: <PerencanaanDetailDaerah />},  

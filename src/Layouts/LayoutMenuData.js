@@ -170,12 +170,12 @@ const Navdata = () => {
           link: "/perencanaan",
           parentId: "sipd",
         },
-        // {
-        //   id: "anggaran",
-        //   label: "Anggaran",
-        //   link: "/pages-development",
-        //   parentId: "sipd",
-        // },
+        {
+          id: "penganggaran",
+          label: "Penganggaran",
+          link: "/penganggaran",
+          parentId: "sipd",
+        },
         {
           id: "realisasi",
           label: "Realisasi",

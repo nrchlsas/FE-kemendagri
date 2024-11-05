@@ -1,0 +1,1161 @@
+import React, { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Card, CardBody, Col, Row,Nav, NavItem, NavLink, Modal, ModalHeader, ModalBody } from 'reactstrap'
+import classnames from "classnames";
+import Pagination from "../../../Components/Pagination/Pagination";
+import PolygonMaps from "../../../Components/MapIndo/PolygonMaps";
+import VerticalBarChart from "../../../Components/Chart/VerticalBarChart";
+import PieChartNew from '../../../Components/Chart/PieChart';
+import '../../../Components/ProgressArrowBar/ProgressArrowBar.scss'
+import BreadCrumb from '../../../Components/Common/BreadCrumb';
+import logoKemendagri from "../../../assets/images/logo-kemendagri/logo-kemendagri-home.png"
+import CountUp from 'react-countup';
+import "./../../Kependudukan/kependudukan.scss";
+
+const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
+
+const ContentPenganggaranDetailDaerah = () => {
+    const { _id } = useParams();
+    const location = useLocation();
+  
+    const queryParams = new URLSearchParams(location.search);
+    const namaDaerah = queryParams.get("namaDaerah");
+    const namaProv = queryParams.get("namaProv");
+    const idProv = queryParams.get('idProv')
+  
+    const [customActiveTab, setcustomActiveTab] = useState("6");
+    const toggleCustom = (tab) => {
+      if (customActiveTab !== tab) {
+        setcustomActiveTab(tab);
+      }
+    };
+    const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
+    const [selectedSingleTahapan, setSelectedSingleTahapan] = useState('1'); // Set default value
+    const [selectedSingleSubTahapan, setSelectedSingleSubTahapan] = useState('6'); // Set default value
+    const [dataPenganggaran, setDataPenganggaran] = useState([]);
+    const [loadingPenganggaran, setLoadingPenganggaran] = useState([]);
+    const [errorPenganggaran, setErrorPenganggaran] = useState([]);
+  
+    const getDataPenganggaranNasional = ({
+      tahun = "2024",
+      tahapan = "1",
+      kodeDdn= _id
+    } = {}) => {
+      const fetchData = async () => {
+        try {
+          const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id_tahap: tahapan,
+              tahun: tahun,
+              kode_ddn: kodeDdn
+            }),
+          };
+          const response = await fetch(
+            `${API_URI}/Penganggaran_level_3`,
+            requestOptions
+          );
+  
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+  
+          const dataPenganggaranNasional = await response.json();
+
+          console.log(dataPenganggaranNasional);
+  
+          setDataPenganggaran(
+            dataPenganggaranNasional.data.Penganggaran_level_3
+          );
+        } catch (errorPenganggaran) {
+          setErrorPenganggaran(errorPenganggaran);
+        } finally {
+          setLoadingPenganggaran(false);
+        }
+      };
+      fetchData();
+    };
+  
+      // Memanggil fungsi API setiap kali dropdown berubah
+      useEffect(() => {
+      getDataPenganggaranNasional({
+          tahun: selectedSingleTahun,
+          tahapan: selectedSingleTahapan,
+      });
+      }, [selectedSingleTahun, selectedSingleTahapan]); // Panggil API jika tahun atau dokumen berubah
+    
+  
+    useEffect(() => {
+      // getDataPenganggaranNasional();
+      getDataPenganggaranNasional();
+    }, []);
+
+    const [dataDetailUnitSkpd, setDataDetailUnitSkpd] = useState([]);    
+    const [loadingDetailUnitSkpd, setLoadingDetailUnitSkpd] = useState([]);
+    const [errorDetailUnitSkpd, setErrorDetailUnitSkpd] = useState([]);    
+  
+    const getDataDetailUnitSkpd = ({
+      tahun= "2024",
+      kodeDdn=_id,
+      kodeUnitSkpd="",
+    }      
+    ) => {
+      const fetchData = async () => {
+        // setLoadingDetailUnitSkpd(true); // Set loading state to true when starting the fetch
+        try {
+          const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              kode_ddn: kodeDdn,
+              kode_skpd: kodeUnitSkpd,
+              tahun : tahun,
+            }),
+          };
+  
+          const response = await fetch(
+            `${API_URI}/Penganggaran_level_3_subgiat`,
+            requestOptions
+          );
+  
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+  
+          const dataDetailUnitSkpd = await response.json();
+  
+          setDataDetailUnitSkpd(dataDetailUnitSkpd.data.Penganggaran_level_3_subgiat)
+
+          setModall(true);            
+          setCurrentPageDetail(1);     
+          // Open the modal only after data is successfully fetched
+        } catch (errorDetailUnitSkpd) {
+          setErrorDetailUnitSkpd(errorDetailUnitSkpd);
+        } finally {
+          setLoadingDetailUnitSkpd(false);
+        }
+      };
+  
+      fetchData();
+    };
+
+    const [dataDetailUnitSkpdSro, setDataDetailUnitSkpdSro] = useState([]);    
+    const [loadingDetailUnitSkpdSro, setLoadingDetailUnitSkpdSro] = useState([]);
+    const [errorDetailUnitSkpdSro, setErrorDetailUnitSkpdSro] = useState([]);    
+  
+    const getDataDetailUnitSkpdSro = ({
+      tahun= "2024",
+      kodeDdn=_id,
+      kodeSubGiat="",
+    }      
+    ) => {
+      const fetchData = async () => {
+        // setLoadingDetailUnitSkpdSro(true); // Set loading state to true when starting the fetch
+        try {
+          const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              kode_ddn: kodeDdn,
+              kode_sub_giat: kodeSubGiat,
+              tahun : tahun,
+            }),
+          };
+  
+          const response = await fetch(
+            `${API_URI}/Penganggaran_level_3_sro`,
+            requestOptions
+          );
+  
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+  
+          const dataDetailUnitSkpdSro = await response.json();
+  
+          setDataDetailUnitSkpdSro(dataDetailUnitSkpdSro.data.Penganggaran_level_3_sro)
+
+          setModall(true);            
+          setCurrentPageDetail(1);     
+          // Open the modal only after data is successfully fetched
+        } catch (errorDetailUnitSkpdSro) {
+          setErrorDetailUnitSkpdSro(errorDetailUnitSkpdSro);
+        } finally {
+          setLoadingDetailUnitSkpdSro(false);
+        }
+      };
+  
+      fetchData();
+    };
+  
+    const [modall, setModall] = useState(false);
+    const [dataRincianDetailAnggaran, setDataRincianDetailAnggaran] = useState(0);
+    const [dataRincianDetailPenganggaran, setDataRincianDetailPenganggaran] = useState(0);
+    const [dataDetailNamaUnitSkpd, setDataDetailNamaUnitSkpd] = useState("");
+
+    const handleOpen = ({
+      kodeUnitSkpd = "",
+      namaUnitSkpd="",
+      Penganggaran=0,
+      anggaran=0
+    }
+    ) => {
+      getDataDetailUnitSkpd({ kodeUnitSkpd:kodeUnitSkpd })
+      setDataDetailNamaUnitSkpd(namaUnitSkpd);    
+      setDataRincianDetailAnggaran(anggaran)
+      setDataRincianDetailPenganggaran(Penganggaran)
+      setCardHead(null);
+    };
+  
+    const [cardhead, setCardHead] = useState();    
+  
+    const handleClose = () => {
+      setModall(false); // Close modal by setting modall to false
+    };
+    
+    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPageDetail, setCurrentPageDetail] = useState(1);
+    const [currentPageDetailSub, setCurrentPageDetailSub] = useState(1);
+    const [itemsPerPage] = useState(10); // Set items per page
+    const [itemsPerPageDetail] = useState(10);
+    const [itemsPerPageDetailSub] = useState(10); // Set items per page
+    const [sortConfig, setSortConfig] = useState({      
+      key: null,
+      direction: "ascending",
+    });
+    const [sortConfigDetail, setSortConfigDetail] = useState({      
+      key: null,
+      direction: "ascending",
+    });
+  
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+    const indexOfLastItemDetail = currentPageDetail * itemsPerPageDetail;
+    const indexOfFirstItemDetail = indexOfLastItemDetail - itemsPerPageDetail;
+
+    const indexOfLastItemDetailSub = currentPageDetailSub * itemsPerPageDetailSub;
+    const indexOfFirstItemDetailSub = indexOfLastItemDetailSub - itemsPerPageDetailSub;
+    
+    const sortedItems = React.useMemo(() => {
+      let sortableItems = [...(dataPenganggaran || [])];
+      if (sortConfig.key !== null) {
+        sortableItems.sort((a, b) => {
+          const aValue = a[sortConfig.key] || 0;
+          const bValue = b[sortConfig.key] || 0;
+  
+          if (aValue < bValue) {
+            return sortConfig.direction === "ascending" ? -1 : 1;
+          }
+          if (aValue > bValue) {
+            return sortConfig.direction === "ascending" ? 1 : -1;
+          }
+          return 0;
+        });
+      }
+      return sortableItems;
+    }, [dataPenganggaran, sortConfig]);
+
+    const sortedItemsDetail = React.useMemo(() => {
+      let sortableItems = [...(dataDetailUnitSkpd || [])];
+      if (sortConfigDetail.key !== null) {
+        sortableItems.sort((a, b) => {
+          const aValue = a[sortConfigDetail.key] || 0;
+          const bValue = b[sortConfigDetail.key] || 0;
+  
+          if (aValue < bValue) {
+            return sortConfigDetail.direction === "ascending" ? -1 : 1;
+          }
+          if (aValue > bValue) {
+            return sortConfigDetail.direction === "ascending" ? 1 : -1;
+          }
+          return 0;
+        });
+      }
+      return sortableItems;
+    }, [dataDetailUnitSkpd, sortConfigDetail]);
+
+    const sortedItemsDetailSub = React.useMemo(() => {
+      let sortableItems = [...(dataDetailUnitSkpdSro || [])];
+      if (sortConfig.key !== null) {
+        sortableItems.sort((a, b) => {
+          const aValue = a[sortConfig.key] || 0;
+          const bValue = b[sortConfig.key] || 0;
+  
+          if (aValue < bValue) {
+            return sortConfig.direction === "ascending" ? -1 : 1;
+          }
+          if (aValue > bValue) {
+            return sortConfig.direction === "ascending" ? 1 : -1;
+          }
+          return 0;
+        });
+      }
+      return sortableItems;
+    }, [dataDetailUnitSkpdSro, sortConfig]);
+
+
+  
+    const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);
+    const currentItemsDetail = sortedItemsDetail.slice(
+      indexOfFirstItemDetail,
+      indexOfLastItemDetail
+    );
+    const currentItemsDetailSub = sortedItemsDetailSub.slice(
+      indexOfFirstItemDetailSub,
+      indexOfLastItemDetailSub
+    );    
+    
+    const totalPages = Math.ceil(
+      (dataPenganggaran?.length || 0) / itemsPerPage
+    );
+    const totalPagesDetail = Math.ceil(
+      (dataDetailUnitSkpd?.length || 0) / itemsPerPage
+    );
+
+    const totalPagesDetailSub = Math.ceil(
+      (dataDetailUnitSkpdSro?.length || 0) / itemsPerPage
+    );
+  
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    const paginateDetail = (pageNumber) => setCurrentPageDetail(pageNumber);
+    const paginateDetailSub = (pageNumber) => setCurrentPageDetailSub(pageNumber);
+  
+    const [dataShowSumberUsulan, setDataShowSumberUsulan] = useState(false);
+    const handleShowDataSumberUsulan = (value) => {
+      setDataShowSumberUsulan(value);
+    };
+
+    const [namaTahapan, setNamaTahapan] = useState("Persiapan")  
+    const handleSelectChange = (e) => {
+      const { name, value } = e.target;
+      console.log(`${name}: ${value}`, 'ini isi selected value');
+      
+      if (name === 'tahun') {
+          setSelectedSingleTahun(value); // Misalnya, untuk dropdown tahun
+      } else if (name === 'tahap') {
+          setSelectedSingleTahapan(value); // Misalnya, untuk dropdown jenis dokumen
+      }else{
+        setSelectedSingleSubTahapan(value);
+      }
+  
+    };
+      
+    const requestSort = (key) => {
+      let direction = "ascending";
+      if (sortConfig.key === key && sortConfig.direction === "ascending") {
+        direction = "descending";
+      }
+      setSortConfig({ key, direction });
+    };
+
+    const getSortIcon = (key) => {
+      if (sortConfig.key === key) {
+        return sortConfig.direction === "ascending" ? "▲" : "▼";
+      }
+      return "↕"; // Default icon for unsorted
+    };
+
+    const requestSortDetail = (key) => {
+      let direction = "ascending";
+      if (sortConfigDetail.key === key && sortConfigDetail.direction === "ascending") {
+        direction = "descending";
+      }
+      setSortConfigDetail({ key, direction });
+    };
+
+    const getSortIconDetail = (key) => {
+      if (sortConfigDetail.key === key) {
+        return sortConfigDetail.direction === "ascending" ? "▲" : "▼";
+      }
+      return "↕"; // Default icon for unsorted
+    };     
+
+    const [modal, setModal] = useState(false);
+    const [dataRincianDetailAnggaranSub, setDataRincianDetailAnggaranSub] = useState(0);
+    const [dataRincianDetailPenganggaranSub, setDataRincianDetailPenganggaranSub] = useState(0);
+    const [dataDetailNamaSubRincinianObjek, setDataDetailNamaSubRincinianObjek] = useState("");
+
+    const handleOpenNextModal = ({
+      kodeSubGiat = "",
+      namaSubGiat = "",
+      anggaran = "",
+      Penganggaran="",
+    }
+    ) => {
+      getDataDetailUnitSkpdSro( {kodeSubGiat : kodeSubGiat} )
+      setModal(true);
+      setDataDetailNamaSubRincinianObjek(namaSubGiat)
+      setDataRincianDetailAnggaranSub(anggaran);
+      setDataRincianDetailPenganggaranSub(Penganggaran);
+      setCardHead(null);
+    };
+    const handleCloseNextModal = () => {
+      setModal(false);
+    };
+      
+      return (
+      <React.Fragment>
+          <Row>
+          <Col>
+            <Card className="card-custom">
+              <div className="d-flex justify-content-between">
+                <div className="d-flex title-page">
+                  {/* <div className="d-flex justify-content-center align-items-center avatar-sm">
+                    <span className="logo-sm">                      
+                    </span>
+                  </div> */}
+                  <div className="d-flex justify-content-center align-items-center">
+                    <span>Penganggaran</span>
+                  </div>
+                </div>
+                <div className="d-flex justify-content-center align-items-center">                  
+                </div>
+              </div>
+            </Card>
+          </Col>
+        </Row>      
+        <Row>
+          <Col>
+          <div className="d-sm-flex align-items-center justify-content-between">            
+              <div className="page-title-right">
+                  <ol className="breadcrumb mb-2 ms-2" style={{fontWeight:600}}>
+                      <li className="breadcrumb-item"><Link to="/Penganggaran">Penganggaran</Link></li>
+                      <li className="breadcrumb-item"><Link to={`/Penganggaran/Penganggaran-detail/${idProv}?namaDaerah=${namaProv}`}>Detail Se-{namaProv}</Link></li>
+                      <li className="breadcrumb-item active">Detail SKPD {namaDaerah}</li>
+                  </ol>
+              </div>
+          </div>
+          </Col>
+        </Row>           
+        <Row>
+          <Col md={6}> 
+            <Card>
+              <CardBody>
+                <Row>
+                  <Col xs={12} md={12} xl={4}>
+                    <img src={logoKemendagri} alt="" width="200" height="210" />
+                  </Col>
+                  <Col xs={12} md={12} xl={8}>
+                  <div className='ms-3'>
+                  <div className='d-flex justify-content-start align-items-start mb-2' style={{fontSize: "30px", fontWeight:600}}>
+                      {namaDaerah}
+                    </div>
+                    {/* <div className="d-flex mb-3">
+                      <div style={{ flexBasis: "180px" }}>Daerah</div>
+                      <div>:&nbsp;</div>
+                      <div style={{ fontWeight: 650 }}>
+                        Data Belum Tersedia
+                      </div>
+                    </div> */}
+                    <div className="d-flex mb-3">
+                      <div style={{ flexBasis: "180px", color:"#929FB1" }}>Kepala Daerah</div>
+                      <div>:&nbsp;</div>
+                      <div style={{ fontWeight: 650 }}>
+                        Data Belum Tersedia
+                      </div>
+                    </div>
+                    <div className="d-flex mb-3">
+                      <div style={{ flexBasis: "180px", color:"#929FB1" }}>Wakil Kepala Daerah</div>
+                      <div>:&nbsp;</div>
+                      <div style={{ fontWeight: 650 }}>
+                        Data Belum Tersedia
+                      </div>
+                    </div>
+                    <div className="d-flex mb-3">
+                      <div style={{ flexBasis: "180px", color:"#929FB1" }}>Sekretaris Daerah</div>
+                      <div>:&nbsp;</div>
+                      <div style={{ fontWeight: 650 }}>
+                        Data Belum Tersedia
+                      </div>
+                    </div>
+                    <div className="d-flex mb-3">
+                      <div style={{ flexBasis: "180px", color:"#929FB1" }}>Jumlah SKPD & Unit SKPD</div>
+                      <div>:&nbsp;</div>
+                      <div style={{ fontWeight: 650 }}>
+                        Data Belum Tersedia
+                      </div>
+                    </div>
+                    <div className="d-flex mb-3">
+                      <div style={{ flexBasis: "180px", color:"#929FB1" }}>Total Pagu</div>
+                      <div>:&nbsp;</div>
+                      <div style={{ fontWeight: 650 }}>
+                        Data Belum Tersedia
+                      </div>
+                    </div>
+                  </div>                    
+                  </Col>
+                </Row>
+                {/* <div className='separator mb-3'>
+                </div> */}
+                {/* <Row>
+                  <Col>
+                  <div className='d-flex justify-content-between'>
+                    <div className='d-flex justify-content-start align-items-start mb-2' style={{fontSize: "20px", fontWeight:600}}>
+                        Sumber Usulan RKPD
+                    </div>
+                    <select
+                        name="subtahap"
+                          style={{
+                            padding: "10px 30px 10px 10px",
+                            fontSize: "16px",
+                            borderRadius: "5px",
+                            border: "1px solid #ccc",
+                            backgroundColor: "#ffffff",                          
+                            cursor: "pointer",                          
+                            marginLeft: "10px"
+                          }}
+                          value={selectedSingleSubTahapan}
+                          onChange={handleSelectChange}
+                        >                        
+                        <option value="1">Persiapan</option>
+                        <option value="2">Ranwal</option>
+                        <option value="3">Rancangan</option>
+                        <option value="4">Musrenbang</option>
+                        <option value="5">Rankhir</option>
+                        <option value="6">Penetapan</option>                                                                                                                  
+                        </select>
+                  </div>
+                  
+                  <PieChartNew 
+                  dataChart={dataPenganggaran}
+                  categoryName={['Eksekutif', 'Legislatif', 'Masyarakat']}
+                  dataColors='["#57E7B4", "#FCAD24", "#2DAED4"]'
+                  />                  
+                  </Col>
+                </Row> */}
+              </CardBody>
+            </Card>
+          </Col>
+          <Col md={6}>
+          <Card className="card-height-100">
+              <CardBody>
+                <div className="separator">
+                  <h4 className="card-title mb-3">
+                    Penganggaran Belanja Daerah {namaDaerah}
+                  </h4>                  
+                </div>                
+                <Row>
+                  <Col>                
+                    {/* <select
+                    name="tahun"
+                          style={{
+                            padding: "10px 30px 10px 10px",
+                            fontSize: "16px",
+                            borderRadius: "5px",
+                            border: "1px solid #ccc",
+                            backgroundColor: "#ffffff",
+                            cursor: "pointer",                 
+                            marginLeft: "10px",
+                            marginTop: "16px",
+                            marginBottom: "30px",
+                          }}
+                          value={selectedSingleTahun}
+                          onChange={handleSelectChange}
+                        >                        
+                          <option value="2024">2024</option>
+                          <option value="2025">2025</option>
+                        </select>
+                        <select
+                        name="tahap"
+                          style={{
+                            padding: "10px 30px 10px 10px",
+                            fontSize: "16px",
+                            borderRadius: "5px",
+                            border: "1px solid #ccc",
+                            backgroundColor: "#ffffff",                          
+                            cursor: "pointer",                          
+                            marginLeft: "10px"
+                          }}
+                          value={selectedSingleTahapan}
+                          onChange={handleSelectChange}
+                        >                        
+                          <option value="1">RKPD</option>
+                          <option value="3">RKPD Perubahan</option>
+                        </select> */}
+                    <div className="table-responsive table-card" style={{ overflowX: "auto" }}>                    
+                      <table className="table table-nowrap mb-2 " style={{width:"1000px"}} >
+                        <thead className="table-light">
+                          <tr>
+                      
+                            <th
+                              onClick={() => requestSort("kode_skpd")}
+                              style={{
+                                textAlign: "center",
+                                verticalAlign: "middle",
+                                cursor: "pointer",
+                                whiteSpace: "normal",
+                                overflowWrap: "break-word",
+                              }}                              
+                              scope="col"
+                            >
+                              KODE SKPD {getSortIcon("kode_skpd")}
+                            </th>
+                            <th
+                              onClick={() => requestSort("nama_skpd")}
+                              style={{
+                                textAlign: "center",
+                                verticalAlign: "middle",
+                                cursor: "pointer",
+                                whiteSpace: "normal",
+                                overflowWrap: "break-word",
+                              }}
+                              scope="col"
+                            >
+                              NAMA SKPD {getSortIcon("nama_skpd")}
+                            </th>
+                            <th
+                            onClick={() => requestSort("kode_unit_skpd")}
+                              style={{
+                                textAlign: "center",
+                                verticalAlign: "middle",
+                                cursor: "pointer",
+                                whiteSpace: "normal",
+                                overflowWrap: "break-word",                                
+                              }}
+                              scope="col"
+                            >
+                              KODE UNIT SKPD {getSortIcon("kode_sub_giat")}
+                            </th>
+                            <th
+                            onClick={() => requestSort("nama_unit_skpd")}
+                              style={{
+                                textAlign: "center",
+                                verticalAlign: "middle",
+                                cursor: "pointer",
+                                whiteSpace: "normal",
+                                overflowWrap: "break-word",                                
+                              }}
+                              scope="col"
+                            >
+                              NAMA UNIT SKPD {getSortIcon("nama_unit_skpd")}
+                            </th>
+                            <th
+                            onClick={() => requestSort("Penganggaran")}
+                              style={{
+                                textAlign: "center",
+                                verticalAlign: "middle",
+                                cursor: "pointer",
+                                whiteSpace: "normal",
+                                overflowWrap: "break-word",
+                              }}
+                              scope="col"
+                            >
+                              Penganggaran (Rp) {getSortIcon("Penganggaran")}
+                            </th>
+                            <th
+                            onClick={() => requestSort("anggarangeser")}
+                              style={{
+                                textAlign: "center",
+                                verticalAlign: "middle",
+                                cursor: "pointer",
+                                whiteSpace: "normal",
+                                overflowWrap: "break-word",                                
+                              }}
+                              scope="col"
+                            >
+                              ANGGARAN (Rp) {getSortIcon("anggarangeser")}
+                            </th>
+                            <th
+                              style={{
+                                textAlign: "center",
+                                verticalAlign: "middle",
+                                cursor: "pointer",
+                                whiteSpace: "normal",
+                                overflowWrap: "break-word",
+                              }}
+                              scope="col"
+                            >
+                              ACTION
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {currentItems.map((item, index) => {
+                            return (
+                              <tr key={index}>
+                                  {/* style={{ verticalAlign: "middle", textAlign: "center" }} */}
+                                <td >{item.kode_skpd}</td>
+                                <td style={{
+                                    whiteSpace: "normal",
+                                    wordWrap: "break-word",
+                                    maxWidth: "200px",
+                                  }}>{item.nama_skpd}
+                                </td>
+                                <td >{item.kode_unit_skpd}</td>
+                                <td style={{
+                                    whiteSpace: "normal", 
+                                    wordWrap: "break-word", 
+                                    maxWidth: "200px", 
+                                  }}>{item.nama_unit_skpd}
+                                </td>
+                                <td>
+                                  <span style={{ float: "right" }}>
+                                  {item.Penganggaran
+                                    ? parseInt(item.Penganggaran).toLocaleString(
+                                        "id-ID"
+                                      )
+                                    : "-"}
+                                  </span>
+                                </td>
+                                <td>
+                                  <span style={{ float: "right" }}>
+                                  {item.anggarangeser
+                                    ? parseInt(item.anggarangeser).toLocaleString(
+                                        "id-ID"
+                                      )
+                                    : "-"}
+                                  </span>
+                                </td>
+                                <td
+                                  style={{
+                                    textAlign: "center",
+                                    verticalAlign: "middle",
+                                    whiteSpace: "normal",
+                                    overflowWrap: "break-word",
+                                  }}
+                                >
+                                  <i
+                                  onClick={()=> handleOpen({ kodeUnitSkpd: item.kode_skpd, namaUnitSkpd:item.nama_unit_skpd, Penganggaran: item.Penganggaran, anggaran:item.anggarangeser })}
+                                    style={{
+                                      padding: "5px 10px",
+                                      cursor: "pointer",
+                                      fontSize: "20px",
+                                    }}
+                                    className="bx bx-list-ul text-primary"
+                                  ></i>
+                                  
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </Col>
+                </Row>
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={paginate}
+                />
+              </CardBody>
+            </Card>
+          </Col>          
+        </Row>
+
+        <Modal
+        size="xl"
+        isOpen={modall}
+        toggle={handleOpen}
+        centered={true}
+        backdrop="static"
+      >
+        <div className="modal-content border-0">
+          <ModalHeader className=" p-3 bg-info-subtle" toggle={handleClose}>
+            Detail Unit SKPD {dataDetailNamaUnitSkpd} {" "}            
+          </ModalHeader>
+          <ModalBody>
+            {/* <div>
+              Total Anggaran: {dataRincianDetailAnggaran}
+            </div> */}
+            <Row>
+              <Col md={4}>
+                <Card className="card-animate card-height-100">
+                  <CardBody>
+                    <div className="d-flex flex-column title-custom-card">
+                      <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                        <span>Total Anggaran</span>
+                      </div>
+                      <div className="d-flex">
+                        {/* <div className="avatar-xs-half flex-shrink-0">
+                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                          <i className=" ri-women-line text-danger"></i>
+                        </span>
+                      </div> */}
+                        <div className="d-flex justify-content-center align-items-center title-body">
+                          <span>
+                            <CountUp
+                              start={0}
+                              end={
+                                // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                                dataRincianDetailAnggaran
+                              }
+                              separator="."
+                              prefix="Rp "
+                              suffix=""
+                              duration={3}
+                            />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+              <Col md={4}>
+                <Card className="card-animate card-height-100">
+                  <CardBody>
+                    <div className="d-flex flex-column title-custom-card">
+                      <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                        <span>Total Penganggaran</span>
+                      </div>
+                      <div className="d-flex">
+                        {/* <div className="avatar-xs-half flex-shrink-0">
+                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                          <i className=" ri-women-line text-danger"></i>
+                        </span>
+                      </div> */}
+                        <div className="d-flex justify-content-center align-items-center title-body">
+                          <span>
+                            <CountUp
+                              start={0}
+                              end={
+                                // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                                dataRincianDetailPenganggaran
+                              }
+                              separator="."
+                              prefix="Rp "
+                              suffix=""
+                              duration={3}
+                            />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+            </Row>
+
+            {/* <div style={{ overflowY: "scroll", maxHeight: "500px" }}> */}
+              <table
+                className="table table-bordered table-nowrap align-middle mb-0"
+                style={{ width: "100%" }}
+              >
+                <thead
+                  className="table-light"
+                  style={{ position: "sticky", top: 0, zIndex: 2 }}
+                >
+                  <tr>                  
+                    <th
+                      onClick={() => requestSortDetail("kode_sub_giat")}
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Kode Sub Giat {getSortIconDetail("kode_sub_giat")}
+                    </th>
+                    <th
+                      onClick={() => requestSortDetail("nama_sub_giat")}
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Nama Sub Giat {getSortIconDetail("nama_sub_giat")}
+                    </th>
+                    {/* <th onClick={() => requestSortDetail("")}
+                        style={{ cursor: "pointer", textAlign: "center" }}>
+                        Rincian Sub Giat
+                      </th>                       */}
+                    <th
+                      onClick={() => requestSortDetail("pagu_validasi")}
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Pagu (Rp){" "}
+                      {getSortIconDetail("pagu_validasi")}
+                    </th>             
+                    <th
+                      onClick={() => requestSortDetail("Penganggaran")}
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Penganggaran (Rp){" "}
+                      {getSortIconDetail("Penganggaran")}
+                    </th>           
+                    <th
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Action
+                    </th>                        
+                  </tr>
+                </thead>
+                <tbody style={{ minHeight: "500px" }}>
+                  {currentItemsDetail.map((item, index) => (
+                    <tr key={index}>
+                      <td>
+                        {item.kode_sub_giat}
+                      </td>                      
+                      <td style={{
+                          whiteSpace: "normal",
+                          wordWrap: "break-word",
+                          maxWidth: "200px",
+                        }}>
+                        {item.nama_sub_giat}
+                      </td>                      
+                      <td>
+                         <span style={{ float: "right" }}>
+                          {item.anggarangeser
+                            ? parseInt(item.anggarangeser).toLocaleString(
+                                "id-ID"
+                              )
+                            : "-"}
+                        </span>                        
+                      </td>   
+                      <td>
+                         <span style={{ float: "right" }}>
+                          {item.Penganggaran
+                            ? parseInt(item.Penganggaran).toLocaleString(
+                                "id-ID"
+                              )
+                            : "-"}
+                        </span>                        
+                      </td>
+                      <td
+                      style={{
+                        textAlign: "center",
+                        verticalAlign: "middle",
+                        whiteSpace: "normal",
+                        overflowWrap: "break-word",
+                      }}
+                      >
+                      <i
+                      onClick={()=> handleOpenNextModal({ kodeSubGiat: item.kode_sub_giat, namaSubGiat:item.nama_sub_giat, Penganggaran: item.Penganggaran, anggaran: item.anggarangeser })}
+                        style={{
+                          padding: "5px 10px",
+                          cursor: "pointer",
+                          fontSize: "20px",
+                        }}
+                        className="bx bx-list-ul text-primary"
+                      ></i>
+                    </td>                   
+                    </tr>
+                  ))}                  
+                </tbody>
+              </table>
+            {/* </div> */}
+            <Pagination
+              currentPage={currentPageDetail}
+              totalPages={totalPagesDetail}
+              onPageChange={paginateDetail}
+            />
+          </ModalBody>
+        </div>
+      </Modal>
+
+      <Modal
+        size="xl"
+        isOpen={modal}
+        toggle={handleOpenNextModal}
+        centered={true}
+        backdrop="static"
+      >
+        <div className="modal-content border-0">
+          <ModalHeader
+            className=" p-3 bg-info-subtle"
+            toggle={handleCloseNextModal}
+          >
+            Sub Rincian Objek {dataDetailNamaSubRincinianObjek}
+          </ModalHeader>
+          <ModalBody>
+            <Row>
+              <Col md={4}>
+                <Card className="card-animate card-height-100">
+                  <CardBody>
+                    <div className="d-flex flex-column title-custom-card">
+                      <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                        <span>Total Anggaran Sub Kegiatan</span>
+                      </div>
+                      <div className="d-flex">
+                        {/* <div className="avatar-xs-half flex-shrink-0">
+                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                          <i className=" ri-women-line text-danger"></i>
+                        </span>
+                      </div> */}
+                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                          <span>
+                            <CountUp
+                              start={0}
+                              end={
+                                // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                                dataRincianDetailAnggaranSub
+                              }
+                              separator="."
+                              prefix="Rp "
+                              suffix=""
+                              duration={3}
+                            />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+              <Col md={4}>
+                <Card className="card-animate card-height-100">
+                  <CardBody>
+                    <div className="d-flex flex-column title-custom-card">
+                      <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                        <span>Total Penganggaran</span>
+                      </div>
+                      <div className="d-flex">
+                        {/* <div className="avatar-xs-half flex-shrink-0">
+                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                          <i className=" ri-women-line text-danger"></i>
+                        </span>
+                      </div> */}
+                        <div className="d-flex justify-content-center align-items-center title-body">
+                          <span>
+                            <CountUp
+                              start={0}
+                              end={
+                                // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                                dataRincianDetailPenganggaranSub
+                              }
+                              separator="."
+                              prefix="Rp "
+                              suffix=""
+                              duration={3}
+                            />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+            </Row>
+
+            <div style={{ overflowY: "scroll", maxHeight: "500px" }}>
+              <table
+                className="table table-bordered table-nowrap align-middle mb-0"
+                style={{ width: "100%" }}
+              >
+                <thead className="table-light">
+                  <tr>
+                    <th
+                      style={{ verticalAlign: "middle", textAlign: "center" }}
+                    >
+                      NO
+                    </th>
+                    <th
+                      onClick={() => requestSort("nama_daerah")}
+                      style={{ cursor: "pointer", verticalAlign: "middle" }}
+                    >
+                      Kode Sub Rincian Objek {getSortIcon("nama_daerah")}
+                    </th>
+                    <th
+                      onClick={() => requestSort("nama_sro")}
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Nama Sub Rincian Objek {getSortIcon("nama_sro")}
+                    </th>
+                    <th
+                      onClick={() => requestSort("total_rinciansro")}
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Pagu (Rp) {getSortIcon("total_rinciansro")}
+                    </th>
+                    <th
+                      onClick={() => requestSort("total_rinciansro")}
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Penganggaran {getSortIcon("total_rinciansro")}
+                    </th>
+                    <th
+                      onClick={() => requestSort("persentase")}
+                      style={{
+                        cursor: "pointer",
+                        textAlign: "center",
+                        whiteSpace: "normal",
+                        overflowWrap: "break-word",
+                      }}
+                    >
+                      Persentase {getSortIcon("persentase")}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody style={{ minHeight: "500px" }}>
+                  {currentItemsDetailSub.map((item, index) => (
+                    <tr key={index}>
+                      {/* <td>{item.kode_prop}</td> */}
+                      <td
+                        style={{ textAlign: "center", verticalAlign: "middle" }}
+                      >
+                        {index + 1}
+                      </td>
+                      <td>{item.kode_sro}</td>
+                      <td
+                        style={{
+                          whiteSpace: "normal", // Membolehkan teks turun ke baris berikutnya
+                          wordWrap: "break-word", // Memastikan teks panjang terpotong dan turun ke bawah
+                          maxWidth: "200px", // Menetapkan lebar maksimum sel (sesuaikan dengan kebutuhan)
+                        }}
+                      >
+                        {" "}
+                        {item.nama_sro || "-"}
+                      </td>
+                      {/* <td>
+                         Rp {item.rincian_sub_giat ? parseInt(item.rincian_sub_giat).toLocaleString("id-ID")
+                            : "-"}
+                        </td> */}
+                      <td>
+                      <span style={{ float: "right" }}>
+                        {item.anggarangeser
+                          ? parseInt(item.anggarangeser).toLocaleString(
+                              "id-ID"
+                            )
+                          : "-"}
+                      </span>
+                    </td>
+                      <td>
+                        <span style={{ float: "right" }}>
+                          {item.Penganggaran
+                            ? parseInt(item.Penganggaran).toLocaleString(
+                                "id-ID"
+                              )
+                            : "-"}
+                        </span>
+                      </td>
+                      <td>
+                        <span style={{ float: "right" }}>
+                          {`${((item.Penganggaran/item.anggarangeser)*100).toLocaleString(
+                                  "id-ID",
+                                  {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  }
+                                )}%`}
+                          {/* {item.persentase
+                            ? item.persentase >= 1
+                              ? `${Number(item.persentase).toLocaleString(
+                                  "id-ID",
+                                  {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  }
+                                )}%`
+                              : `${Number(item.persentase).toLocaleString(
+                                  "id-ID",
+                                  {
+                                    minimumFractionDigits: 4,
+                                  }
+                                )}%`
+                            : "-"} */}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <Pagination
+              currentPage={currentPageDetailSub}
+              totalPages={totalPagesDetailSub}
+              onPageChange={paginateDetailSub}
+            />
+          </ModalBody>
+        </div>
+      </Modal>
+      </React.Fragment>
+    )
+}
+
+export default ContentPenganggaranDetailDaerah
