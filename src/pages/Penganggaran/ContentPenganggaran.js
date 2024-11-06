@@ -223,7 +223,7 @@ const ContentPenganggaran = () => {
     
     <Row>        
         <Col md={12}>
-        {/* <Card className="card-custom"> */}
+        <Card className="card-custom">
               <div className="d-flex justify-content-between align-items-center">
                 <div className="d-flex justify-content-start">
                 <div className="d-flex title-page justify-content-center align-items-center">
@@ -239,125 +239,63 @@ const ContentPenganggaran = () => {
                 </div>
                   <div className="nav-beranda d-flex justify-content-center align-items-center">
                     <Nav tabs className="nav nav-tabs nav-success nav-justified border-bottom-0">
-                      {selectedSingleTahapan =="1" ? (<>
-                      <NavItem>
+                    <NavItem>
                         <NavLink
                           style={{ cursor: "pointer" }}
-                          className={classnames({
+                          className={classnames("h-100", {
                             active: customActiveTab === "1",
                           })}
                           onClick={() => {
                             toggleCustom("1");
-                            setNamaTahapan("Persiapan")
                           }}
                         >
-                          KUA & PPAS
+                          Murni
                         </NavLink>
-                      </NavItem>
-                      <NavItem>
+                      </NavItem>                                            
+                    <NavItem>
                         <NavLink
                           style={{ cursor: "pointer" }}
-                          className={classnames({
+                          className={classnames("h-100", {
                             active: customActiveTab === "2",
                           })}
                           onClick={() => {
                             toggleCustom("2");
-                            setNamaTahapan("Rancangan Awal")
                           }}
                         >
-                          RAPBD
+                          Pergeseran
                         </NavLink>
-                      </NavItem>
-                      <NavItem>
+                      </NavItem>                                            
+                    <NavItem>
                         <NavLink
                           style={{ cursor: "pointer" }}
-                          className={classnames({
+                          className={classnames("h-100", {
+                            active: customActiveTab === "3",
+                          })}
+                          onClick={() => {
+                            toggleCustom("3");
+                          }}
+                        >
+                          Perubahan
+                        </NavLink>
+                      </NavItem>                                            
+                    <NavItem>
+                        <NavLink
+                          style={{ cursor: "pointer", width:"250px" }}
+                          className={classnames("h-100", {
                             active: customActiveTab === "4",
                           })}
                           onClick={() => {
                             toggleCustom("4");
-                            setNamaTahapan("Musrenbang")
                           }}
                         >
-                          Penetapan RAPBD
+                          Pergeseran Setelah Perubahan
                         </NavLink>
-                      </NavItem>                      
-                      </>) : selectedSingleTahapan =="2" ? (<> <NavItem>
-                        <NavLink
-                          style={{ cursor: "pointer" }}
-                          className={classnames({
-                            active: customActiveTab === "1",
-                          })}
-                          onClick={() => {
-                            toggleCustom("1");
-                            setNamaTahapan("Persiapan")
-                          }}
-                        >
-                          APBD Pergeseran
-                        </NavLink>
-                      </NavItem></>) : selectedSingleTahapan =="3" ? (<>
-                        <NavItem>
-                        <NavLink
-                          style={{ cursor: "pointer" }}
-                          className={classnames({
-                            active: customActiveTab === "1",
-                          })}
-                          onClick={() => {
-                            toggleCustom("1");
-                            setNamaTahapan("Persiapan")
-                          }}
-                        >
-                          KUA & PPAS
-                        </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink
-                          style={{ cursor: "pointer" }}
-                          className={classnames({
-                            active: customActiveTab === "2",
-                          })}
-                          onClick={() => {
-                            toggleCustom("2");
-                            setNamaTahapan("Rancangan Awal")
-                          }}
-                        >
-                          RAPBD Perubahan
-                        </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink
-                          style={{ cursor: "pointer" }}
-                          className={classnames({
-                            active: customActiveTab === "4",
-                          })}
-                          onClick={() => {
-                            toggleCustom("4");
-                            setNamaTahapan("Musrenbang")
-                          }}
-                        >
-                          Penetapan RAPBD Perubahan
-                        </NavLink>
-                      </NavItem> 
-                      </>): (<><NavItem>
-                        <NavLink
-                          style={{ cursor: "pointer" }}
-                          className={classnames({
-                            active: customActiveTab === "1",
-                          })}
-                          onClick={() => {
-                            toggleCustom("1");
-                            setNamaTahapan("Persiapan")
-                          }}
-                        >
-                          APBD Pergeseran Setelah Perubahan
-                        </NavLink>
-                      </NavItem></>)}
-                      
+                      </NavItem>                                            
                     </Nav>
                   </div>
               </div>
             
-          {/* </Card> */}
+          </Card>
         </Col>
     </Row>    
       <Row>
@@ -482,11 +420,34 @@ const ContentPenganggaran = () => {
                         }}
                         value={selectedSingleTahapan}
                         onChange={handleSelectChange}
-                      >                        
-                        <option value="1">Murni</option>
-                        <option value="2">Pergeseran</option>
-                        <option value="3">Perubahan</option>
-                        <option value="4">Pergeseran Setelah Perubahan</option>
+                      > 
+                        {(()=>{
+                          switch(customActiveTab){
+                            case "1":
+                            return (<>
+                            <option value="1">KUA & PPAS</option>
+                            <option value="2">RAPBD</option>
+                            <option value="3">Penetapan RAPBD</option>
+                            </>)
+                            
+                            case "2":
+                            return (<>
+                              <option value="1">APBD Pergeseran</option>                              
+                            </>)
+                            
+                            case "3":
+                            return (<>
+                            <option value="1">KUA & PPAS Perubahan</option>
+                            <option value="2">RAPBD Perubahan</option>
+                            <option value="3">Penetapan RAPBD Perubahan</option>
+                            </>)
+                            
+                            default:
+                            return (<>
+                              <option value="3">Penetapan RAPBD Perubahan</option>
+                            </>)
+                          }
+                        })()}
                       </select>
                 </Col>
               </Row>
