@@ -29,28 +29,16 @@ import { useNavigate } from "react-router-dom";
 import BreadCrumb from "../../Components/Common/BreadCrumb";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
-const SingleOptions = [
-    { value: "2024", label: "2024" },
-    { value: "2025", label: "2025" },
-  ];
-
-const dataAnggaran = [
-  {id: "11", namaProv: "adaad", persenPenganggaranPenganggaran:23},
-  {id: "11", namaProv: "adaad", persenPenganggaranPenganggaran:22},
-  {id: "11", namaProv: "adaad", persenPenganggaranPenganggaran:32},
-  {id: "11", namaProv: "adaad", persenPenganggaranPenganggaran:23},
-  {id: "11", namaProv: "adaad", persenPenganggaranPenganggaran:31},
-]
 
 const ContentPenganggaran = () => {
-  const [customActiveTab, setcustomActiveTab] = useState("6");
+  const [customActiveTab, setcustomActiveTab] = useState("1");
   const toggleCustom = (tab) => {
     if (customActiveTab !== tab) {
       setcustomActiveTab(tab);
     }
   };
   const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
-  const [selectedSingleTahapan, setSelectedSingleTahapan] = useState('1'); // Set default value
+  const [selectedSingleTahapan, setSelectedSingleTahapan] = useState('28'); // Set default value
 
   const [dataPenganggaran, setDataPenganggaran] = useState([]);
   const [dataPenganggaranPersentase, setDataPenganggaranPersentase] = useState(
@@ -61,6 +49,7 @@ const ContentPenganggaran = () => {
 
   const getDataPenganggaranNasional = ({
     tahun = "2024",
+    tahapan = "1",
   } = {}) => {
     const fetchData = async () => {
       try {
@@ -68,11 +57,12 @@ const ContentPenganggaran = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            id_tahap: tahapan,
             tahun: tahun,
           }),
         };
         const response = await fetch(
-          `${API_URI}/Penganggaran_level_1_`,
+          `${API_URI}/dashboard_penganggaran_1_nasional`,
           requestOptions
         );
 
@@ -103,8 +93,8 @@ const ContentPenganggaran = () => {
   };
 
   const getDataPenganggaranNasionalPersentase = ({
-    tahun = "",
-    // tahapan = "1",    
+    tahun = "2024",
+    tahapan = "28",    
   } = {}) => {
     const fetchData = async () => {
       try {
@@ -112,12 +102,12 @@ const ContentPenganggaran = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            // id_tahap: tahapan,
+            id_tahap: tahapan,
             tahun: tahun,
           }),
         };
         const response = await fetch(
-          `${API_URI}/Penganggaran_level_1`,
+          `${API_URI}/dashboard_penganggaran_level_1`,
           requestOptions
         );
 
@@ -127,11 +117,9 @@ const ContentPenganggaran = () => {
 
         const dataPenganggaranNasionalPersentase = await response.json();
 
-        console.log(dataPenganggaranNasionalPersentase,'ini data Penganggaran')
-
         setDataPenganggaranPersentase(
-          dataPenganggaranNasionalPersentase.data.Penganggaran_level_1
-        );
+          dataPenganggaranNasionalPersentase.data.penganggaran_level_1
+        );        
       } catch (errorPenganggaran) {
         setErrorPenganggaran(errorPenganggaran);
       } finally {
@@ -151,8 +139,8 @@ const ContentPenganggaran = () => {
 
 
     useEffect(() => {
-      getDataPenganggaranNasional();
-      getDataPenganggaranNasionalPersentase();
+        // getDataPenganggaranNasional();
+        getDataPenganggaranNasionalPersentase();
     }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -166,7 +154,7 @@ const ContentPenganggaran = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
   const sortedItems = React.useMemo(() => {
-    let sortableItems = [...(dataAnggaran || [])];
+    let sortableItems = [...(dataPenganggaranPersentase || [])];
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key] || 0;
@@ -182,11 +170,11 @@ const ContentPenganggaran = () => {
       });
     }
     return sortableItems;
-  }, [dataAnggaran, sortConfig]);
+  }, [dataPenganggaranPersentase, sortConfig]);
 
   const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(
-    (dataAnggaran?.length || 0) / itemsPerPage
+    (dataPenganggaranPersentase?.length || 0) / itemsPerPage
   );
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -194,11 +182,8 @@ const ContentPenganggaran = () => {
   const [dataShowSumberUsulan, setDataShowSumberUsulan] = useState(false);
   const handleShowDataSumberUsulan = (value) => {
     setDataShowSumberUsulan(value);
-  };
-
-  const [namaTahapan, setNamaTahapan] = useState("Penetapan")
+  };  
   
-
   const handleSelectChange = (e) => {
     const { name, value } = e.target;
     console.log(`${name}: ${value}`, 'ini isi selected value');
@@ -207,38 +192,37 @@ const ContentPenganggaran = () => {
         setSelectedSingleTahun(value); // Misalnya, untuk dropdown tahun
     } else if (name === 'tahap') {
         setSelectedSingleTahapan(value); // Misalnya, untuk dropdown jenis dokumen
-    }
+    }    
 
   };
   
   const navigate = useNavigate();
   const goToDetail = (_id, namaDaerah) => {
     const encodedNamaDaerah = encodeURIComponent(namaDaerah);
-    navigate(`/Penganggaran/Penganggaran-detail/${_id}?namaDaerah=${encodedNamaDaerah}`);
+    navigate(`/penganggaran/penganggaran-detail/${_id}?namaDaerah=${encodedNamaDaerah}`);
   };
 
 
   return (
     <React.Fragment>
     
-    <Row>        
-        <Col md={12}>
-        <Card className="card-custom">
-              <div className="d-flex justify-content-between align-items-center">
-                <div className="d-flex justify-content-start">
-                <div className="d-flex title-page justify-content-center align-items-center">
-                  {/* <div className="d-flex justify-content-center align-items-center avatar-sm">
-                    <span className="logo-sm">
-                      <img src={logoKemenkoPmk} alt="" width="40" height="40" />
-                    </span>
-                  </div> */}
-                  <div className="d-flex justify-content-center align-items-center">
-                    <span className="d-flex justify-content-center align-items-center">Penganggaran</span>
-                  </div>
+    <Row>
+        <Col>
+          <Card className="card-custom">
+            <div className="d-flex justify-content-between">
+              <div className="d-flex title-page">
+                <div className="d-flex justify-content-center align-items-center avatar-sm">
+                  <span className="logo-sm">
+                    {/* <img src={logoKemenkoPmk} alt="" width="40" height="40" /> */}
+                  </span>
                 </div>
+                <div className="d-flex justify-content-center align-items-center">
+                  <span>Penganggaran</span>
                 </div>
-                  <div className="nav-beranda d-flex justify-content-center align-items-center">
-                    <Nav tabs className="nav nav-tabs nav-success nav-justified border-bottom-0">
+              </div>
+              <div className="d-flex justify-content-center align-items-center">
+                <div className="nav-beranda d-flex justify-content-center align-items-center">
+                <Nav tabs className="nav nav-tabs nav-success nav-justified border-bottom-0">
                     <NavItem>
                         <NavLink
                           style={{ cursor: "pointer" }}
@@ -247,6 +231,7 @@ const ContentPenganggaran = () => {
                           })}
                           onClick={() => {
                             toggleCustom("1");
+                            setSelectedSingleTahapan("28")
                           }}
                         >
                           Murni
@@ -260,6 +245,7 @@ const ContentPenganggaran = () => {
                           })}
                           onClick={() => {
                             toggleCustom("2");
+                            setSelectedSingleTahapan("30")
                           }}
                         >
                           Pergeseran
@@ -273,6 +259,7 @@ const ContentPenganggaran = () => {
                           })}
                           onClick={() => {
                             toggleCustom("3");
+                            setSelectedSingleTahapan("41")
                           }}
                         >
                           Perubahan
@@ -286,17 +273,18 @@ const ContentPenganggaran = () => {
                           })}
                           onClick={() => {
                             toggleCustom("4");
+                            setSelectedSingleTahapan("32")
                           }}
                         >
                           Pergeseran Setelah Perubahan
                         </NavLink>
                       </NavItem>                                            
                     </Nav>
-                  </div>
+                </div>
               </div>
-            
+            </div>
           </Card>
-        </Col>
+        </Col>        
     </Row>    
       <Row>
         <Col md={6} xl={6}>
@@ -345,14 +333,14 @@ const ContentPenganggaran = () => {
                         <span style={{fontStyle:"poppins", color:"#929FB1"}}>Ketika 0% Pemda</span>
                     </div>
                     </div>
-                    {/* <div className="d-flex mt-4 align-items-end">
+                    <div className="d-flex mt-4 align-items-end">
                         <span
                         onClick={() => handleShowDataSumberUsulan(true)}
                         style={{ cursor: "pointer", color: "#2DAED4" }}
                         >
                         Lihat Sumber Usulan
                         </span>
-                    </div> */}
+                    </div>
                   </div>
                   
                 </>
@@ -361,15 +349,12 @@ const ContentPenganggaran = () => {
           </Card>
         </Col>
         <Col md={6} xl={6}>
-          <Card className="card-height-100">
+          <Card>
             <CardBody>
               <div className="separator">
                 <h4 className="card-title mb-1">
-                  Penganggaran Belanja
+                  List Progress Penganggaran 
                 </h4>
-                {/* <h4 className="card-title">
-                    {namaTahapan}
-                </h4>                 */}
               </div>
               <Row>
                 <Col>
@@ -420,31 +405,28 @@ const ContentPenganggaran = () => {
                         }}
                         value={selectedSingleTahapan}
                         onChange={handleSelectChange}
-                      > 
+                      >                        
                         {(()=>{
                           switch(customActiveTab){
                             case "1":
                             return (<>
-                            <option value="1">KUA & PPAS</option>
-                            <option value="2">RAPBD</option>
-                            <option value="3">Penetapan RAPBD</option>
-                            </>)
-                            
+                            <option value="40">KUA & PPAS</option>
+                            <option value="5">RAPBD</option>
+                            <option value="28">Penetapan APBD</option>
+                            </>)                            
                             case "2":
                             return (<>
-                              <option value="1">APBD Pergeseran</option>                              
-                            </>)
-                            
+                              <option value="30">APBD Pergeseran</option>                              
+                            </>)                            
                             case "3":
                             return (<>
-                            <option value="1">KUA & PPAS Perubahan</option>
-                            <option value="2">RAPBD Perubahan</option>
-                            <option value="3">Penetapan RAPBD Perubahan</option>
-                            </>)
-                            
+                            <option value="41">KUPA & PPAS</option>
+                            <option value="8">RAPBD Perubahan</option>
+                            <option value="29">Penetapan APBD Perubahan</option>
+                            </>)                            
                             default:
                             return (<>
-                              <option value="3">Penetapan RAPBD Perubahan</option>
+                              <option value="32">APBD Pergeseran Setelah APBD Perubahan</option>
                             </>)
                           }
                         })()}
@@ -453,7 +435,7 @@ const ContentPenganggaran = () => {
               </Row>
               <Row>
                 <Col>
-                  <div className="table-responsive table-card mt-2">
+                  <div className="table-responsive table-card">
                     <table className="table table-nowrap mb-2 ">
                       <thead className="table-light">
                         <tr>
@@ -509,15 +491,16 @@ const ContentPenganggaran = () => {
                       </thead>
                       <tbody>
                         {currentItems.map((item, index) => {
-                          const tahapData = {
-                            1: item.persiapan,
-                            2: item.rancangan_awal,
-                            3: item.rancangan,
-                            4: item.musrenbang,
-                            5: item.rancangan_akhir,
-                            6: item.penetapan,
-                          };
-
+                           const tahapData = {
+                              5: item?.persen_daerah_rapbd,
+                              40: item?.persen_daerah_kuappas,
+                              30: item?.persen_daerah_apbdgeser,
+                              41: item?.persen_daerah_kupa,
+                              8: item?.persen_daerah_rapbdubah,
+                              29: item?.persen_daerah_apbdubah,
+                              28: item?.persen_daerah_apbd,
+                              32: item?.persen_daerah_apbdgeserpasca,
+                            };
                           return (
                             <tr key={index}>
                               <td>{item.kode_prov}</td>
@@ -531,27 +514,24 @@ const ContentPenganggaran = () => {
                                     className="progress-bar"
                                     role="progressbar"
                                     style={{
-                                      width: `${item.persenPenganggaranPenganggaran}%`,
-                                      backgroundColor: item.persenPenganggaranPenganggaran === 100
+                                      width: `${tahapData[selectedSingleTahapan]}%`,
+                                      backgroundColor: tahapData[selectedSingleTahapan] === 100
                                       ? "#57E7B4" // Hijau jika 100%
-                                      : (item.persenPenganggaranPenganggaran > 5 && item.persenPenganggaranPenganggaran < 100)
+                                      : (tahapData[selectedSingleTahapan] > 5 && tahapData[selectedSingleTahapan] < 100)
                                       ? "#FCAD24" // Kuning jika 1%-99%
-                                      : "#F35F52", // Merah jika 0%,
+                                      : "#EFF2F7", // Merah jika 0%,
                                       color: "black",
                                     }}
-                                    aria-valuenow={item.persenPenganggaranPenganggaran}
+                                    aria-valuenow={tahapData[selectedSingleTahapan] !=0 ? tahapData[selectedSingleTahapan] : 100}
                                     aria-valuemin="0"
                                     aria-valuemax="100"
-                                  >
-                                    {item.persenPenganggaranPenganggaran > 30 &&
-                                      `${item.persenPenganggaranPenganggaran.toLocaleString("id-ID", {
+                                  >                                    
+                                    {tahapData[selectedSingleTahapan] > 30 && `${tahapData[selectedSingleTahapan].toLocaleString("id-ID", {
                                         minimumFractionDigits: 2,
                                         maximumFractionDigits: 2,
                                       })}%`}
                                   </div>
-                                  {item.persenPenganggaranPenganggaran <= 30 && (
-                                    <div className="d-flex justify-content-center ms-1 align-items-center">
-                                      {item.persenPenganggaranPenganggaran.toLocaleString("id-ID", {
+                                  {tahapData[selectedSingleTahapan] <= 30 && (<div className="d-flex justify-content-center ms-1 align-items-center">{tahapData[selectedSingleTahapan].toLocaleString("id-ID", {
                                         minimumFractionDigits: 2,
                                         maximumFractionDigits: 2,
                                       })}

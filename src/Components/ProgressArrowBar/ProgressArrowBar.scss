@@ -10,11 +10,12 @@
     margin-left: -2%;
   }
   
-  .step-item {
+  .step-item {    
+    padding: 0 15px;
     margin: 0;
     margin-left: 0.5%;
-    height: 30px;
-    width: 15%;
+    min-height: 30px;
+    min-width: 60px;
     position: relative;
     display: inline-block;
     text-align: center;
@@ -98,5 +99,3 @@
   .step-item:hover:after { 
     background: #4682B4;    
   }
-
-  

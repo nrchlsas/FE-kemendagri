@@ -51,49 +51,6 @@ const ContentRealisasi = () => {
   const [loadingRealisasi, setLoadingRealisasi] = useState([]);
   const [errorRealisasi, setErrorRealisasi] = useState([]);
 
-  const getDataRealisasiNasional = ({
-    tahun = "2024",
-  } = {}) => {
-    const fetchData = async () => {
-      try {
-        const requestOptions = {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            tahun: tahun,
-          }),
-        };
-        const response = await fetch(
-          `${API_URI}/realisasi_level_1_`,
-          requestOptions
-        );
-
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-
-        const dataRealisasiNasional = await response.json();
-
-        const dataResultChartTahapan =
-          dataRealisasiNasional.data.dashboard_Realisasi_1__nasional.list.reduce(
-            (acc, item) => {
-              acc[0].push(item.value);
-              acc[1].push(item.tahapan);
-              return acc;
-            },
-            [[], []]
-          );        
-
-        setDataRealisasi(dataResultChartTahapan);
-      } catch (errorRealisasi) {
-        setErrorRealisasi(errorRealisasi);
-      } finally {
-        setLoadingRealisasi(false);
-      }
-    };
-    fetchData();
-  };
-
   const getDataRealisasiNasionalPersentase = ({
     tahun = "",
     // tahapan = "1",    
@@ -142,8 +99,7 @@ const ContentRealisasi = () => {
     }, [selectedSingleTahun, selectedSingleTahapan]); // Panggil API jika tahun atau dokumen berubah
 
 
-    useEffect(() => {
-      getDataRealisasiNasional();
+    useEffect(() => {      
       getDataRealisasiNasionalPersentase();
     }, []);
 

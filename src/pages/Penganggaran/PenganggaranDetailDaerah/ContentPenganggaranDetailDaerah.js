@@ -23,23 +23,67 @@ const ContentPenganggaranDetailDaerah = () => {
     const namaProv = queryParams.get("namaProv");
     const idProv = queryParams.get('idProv')
   
-    const [customActiveTab, setcustomActiveTab] = useState("6");
+    const [customActiveTab, setcustomActiveTab] = useState("1");
     const toggleCustom = (tab) => {
       if (customActiveTab !== tab) {
         setcustomActiveTab(tab);
       }
     };
     const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
-    const [selectedSingleTahapan, setSelectedSingleTahapan] = useState('1'); // Set default value
+    const [selectedSingleTahapan, setSelectedSingleTahapan] = useState('28'); // Set default value
     const [selectedSingleSubTahapan, setSelectedSingleSubTahapan] = useState('6'); // Set default value
     const [dataPenganggaran, setDataPenganggaran] = useState([]);
+    const [dataPenganggaranPersentase, setDataPenganggaranPersentase] = useState(
+      []
+    );
     const [loadingPenganggaran, setLoadingPenganggaran] = useState([]);
     const [errorPenganggaran, setErrorPenganggaran] = useState([]);
   
     const getDataPenganggaranNasional = ({
-      tahun = "2024",
-      tahapan = "1",
-      kodeDdn= _id
+      // tahun = "2024",
+      // tahapan = "1",
+      kodeDdn=_id
+    } = {}) => {
+      const fetchData = async () => {
+        try {
+          const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              // id_tahap: tahapan,
+              // tahun: tahun,
+              kode_ddn: kodeDdn
+            }),
+          };
+          const response = await fetch(
+            `${API_URI}/dashboard_Penganggaran_2_komposisi`,
+            requestOptions
+          );
+  
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+  
+          const dataPenganggaranNasional = await response.json();
+  
+          const dataResultChartTahapan = [dataPenganggaranNasional.data.eksekutif, dataPenganggaranNasional.data.legislatif, dataPenganggaranNasional.data.masyarakat]
+
+          console.log(dataResultChartTahapan, "ini");
+  
+          setDataPenganggaran(dataResultChartTahapan);
+        } catch (errorPenganggaran) {
+          setErrorPenganggaran(errorPenganggaran);
+        } finally {
+          setLoadingPenganggaran(false);
+        }
+      };
+      fetchData();
+    };
+  
+    const getDataPenganggaranNasionalPersentase = ({
+      tahun = "2024",      
+      tahapan = "28",
+      kodeDdn = _id
     } = {}) => {
       const fetchData = async () => {
         try {
@@ -53,7 +97,7 @@ const ContentPenganggaranDetailDaerah = () => {
             }),
           };
           const response = await fetch(
-            `${API_URI}/Penganggaran_level_3`,
+            `${API_URI}/dashboard_Penganggaran_level_3`,
             requestOptions
           );
   
@@ -61,12 +105,12 @@ const ContentPenganggaranDetailDaerah = () => {
             throw new Error("Network response was not ok");
           }
   
-          const dataPenganggaranNasional = await response.json();
+          const dataPenganggaranNasionalPersentase = await response.json();
 
-          console.log(dataPenganggaranNasional);
+          console.log(dataPenganggaranNasionalPersentase);
   
-          setDataPenganggaran(
-            dataPenganggaranNasional.data.Penganggaran_level_3
+          setDataPenganggaranPersentase(
+            dataPenganggaranNasionalPersentase.data.penganggaran_level_3
           );
         } catch (errorPenganggaran) {
           setErrorPenganggaran(errorPenganggaran);
@@ -79,7 +123,7 @@ const ContentPenganggaranDetailDaerah = () => {
   
       // Memanggil fungsi API setiap kali dropdown berubah
       useEffect(() => {
-      getDataPenganggaranNasional({
+      getDataPenganggaranNasionalPersentase({
           tahun: selectedSingleTahun,
           tahapan: selectedSingleTahapan,
       });
@@ -87,8 +131,8 @@ const ContentPenganggaranDetailDaerah = () => {
     
   
     useEffect(() => {
-      // getDataPenganggaranNasional();
       getDataPenganggaranNasional();
+      getDataPenganggaranNasionalPersentase();
     }, []);
 
     const [dataDetailUnitSkpd, setDataDetailUnitSkpd] = useState([]);    
@@ -99,23 +143,25 @@ const ContentPenganggaranDetailDaerah = () => {
       tahun= "2024",
       kodeDdn=_id,
       kodeUnitSkpd="",
+      idTahap=""
     }      
     ) => {
       const fetchData = async () => {
-        // setLoadingDetailUnitSkpd(true); // Set loading state to true when starting the fetch
+        setLoadingDetailUnitSkpd(true); // Set loading state to true when starting the fetch
         try {
           const requestOptions = {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               kode_ddn: kodeDdn,
-              kode_skpd: kodeUnitSkpd,
+              kode_unit_skpd: kodeUnitSkpd,
+              id_tahap: idTahap,
               tahun : tahun,
             }),
           };
   
           const response = await fetch(
-            `${API_URI}/Penganggaran_level_3_subgiat`,
+            `${API_URI}/dashboard_penganggaran_level_3_subgiat`,
             requestOptions
           );
   
@@ -125,10 +171,10 @@ const ContentPenganggaranDetailDaerah = () => {
   
           const dataDetailUnitSkpd = await response.json();
   
-          setDataDetailUnitSkpd(dataDetailUnitSkpd.data.Penganggaran_level_3_subgiat)
+          setDataDetailUnitSkpd(dataDetailUnitSkpd.data.penganggaran_level_3_subgiat)    
 
           setModall(true);            
-          setCurrentPageDetail(1);     
+          setCurrentPageDetail(1);        
           // Open the modal only after data is successfully fetched
         } catch (errorDetailUnitSkpd) {
           setErrorDetailUnitSkpd(errorDetailUnitSkpd);
@@ -147,6 +193,7 @@ const ContentPenganggaranDetailDaerah = () => {
     const getDataDetailUnitSkpdSro = ({
       tahun= "2024",
       kodeDdn=_id,
+      idTahap=selectedSingleTahapan,
       kodeSubGiat="",
     }      
     ) => {
@@ -160,11 +207,12 @@ const ContentPenganggaranDetailDaerah = () => {
               kode_ddn: kodeDdn,
               kode_sub_giat: kodeSubGiat,
               tahun : tahun,
+              id_tahap: idTahap
             }),
           };
   
           const response = await fetch(
-            `${API_URI}/Penganggaran_level_3_sro`,
+            `${API_URI}/dashboard_penganggaran_level_3_sro`,
             requestOptions
           );
   
@@ -174,7 +222,7 @@ const ContentPenganggaranDetailDaerah = () => {
   
           const dataDetailUnitSkpdSro = await response.json();
   
-          setDataDetailUnitSkpdSro(dataDetailUnitSkpdSro.data.Penganggaran_level_3_sro)
+          setDataDetailUnitSkpdSro(dataDetailUnitSkpdSro.data.penganggaran_level_3_sro)
 
           setModall(true);            
           setCurrentPageDetail(1);     
@@ -190,21 +238,20 @@ const ContentPenganggaranDetailDaerah = () => {
     };
   
     const [modall, setModall] = useState(false);
-    const [dataRincianDetailAnggaran, setDataRincianDetailAnggaran] = useState(0);
-    const [dataRincianDetailPenganggaran, setDataRincianDetailPenganggaran] = useState(0);
+    const [dataRincianDetail, setDataRincianDetail] = useState(0);
     const [dataDetailNamaUnitSkpd, setDataDetailNamaUnitSkpd] = useState("");
 
     const handleOpen = ({
+      kodeDdn = "",
       kodeUnitSkpd = "",
+      tahun = "",
       namaUnitSkpd="",
-      Penganggaran=0,
-      anggaran=0
+      paguValidasi=0
     }
     ) => {
-      getDataDetailUnitSkpd({ kodeUnitSkpd:kodeUnitSkpd })
+      getDataDetailUnitSkpd({idTahap: selectedSingleTahapan, kodeDdn: kodeDdn, kodeUnitSkpd:kodeUnitSkpd, tahun:tahun})
       setDataDetailNamaUnitSkpd(namaUnitSkpd);    
-      setDataRincianDetailAnggaran(anggaran)
-      setDataRincianDetailPenganggaran(Penganggaran)
+      setDataRincianDetail(paguValidasi) 
       setCardHead(null);
     };
   
@@ -239,7 +286,7 @@ const ContentPenganggaranDetailDaerah = () => {
     const indexOfFirstItemDetailSub = indexOfLastItemDetailSub - itemsPerPageDetailSub;
     
     const sortedItems = React.useMemo(() => {
-      let sortableItems = [...(dataPenganggaran || [])];
+      let sortableItems = [...(dataPenganggaranPersentase || [])];
       if (sortConfig.key !== null) {
         sortableItems.sort((a, b) => {
           const aValue = a[sortConfig.key] || 0;
@@ -255,7 +302,7 @@ const ContentPenganggaranDetailDaerah = () => {
         });
       }
       return sortableItems;
-    }, [dataPenganggaran, sortConfig]);
+    }, [dataPenganggaranPersentase, sortConfig]);
 
     const sortedItemsDetail = React.useMemo(() => {
       let sortableItems = [...(dataDetailUnitSkpd || [])];
@@ -294,9 +341,7 @@ const ContentPenganggaranDetailDaerah = () => {
       }
       return sortableItems;
     }, [dataDetailUnitSkpdSro, sortConfig]);
-
-
-  
+    
     const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);
     const currentItemsDetail = sortedItemsDetail.slice(
       indexOfFirstItemDetail,
@@ -308,16 +353,15 @@ const ContentPenganggaranDetailDaerah = () => {
     );    
     
     const totalPages = Math.ceil(
-      (dataPenganggaran?.length || 0) / itemsPerPage
+      (dataPenganggaranPersentase?.length || 0) / itemsPerPage
     );
     const totalPagesDetail = Math.ceil(
       (dataDetailUnitSkpd?.length || 0) / itemsPerPage
     );
-
     const totalPagesDetailSub = Math.ceil(
       (dataDetailUnitSkpdSro?.length || 0) / itemsPerPage
     );
-  
+    
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
     const paginateDetail = (pageNumber) => setCurrentPageDetail(pageNumber);
     const paginateDetailSub = (pageNumber) => setCurrentPageDetailSub(pageNumber);
@@ -339,7 +383,6 @@ const ContentPenganggaranDetailDaerah = () => {
       }else{
         setSelectedSingleSubTahapan(value);
       }
-  
     };
       
     const requestSort = (key) => {
@@ -374,21 +417,19 @@ const ContentPenganggaranDetailDaerah = () => {
 
     const [modal, setModal] = useState(false);
     const [dataRincianDetailAnggaranSub, setDataRincianDetailAnggaranSub] = useState(0);
-    const [dataRincianDetailPenganggaranSub, setDataRincianDetailPenganggaranSub] = useState(0);
+    const [dataRincianDetailRealisasiSub, setDataRincianDetailRealisasiSub] = useState(0);
     const [dataDetailNamaSubRincinianObjek, setDataDetailNamaSubRincinianObjek] = useState("");
 
     const handleOpenNextModal = ({
       kodeSubGiat = "",
       namaSubGiat = "",
-      anggaran = "",
-      Penganggaran="",
+      anggaran = "",      
     }
     ) => {
-      getDataDetailUnitSkpdSro( {kodeSubGiat : kodeSubGiat} )
+      getDataDetailUnitSkpdSro( {kodeSubGiat : kodeSubGiat, idTahap: selectedSingleTahapan} )
       setModal(true);
       setDataDetailNamaSubRincinianObjek(namaSubGiat)
-      setDataRincianDetailAnggaranSub(anggaran);
-      setDataRincianDetailPenganggaranSub(Penganggaran);
+      setDataRincianDetailAnggaranSub(anggaran);      
       setCardHead(null);
     };
     const handleCloseNextModal = () => {
@@ -398,24 +439,85 @@ const ContentPenganggaranDetailDaerah = () => {
       return (
       <React.Fragment>
           <Row>
-          <Col>
-            <Card className="card-custom">
-              <div className="d-flex justify-content-between">
-                <div className="d-flex title-page">
-                  {/* <div className="d-flex justify-content-center align-items-center avatar-sm">
-                    <span className="logo-sm">                      
-                    </span>
-                  </div> */}
-                  <div className="d-flex justify-content-center align-items-center">
-                    <span>Penganggaran</span>
-                  </div>
+        <Col>
+          <Card className="card-custom">
+            <div className="d-flex justify-content-between">
+              <div className="d-flex title-page">
+                <div className="d-flex justify-content-center align-items-center avatar-sm">
+                  <span className="logo-sm">
+                    {/* <img src={logoKemenkoPmk} alt="" width="40" height="40" /> */}
+                  </span>
                 </div>
-                <div className="d-flex justify-content-center align-items-center">                  
+                <div className="d-flex justify-content-center align-items-center">
+                  <span>Penganggaran</span>
                 </div>
               </div>
-            </Card>
-          </Col>
-        </Row>      
+              <div className="d-flex justify-content-center align-items-center">
+                <div className="nav-beranda d-flex justify-content-center align-items-center">
+                <Nav tabs className="nav nav-tabs nav-success nav-justified border-bottom-0">
+                    <NavItem>
+                        <NavLink
+                          style={{ cursor: "pointer" }}
+                          className={classnames("h-100", {
+                            active: customActiveTab === "1",
+                          })}
+                          onClick={() => {
+                            toggleCustom("1");
+                            setSelectedSingleTahapan("28")
+                          }}
+                        >
+                          Murni
+                        </NavLink>
+                      </NavItem>                                            
+                    <NavItem>
+                        <NavLink
+                          style={{ cursor: "pointer" }}
+                          className={classnames("h-100", {
+                            active: customActiveTab === "2",
+                          })}
+                          onClick={() => {
+                            toggleCustom("2");
+                            setSelectedSingleTahapan("30")
+                          }}
+                        >
+                          Pergeseran
+                        </NavLink>
+                      </NavItem>                                            
+                    <NavItem>
+                        <NavLink
+                          style={{ cursor: "pointer" }}
+                          className={classnames("h-100", {
+                            active: customActiveTab === "3",
+                          })}
+                          onClick={() => {
+                            toggleCustom("3");
+                            setSelectedSingleTahapan("41")
+                          }}
+                        >
+                          Perubahan
+                        </NavLink>
+                      </NavItem>                                            
+                    <NavItem>
+                        <NavLink
+                          style={{ cursor: "pointer", width:"250px" }}
+                          className={classnames("h-100", {
+                            active: customActiveTab === "4",
+                          })}
+                          onClick={() => {
+                            toggleCustom("4");
+                            setSelectedSingleTahapan("32")
+                          }}
+                        >
+                          Pergeseran Setelah Perubahan
+                        </NavLink>
+                      </NavItem>                                            
+                    </Nav>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </Col>        
+    </Row>    
         <Row>
           <Col>
           <div className="d-sm-flex align-items-center justify-content-between">            
@@ -487,44 +589,6 @@ const ContentPenganggaranDetailDaerah = () => {
                   </div>                    
                   </Col>
                 </Row>
-                {/* <div className='separator mb-3'>
-                </div> */}
-                {/* <Row>
-                  <Col>
-                  <div className='d-flex justify-content-between'>
-                    <div className='d-flex justify-content-start align-items-start mb-2' style={{fontSize: "20px", fontWeight:600}}>
-                        Sumber Usulan RKPD
-                    </div>
-                    <select
-                        name="subtahap"
-                          style={{
-                            padding: "10px 30px 10px 10px",
-                            fontSize: "16px",
-                            borderRadius: "5px",
-                            border: "1px solid #ccc",
-                            backgroundColor: "#ffffff",                          
-                            cursor: "pointer",                          
-                            marginLeft: "10px"
-                          }}
-                          value={selectedSingleSubTahapan}
-                          onChange={handleSelectChange}
-                        >                        
-                        <option value="1">Persiapan</option>
-                        <option value="2">Ranwal</option>
-                        <option value="3">Rancangan</option>
-                        <option value="4">Musrenbang</option>
-                        <option value="5">Rankhir</option>
-                        <option value="6">Penetapan</option>                                                                                                                  
-                        </select>
-                  </div>
-                  
-                  <PieChartNew 
-                  dataChart={dataPenganggaran}
-                  categoryName={['Eksekutif', 'Legislatif', 'Masyarakat']}
-                  dataColors='["#57E7B4", "#FCAD24", "#2DAED4"]'
-                  />                  
-                  </Col>
-                </Row> */}
               </CardBody>
             </Card>
           </Col>
@@ -532,13 +596,13 @@ const ContentPenganggaranDetailDaerah = () => {
           <Card className="card-height-100">
               <CardBody>
                 <div className="separator">
-                  <h4 className="card-title mb-3">
-                    Penganggaran Belanja Daerah {namaDaerah}
+                  <h4 className="card-title mb-1">
+                    List Progress Penganggaran 
                   </h4>                  
                 </div>                
                 <Row>
                   <Col>                
-                    {/* <select
+                    <select
                     name="tahun"
                           style={{
                             padding: "10px 30px 10px 10px",
@@ -558,22 +622,44 @@ const ContentPenganggaranDetailDaerah = () => {
                           <option value="2025">2025</option>
                         </select>
                         <select
-                        name="tahap"
-                          style={{
-                            padding: "10px 30px 10px 10px",
-                            fontSize: "16px",
-                            borderRadius: "5px",
-                            border: "1px solid #ccc",
-                            backgroundColor: "#ffffff",                          
-                            cursor: "pointer",                          
-                            marginLeft: "10px"
-                          }}
-                          value={selectedSingleTahapan}
-                          onChange={handleSelectChange}
-                        >                        
-                          <option value="1">RKPD</option>
-                          <option value="3">RKPD Perubahan</option>
-                        </select> */}
+                      name="tahap"
+                        style={{
+                          padding: "10px 30px 10px 10px",
+                          fontSize: "16px",
+                          borderRadius: "5px",
+                          border: "1px solid #ccc",
+                          backgroundColor: "#ffffff",                          
+                          cursor: "pointer",                          
+                          marginLeft: "10px"
+                        }}
+                        value={selectedSingleTahapan}
+                        onChange={handleSelectChange}
+                      >                        
+                        {(()=>{
+                          switch(customActiveTab){
+                            case "1":
+                            return (<>
+                            <option value="40">KUA & PPAS</option>
+                            <option value="5">RAPBD</option>
+                            <option value="28">Penetapan APBD</option>
+                            </>)                            
+                            case "2":
+                            return (<>
+                              <option value="30">APBD Pergeseran</option>                              
+                            </>)                            
+                            case "3":
+                            return (<>
+                            <option value="41">KUPA & PPAS</option>
+                            <option value="8">RAPBD Perubahan</option>
+                            <option value="29">Penetapan APBD Perubahan</option>
+                            </>)                            
+                            default:
+                            return (<>
+                              <option value="32">APBD Pergeseran Setelah APBD Perubahan</option>
+                            </>)
+                          }
+                        })()}
+                      </select>
                     <div className="table-responsive table-card" style={{ overflowX: "auto" }}>                    
                       <table className="table table-nowrap mb-2 " style={{width:"1000px"}} >
                         <thead className="table-light">
@@ -632,7 +718,7 @@ const ContentPenganggaranDetailDaerah = () => {
                               NAMA UNIT SKPD {getSortIcon("nama_unit_skpd")}
                             </th>
                             <th
-                            onClick={() => requestSort("Penganggaran")}
+                            onClick={() => requestSort("pagu_validasi")}
                               style={{
                                 textAlign: "center",
                                 verticalAlign: "middle",
@@ -642,20 +728,7 @@ const ContentPenganggaranDetailDaerah = () => {
                               }}
                               scope="col"
                             >
-                              Penganggaran (Rp) {getSortIcon("Penganggaran")}
-                            </th>
-                            <th
-                            onClick={() => requestSort("anggarangeser")}
-                              style={{
-                                textAlign: "center",
-                                verticalAlign: "middle",
-                                cursor: "pointer",
-                                whiteSpace: "normal",
-                                overflowWrap: "break-word",                                
-                              }}
-                              scope="col"
-                            >
-                              ANGGARAN (Rp) {getSortIcon("anggarangeser")}
+                              ANGGARAN (Rp) {getSortIcon("pagu_validasi")}
                             </th>
                             <th
                               style={{
@@ -673,36 +746,41 @@ const ContentPenganggaranDetailDaerah = () => {
                         </thead>
                         <tbody>
                           {currentItems.map((item, index) => {
+                            const tahapData = {
+                              5: item?.total_rincian_rapbd,
+                              40: item?.total_rincian_kuappas,
+                              30: item?.total_rincian_apbdgeser,
+                              41: item?.total_rincian_kupa,
+                              8: item?.total_rincian_rapbdubah,
+                              29: item?.total_rincian_apbdubah,
+                              28: item?.total_rincian_apbd,
+                              32: item?.total_rincian_apbdgeserpasca,
+                            };
                             return (
                               <tr key={index}>
                                   {/* style={{ verticalAlign: "middle", textAlign: "center" }} */}
                                 <td >{item.kode_skpd}</td>
                                 <td style={{
-                                    whiteSpace: "normal",
-                                    wordWrap: "break-word",
-                                    maxWidth: "200px",
-                                  }}>{item.nama_skpd}
+                                  whiteSpace: "normal",
+                                  wordWrap: "break-word",
+                                  maxWidth: "200px",
+                                }}>
+                                  {item.nama_skpd}
                                 </td>
-                                <td >{item.kode_unit_skpd}</td>
+                                <td>                               
+                                    {item.kode_unit_skpd}
+                                </td>
                                 <td style={{
-                                    whiteSpace: "normal", 
-                                    wordWrap: "break-word", 
-                                    maxWidth: "200px", 
-                                  }}>{item.nama_unit_skpd}
+                                  whiteSpace: "normal", 
+                                  wordWrap: "break-word", 
+                                  maxWidth: "200px", 
+                                }}>
+                                  {item.nama_unit_skpd}
                                 </td>
                                 <td>
                                   <span style={{ float: "right" }}>
-                                  {item.Penganggaran
-                                    ? parseInt(item.Penganggaran).toLocaleString(
-                                        "id-ID"
-                                      )
-                                    : "-"}
-                                  </span>
-                                </td>
-                                <td>
-                                  <span style={{ float: "right" }}>
-                                  {item.anggarangeser
-                                    ? parseInt(item.anggarangeser).toLocaleString(
+                                  {tahapData[selectedSingleTahapan]
+                                    ? parseInt(tahapData[selectedSingleTahapan]).toLocaleString(
                                         "id-ID"
                                       )
                                     : "-"}
@@ -717,7 +795,7 @@ const ContentPenganggaranDetailDaerah = () => {
                                   }}
                                 >
                                   <i
-                                  onClick={()=> handleOpen({ kodeUnitSkpd: item.kode_skpd, namaUnitSkpd:item.nama_unit_skpd, Penganggaran: item.Penganggaran, anggaran:item.anggarangeser })}
+                                  onClick={()=> handleOpen({idTahap: selectedSingleTahapan, tahun:item.tahun, kodeUnitSkpd: item.kode_unit_skpd, kodeDdn: item.kode_ddn, namaUnitSkpd:item.nama_unit_skpd, paguValidasi: tahapData[selectedSingleTahapan]})}
                                     style={{
                                       padding: "5px 10px",
                                       cursor: "pointer",
@@ -744,7 +822,6 @@ const ContentPenganggaranDetailDaerah = () => {
             </Card>
           </Col>          
         </Row>
-
         <Modal
         size="xl"
         isOpen={modall}
@@ -758,7 +835,7 @@ const ContentPenganggaranDetailDaerah = () => {
           </ModalHeader>
           <ModalBody>
             {/* <div>
-              Total Anggaran: {dataRincianDetailAnggaran}
+              Total Anggaran: {dataRincianDetail}
             </div> */}
             <Row>
               <Col md={4}>
@@ -780,40 +857,7 @@ const ContentPenganggaranDetailDaerah = () => {
                               start={0}
                               end={
                                 // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
-                                dataRincianDetailAnggaran
-                              }
-                              separator="."
-                              prefix="Rp "
-                              suffix=""
-                              duration={3}
-                            />
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardBody>
-                </Card>
-              </Col>
-              <Col md={4}>
-                <Card className="card-animate card-height-100">
-                  <CardBody>
-                    <div className="d-flex flex-column title-custom-card">
-                      <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                        <span>Total Penganggaran</span>
-                      </div>
-                      <div className="d-flex">
-                        {/* <div className="avatar-xs-half flex-shrink-0">
-                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
-                          <i className=" ri-women-line text-danger"></i>
-                        </span>
-                      </div> */}
-                        <div className="d-flex justify-content-center align-items-center title-body">
-                          <span>
-                            <CountUp
-                              start={0}
-                              end={
-                                // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
-                                dataRincianDetailPenganggaran
+                                dataRincianDetail
                               }
                               separator="."
                               prefix="Rp "
@@ -859,74 +903,68 @@ const ContentPenganggaranDetailDaerah = () => {
                       onClick={() => requestSortDetail("pagu_validasi")}
                       style={{ cursor: "pointer", textAlign: "center" }}
                     >
-                      Pagu (Rp){" "}
+                      Anggaran
                       {getSortIconDetail("pagu_validasi")}
-                    </th>             
-                    <th
-                      onClick={() => requestSortDetail("Penganggaran")}
-                      style={{ cursor: "pointer", textAlign: "center" }}
-                    >
-                      Penganggaran (Rp){" "}
-                      {getSortIconDetail("Penganggaran")}
-                    </th>           
+                    </th>              
                     <th
                       style={{ cursor: "pointer", textAlign: "center" }}
                     >
                       Action
-                    </th>                        
+                    </th>                                            
                   </tr>
                 </thead>
                 <tbody style={{ minHeight: "500px" }}>
-                  {currentItemsDetail.map((item, index) => (
-                    <tr key={index}>
+                  {currentItemsDetail.map((item, index) => {
+                    const tahapData = {
+                      5: item?.total_rincian_rapbd,
+                      40: item?.total_rincian_kuappas,
+                      30: item?.total_rincian_apbdgeser,
+                      41: item?.total_rincian_kupa,
+                      8: item?.total_rincian_rapbdubah,
+                      29: item?.total_rincian_apbdubah,
+                      28: item?.total_rincian_apbd,
+                      32: item?.total_rincian_apbdgeserpasca,
+                    };
+                    return (<tr key={index}>
+                      {/* <td>{item.kode_prop}</td> */}
                       <td>
                         {item.kode_sub_giat}
                       </td>                      
                       <td style={{
-                          whiteSpace: "normal",
-                          wordWrap: "break-word",
-                          maxWidth: "200px",
+                          whiteSpace: "normal", // Membolehkan teks turun ke baris berikutnya
+                          wordWrap: "break-word", // Memastikan teks panjang terpotong dan turun ke bawah
+                          maxWidth: "200px", // Menetapkan lebar maksimum sel (sesuaikan dengan kebutuhan)
                         }}>
                         {item.nama_sub_giat}
                       </td>                      
                       <td>
                          <span style={{ float: "right" }}>
-                          {item.anggarangeser
-                            ? parseInt(item.anggarangeser).toLocaleString(
+                          {tahapData[selectedSingleTahapan]
+                            ? parseInt(tahapData[selectedSingleTahapan]).toLocaleString(
                                 "id-ID"
                               )
                             : "-"}
                         </span>                        
-                      </td>   
-                      <td>
-                         <span style={{ float: "right" }}>
-                          {item.Penganggaran
-                            ? parseInt(item.Penganggaran).toLocaleString(
-                                "id-ID"
-                              )
-                            : "-"}
-                        </span>                        
-                      </td>
-                      <td
-                      style={{
+                      </td>       
+                      <td style={{
                         textAlign: "center",
                         verticalAlign: "middle",
                         whiteSpace: "normal",
                         overflowWrap: "break-word",
-                      }}
-                      >
+                      }}>
                       <i
-                      onClick={()=> handleOpenNextModal({ kodeSubGiat: item.kode_sub_giat, namaSubGiat:item.nama_sub_giat, Penganggaran: item.Penganggaran, anggaran: item.anggarangeser })}
+                      onClick={()=> handleOpenNextModal({ kodeSubGiat: item.kode_sub_giat, namaSubGiat:item.nama_sub_giat, realisasi: item.realisasi, anggaran: tahapData[selectedSingleTahapan] })}
                         style={{
                           padding: "5px 10px",
                           cursor: "pointer",
                           fontSize: "20px",
                         }}
                         className="bx bx-list-ul text-primary"
-                      ></i>
-                    </td>                   
-                    </tr>
-                  ))}                  
+                      >                        
+                      </i>
+                      </td>               
+                    </tr>)                    
+                  })}                  
                 </tbody>
               </table>
             {/* </div> */}
@@ -951,7 +989,7 @@ const ContentPenganggaranDetailDaerah = () => {
             className=" p-3 bg-info-subtle"
             toggle={handleCloseNextModal}
           >
-            Sub Rincian Objek {dataDetailNamaSubRincinianObjek}
+            Sub Kegiatan {dataDetailNamaSubRincinianObjek}
           </ModalHeader>
           <ModalBody>
             <Row>
@@ -987,40 +1025,7 @@ const ContentPenganggaranDetailDaerah = () => {
                     </div>
                   </CardBody>
                 </Card>
-              </Col>
-              <Col md={4}>
-                <Card className="card-animate card-height-100">
-                  <CardBody>
-                    <div className="d-flex flex-column title-custom-card">
-                      <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                        <span>Total Penganggaran</span>
-                      </div>
-                      <div className="d-flex">
-                        {/* <div className="avatar-xs-half flex-shrink-0">
-                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
-                          <i className=" ri-women-line text-danger"></i>
-                        </span>
-                      </div> */}
-                        <div className="d-flex justify-content-center align-items-center title-body">
-                          <span>
-                            <CountUp
-                              start={0}
-                              end={
-                                // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
-                                dataRincianDetailPenganggaranSub
-                              }
-                              separator="."
-                              prefix="Rp "
-                              suffix=""
-                              duration={3}
-                            />
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardBody>
-                </Card>
-              </Col>
+              </Col>              
             </Row>
 
             <div style={{ overflowY: "scroll", maxHeight: "500px" }}>
@@ -1051,30 +1056,24 @@ const ContentPenganggaranDetailDaerah = () => {
                       onClick={() => requestSort("total_rinciansro")}
                       style={{ cursor: "pointer", textAlign: "center" }}
                     >
-                      Pagu (Rp) {getSortIcon("total_rinciansro")}
-                    </th>
-                    <th
-                      onClick={() => requestSort("total_rinciansro")}
-                      style={{ cursor: "pointer", textAlign: "center" }}
-                    >
-                      Penganggaran {getSortIcon("total_rinciansro")}
-                    </th>
-                    <th
-                      onClick={() => requestSort("persentase")}
-                      style={{
-                        cursor: "pointer",
-                        textAlign: "center",
-                        whiteSpace: "normal",
-                        overflowWrap: "break-word",
-                      }}
-                    >
-                      Persentase {getSortIcon("persentase")}
-                    </th>
+                      Anggaran (Rp) {getSortIcon("total_rinciansro")}
+                    </th>                                        
                   </tr>
                 </thead>
                 <tbody style={{ minHeight: "500px" }}>
-                  {currentItemsDetailSub.map((item, index) => (
-                    <tr key={index}>
+                  {currentItemsDetailSub.map((item, index) => {
+                    const tahapData = {
+                      5: item?.total_rincian_rapbd,
+                      40: item?.total_rincian_kuappas,
+                      30: item?.total_rincian_apbdgeser,
+                      41: item?.total_rincian_kupa,
+                      8: item?.total_rincian_rapbdubah,
+                      29: item?.total_rincian_apbdubah,
+                      28: item?.total_rincian_apbd,
+                      32: item?.total_rincian_apbdgeserpasca,
+                    };
+                    return (
+                      <tr key={index}>
                       {/* <td>{item.kode_prop}</td> */}
                       <td
                         style={{ textAlign: "center", verticalAlign: "middle" }}
@@ -1098,51 +1097,16 @@ const ContentPenganggaranDetailDaerah = () => {
                         </td> */}
                       <td>
                       <span style={{ float: "right" }}>
-                        {item.anggarangeser
-                          ? parseInt(item.anggarangeser).toLocaleString(
+                        {tahapData[selectedSingleTahapan]
+                          ? parseInt(tahapData[selectedSingleTahapan]).toLocaleString(
                               "id-ID"
                             )
                           : "-"}
                       </span>
-                    </td>
-                      <td>
-                        <span style={{ float: "right" }}>
-                          {item.Penganggaran
-                            ? parseInt(item.Penganggaran).toLocaleString(
-                                "id-ID"
-                              )
-                            : "-"}
-                        </span>
-                      </td>
-                      <td>
-                        <span style={{ float: "right" }}>
-                          {`${((item.Penganggaran/item.anggarangeser)*100).toLocaleString(
-                                  "id-ID",
-                                  {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2,
-                                  }
-                                )}%`}
-                          {/* {item.persentase
-                            ? item.persentase >= 1
-                              ? `${Number(item.persentase).toLocaleString(
-                                  "id-ID",
-                                  {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2,
-                                  }
-                                )}%`
-                              : `${Number(item.persentase).toLocaleString(
-                                  "id-ID",
-                                  {
-                                    minimumFractionDigits: 4,
-                                  }
-                                )}%`
-                            : "-"} */}
-                        </span>
-                      </td>
+                    </td>                                          
                     </tr>
-                  ))}
+                    )                    
+                  })}
                 </tbody>
               </table>
             </div>
