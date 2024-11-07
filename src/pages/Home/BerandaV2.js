@@ -817,7 +817,7 @@ const BerandaV2 = () => {
                       toggleTabPerencanaan("1", "all");
                       getDataBerandaPerencanaan({idTahap : "1"});
                     }}
-                    href="#"
+                    style={{ cursor: "pointer" }}
                   >
                     Murni{" "}
                     {/* <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">
@@ -835,7 +835,7 @@ const BerandaV2 = () => {
                       toggleTabPerencanaan("2", "published");
                       getDataBerandaPerencanaan({idTahap : "3"});
                     }}
-                    href="#"
+                    style={{ cursor: "pointer" }}
                   >
                     Perubahan{" "}
                     {/* <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">
@@ -1048,7 +1048,7 @@ const BerandaV2 = () => {
                       toggleTabPenganggaran("1");
                       getDataBerandaPenganggaran({idTahap : "28"});
                     }}
-                    href="#"
+                    style={{ cursor: "pointer" }}
                   >
                     Murni{" "}
                     {/* <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">
@@ -1066,7 +1066,7 @@ const BerandaV2 = () => {
                       toggleTabPenganggaran("2");
                       getDataBerandaPenganggaran({idTahap : "29"});
                     }}
-                    href="#"
+                    style={{ cursor: "pointer" }}
                   >
                     Perubahan{" "}
                     {/* <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">
@@ -1084,9 +1084,27 @@ const BerandaV2 = () => {
                       toggleTabPenganggaran("3");
                       getDataBerandaPenganggaran({idTahap : "30"});
                     }}
-                    href="#"
+                    style={{ cursor: "pointer" }}
                   >
                     Pergeseran{" "}
+                    {/* <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">
+                              5
+                            </span> */}
+                  </NavLink>
+                </NavItem>
+                <NavItem>
+                  <NavLink
+                    className={classnames(
+                      { active: activeTabPenganggaran === "4" },
+                      "fw-semibold"
+                    )}
+                    onClick={() => {
+                      toggleTabPenganggaran("4");
+                      getDataBerandaPenganggaran({idTahap : "99"});
+                    }}
+                    style={{ cursor: "pointer" }}
+                  >
+                    id tahap 99
                     {/* <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">
                               5
                             </span> */}

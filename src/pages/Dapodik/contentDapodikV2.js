@@ -1667,7 +1667,16 @@ const ContentDapodikV2 = () => {
                       </thead>
                       <tbody style={{ minHeight: "500px" }}>
                         {currentItems.map((item, index) => (
-                          <tr key={index}>
+                          <tr key={index} style={{cursor:"pointer"}} onClick={() =>
+                            handleOpen(
+                              item.kode_prov,
+                              item.nama_prov,
+                              "",
+                              "",
+                              "",
+                              item.total_pendidikan
+                            )
+                          }>
                             {/* <td>{item.kode_prop}</td> */}
                             <td
                               style={{
@@ -2168,7 +2177,16 @@ const ContentDapodikV2 = () => {
                       </thead>
                       <tbody style={{ minHeight: "500px" }}>
                         {currentItemProvinsi.map((item, index) => (
-                          <tr key={index}>
+                          <tr key={index} style={{cursor:"pointer"}} onClick={() =>
+                            handleOpen(
+                              "",
+                              item.nama_prov,
+                              "",
+                              item.kode_ddn,
+                              item.jns_pemda,
+                              item.total_pendidikan
+                            )
+                          }>
                             {/* <td>{item.kode_prop}</td> */}
                             <td
                               style={{
@@ -2726,7 +2744,16 @@ const ContentDapodikV2 = () => {
                       </thead>
                       <tbody style={{ minHeight: "500px" }}>
                         {currentItemsKabupaten.map((item, index) => (
-                          <tr key={index}>
+                          <tr key={index} style={{cursor:"pointer"}} onClick={() =>
+                            handleOpen(
+                              "",
+                              item.nama_kabkota,
+                              item.kode_ddn,
+                              "",
+                              item.jns_pemda,
+                              item.total_pendidikan
+                            )
+                          }>
                             {/* <td>{item.kode_prop}</td> */}
                             <td
                               style={{
