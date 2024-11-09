@@ -211,12 +211,6 @@ const ContentPenganggaranDaerah = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const paginateSudahDanBelum = (pageNumber) => setCurrentPageSudahDanBelum(pageNumber);
   
-  const [dataShowSumberUsulan, setDataShowSumberUsulan] = useState(false);
-  const handleShowDataSumberUsulan = (value) => {
-    setDataShowSumberUsulan(value);
-  };
-
-  
   const handleSelectChange = (e) => {
     const { name, value } = e.target;
     console.log(`${name}: ${value}`, 'ini isi selected value');
@@ -798,9 +792,9 @@ const ContentPenganggaranDaerah = () => {
                                   <div className="step-container">
                                     {selectedSingleTahapan=="1" ? 
                                     (<>
-                                    <div onClick={()=>{item.daerah_kuappas=='1'? (handleOpen({idTahap: 40}), setDataDetailIdTahap(40)):''}} className={`step-item ${item.daerah_kuappas=='1'? 'persiapan':'disabled'}`}>KUA & PPAS</div>
-                                    <div onClick={()=>{item.daerah_rapbd=='1'? (handleOpen({idTahap: 5}), setDataDetailIdTahap(5)):''}} className={`step-item ${item.daerah_rapbd=='1'? 'ranwal':'disabled'}`}>RAPBD</div>
-                                    <div onClick={()=>{item.daerah_apbd=='1'? handleOpen({idTahap: 28}):''}} className={`step-item ${item.daerah_apbd=='1'? 'rancangan':'disabled'}`}>Penetapan APBD</div>                                  
+                                    <div onClick={()=>{item.daerah_kuappas=='1'? '':''}} className={`step-item ${item.daerah_kuappas=='1'? 'persiapan':'disabled'}`}>KUA & PPAS</div>
+                                    <div onClick={()=>{item.daerah_rapbd=='1'? '':''}} className={`step-item ${item.daerah_rapbd=='1'? 'ranwal':'disabled'}`}>RAPBD</div>
+                                    <div onClick={()=>{item.daerah_apbd=='1'? '':''}} className={`step-item ${item.daerah_apbd=='1'? 'rancangan':'disabled'}`}>Penetapan APBD</div>                                  
                                     </>) : selectedSingleTahapan=="2" ?
                                     (<>                                
                                     {item.daerah_apbdgeser==0 ? (<>
@@ -819,9 +813,9 @@ const ContentPenganggaranDaerah = () => {
                                     <div onClick={()=>{item.daerah_apbdgeser>0? '':''}} className={`step-item ${item.daerah_apbdgeser>0 ? 'rancangan':'disabled'}`}>{item.daerah_apbdgeser}</div>
                                     )}
                                     </>) : selectedSingleTahapan=="3" ? (<>
-                                    <div onClick={()=>{item.daerah_kupa=='1'? (handleOpen({idTahap: 41}), setDataDetailIdTahap(41)):''}} className={`step-item ${item.daerah_kupa=='1'? 'rancangan':'disabled'}`}>KUPA & PPAS</div>
-                                    <div onClick={()=>{item.daerah_rapbdubah=='1'? handleOpen({idTahap: 8}):''}} className={`step-item ${item.daerah_rapbdubah=='1'? 'rankhir':'disabled'}`}>RAPBD Perubahan</div>
-                                    <div onClick={()=>{item.daerah_apbdubah=='1'? handleOpen({idTahap: 29}):''}} className={`step-item ${item.daerah_apbdubah=='1'? 'penetapan':'disabled'}`}>Penetapan APBD Perubahan</div>
+                                    <div onClick={()=>{item.daerah_kupa=='1'? '':''}} className={`step-item ${item.daerah_kupa=='1'? 'rancangan':'disabled'}`}>KUPA & PPAS</div>
+                                    <div onClick={()=>{item.daerah_rapbdubah=='1'? '':''}} className={`step-item ${item.daerah_rapbdubah=='1'? 'rankhir':'disabled'}`}>RAPBD Perubahan</div>
+                                    <div onClick={()=>{item.daerah_apbdubah=='1'? '':''}} className={`step-item ${item.daerah_apbdubah=='1'? 'penetapan':'disabled'}`}>Penetapan APBD Perubahan</div>
                                     </>) : (<>
                                       {item.daerah_apbdgeserpasca==0 ? (<>
                                     <div>Tidak Ada Pergeseran</div>  {/* Menampilkan div lain saat data 0 */}
