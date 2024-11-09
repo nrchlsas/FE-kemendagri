@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Card, CardBody, Col, Row,Nav, NavItem, NavLink } from 'reactstrap'
+import { Card, CardBody, Col, Row,Nav, NavItem, NavLink, Modal, ModalHeader, ModalBody } from 'reactstrap'
 import Pagination from "../../../Components/Pagination/Pagination";
 import '../../../Components/ProgressArrowBar/ProgressArrowBar.scss'
 
@@ -26,6 +26,9 @@ const ContentPenganggaranDaerah = () => {
   const [selectedSingleTahapan, setSelectedSingleTahapan] = useState('1'); // Set default value
   const [dataPenganggaran, setDataPenganggaran] = useState([]);
   const [dataPenganggaranPersentase, setDataPenganggaranPersentase] = useState(
+    []
+  );
+  const [dataPenganggaranSudahDanBelum, setDataPenganggaranSudahDanBelum] = useState(
     []
   );
   const [loadingPenganggaran, setLoadingPenganggaran] = useState([]);
@@ -110,6 +113,10 @@ const ContentPenganggaranDaerah = () => {
         setDataPenganggaranPersentase(
           dataPenganggaranNasionalPersentase.data.penganggaran_level_2
         );
+
+        setDataPenganggaranSudahDanBelum(
+          dataPenganggaranNasionalPersentase.data.penganggaran_level_2
+        )
       } catch (errorPenganggaran) {
         setErrorPenganggaran(errorPenganggaran);
       } finally {
@@ -136,13 +143,22 @@ const ContentPenganggaranDaerah = () => {
   
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10); // Set items per page
+  const [currentPageSudahDanBelum, setCurrentPageSudahDanBelum] = useState(1);
+  const [itemsPerPageSudahDanBelum] = useState(10); // Set items per page
   const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: "ascending",
+  });
+  const [sortConfigDetail, setSortConfigDetail] = useState({      
     key: null,
     direction: "ascending",
   });
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+
+  const indexOfLastItemSudahDanBelum = currentPageSudahDanBelum * itemsPerPageSudahDanBelum;
+  const indexOfFirstItemSudahDanBelum = indexOfLastItemSudahDanBelum - itemsPerPageSudahDanBelum;
 
   const sortedItems = React.useMemo(() => {
     let sortableItems = [...(dataPenganggaranPersentase || [])];
@@ -163,20 +179,44 @@ const ContentPenganggaranDaerah = () => {
     return sortableItems;
   }, [dataPenganggaranPersentase, sortConfig]);
 
+  const sortedItemsSudahDanBelum = React.useMemo(() => {
+    let sortableItems = [...(dataPenganggaranSudahDanBelum || [])];
+    if (sortConfigDetail.key !== null) {
+      sortableItems.sort((a, b) => {
+        const aValue = a[sortConfigDetail.key] || 0;
+        const bValue = b[sortConfigDetail.key] || 0;
+
+        if (aValue < bValue) {
+          return sortConfigDetail.direction === "ascending" ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfigDetail.direction === "ascending" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [dataPenganggaranSudahDanBelum, sortConfigDetail]);
+
   const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItemsSudahDanBelum = sortedItemsSudahDanBelum.slice(indexOfFirstItemSudahDanBelum, indexOfLastItemSudahDanBelum);
+
   const totalPages = Math.ceil(
     (dataPenganggaranPersentase?.length || 0) / itemsPerPage
   );
+  const totalPagesSudahDanBelum = Math.ceil(
+    (dataPenganggaranSudahDanBelum?.length || 0) / itemsPerPage
+  );
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
+  const paginateSudahDanBelum = (pageNumber) => setCurrentPageSudahDanBelum(pageNumber);
+  
   const [dataShowSumberUsulan, setDataShowSumberUsulan] = useState(false);
   const handleShowDataSumberUsulan = (value) => {
     setDataShowSumberUsulan(value);
   };
 
-
-  const [namaTahapan, setNamaTahapan] = useState("Persiapan")  
+  
   const handleSelectChange = (e) => {
     const { name, value } = e.target;
     console.log(`${name}: ${value}`, 'ini isi selected value');
@@ -195,11 +235,41 @@ const ContentPenganggaranDaerah = () => {
     const encodedNamaProv = encodeURIComponent(namaProv); 
     navigate(`/penganggaran/penganggaran-detail/penganggaran-detail-skpd/${id}?namaDaerah=${encodedNamaDaerah}&namaProv=${encodedNamaProv}&idProv=${_id}`);
   };
+  
+  const [modall, setModall] = useState(false);
+  const [dataDetailNamaTahap, setDataDetailNamaTahap] = useState("");
+  const [dataDetailIdTahap, setDataDetailIdTahap] = useState(28);
+  const [dataRincianDetail, setDataRincianDetail] = useState(0);
+  const [dataDetailNamaUnitSkpd, setDataDetailNamaUnitSkpd] = useState("");
+  const [cardhead, setCardHead] = useState();    
 
-  const toggleDropdown = () => {
-    const menu = document.getElementById("dropdownMenu");
-    menu.classList.toggle("show");
+  const handleOpen = ({   
+    idTahap 
+  }) => {         
+    setModall(true);  
+    setCardHead(null);
+    console.log(dataDetailIdTahap, 'ini isi data detail')
   };
+
+
+  const handleClose = () => {
+    setModall(false); // Close modal by setting modall to false
+  };
+
+  const requestSortDetail = (key) => {
+    let direction = "ascending";
+    if (sortConfigDetail.key === key && sortConfigDetail.direction === "ascending") {
+      direction = "descending";
+    }
+    setSortConfigDetail({ key, direction });
+  };
+
+  const getSortIconDetail = (key) => {
+    if (sortConfigDetail.key === key) {
+      return sortConfigDetail.direction === "ascending" ? "▲" : "▼";
+    }
+    return "↕"; // Default icon for unsorted
+  };     
 
     return (
     <React.Fragment>
@@ -706,7 +776,16 @@ const ContentPenganggaranDaerah = () => {
                       </thead>
                       <tbody>
                         {currentItems.map((item, index) => {
-
+                          const tahapData = {
+                            5: item?.total_rincian_rapbd,
+                            40: item?.total_rincian_kuappas,
+                            30: item?.total_rincian_apbdgeser,
+                            41: item?.total_rincian_kupa,
+                            8: item?.total_rincian_rapbdubah,
+                            29: item?.total_rincian_apbdubah,
+                            28: item?.total_rincian_apbd,
+                            32: item?.total_rincian_apbdgeserpasca,
+                          };
                           return (
                             <tr key={index}>
                                 {/* style={{ verticalAlign: "middle", textAlign: "center" }} */}
@@ -719,9 +798,9 @@ const ContentPenganggaranDaerah = () => {
                                   <div className="step-container">
                                     {selectedSingleTahapan=="1" ? 
                                     (<>
-                                    <div onClick={()=>{item.daerah_kuappas=='1'? '':''}} className={`step-item ${item.daerah_kuappas=='1'? 'persiapan':'disabled'}`}>KUA & PPAS</div>
-                                    <div onClick={()=>{item.daerah_rapbd=='1'? '':''}} className={`step-item ${item.daerah_rapbd=='1'? 'ranwal':'disabled'}`}>RAPBD</div>
-                                    <div onClick={()=>{item.daerah_apbd=='1'? '':''}} className={`step-item ${item.daerah_apbd=='1'? 'rancangan':'disabled'}`}>Penetapan APBD</div>                                  
+                                    <div onClick={()=>{item.daerah_kuappas=='1'? (handleOpen({idTahap: 40}), setDataDetailIdTahap(40)):''}} className={`step-item ${item.daerah_kuappas=='1'? 'persiapan':'disabled'}`}>KUA & PPAS</div>
+                                    <div onClick={()=>{item.daerah_rapbd=='1'? (handleOpen({idTahap: 5}), setDataDetailIdTahap(5)):''}} className={`step-item ${item.daerah_rapbd=='1'? 'ranwal':'disabled'}`}>RAPBD</div>
+                                    <div onClick={()=>{item.daerah_apbd=='1'? handleOpen({idTahap: 28}):''}} className={`step-item ${item.daerah_apbd=='1'? 'rancangan':'disabled'}`}>Penetapan APBD</div>                                  
                                     </>) : selectedSingleTahapan=="2" ?
                                     (<>                                
                                     {item.daerah_apbdgeser==0 ? (<>
@@ -740,9 +819,9 @@ const ContentPenganggaranDaerah = () => {
                                     <div onClick={()=>{item.daerah_apbdgeser>0? '':''}} className={`step-item ${item.daerah_apbdgeser>0 ? 'rancangan':'disabled'}`}>{item.daerah_apbdgeser}</div>
                                     )}
                                     </>) : selectedSingleTahapan=="3" ? (<>
-                                    <div onClick={()=>{item.rancangan=='1'? '':''}} className={`step-item ${item.daerah_kupa=='1'? 'rancangan':'disabled'}`}>KUPA & PPAS</div>
-                                    <div onClick={()=>{item.rancangan_akhir=='1'? '':''}} className={`step-item ${item.daerah_rapbdubah=='1'? 'rankhir':'disabled'}`}>RAPBD Perubahan</div>
-                                    <div onClick={()=>{item.penetapan=='1'? '':''}} className={`step-item ${item.daerah_apbdubah=='1'? 'penetapan':'disabled'}`}>Penetapan APBD Perubahan</div>
+                                    <div onClick={()=>{item.daerah_kupa=='1'? (handleOpen({idTahap: 41}), setDataDetailIdTahap(41)):''}} className={`step-item ${item.daerah_kupa=='1'? 'rancangan':'disabled'}`}>KUPA & PPAS</div>
+                                    <div onClick={()=>{item.daerah_rapbdubah=='1'? handleOpen({idTahap: 8}):''}} className={`step-item ${item.daerah_rapbdubah=='1'? 'rankhir':'disabled'}`}>RAPBD Perubahan</div>
+                                    <div onClick={()=>{item.daerah_apbdubah=='1'? handleOpen({idTahap: 29}):''}} className={`step-item ${item.daerah_apbdubah=='1'? 'penetapan':'disabled'}`}>Penetapan APBD Perubahan</div>
                                     </>) : (<>
                                       {item.daerah_apbdgeserpasca==0 ? (<>
                                     <div>Tidak Ada Pergeseran</div>  {/* Menampilkan div lain saat data 0 */}
@@ -813,6 +892,91 @@ const ContentPenganggaranDaerah = () => {
           </Card>
         </Col>
       </Row>
+
+      <Modal
+        size="xl"
+        isOpen={modall}
+        toggle={handleOpen}
+        centered={true}
+        backdrop="static"
+      >
+        <div className="modal-content border-0">
+          <ModalHeader className=" p-3 bg-info-subtle" toggle={handleClose}>
+            List Progress Penganggaran {dataDetailNamaTahap} {" "}            
+          </ModalHeader>
+          <ModalBody>
+            {/* <div>
+              Total Anggaran: {dataRincianDetail}
+            </div> */}
+            
+
+            {/* <div style={{ overflowY: "scroll", maxHeight: "500px" }}> */}
+              <table
+                className="table table-bordered table-nowrap align-middle mb-0"
+                style={{ width: "100%" }}
+              >
+                <thead
+                  className="table-light"
+                  style={{ position: "sticky", top: 0, zIndex: 2 }}
+                >
+                  <tr>
+                  <th
+                      onClick={() => requestSortDetail("kode_sub_giat")}
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Kode
+                    </th>
+                    <th
+                      onClick={() => requestSortDetail("kode_sub_giat")}
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Sudah {getSortIconDetail("kode_sub_giat")}
+                    </th>
+                    <th
+                      onClick={() => requestSortDetail("nama_sub_giat")}
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Kode {getSortIconDetail("nama_sub_giat")}
+                    </th>
+                    <th
+                      onClick={() => requestSortDetail("nama_sub_giat")}
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Belum {getSortIconDetail("nama_sub_giat")}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody style={{ minHeight: "500px" }}>
+                  {currentItemsSudahDanBelum.map((item, index) => {
+                    const tahapData = {
+                      5: item?.daerah_rapbd,
+                      40: item?.daerah_kuappas,
+                      30: item?.daerah_apbdgeser,
+                      41: item?.daerah_kupa,
+                      8: item?.daerah_rapbdubah,
+                      29: item?.daerah_apbdubah,
+                      28: item?.daerah_apbd,
+                      32: item?.daerah_apbdgeserpasca,
+                    };
+                    return (                      
+                    <tr key={index}>
+                      <td>{tahapData[dataDetailIdTahap] == 1 ? item.kode_ddn : ""}</td>
+                      <td>{tahapData[dataDetailIdTahap] == 1 ? item.nama_daerah : ""}</td>
+                      <td>{tahapData[dataDetailIdTahap] == 0 ? item.kode_ddn : ""}</td>
+                      <td>{tahapData[dataDetailIdTahap] == 0 ? item.nama_daerah : ""}</td>
+                    </tr>)
+                  })}
+                </tbody>
+              </table>
+            {/* </div> */}
+            <Pagination
+              currentPage={currentPageSudahDanBelum}
+              totalPages={totalPagesSudahDanBelum}
+              onPageChange={paginateSudahDanBelum}
+            />
+          </ModalBody>
+        </div>
+      </Modal>
     </React.Fragment>
   )
 }

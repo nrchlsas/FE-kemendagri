@@ -146,7 +146,7 @@ const BerandaV2 = () => {
     fetchData();
   };
 
-  const getDataBerandaPenganggaran = ({idTahap="30"}) => {
+  const getDataBerandaPenganggaran = ({idTahap=""}) => {
     const fetchData = async () => {
       try {
         const requestOptions = {
@@ -280,7 +280,7 @@ const BerandaV2 = () => {
   useEffect(() => {
     // getDataBeranda();
     getDataBerandaPerencanaan("1");
-    getDataBerandaPenganggaran("30");
+    getDataBerandaPenganggaran({idTahap:"28"});
     getDataBerandaRealisasi();
     getDataBerandaSpm();
     getPiePerencanaan();
@@ -334,14 +334,22 @@ const BerandaV2 = () => {
     }
   };
 
-
+  const [selectedTahap, setSelectedTahap] = useState("28"); // State untuk menyimpan pilihan dropdown
   const handleSelectChange = (e) => {
-    const selectedValue = e.target.value;
-    console.log("Selected value:", selectedValue); // Debugging
-
-    setSelectedSingle(selectedValue);
-    getPiePerencanaan(selectedValue); // Panggil API dengan filter yang dipilih
+    const { name, value } = e.target;
+    const selectedValue = value;
+    console.log(selectedValue, 'ini selected vlue')
+    getDataBerandaPenganggaran({idTahap : value});
+    setSelectedTahap(selectedValue); // Update state dengan pilihan yang dipilih
   };
+
+  // const handleSelectChange = (e) => {
+  //   const selectedValue = e.target.value;
+  //   console.log("Selected value:", selectedValue); // Debugging
+
+  //   setSelectedSingle(selectedValue);
+  //   getPiePerencanaan(selectedValue); // Panggil API dengan filter yang dipilih
+  // };
 
   const navigate = useNavigate();
 
@@ -838,9 +846,6 @@ const BerandaV2 = () => {
                     style={{ cursor: "pointer" }}
                   >
                     Perubahan{" "}
-                    {/* <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">
-                              5
-                            </span> */}
                   </NavLink>
                 </NavItem>
               </Nav>
@@ -1033,8 +1038,33 @@ const BerandaV2 = () => {
         </Col>
         <Col md={4}>
           <Card className="card-animate card-height-100">
-            <CardHeader className="border-bottom-0">
-              <Nav
+            <CardHeader className="border-bottom-0" >
+            <div className="d-flex">
+              <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                Pilih Tahap:
+              </div>
+              <select
+                    name="Tahap"
+                      style={{
+                        padding: "2px 7px 2px 7px",
+                        fontSize: "16px",
+                        borderRadius: "5px",
+                        border: "1px solid #ccc",
+                        backgroundColor: "#ffffff",
+                        cursor: "pointer",
+                        marginLeft: "10px"
+                      }}
+                      value={selectedTahap}
+                      onChange={handleSelectChange}
+                    >
+                    <option value="28">Murni</option>
+                    <option value="29">Perubahan</option>
+                    <option value="30">Pergeseran</option>
+                    <option value="32">Pergeseran Setelah</option>
+                    <option value="99">APBD Akhir</option>
+                    </select>
+                </div>
+              {/* <Nav
                 className="nav-tabs-custom card-header-tabs border-bottom-0"
                 role="tablist"
               >
@@ -1050,10 +1080,7 @@ const BerandaV2 = () => {
                     }}
                     style={{ cursor: "pointer" }}
                   >
-                    Murni{" "}
-                    {/* <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">
-                              12
-                            </span> */}
+                    Murni{" "}                    
                   </NavLink>
                 </NavItem>
                 <NavItem>
@@ -1069,9 +1096,6 @@ const BerandaV2 = () => {
                     style={{ cursor: "pointer" }}
                   >
                     Perubahan{" "}
-                    {/* <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">
-                              5
-                            </span> */}
                   </NavLink>
                 </NavItem>
                 <NavItem>
@@ -1087,9 +1111,6 @@ const BerandaV2 = () => {
                     style={{ cursor: "pointer" }}
                   >
                     Pergeseran{" "}
-                    {/* <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">
-                              5
-                            </span> */}
                   </NavLink>
                 </NavItem>
                 <NavItem>
@@ -1100,17 +1121,15 @@ const BerandaV2 = () => {
                     )}
                     onClick={() => {
                       toggleTabPenganggaran("4");
-                      getDataBerandaPenganggaran({idTahap : "99"});
+                      getDataBerandaPenganggaran({idTahap : "32"});
                     }}
                     style={{ cursor: "pointer" }}
                   >
-                    id tahap 99
-                    {/* <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">
-                              5
-                            </span> */}
+                    pergeseran setelah
                   </NavLink>
                 </NavItem>
-              </Nav>
+              </Nav> */}
+              
             </CardHeader>
             <CardBody>
               <div className="d-flex flex-column justify-content-center align-items-center">
