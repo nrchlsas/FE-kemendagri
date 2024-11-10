@@ -786,6 +786,7 @@ const ContentPerencanaan = () => {
                   </tr>
                 </thead>
                 <tbody style={{ minHeight: "500px" }}>
+                  {/* buat double map */}
                 {currentItemsSudahDanBelum?.map((item, index)=>{
                    const tahapData = {
                       5: item?.daerah_rapbd,

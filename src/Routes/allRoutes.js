@@ -271,6 +271,7 @@ import RealisasiDetailDaerah from "../pages/Realisasi/RealisasiDetailDaerah";
 import Penganggaran from "../pages/Penganggaran";
 import PenganggaranDaerah from "../pages/Penganggaran/PenganggaranDaerah";
 import PenganggaranDetailDaerah from "../pages/Penganggaran/PenganggaranDetailDaerah";
+import Apbd from "../pages/APDB";
 
 //home
 
@@ -278,6 +279,7 @@ import PenganggaranDetailDaerah from "../pages/Penganggaran/PenganggaranDetailDa
 const authProtectedRoutes = [
 
   { path: "/beranda", component: <Home />},
+  { path: "/apbd", component: <Apbd />},
   { path: "/penganggaran", component: <Penganggaran />},
   { path: "/penganggaran/penganggaran-detail/:_id", component: <PenganggaranDaerah />},
   { path: "/penganggaran/penganggaran-detail/penganggaran-detail-skpd/:_id", component: <PenganggaranDetailDaerah />},  

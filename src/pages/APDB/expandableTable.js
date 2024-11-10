@@ -151,7 +151,7 @@ const ExpandableTable = () => {
         </tr>
       </thead>
       <tbody>
-        {dataGrafikPostur.map((item, idx) => renderRow(item, idx))}
+        {data.map((item, idx) => renderRow(item, idx))}
       </tbody>
     </table>
   );

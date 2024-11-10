@@ -267,6 +267,32 @@ const ContentPenganggaran = () => {
   const handleSelectChange = (e) => {
     const { name, value } = e.target;
     console.log(`${name}: ${value}`, 'ini isi selected value');
+
+    switch (value) {
+      case "40":
+       setDataDetailNamaTahap("KUA & PPAS");
+       break;
+      case "5":
+       setDataDetailNamaTahap("RAPBD")
+       break;
+      case "28":
+       setDataDetailNamaTahap("Penetapan APBD")
+       break;
+      case "30":
+       setDataDetailNamaTahap("APBD Pergeseran")
+       break;
+      case "41":
+       setDataDetailNamaTahap("KUPA & PPAS")
+       break;
+      case "8":
+       setDataDetailNamaTahap("RAPBD Perubahan")
+       break;
+      case "29":
+       setDataDetailNamaTahap("Penetapan APBD Perubahan")
+       break;
+      default:
+       setDataDetailNamaTahap("APBD Pergeseran Setelah APBD Perubahan")
+    }
     
     if (name === 'tahun') {
         setSelectedSingleTahun(value); // Misalnya, untuk dropdown tahun
@@ -283,7 +309,7 @@ const ContentPenganggaran = () => {
   };
 
   const [modall, setModall] = useState(false);
-  const [dataDetailNamaTahap, setDataDetailNamaTahap] = useState("");
+  const [dataDetailNamaTahap, setDataDetailNamaTahap] = useState("Penetapan APBD Perubahan");
   const [dataDetailIdTahap, setDataDetailIdTahap] = useState(28);
   const [dataRincianDetail, setDataRincianDetail] = useState(0);
   const [dataDetailNamaUnitSkpd, setDataDetailNamaUnitSkpd] = useState("");
@@ -344,6 +370,7 @@ const ContentPenganggaran = () => {
                           onClick={() => {
                             toggleCustom("1");
                             setSelectedSingleTahapan("28")
+                            setDataDetailNamaTahap("Penetapan APBD")
                           }}
                         >
                           Murni
@@ -358,6 +385,7 @@ const ContentPenganggaran = () => {
                           onClick={() => {
                             toggleCustom("2");
                             setSelectedSingleTahapan("30")
+                            setDataDetailNamaTahap("APBD Pergeseran")
                           }}
                         >
                           Pergeseran
@@ -372,6 +400,7 @@ const ContentPenganggaran = () => {
                           onClick={() => {
                             toggleCustom("3");
                             setSelectedSingleTahapan("41")
+                            setDataDetailNamaTahap("KUPA & PPAS")
                           }}
                         >
                           Perubahan
@@ -386,6 +415,7 @@ const ContentPenganggaran = () => {
                           onClick={() => {
                             toggleCustom("4");
                             setSelectedSingleTahapan("32")
+                            setDataDetailNamaTahap("APBD Pergeseran Setelah APBD Perubahan")
                           }}
                         >
                           Pergeseran Setelah Perubahan
@@ -486,7 +516,7 @@ const ContentPenganggaran = () => {
                     placeholder="Cari Daerah"
                   /> */}
                   <select
-                  name="tahun"
+                  name="tahun"                 
                         style={{
                           padding: "10px 30px 10px 10px",
                           fontSize: "16px",
@@ -506,6 +536,7 @@ const ContentPenganggaran = () => {
                       </select>
                       <select
                       name="tahap"
+                      id="mySelect"
                         style={{
                           padding: "10px 30px 10px 10px",
                           fontSize: "16px",

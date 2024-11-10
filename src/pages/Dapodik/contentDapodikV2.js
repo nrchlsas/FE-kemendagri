@@ -1398,6 +1398,36 @@ const ContentDapodikV2 = () => {
                           >
                             Peserta Didik
                           </th>
+                          <th
+                            colSpan="4"
+                            style={{
+                              textAlign: "center",
+                              borderRight: "2px solid #A9A9A9",
+                              backgroundColor: "#f7f7ff"
+                            }}
+                          >
+                            Tenaga Pengajar
+                          </th>
+                          <th
+                            colSpan="4"
+                            style={{
+                              textAlign: "center",
+                              borderRight: "2px solid #A9A9A9",
+                              backgroundColor: "#f7f7ff"
+                            }}
+                          >
+                            Jumlah Sekolah
+                          </th>
+                          {/* <th
+                            colSpan="4"
+                            style={{
+                              textAlign: "center",
+                              borderRight: "2px solid #A9A9A9",
+                              backgroundColor: "#f7f7ff"
+                            }}
+                          >
+                            Jumlah Sekolah
+                          </th> */}
                           {/* <th colSpan="6" style={{ textAlign: "center" }}>
                             Anak Tidak Sekolah
                           </th> */}
@@ -1475,6 +1505,62 @@ const ContentDapodikV2 = () => {
                             }}
                           >
                             SMK {getSortIcon("smk")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("guru_sd")}
+                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
+                          >
+                            SD {getSortIcon("guru_sd")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("guru_smp")}
+                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
+                          >
+                            SMP {getSortIcon("guru_smp")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("guru_sma")}
+                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
+                          >
+                            SMA {getSortIcon("guru_sma")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("guru_smk")}
+                            style={{
+                              cursor: "pointer",
+                              borderRight: "2px solid #A9A9A9",
+                              backgroundColor: "#f7f7ff"
+                            }}
+                          >
+                            SMK {getSortIcon("guru_smk")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("jumlah_sekolah_sd")}
+                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
+                          >
+                            SD {getSortIcon("jumlah_sekolah_sd")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("jumlah_sekolah_smp")}
+                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
+                          >
+                            SMP {getSortIcon("jumlah_sekolah_smp")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("jumlah_sekolah_sma")}
+                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
+                          >
+                            SMA {getSortIcon("jumlah_sekolah_sma")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("jumlah_sekolah_smk")}
+                            style={{
+                              cursor: "pointer",
+                              borderRight: "2px solid #A9A9A9",
+                              backgroundColor: "#f7f7ff"
+                            }}
+                          >
+                            SMK {getSortIcon("jumlah_sekolah_smk")}
                           </th>
                           {/* <th
                             onClick={() => requestSort("totsd_do")}
@@ -1706,10 +1792,52 @@ const ContentDapodikV2 = () => {
                                 : "-"}
                             </td >
                             <td style={{ backgroundColor: "#f7f7ff", borderRight: "2px solid #A9A9A9" }}>
-                              {item.smk
+                              {item.smk 
                                 ? parseInt(item.smk).toLocaleString("id-ID")
                                 : "-"}
-                            </td></>):(<>
+                            </td>
+                            <td style={{ backgroundColor: "#f7f7ff" }}>
+                              {item.guru_sd
+                                ? parseInt(item.guru_sd).toLocaleString("id-ID")
+                                : "-"}
+                            </td>
+                            <td style={{ backgroundColor: "#f7f7ff" }}>
+                              {item.guru_smp
+                                ? parseInt(item.guru_smp).toLocaleString("id-ID")
+                                : "-"}
+                            </td>
+                            <td  style={{ backgroundColor: "#f7f7ff" }}>
+                              {item.guru_sma
+                                ? parseInt(item.guru_sma).toLocaleString("id-ID")
+                                : "-"}
+                            </td >
+                            <td style={{ backgroundColor: "#f7f7ff", borderRight: "2px solid #A9A9A9" }}>
+                              {item.guru_smk
+                                ? parseInt(item.guru_smk).toLocaleString("id-ID")
+                                : "-"}
+                            </td>
+
+                            <td style={{ backgroundColor: "#f7f7ff" }}>
+                              {item.jumlah_sekolah_sd
+                                ? parseInt(item.jumlah_sekolah_sd).toLocaleString("id-ID")
+                                : "-"}
+                            </td>
+                            <td style={{ backgroundColor: "#f7f7ff" }}>
+                              {item.jumlah_sekolah_smp
+                                ? parseInt(item.jumlah_sekolah_smp).toLocaleString("id-ID")
+                                : "-"}
+                            </td>
+                            <td  style={{ backgroundColor: "#f7f7ff" }}>
+                              {item.jumlah_sekolah_sma
+                                ? parseInt(item.jumlah_sekolah_sma).toLocaleString("id-ID")
+                                : "-"}
+                            </td >
+                            <td style={{ backgroundColor: "#f7f7ff", borderRight: "2px solid #A9A9A9" }}>
+                              {item.jumlah_sekolah_smk
+                                ? parseInt(item.jumlah_sekolah_smk).toLocaleString("id-ID")
+                                : "-"}
+                            </td>
+                            </>):(<>
                               <td style={{ backgroundColor: "#f7f7f7" }}>
                               {item.totsd_do
                                 ? parseInt(item.totsd_do).toLocaleString(
@@ -1935,6 +2063,26 @@ const ContentDapodikV2 = () => {
                           >
                             Peserta Didik
                           </th>
+                          <th
+                            colSpan="2"
+                            style={{
+                              textAlign: "center",
+                              borderRight: "2px solid #A9A9A9",
+                              backgroundColor: "#f7f7ff"
+                            }}
+                          >
+                            Tenaga Pengajar
+                          </th>
+                          <th
+                            colSpan="2"
+                            style={{
+                              textAlign: "center",
+                              borderRight: "2px solid #A9A9A9",
+                              backgroundColor: "#f7f7ff"
+                            }}
+                          >
+                            Jumlah Sekolah
+                          </th>
                           {/* <th colSpan="2" style={{ textAlign: "center" }}>
                             Anak Tidak Sekolah
                           </th> */}
@@ -2012,6 +2160,38 @@ const ContentDapodikV2 = () => {
                             }}
                           >
                             SMK {getSortIcon("smk")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("guru_sma")}
+                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
+                          >
+                            SMA {getSortIcon("guru_sma")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("guru_smk")}
+                            style={{
+                              cursor: "pointer",
+                              borderRight: "2px solid #A9A9A9",
+                              backgroundColor: "#f7f7ff"
+                            }}
+                          >
+                            SMK {getSortIcon("guru_smk")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("jumlah_sekolah_sma")}
+                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
+                          >
+                            SMA {getSortIcon("jumlah_sekolah_sma")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("jumlah_sekolah_smk")}
+                            style={{
+                              cursor: "pointer",
+                              borderRight: "2px solid #A9A9A9",
+                              backgroundColor: "#f7f7ff"
+                            }}
+                          >
+                            SMK {getSortIcon("jumlah_sekolah_smk")}
                           </th>
                           {/* <th
                         onClick={() => requestSort("totsd_do")}
@@ -2218,6 +2398,26 @@ const ContentDapodikV2 = () => {
                             <td style={{ borderRight: "2px solid #A9A9A9", backgroundColor: "#f7f7ff" }}>
                               {item.smk
                                 ? parseInt(item.smk).toLocaleString("id-ID")
+                                : "-"}
+                            </td>
+                            <td style={{ backgroundColor: "#f7f7ff" }}>
+                              {item.guru_sma
+                                ? parseInt(item.guru_sma).toLocaleString("id-ID")
+                                : "-"}
+                            </td>
+                            <td style={{ borderRight: "2px solid #A9A9A9", backgroundColor: "#f7f7ff" }}>
+                              {item.guru_smk
+                                ? parseInt(item.guru_smk).toLocaleString("id-ID")
+                                : "-"}
+                            </td>
+                            <td style={{ backgroundColor: "#f7f7ff" }}>
+                              {item.jumlah_sekolah_sma
+                                ? parseInt(item.jumlah_sekolah_sma).toLocaleString("id-ID")
+                                : "-"}
+                            </td>
+                            <td style={{ borderRight: "2px solid #A9A9A9", backgroundColor: "#f7f7ff" }}>
+                              {item.jumlah_sekolah_smk
+                                ? parseInt(item.jumlah_sekolah_smk).toLocaleString("id-ID")
                                 : "-"}
                             </td></>) : (<>
                             {/* <td>
@@ -2475,6 +2675,26 @@ const ContentDapodikV2 = () => {
                           >
                             Peserta Didik
                           </th>
+                          <th
+                            colSpan="2"
+                            style={{
+                              textAlign: "center",
+                              borderRight: "2px solid #A9A9A9",
+                              backgroundColor: "#f7f7ff"
+                            }}
+                          >
+                            Tenaga Pengajar
+                          </th>
+                          <th
+                            colSpan="2"
+                            style={{
+                              textAlign: "center",
+                              borderRight: "2px solid #A9A9A9",
+                              backgroundColor: "#f7f7ff"
+                            }}
+                          >
+                            Jumlah Sekolah
+                          </th>
                           {/* <th colSpan="4" style={{ textAlign: "center" }}>
                             Anak Tidak Sekolah
                           </th> */}
@@ -2540,6 +2760,38 @@ const ContentDapodikV2 = () => {
                             }}
                           >
                             SMP {getSortIcon("smp")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("guru_sd")}
+                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
+                          >
+                            SD {getSortIcon("guru_sd")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("guru_smp")}
+                            style={{
+                              cursor: "pointer",
+                              borderRight: "2px solid #A9A9A9",
+                              backgroundColor: "#f7f7ff"
+                            }}
+                          >
+                            SMP {getSortIcon("guru_smp")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("jumlah_sekolah_sd")}
+                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
+                          >
+                            SD {getSortIcon("jumlah_sekolah_sd")}
+                          </th>
+                          <th
+                            onClick={() => requestSort("jumlah_sekolah_smp")}
+                            style={{
+                              cursor: "pointer",
+                              borderRight: "2px solid #A9A9A9",
+                              backgroundColor: "#f7f7ff"
+                            }}
+                          >
+                            SMP {getSortIcon("jumlah_sekolah_smp")}
                           </th>
                           {/* <th
                         onClick={() => requestSort("sma")}
@@ -2777,6 +3029,30 @@ const ContentDapodikV2 = () => {
                             <td style={{ borderRight: "2px solid #A9A9A9", backgroundColor: "#f7f7ff" }}>
                               {item.smp
                                 ? parseInt(item.smp).toLocaleString("id-ID")
+                                : "-"}
+                            </td>
+                            <td style={{
+                                backgroundColor: "#f7f7ff"
+                              }} >
+                              {item.guru_sd
+                                ? parseInt(item.guru_sd).toLocaleString("id-ID")
+                                : "-"}
+                            </td>
+                            <td style={{ borderRight: "2px solid #A9A9A9", backgroundColor: "#f7f7ff" }}>
+                              {item.guru_smp
+                                ? parseInt(item.guru_smp).toLocaleString("id-ID")
+                                : "-"}
+                            </td>
+                            <td style={{
+                                backgroundColor: "#f7f7ff"
+                              }} >
+                              {item.jumlah_sekolah_sd
+                                ? parseInt(item.jumlah_sekolah_sd).toLocaleString("id-ID")
+                                : "-"}
+                            </td>
+                            <td style={{ borderRight: "2px solid #A9A9A9", backgroundColor: "#f7f7ff" }}>
+                              {item.jumlah_sekolah_smp
+                                ? parseInt(item.jumlah_sekolah_smp).toLocaleString("id-ID")
                                 : "-"}
                             </td>
                             {/* <td>
