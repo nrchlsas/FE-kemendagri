@@ -785,9 +785,14 @@ const ContentPenganggaran = () => {
                         <td style={{maxHeight: "45px"}}>{item.kode_ddn}</td>
                         <td style={{maxHeight: "45px"}}>{item.nama_daerah}</td>
                         <td style={{maxHeight: "45px"}}>
-                          <div className="d-flex justify-content-center align-items-center" style={{ backgroundColor: tahapData[selectedSingleTahapan] > 0 ? "#57E7B4" : "#F35F52", color: "black", padding: "5px 10px", border: "none", borderRadius: "5px", fontSize: "16px", fontFamily:"poppins"}}>
+                          {customActiveTab == "1" ? (<><div className="d-flex justify-content-center align-items-center" style={{ backgroundColor: tahapData[selectedSingleTahapan] > 0 ? "#57E7B4" : "#F35F52", color: "black", padding: "5px 10px", border: "none", borderRadius: "5px", fontSize: "16px", fontFamily:"poppins"}}>
                              {tahapData[selectedSingleTahapan] > 0 ? "SUDAH" : "BELUM"}
-                          </div>
+                          </div></>) : (<><div className="d-flex justify-content-center align-items-center" style={{ backgroundColor: tahapData[selectedSingleTahapan] > 0 ? "#57E7B4" : "#F35F52", color: "black", padding: "5px 10px", border: "none", borderRadius: "5px", fontSize: "16px", fontFamily:"poppins"}}>
+                             {tahapData[selectedSingleTahapan] > 0 ? "MELAKUKAN" : "TIDAK MELAKUKAN"}
+                          </div></>)}
+                          {/* <div className="d-flex justify-content-center align-items-center" style={{ backgroundColor: tahapData[selectedSingleTahapan] > 0 ? "#57E7B4" : "#F35F52", color: "black", padding: "5px 10px", border: "none", borderRadius: "5px", fontSize: "16px", fontFamily:"poppins"}}>
+                             {tahapData[selectedSingleTahapan] > 0 ? "MELAKUKAN" : "TIDAK MELAKUKAN"}
+                          </div> */}
                         </td>
                       </tr>
                     )

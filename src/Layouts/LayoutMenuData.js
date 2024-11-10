@@ -278,13 +278,13 @@ const Navdata = () => {
       subItems: [
         {
           id: "dapodik",
-          label: "KEMENDIKBUD",
+          label: "Kementerian Pendidikan Dasar dan Menengah (Kemendikdasmen)",
           link: "/dapodik",
           parentId: "integrasi",
         },
         {
           id: "keluargaBeresikoStunting",
-          label: "BKKBN",
+          label: "Kementerian Kependudukan dan Pembangunan Keluarga",
           link: "/keluarga-beresiko-stunting",
           parentId: "integrasi",
         },
@@ -308,7 +308,7 @@ const Navdata = () => {
         // },
         {
           id: "kementerianDanLembaga",
-          label: "KEMENTERIAN & LEMBAGA",
+          label: "Monitoring KL",
           link: "/kementerian-dan-lembaga",
           parentId: "integrasi",
         },
