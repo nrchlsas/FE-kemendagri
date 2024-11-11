@@ -60,7 +60,20 @@ const BarWithPercentageModified = ({dataColors, valueChart=[], percentageChart1=
                     return `${categoryName}<br/>` + `Total Anggaran Provinsi: ${additionalValue}<br/>` + tooltipItems.join('<br/>');
                 }
                 
-            }
+            },
+            axisPointer: {
+                type: 'cross',
+                animation: false,
+                label: {
+                  backgroundColor: '#ccc',
+                  borderColor: '#aaa',
+                  borderWidth: 1,
+                  shadowBlur: 0,
+                  shadowOffsetX: 0,
+                  shadowOffsetY: 0,
+                  color: '#222'
+                }
+              },
         },
         grid: {
             bottom: 150, // Memberi lebih banyak ruang di bagian bawah untuk label
@@ -187,9 +200,15 @@ const BarWithPercentageModified = ({dataColors, valueChart=[], percentageChart1=
             //   end: dataTotal,         // Posisi akhir (50%)
             startValue: startIndex,
             endValue: endIndex
-            }
+            },
+            {type : 'inside'}
           ]
-        
+        , 
+        toolbox: {
+            feature: {              
+              saveAsImage: {}
+            }
+          },
     };
 
     return (

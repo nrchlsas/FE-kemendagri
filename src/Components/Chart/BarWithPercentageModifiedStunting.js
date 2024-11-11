@@ -59,7 +59,20 @@ const BarWithPercentageModifiedStunting = ({dataColors, valueChart=[], percentag
                 }else{
                     return `${categoryName}<br/>` + `Total Anggaran Provinsi: ${additionalValue}<br/>` + tooltipItems.join('<br/>');
                 }                
-            }
+            },
+            axisPointer: {
+                type: 'cross',
+                animation: false,
+                label: {
+                  backgroundColor: '#ccc',
+                  borderColor: '#aaa',
+                  borderWidth: 1,
+                  shadowBlur: 0,
+                  shadowOffsetX: 0,
+                  shadowOffsetY: 0,
+                  color: '#222'
+                }
+              },
         },
         grid: {
             bottom: 150, // Memberi lebih banyak ruang di bagian bawah untuk label
@@ -85,6 +98,18 @@ const BarWithPercentageModifiedStunting = ({dataColors, valueChart=[], percentag
                 }
             }
         },
+        toolbox: {
+            feature: {              
+            saveAsImage: {
+                show: true,                // Show the save as image button
+                title: 'Save Chart',     // Tooltip text on hover
+                type: 'png',                // Image format: 'png' or 'jpeg'
+                backgroundColor: '#ffffff', // Background color of the image
+                name: kabupaten ? 'grafik alokasi kabupaten' : 'grafik alokasi se-provinsi',        // File name for the saved image
+                pixelRatio: 2               // Pixel density of the image, higher value = higher resolution
+                }
+            }
+          },
         yAxis: [
             {
                 type: 'value',
@@ -185,8 +210,9 @@ const BarWithPercentageModifiedStunting = ({dataColors, valueChart=[], percentag
             //   end: dataTotal,  // Posisi akhir (50%)
                 startValue: startIndex,
                 endValue: endIndex
-            }
-          ]
+            },
+            {type : 'inside'}
+          ],
         
     };
 

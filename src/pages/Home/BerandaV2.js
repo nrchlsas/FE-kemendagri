@@ -339,7 +339,11 @@ const BerandaV2 = () => {
     const { name, value } = e.target;
     const selectedValue = value;
     console.log(selectedValue, 'ini selected vlue')
-    getDataBerandaPenganggaran({idTahap : value});
+    if (name == "Tahap Perencanaan") {
+      getDataBerandaPerencanaan({idTahap : value});
+    }else if (name== "Tahap"){
+      getDataBerandaPenganggaran({idTahap : value});
+    }
     setSelectedTahap(selectedValue); // Update state dengan pilihan yang dipilih
   };
 
@@ -811,7 +815,7 @@ const BerandaV2 = () => {
         <Col md={4}>
           <Card className="card-animate card-height-100">
             <CardHeader className="border-bottom-0">
-              <Nav
+              {/* <Nav
                 className="nav-tabs-custom card-header-tabs border-bottom-0"
                 role="tablist"
               >
@@ -827,10 +831,7 @@ const BerandaV2 = () => {
                     }}
                     style={{ cursor: "pointer" }}
                   >
-                    Murni{" "}
-                    {/* <span className="badge bg-danger-subtle text-danger align-middle rounded-pill ms-1">
-                              12
-                            </span> */}
+                    Murni{" "}                    
                   </NavLink>
                 </NavItem>
                 <NavItem>
@@ -848,7 +849,29 @@ const BerandaV2 = () => {
                     Perubahan{" "}
                   </NavLink>
                 </NavItem>
-              </Nav>
+              </Nav> */}
+              <div className="d-flex">
+              <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                Pilih Tahap:
+              </div>
+              <select
+                    name="Tahap Perencanaan"
+                      style={{
+                        padding: "2px 7px 2px 7px",
+                        fontSize: "16px",
+                        borderRadius: "5px",
+                        border: "1px solid #ccc",
+                        backgroundColor: "#ffffff",
+                        cursor: "pointer",
+                        marginLeft: "10px"
+                      }}
+                      value={selectedTahap}
+                      onChange={handleSelectChange}
+                    >
+                    <option value="1">Murni</option>
+                    <option value="3">Perubahan</option>                    
+                    </select>
+                </div>
             </CardHeader>
             <CardBody>
               <div className="d-flex flex-column align-items-center">
