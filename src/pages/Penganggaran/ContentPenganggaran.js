@@ -123,6 +123,41 @@ const ContentPenganggaran = () => {
 
         const dataPenganggaranNasionalPersentase = await response.json();
 
+        const sudahData = dataPenganggaranNasionalPersentase.data.penganggaran_level_2.filter((item) => {
+          const tahapData = {
+            5: item?.persen_daerah_rapbd,
+            40: item?.persen_daerah_kuappas,
+            30: item?.persen_daerah_apbdgeser,
+            41: item?.persen_daerah_kupa,
+            8: item?.persen_daerah_rapbdubah,
+            29: item?.persen_daerah_apbdubah,
+            28: item?.persen_daerah_apbd,
+            32: item?.persen_daerah_apbdgeserpasca,
+          };
+
+          return (
+            tahapData[selectedSingleTahapan] > 0
+          )
+        });
+        console.log(sudahData, 'ini sudah ')
+
+        const belumData = dataPenganggaranNasionalPersentase.data.penganggaran_level_2.filter((item) => {
+          const tahapData = {
+            5: item?.persen_daerah_rapbd,
+            40: item?.persen_daerah_kuappas,
+            30: item?.persen_daerah_apbdgeser,
+            41: item?.persen_daerah_kupa,
+            8: item?.persen_daerah_rapbdubah,
+            29: item?.persen_daerah_apbdubah,
+            28: item?.persen_daerah_apbd,
+            32: item?.persen_daerah_apbdgeserpasca,
+          };
+
+          return (
+            tahapData[selectedSingleTahapan] == 0
+          )
+        });
+        console.log(belumData, 'ini belum')
         setDataPenganggaranSudahDanBelum(
           dataPenganggaranNasionalPersentase.data.penganggaran_level_2
         )
@@ -339,6 +374,36 @@ const ContentPenganggaran = () => {
     }
     return "↕"; // Default icon for unsorted
   };
+
+  const sudahItems = currentItemsSudahDanBelum.filter((item) => {
+    const tahapData = {
+      5: item?.daerah_rapbd,
+      40: item?.daerah_kuappas,
+      30: item?.daerah_apbdgeser,
+      41: item?.daerah_kupa,
+      8: item?.daerah_rapbdubah,
+      29: item?.daerah_apbdubah,
+      28: item?.daerah_apbd,
+      32: item?.daerah_apbdgeserpasca,
+    };
+    return tahapData[selectedSingleTahapan] > 0;
+  });
+  
+  const belumItems = currentItemsSudahDanBelum.filter((item) => {
+    const tahapData = {
+      5: item?.daerah_rapbd,
+      40: item?.daerah_kuappas,
+      30: item?.daerah_apbdgeser,
+      41: item?.daerah_kupa,
+      8: item?.daerah_rapbdubah,
+      29: item?.daerah_apbdubah,
+      28: item?.daerah_apbd,
+      32: item?.daerah_apbdgeserpasca,
+    };
+    return tahapData[selectedSingleTahapan] === 0;
+  });
+  
+  const maxLength = Math.max(sudahItems.length, belumItems.length);
 
 
   return (
@@ -736,8 +801,8 @@ const ContentPenganggaran = () => {
             
 
             {/* <div style={{ overflowY: "scroll", maxHeight: "500px" }}> */}
-           
-              <table
+           <div className="d-flex">
+           <table
                 className="table table-bordered table-nowrap align-middle mb-0"
                 style={{ width: "100%" }}
               >
@@ -745,8 +810,8 @@ const ContentPenganggaran = () => {
                   className="table-light"
                   style={{ position: "sticky", top: 0, zIndex: 2 }}
                 >
-                  <tr>
-                  <th
+                  <tr>                                      
+                    <th
                       onClick={() => ""}
                       style={{ cursor: "pointer", textAlign: "center" }}
                     >
@@ -756,19 +821,14 @@ const ContentPenganggaran = () => {
                       onClick={() => ""}
                       style={{ cursor: "pointer", textAlign: "center" }}
                     >
-                      Nama Daerah
-                    </th>
-                    <th
-                      onClick={() => ""}
-                      style={{ cursor: "pointer", textAlign: "center" }}
-                    >
-                      Status
-                    </th>
+                      Sudah
+                    </th>                    
                   </tr>
                 </thead>
                 <tbody style={{ minHeight: "500px" }}>
-                {currentItemsSudahDanBelum?.map((item, index)=>{
-                   const tahapData = {
+                {currentItemsSudahDanBelum
+                  .filter((item) => {
+                    const tahapData = {
                       5: item?.daerah_rapbd,
                       40: item?.daerah_kuappas,
                       30: item?.daerah_apbdgeser,
@@ -777,28 +837,64 @@ const ContentPenganggaran = () => {
                       29: item?.daerah_apbdubah,
                       28: item?.daerah_apbd,
                       32: item?.daerah_apbdgeserpasca,
-                    }
-                    return (
-                      <tr key={index}>
-                        {/* <td style={{maxHeight: "45px"}}>{tahapData[selectedSingleTahapan] > 0 ? item.kode_ddn : ""}</td>
-                        <td style={{maxHeight: "45px"}}>{tahapData[selectedSingleTahapan] > 0 ? item.nama_daerah : ""}</td> */}
-                        <td style={{maxHeight: "45px"}}>{item.kode_ddn}</td>
-                        <td style={{maxHeight: "45px"}}>{item.nama_daerah}</td>
-                        <td style={{maxHeight: "45px"}}>
-                          {customActiveTab == "1" ? (<><div className="d-flex justify-content-center align-items-center" style={{ backgroundColor: tahapData[selectedSingleTahapan] > 0 ? "#57E7B4" : "#F35F52", color: "black", padding: "5px 10px", border: "none", borderRadius: "5px", fontSize: "16px", fontFamily:"poppins"}}>
-                             {tahapData[selectedSingleTahapan] > 0 ? "SUDAH" : "BELUM"}
-                          </div></>) : (<><div className="d-flex justify-content-center align-items-center" style={{ backgroundColor: tahapData[selectedSingleTahapan] > 0 ? "#57E7B4" : "#F35F52", color: "black", padding: "5px 10px", border: "none", borderRadius: "5px", fontSize: "16px", fontFamily:"poppins"}}>
-                             {tahapData[selectedSingleTahapan] > 0 ? "MELAKUKAN" : "TIDAK MELAKUKAN"}
-                          </div></>)}
-                          {/* <div className="d-flex justify-content-center align-items-center" style={{ backgroundColor: tahapData[selectedSingleTahapan] > 0 ? "#57E7B4" : "#F35F52", color: "black", padding: "5px 10px", border: "none", borderRadius: "5px", fontSize: "16px", fontFamily:"poppins"}}>
-                             {tahapData[selectedSingleTahapan] > 0 ? "MELAKUKAN" : "TIDAK MELAKUKAN"}
-                          </div> */}
-                        </td>
-                      </tr>
-                    )
-                  })}
+                    };
+                    return tahapData[selectedSingleTahapan] > 0; // Return boolean for filtering
+                  })
+                  .map((item, index) => (
+                    <tr key={index}>
+                      <td>{item.kode_ddn}</td>
+                      <td>{item.nama_daerah}</td>
+                    </tr>
+                  ))}        
                 </tbody>
               </table>
+              <table
+                className="table table-bordered table-nowrap align-middle mb-0"
+                style={{ width: "100%" }}
+              >
+                <thead
+                  className="table-light"
+                  style={{ position: "sticky", top: 0, zIndex: 2 }}
+                >
+                  <tr>                                      
+                    <th
+                      onClick={() => ""}
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Kode
+                    </th>
+                    <th
+                      onClick={() => ""}
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Belum
+                    </th>
+                  </tr>
+                </thead>
+                <tbody style={{ minHeight: "500px" }}>
+                {currentItemsSudahDanBelum
+                  .filter((item) => {
+                    const tahapData = {
+                      5: item?.daerah_rapbd,
+                      40: item?.daerah_kuappas,
+                      30: item?.daerah_apbdgeser,
+                      41: item?.daerah_kupa,
+                      8: item?.daerah_rapbdubah,
+                      29: item?.daerah_apbdubah,
+                      28: item?.daerah_apbd,
+                      32: item?.daerah_apbdgeserpasca,
+                    };
+                    return tahapData[selectedSingleTahapan] == 0; // Return boolean for filtering
+                  })
+                  .map((item, index) => (
+                    <tr key={index}>
+                      <td style={{height: "45px"}}>{item.kode_ddn}</td>
+                      <td style={{height: "45px"}}>{item.nama_daerah}</td>
+                    </tr>
+                  ))}        
+                </tbody>
+              </table>
+           </div>              
             <Pagination
               currentPage={currentPageSudahDanBelum}
               totalPages={totalPagesSudahDanBelum}
