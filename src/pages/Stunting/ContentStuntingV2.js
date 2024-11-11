@@ -1101,7 +1101,7 @@ const ContentStunting = () => {
                 </span>
               </div>
               <div className="d-flex justify-content-center align-items-center">
-                <span>Badan Kependudukan dan Keluarga Berencana Nasional</span>
+                <span>Kementerian Kependudukan dan Pembangunan Keluarga</span>
               </div>
             </div>
           </Card>
@@ -2019,7 +2019,7 @@ const ContentStunting = () => {
                                                       
                           </tr>
                         ))}
-                        {placeholders}
+                        {/* {placeholders} */}
                       </tbody>
                     </table>
                   </div>

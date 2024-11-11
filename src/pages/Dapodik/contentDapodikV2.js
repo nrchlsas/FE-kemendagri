@@ -395,6 +395,12 @@ const ContentDapodikV2 = () => {
           throw new Error("Network response was not ok");
         }
         const dataDapodikTabelProvinsi = await response.json();
+
+        const filterKabupaten = dataDapodikTabelProvinsi?.data?.tabel_dapodik_provinsi.filter((item)=>(
+          item.jns_pemda=="kab" || item.jns_pemda=="kota"
+        ))
+        console.log(filterKabupaten, 'ini')
+
         setDataDapodikTabelProvinsi(dataDapodikTabelProvinsi?.data?.tabel_dapodik_provinsi);
 
       } catch (errorDapodikTabel) {
@@ -839,7 +845,7 @@ const ContentDapodikV2 = () => {
                 </span>
               </div>
               <div className="d-flex justify-content-center align-items-center">
-                <span>DAPODIK</span>
+                <span>Kementerian Pendidikan Dasar dan Menengah</span>
               </div>
             </div>
           </Card>
@@ -3240,7 +3246,7 @@ const ContentDapodikV2 = () => {
                           </tr>
                         ))}
                       </tbody>
-                      {placeholdersKabupaten}
+                      {/* {placeholdersKabupaten} */}
                     </table>
                   </div>
                   <Pagination
