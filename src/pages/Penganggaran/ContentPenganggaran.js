@@ -281,7 +281,7 @@ const ContentPenganggaran = () => {
   }, [dataPenganggaranSudahDanBelum, sortConfigDetail]);
 
   const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);
-  const currentItemsSudahDanBelum = sortedItemsSudahDanBelum.slice(indexOfFirstItemSudahDanBelum, indexOfLastItemSudahDanBelum);
+  const currentItemsSudahDanBelum = sortedItemsSudahDanBelum
   
   const totalPages = Math.ceil(
     (dataPenganggaranPersentase?.length || 0) / itemsPerPage
@@ -375,7 +375,7 @@ const ContentPenganggaran = () => {
     return "↕"; // Default icon for unsorted
   };
 
-  const sudahItems = currentItemsSudahDanBelum.filter((item) => {
+  const itemsSudah = currentItemsSudahDanBelum.filter((item) => {
     const tahapData = {
       5: item?.daerah_rapbd,
       40: item?.daerah_kuappas,
@@ -389,7 +389,7 @@ const ContentPenganggaran = () => {
     return tahapData[selectedSingleTahapan] > 0;
   });
   
-  const belumItems = currentItemsSudahDanBelum.filter((item) => {
+  const itemsBelum = currentItemsSudahDanBelum.filter((item) => {
     const tahapData = {
       5: item?.daerah_rapbd,
       40: item?.daerah_kuappas,
@@ -403,8 +403,16 @@ const ContentPenganggaran = () => {
     return tahapData[selectedSingleTahapan] === 0;
   });
   
-  const maxLength = Math.max(sudahItems.length, belumItems.length);
-
+  // Sesuaikan panjang array dengan menambahkan baris kosong ke array yang lebih pendek
+  const maxLength = Math.max(itemsSudah.length, itemsBelum.length);
+  
+  while (itemsSudah.length < maxLength) {
+    itemsSudah.push({ kode_ddn: "", nama_daerah: "" });
+  }
+  
+  while (itemsBelum.length < maxLength) {
+    itemsBelum.push({ kode_ddn: "", nama_daerah: "" });
+  }
 
   return (
     <React.Fragment>
@@ -801,105 +809,58 @@ const ContentPenganggaran = () => {
             
 
             {/* <div style={{ overflowY: "scroll", maxHeight: "500px" }}> */}
-           <div className="d-flex">
-           <table
-                className="table table-bordered table-nowrap align-middle mb-0"
-                style={{ width: "100%" }}
-              >
-                <thead
-                  className="table-light"
-                  style={{ position: "sticky", top: 0, zIndex: 2 }}
-                >
-                  <tr>                                      
-                    <th
-                      onClick={() => ""}
-                      style={{ cursor: "pointer", textAlign: "center" }}
-                    >
-                      Kode
-                    </th>
-                    <th
-                      onClick={() => ""}
-                      style={{ cursor: "pointer", textAlign: "center" }}
-                    >
-                      {customActiveTab=="1" ? "Sudah" : "Melakukan"}
-                    </th>                    
-                  </tr>
-                </thead>
-                <tbody style={{ minHeight: "500px" }}>
-                {currentItemsSudahDanBelum
-                  .filter((item) => {
-                    const tahapData = {
-                      5: item?.daerah_rapbd,
-                      40: item?.daerah_kuappas,
-                      30: item?.daerah_apbdgeser,
-                      41: item?.daerah_kupa,
-                      8: item?.daerah_rapbdubah,
-                      29: item?.daerah_apbdubah,
-                      28: item?.daerah_apbd,
-                      32: item?.daerah_apbdgeserpasca,
-                    };
-                    return tahapData[selectedSingleTahapan] > 0; // Return boolean for filtering
-                  })
-                  .map((item, index) => (
-                    <tr key={index}>
-                      <td>{item.kode_ddn}</td>
-                      <td>{item.nama_daerah}</td>
-                    </tr>
-                  ))}        
-                </tbody>
-              </table>
-              <table
-                className="table table-bordered table-nowrap align-middle mb-0"
-                style={{ width: "100%" }}
-              >
-                <thead
-                  className="table-light"
-                  style={{ position: "sticky", top: 0, zIndex: 2 }}
-                >
-                  <tr>                                      
-                    <th
-                      onClick={() => ""}
-                      style={{ cursor: "pointer", textAlign: "center" }}
-                    >
-                      Kode
-                    </th>
-                    <th
-                      onClick={() => ""}
-                      style={{ cursor: "pointer", textAlign: "center" }}
-                    >
-                      {customActiveTab=="1" ? "Belum" : "Tidak Melakukan"}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody style={{ minHeight: "500px" }}>
-                {currentItemsSudahDanBelum
-                  .filter((item) => {
-                    const tahapData = {
-                      5: item?.daerah_rapbd,
-                      40: item?.daerah_kuappas,
-                      30: item?.daerah_apbdgeser,
-                      41: item?.daerah_kupa,
-                      8: item?.daerah_rapbdubah,
-                      29: item?.daerah_apbdubah,
-                      28: item?.daerah_apbd,
-                      32: item?.daerah_apbdgeserpasca,
-                    };
-                    return tahapData[selectedSingleTahapan] == 0; // Return boolean for filtering
-                  })
-                  .map((item, index) => (
-                    <tr key={index}>
-                      <td style={{height: "45px"}}>{item.kode_ddn}</td>
-                      <td style={{height: "45px"}}>{item.nama_daerah}</td>
-                    </tr>
-                  ))}        
-                </tbody>
-              </table>
-           </div>              
-            <Pagination
+                     <div className="d-flex" style={{height:"450px", overflowX: "auto"}}>
+  <table
+    className="table table-bordered table-nowrap align-middle mb-0"
+    style={{ width: "100%" }}
+  >
+    <thead
+      className="table-light"
+      style={{ position: "sticky", top: 0, zIndex: 2 }}
+    >
+      <tr>
+        <th style={{ cursor: "pointer", textAlign: "center" }}>Kode</th>
+        <th style={{ cursor: "pointer", textAlign: "center" }}>{customActiveTab == "1" ? "Sudah" : "Melakukan"}</th>
+      </tr>
+    </thead>
+    <tbody style={{ minHeight: "500px" }}>
+      {itemsSudah.map((item, index) => (
+        <tr key={index}>
+          <td style={{ height: "45px" }}>{item.kode_ddn}</td>
+          <td style={{ height: "45px" }}>{item.nama_daerah}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  <table
+    className="table table-bordered table-nowrap align-middle mb-0"
+    style={{ width: "100%" }}
+  >
+    <thead
+      className="table-light"
+      style={{ position: "sticky", top: 0, zIndex: 2 }}
+    >
+      <tr>
+        <th style={{ cursor: "pointer", textAlign: "center" }}>Kode</th>
+        <th style={{ cursor: "pointer", textAlign: "center" }}>{customActiveTab == "1" ? "Belum" : "Tidak Melakukan"}</th>
+      </tr>
+    </thead>
+    <tbody style={{ minHeight: "500px" }}>
+      {itemsBelum.map((item, index) => (
+        <tr key={index}>
+          <td style={{ height: "45px" }}>{item.kode_ddn}</td>
+          <td style={{ height: "45px" }}>{item.nama_daerah}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+            {/* <Pagination
               currentPage={currentPageSudahDanBelum}
               totalPages={totalPagesSudahDanBelum}
               onPageChange={paginateSudahDanBelum}
-            />
+            /> */}
           </ModalBody>
         </div>
       </Modal>
