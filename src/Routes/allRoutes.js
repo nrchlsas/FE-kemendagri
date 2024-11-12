@@ -291,7 +291,7 @@ const authProtectedRoutes = [
   { path: "/realisasi/realisasi-detail/:_id", component: <RealisasiDaerah />},
   { path: "/realisasi/realisasi-detail/realisasi-detail-skpd/:_id", component: <RealisasiDetailDaerah />},
   { path: "/dapodik", component: <Dapodik />},
-  { path: "/uhc", component: <Uhc />},
+  { path: "/bpjs-kesehatan", component: <Uhc />},
   { path: "/miskin-ekstrim", component: <MiskinEkstrim />},
   { path: "/anggaran-miskin-ekstrim", component: <MiskinEkstrim />},
   { path: "/apbd-details/:id", component: <DetailApbd /> },

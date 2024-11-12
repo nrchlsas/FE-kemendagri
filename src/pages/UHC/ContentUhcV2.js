@@ -66,8 +66,86 @@ const ContentUhcV2 = () => {
     fetchData();
   };
 
+  const [dataBpjsTabelSeprov, setDataBpjsTabelSeprov] = useState([])
+  const [loadingBpjsTabel, setLoadingBpjsTabel] = useState([]);
+  const [errorBpjsTabel, setErrorBpjsTabel] = useState([]);
+
+  const getDataTabelBpjsSeprov = () => {
+    const fetchData = async () => {
+      try {
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
+          }),
+        };
+        // /table_Bpjs_provinsi
+        // /table_Bpjs_kabupaten
+        // /table_stunting_provinsi
+        const response = await fetch(
+          `${API_URI}/tabel_bpjs_Seprov`,
+          requestOptions
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const dataBpjsTabelSeprov = await response.json();
+
+        setDataBpjsTabelSeprov(dataBpjsTabelSeprov?.data);
+      } catch (errorBpjsTabel) {
+        setErrorBpjsTabel(errorBpjsTabel);
+      } finally {
+        setLoadingBpjsTabel(false);
+      }
+    };
+    fetchData();
+  };
+
+  const [dataBpjsTabelKabupaten, setDataBpjsTabelKabupaten] = useState([])
+  const [loadingBpjsTabelKabupaten, setLoadingBpjsTabelKabupaten] = useState([]);
+  const [errorBpjsTabelKabupaten, setErrorBpjsTabelKabupaten] = useState([]);
+
+  const getDataTabelBpjsKabupaten = () => {
+    const fetchData = async () => {
+      try {
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
+          }),
+        };
+        // /table_Bpjs_provinsi
+        // /table_Bpjs_kabupaten
+        // /table_stunting_provinsi
+        const response = await fetch(
+          `${API_URI}/tabel_bpjs_provkabkota`,
+          requestOptions
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const dataBpjsTabelKabupaten = await response.json();
+
+        setDataBpjsTabelKabupaten(dataBpjsTabelKabupaten?.data);
+      } catch (errorBpjsTabelKabupaten) {
+        setErrorBpjsTabelKabupaten(errorBpjsTabelKabupaten);
+      } finally {
+        setLoadingBpjsTabelKabupaten(false);
+      }
+    };
+    fetchData();
+  };
+
   useEffect(() => {
     getDataUhc();
+    getDataTabelBpjsSeprov()
+    getDataTabelBpjsKabupaten()
   }, []);
 
   return (
@@ -331,6 +409,174 @@ const ContentUhcV2 = () => {
               </Col>
             </CardBody>
           </Card>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+        <Card>
+          <CardBody>
+            Tabel Seprov
+          <div style={{ overflowX: "auto" }}>
+                    <table
+                      className="table table-bordered table-nowrap align-middle mb-0 custom-table"
+                      style={{ width: "100%" }}
+                    >
+                      <thead className="table-light">
+                        <tr>
+                          <th>
+                            No  
+                          </th>        
+                          <th>
+                            Provinsi  
+                          </th>        
+                          <th>
+                          jumlah_bp_pn
+                          </th>     
+                          <th>
+                          jumlah_bp_swasta
+                          </th>     
+                          <th>
+                          jumlah_non_aktif
+                          </th>     
+                          <th>
+                          jumlah_pbi_jk
+                          </th>     
+                          <th>
+                          jumlah_pbpu
+                          </th>     
+                          <th>
+                          jumlah_pbpu_bp_pemda
+                          </th>     
+                          <th>
+                          jumlah_ppu_bu
+                          </th>     
+                          <th>
+                          jumlah_ppu_pn
+                          </th>     
+                          <th>
+                          total_anggaran
+                          </th>     
+                          <th>
+                          total_anggaran_bpjs
+                          </th>     
+                          <th>
+                          total_bpjs
+                          </th>     
+                          <th>
+                          total_penduduk_dukcapil
+                          </th>     
+                        </tr>
+                      </thead>
+                      <tbody style={{ minHeight: "500px" }}>
+                  {dataBpjsTabelSeprov.map((item, index) =>(
+                    <tr key={index}>
+                        <td>{index+1}</td>
+                        <td>{item.nama}</td>
+                        <td>{item.jumlah_bp_pn}</td>
+                        <td>{item.jumlah_bp_swasta}</td>
+                        <td>{item.jumlah_non_aktif}</td>
+                        <td>{item.jumlah_pbi_jk}</td>
+                        <td>{item.jumlah_pbpu}</td>
+                        <td>{item.jumlah_pbpu_bp_pemda}</td>
+                        <td>{item.jumlah_ppu_bu}</td>
+                        <td>{item.jumlah_ppu_pn}</td>
+                        <td>{item.total_anggaran}</td>
+                        <td>{item.total_anggaran_bpjs}</td>
+                        <td>{item.total_bpjs}</td>
+                        <td>{item.total_penduduk_dukcapil}</td>  
+                    </tr>
+                    
+                    ))}
+                </tbody>
+            </table>
+            </div>    
+          </CardBody>
+        </Card>
+           
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+        <Card>
+          <CardBody>
+            Tabel Kabupaten
+          <div style={{ overflowX: "auto" }}>
+                    <table
+                      className="table table-bordered table-nowrap align-middle mb-0 custom-table"
+                      style={{ width: "100%" }}
+                    >
+                      <thead className="table-light">
+                        <tr>
+                          <th>
+                            No  
+                          </th>        
+                          <th>
+                            Provinsi  
+                          </th>        
+                          <th>
+                          jumlah_bp_pn
+                          </th>     
+                          <th>
+                          jumlah_bp_swasta
+                          </th>     
+                          <th>
+                          jumlah_non_aktif
+                          </th>     
+                          <th>
+                          jumlah_pbi_jk
+                          </th>     
+                          <th>
+                          jumlah_pbpu
+                          </th>     
+                          <th>
+                          jumlah_pbpu_bp_pemda
+                          </th>     
+                          <th>
+                          jumlah_ppu_bu
+                          </th>     
+                          <th>
+                          jumlah_ppu_pn
+                          </th>     
+                          <th>
+                          total_anggaran
+                          </th>     
+                          <th>
+                          total_anggaran_bpjs
+                          </th>     
+                          <th>
+                          total_bpjs
+                          </th>     
+                          <th>
+                          total_penduduk_dukcapil
+                          </th>     
+                        </tr>
+                      </thead>
+                      <tbody style={{ minHeight: "500px" }}>
+                  {dataBpjsTabelKabupaten.map((item, index) =>(
+                    <tr key={index}>
+                        <td>{index+1}</td>
+                        <td>{item.nama_daerah}</td>
+                        <td>{item.jumlah_bp_pn}</td>
+                        <td>{item.jumlah_bp_swasta}</td>
+                        <td>{item.jumlah_non_aktif}</td>
+                        <td>{item.jumlah_pbi_jk}</td>
+                        <td>{item.jumlah_pbpu}</td>
+                        <td>{item.jumlah_pbpu_bp_pemda}</td>
+                        <td>{item.jumlah_ppu_bu}</td>
+                        <td>{item.jumlah_ppu_pn}</td>
+                        <td>{item.total_anggaran}</td>
+                        <td>{item.total_anggaran_bpjs}</td>
+                        <td>{item.total_bpjs}</td>
+                        <td>{item.total_penduduk_dukcapil}</td>  
+                    </tr>
+                    
+                    ))}
+                </tbody>
+            </table>
+            </div>    
+          </CardBody>
+        </Card>
+           
         </Col>
       </Row>
       <Row>
