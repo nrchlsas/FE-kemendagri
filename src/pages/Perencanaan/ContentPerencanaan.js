@@ -249,7 +249,7 @@ const ContentPerencanaan = () => {
   }, [dataPerencanaanSudahDanBelum, sortConfigDetail]);
 
   const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);
-  const currentItemsSudahDanBelum = sortedItemsSudahDanBelum.slice(indexOfFirstItemSudahDanBelum, indexOfLastItemSudahDanBelum);
+  const currentItemsSudahDanBelum = sortedItemsSudahDanBelum
   const totalPages = Math.ceil(
     (dataPerencanaanPersentase?.length || 0) / itemsPerPage
   );
@@ -272,11 +272,15 @@ const ContentPerencanaan = () => {
   const handleSelectChange = (e) => {
     const { name, value } = e.target;
     console.log(`${name}: ${value}`, 'ini isi selected value');
-    
+    if (value == "3"){
+      setcustomActiveTab("3")
+    }else{
+      setcustomActiveTab("6")
+    } // Misalnya, untuk dropdown jenis dokumen
     if (name === 'tahun') {
         setSelectedSingleTahun(value); // Misalnya, untuk dropdown tahun
     } else if (name === 'tahap') {
-        setSelectedSingleTahapan(value); // Misalnya, untuk dropdown jenis dokumen
+        setSelectedSingleTahapan(value);        
     }
 
   };
@@ -319,6 +323,41 @@ const ContentPerencanaan = () => {
     return "↕"; // Default icon for unsorted
   };
 
+  const itemsSudah = currentItemsSudahDanBelum.filter((item) => {
+    const tahapData = {
+      1: item?.persiapan,
+      2: item?.rancangan_awal,
+      3: item?.rancangan,
+      4: item?.musrenbang,
+      5: item?.rancangan_akhir,
+      6: item?.penetapan,      
+    };
+    return tahapData[customActiveTab] == "SUDAH";
+  });
+  
+  const itemsBelum = currentItemsSudahDanBelum.filter((item) => {
+    const tahapData = {
+      1: item?.persiapan,
+      2: item?.rancangan_awal,
+      3: item?.rancangan,
+      4: item?.musrenbang,
+      5: item?.rancangan_akhir,
+      6: item?.penetapan,      
+    };
+    return tahapData[customActiveTab] == "BELUM";
+  });
+  
+  // Sesuaikan panjang array dengan menambahkan baris kosong ke array yang lebih pendek
+  const maxLength = Math.max(itemsSudah.length, itemsBelum.length);
+  
+  while (itemsSudah.length < maxLength) {
+    itemsSudah.push({ kode_ddn: "", nama_daerah: "" });
+  }
+  
+  while (itemsBelum.length < maxLength) {
+    itemsBelum.push({ kode_ddn: "", nama_daerah: "" });
+  }
+
 
   return (
     <React.Fragment>
@@ -340,7 +379,7 @@ const ContentPerencanaan = () => {
               <div className="d-flex justify-content-center align-items-center">
                 <div className="nav-beranda d-flex justify-content-center align-items-center">
                   <Nav tabs className="nav nav-tabs nav-success nav-justified">
-                    <NavItem>
+                    {selectedSingleTahapan == "1" ? (<><NavItem>
                       <NavLink
                         style={{ cursor: "pointer" }}
                         className={classnames({
@@ -395,7 +434,49 @@ const ContentPerencanaan = () => {
                       >
                         Musrenbang
                       </NavLink>
+                    </NavItem>                    
+                    <NavItem>
+                      <NavLink
+                        style={{ cursor: "pointer" }}
+                        className={classnames({
+                          active: customActiveTab === "5",
+                        })}
+                        onClick={() => {
+                          toggleCustom("5");
+                          setNamaTahapan("Rancangan Akhir")
+                        }}
+                      >
+                        Rankhir
+                      </NavLink>
                     </NavItem>
+                    <NavItem>
+                      <NavLink
+                        style={{ cursor: "pointer" }}
+                        className={classnames({
+                          active: customActiveTab === "6",
+                        })}
+                        onClick={() => {
+                          toggleCustom("6");
+                          setNamaTahapan("Penetapan")
+                        }}
+                      >
+                        Penetapan
+                      </NavLink>
+                    </NavItem></>):(<>                     
+                    <NavItem>
+                      <NavLink
+                        style={{ cursor: "pointer" }}
+                        className={classnames({
+                          active: customActiveTab === "3",
+                        })}
+                        onClick={() => {
+                          toggleCustom("3");
+                          setNamaTahapan("Rancangan")
+                        }}
+                      >
+                        Rancangan
+                      </NavLink>
+                    </NavItem>                                    
                     <NavItem>
                       <NavLink
                         style={{ cursor: "pointer" }}
@@ -424,6 +505,8 @@ const ContentPerencanaan = () => {
                         Penetapan
                       </NavLink>
                     </NavItem>
+                    </>)}
+                    
                   </Nav>
                 </div>
               </div>
@@ -726,7 +809,7 @@ const ContentPerencanaan = () => {
 
             {/* <div style={{ overflowY: "scroll", maxHeight: "500px" }}> */}
            
-              <table
+              {/* <table
                 className="table table-bordered table-nowrap align-middle mb-0"
                 style={{ width: "100%" }}
               >
@@ -786,7 +869,7 @@ const ContentPerencanaan = () => {
                   </tr>
                 </thead>
                 <tbody style={{ minHeight: "500px" }}>
-                  {/* buat double map */}
+                  
                 {currentItemsSudahDanBelum?.map((item, index)=>{
                    const tahapData = {
                       5: item?.daerah_rapbd,
@@ -799,9 +882,7 @@ const ContentPerencanaan = () => {
                       32: item?.daerah_apbdgeserpasca,
                     }
                     return (
-                      <tr key={index}>
-                        {/* <td style={{maxHeight: "45px"}}>{tahapData[selectedSingleTahapan] > 0 ? item.kode_ddn : ""}</td>
-                        <td style={{maxHeight: "45px"}}>{tahapData[selectedSingleTahapan] > 0 ? item.nama_daerah : ""}</td> */}
+                      <tr key={index}>                        
                         <td style={{maxHeight: "45px"}}>{item.kode_ddn}</td>
                         <td style={{maxHeight: "45px"}}>{item.nama_daerah}</td>
                         <td style={{maxHeight: "45px"}}>
@@ -837,13 +918,61 @@ const ContentPerencanaan = () => {
                       </tr>
                     )
                   })}
+  
                 </tbody>
-              </table>
-            <Pagination
+              </table> */}
+                              <div className="d-flex" style={{height:"450px", overflowX: "auto"}}>
+  <table
+    className="table table-bordered table-nowrap align-middle mb-0"
+    style={{ width: "100%" }}
+  >
+    <thead
+      className="table-light"
+      style={{ position: "sticky", top: 0, zIndex: 2 }}
+    >
+      <tr>
+        <th style={{ cursor: "pointer", textAlign: "center" }}>Kode</th>
+        <th style={{ cursor: "pointer", textAlign: "center" }}>{customActiveTab == "1" ? "Sudah" : "Melakukan"}</th>
+      </tr>
+    </thead>
+    <tbody style={{ minHeight: "500px" }}>
+      {itemsSudah.map((item, index) => (
+        <tr key={index}>
+          <td style={{ height: "45px" }}>{item.kode_ddn}</td>
+          <td style={{ height: "45px" }}>{item.nama_daerah}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+
+  <table
+    className="table table-bordered table-nowrap align-middle mb-0"
+    style={{ width: "100%" }}
+  >
+    <thead
+      className="table-light"
+      style={{ position: "sticky", top: 0, zIndex: 2 }}
+    >
+      <tr>
+        <th style={{ cursor: "pointer", textAlign: "center" }}>Kode</th>
+        <th style={{ cursor: "pointer", textAlign: "center" }}>{customActiveTab == "1" ? "Belum" : "Tidak Melakukan"}</th>
+      </tr>
+    </thead>
+    <tbody style={{ minHeight: "500px" }}>
+      {itemsBelum.map((item, index) => (
+        <tr key={index}>
+          <td style={{ height: "45px" }}>{item.kode_ddn}</td>
+          <td style={{ height: "45px" }}>{item.nama_daerah}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+            {/* <Pagination
               currentPage={currentPageSudahDanBelum}
               totalPages={totalPagesSudahDanBelum}
               onPageChange={paginateSudahDanBelum}
-            />
+            /> */}
           </ModalBody>
         </div>
       </Modal>
