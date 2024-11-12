@@ -395,13 +395,58 @@ const ContentDapodikV2 = () => {
           throw new Error("Network response was not ok");
         }
         const dataDapodikTabelProvinsi = await response.json();
-
+        setShowNextData(false)
         const filterKabupaten = dataDapodikTabelProvinsi?.data?.tabel_dapodik_provinsi.filter((item)=>(
           item.jns_pemda=="kab" || item.jns_pemda=="kota"
         ))
         console.log(filterKabupaten, 'ini')
-
+        setDataKolomNamaDaerah("Provinsi");
+        setCurrentPageProvinsi(1)
         setDataDapodikTabelProvinsi(dataDapodikTabelProvinsi?.data?.tabel_dapodik_provinsi);
+
+      } catch (errorDapodikTabel) {
+        setErrorDapodikTabel(errorDapodikTabel);
+      } finally {
+        setLoadingDapodikTabel(false);
+      }
+    };
+    fetchData();
+  };
+
+  const getDataTabelDapodikProvDetail = (kodeProv, e) => {
+    const fetchData = async () => {      
+      try {
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
+            kode_prov: kodeProv
+          }),
+        };
+        // /table_dapodik_provinsi
+        // /table_dapodik_kabupaten
+        // /table_stunting_provinsi
+        const response = await fetch(
+          `${API_URI}/tabel_dapodik_provinsi_detail`,
+          requestOptions
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const dataDapodikTabelProvinsiDetail = await response.json();
+        e.stopPropagation(); // Mencegah event bubbling jika dibutuhkan
+        setShowNextData(true);
+        setDataKolomNamaDaerah("Nama Daerah");
+        setCurrentPageProvinsi(1)
+         // Mengatur state agar class 'test' dihilangkan dari semua elemen
+        // const filterKabupaten = dataDapodikTabelProvinsi?.data?.tabel_dapodik_provinsi.filter((item)=>(
+          //   item.jns_pemda=="kab" || item.jns_pemda=="kota"
+          setDataDapodikTabelProvinsi(dataDapodikTabelProvinsiDetail?.data);
+        // ))
+        // console.log(filterKabupaten, 'ini')
+
 
       } catch (errorDapodikTabel) {
         setErrorDapodikTabel(errorDapodikTabel);
@@ -694,6 +739,10 @@ const ContentDapodikV2 = () => {
       </tr>
     )
   );
+  
+  const [dataKolomNamaDaerah, setDataKolomNamaDaerah] = useState("Provinsi");
+  const [showNextData, setShowNextData] = useState(false);
+  
   const placeholdersKabupaten = Array.from(
     { length: itemsPerPage - currentItemsKabupaten.length },
     (_, index) => (
@@ -1379,6 +1428,7 @@ const ContentDapodikV2 = () => {
                             style={{
                               cursor: "pointer",
                               verticalAlign: "middle",
+                              
                             }}
                           >
                             No
@@ -1389,7 +1439,7 @@ const ContentDapodikV2 = () => {
                             style={{
                               cursor: "pointer",
                               verticalAlign: "middle",
-                              textAlign: "center",
+                              textAlign:"center"
                             }}
                           >
                             Se-Provinsi {getSortIcon("nama_prov")}
@@ -1759,16 +1809,7 @@ const ContentDapodikV2 = () => {
                       </thead>
                       <tbody style={{ minHeight: "500px" }}>
                         {currentItems.map((item, index) => (
-                          <tr key={index} style={{cursor:"pointer"}} onClick={() =>
-                            handleOpen(
-                              item.kode_prov,
-                              item.nama_prov,
-                              "",
-                              "",
-                              "",
-                              item.total_pendidikan
-                            )
-                          }>
+                          <tr key={index}>
                             {/* <td>{item.kode_prop}</td> */}
                             <td
                               style={{
@@ -1969,7 +2010,7 @@ const ContentDapodikV2 = () => {
                 </TabPane>
                 <TabPane tabId="2" id="">
                 <div className="mb-2 d-flex">
-                    <div
+                  {showNextData ? (<></>): (<><div
                       className="mx-2"
                       style={{
                         position: "relative",
@@ -2028,8 +2069,28 @@ const ContentDapodikV2 = () => {
                       >
                         search
                       </button>
-                    </div>
+                    </div></>)}                    
                   </div>                  
+                  {showNextData ? (
+                    <><button
+                    style={{
+                      backgroundColor: "#007bff",
+                      color: "white",
+                      padding: "10px 20px",
+                      border: "none",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                      fontSize: "16px",
+                      marginBottom: "8px",
+                    }}
+                    onClick={() => getDataTabelDapodikProv()}
+                  >
+                    Kembali ke Provinsi
+                  </button></>
+                  ) : (
+                    <>
+                    </>
+                  )}
                   <div style={{ overflowX: "auto" }}>
                     {/* Render Table */}
                     <table
@@ -2044,20 +2105,24 @@ const ContentDapodikV2 = () => {
                             style={{
                               cursor: "pointer",
                               verticalAlign: "middle",
+                              textAlign: "center"
                             }}
                           >
                             No
                           </th>
                           <th
                             rowSpan="2"
-                            onClick={() => requestSort("nama_prov")}
+                            onClick={() => dataKolomNamaDaerah =="Provinsi" ? requestSort("kode_prov") : requestSort("kode_ddn")}
                             style={{
                               cursor: "pointer",
                               verticalAlign: "middle",
                               textAlign: "center",
                             }}
                           >
-                            Provinsi {getSortIcon("nama_prov")}
+                            {dataKolomNamaDaerah}
+                            {dataKolomNamaDaerah == "Provinsi"
+                              ? getSortIcon("kode_prov")
+                              : getSortIcon("kode_ddn")}                            
                           </th>
                           <th
                             colSpan="2"
@@ -2092,7 +2157,7 @@ const ContentDapodikV2 = () => {
                           {/* <th colSpan="2" style={{ textAlign: "center" }}>
                             Anak Tidak Sekolah
                           </th> */}
-                          <th
+                          {showNextData ? (<></>) : (<><th
                             rowSpan="2"
                             style={{
                               textAlign: "center",
@@ -2136,7 +2201,7 @@ const ContentDapodikV2 = () => {
                             }}
                           >
                             Detail Anggaran Pendidikan
-                          </th>
+                          </th></>)}                          
                         </tr>
                         <tr>
                           {/* <th
@@ -2363,16 +2428,7 @@ const ContentDapodikV2 = () => {
                       </thead>
                       <tbody style={{ minHeight: "500px" }}>
                         {currentItemProvinsi.map((item, index) => (
-                          <tr key={index} style={{cursor:"pointer"}} onClick={() =>
-                            handleOpen(
-                              "",
-                              item.nama_prov,
-                              "",
-                              item.kode_ddn,
-                              item.jns_pemda,
-                              item.total_pendidikan
-                            )
-                          }>
+                          <tr key={index}>
                             {/* <td>{item.kode_prop}</td> */}
                             <td
                               style={{
@@ -2382,9 +2438,8 @@ const ContentDapodikV2 = () => {
                             >
                               {indexOfFirstItemProvinsi + index + 1}
                             </td>
-                            <td style={{ maxWidth: "250px" }}>
-                              {" "}
-                              {item.nama_prov || "-"}
+                            <td onClick={(e)=>{showNextData ? "" : getDataTabelDapodikProvDetail(item.kode_prov, e)}} className={showNextData ? "" : "click-data"} style={{ maxWidth: "250px" }}>                              
+                              {showNextData ? item.nama_kabkota : item.nama_prov}
                             </td>
                             {/* <td>
                           {item.sd
@@ -2464,8 +2519,7 @@ const ContentDapodikV2 = () => {
                             </td> */}
                             </>)}
                             
-                            
-                            <td>
+                            {showNextData ? (<></>):(<><td>
                               <span style={{ float: "right" }}>
                                 {item.totalanggaran
                                   ? parseInt(item.totalanggaran).toLocaleString(
@@ -2534,7 +2588,8 @@ const ContentDapodikV2 = () => {
                                 }
                                 className="bx bx-list-ul text-primary"
                               ></i>
-                            </td>
+                            </td></>)}
+                            
                           </tr>
                         ))}
                         {placeholders}
@@ -3002,16 +3057,7 @@ const ContentDapodikV2 = () => {
                       </thead>
                       <tbody style={{ minHeight: "500px" }}>
                         {currentItemsKabupaten.map((item, index) => (
-                          <tr key={index} style={{cursor:"pointer"}} onClick={() =>
-                            handleOpen(
-                              "",
-                              item.nama_kabkota,
-                              item.kode_ddn,
-                              "",
-                              item.jns_pemda,
-                              item.total_pendidikan
-                            )
-                          }>
+                          <tr key={index}>
                             {/* <td>{item.kode_prop}</td> */}
                             <td
                               style={{

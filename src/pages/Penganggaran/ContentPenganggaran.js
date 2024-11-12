@@ -821,7 +821,7 @@ const ContentPenganggaran = () => {
                       onClick={() => ""}
                       style={{ cursor: "pointer", textAlign: "center" }}
                     >
-                      Sudah
+                      {customActiveTab=="1" ? "Sudah" : "Melakukan"}
                     </th>                    
                   </tr>
                 </thead>
@@ -867,7 +867,7 @@ const ContentPenganggaran = () => {
                       onClick={() => ""}
                       style={{ cursor: "pointer", textAlign: "center" }}
                     >
-                      Belum
+                      {customActiveTab=="1" ? "Belum" : "Tidak Melakukan"}
                     </th>
                   </tr>
                 </thead>

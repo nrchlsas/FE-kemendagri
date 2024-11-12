@@ -13,7 +13,6 @@ import {
   TabContent,
   TabPane,
 } from "reactstrap";
-import PolygonMaps from "../../Components/MapIndo/PolygonMaps";
 import classnames from "classnames";
 import CountUp from "react-countup";
 import StackedBarChart from "../../Components/Chart/StackedChart";
