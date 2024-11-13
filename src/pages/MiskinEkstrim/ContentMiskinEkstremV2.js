@@ -1858,6 +1858,7 @@ const ContentMiskinEkstremV2 = () => {
                             style={{
                               cursor: "pointer",
                               verticalAlign: "middle",
+                              textAlign: "center"
                             }}
                           >
                             No

@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Card, CardBody, Col, Row } from "reactstrap";
+import { Card, CardBody, Col, Modal, ModalBody, ModalHeader, Nav, NavItem, NavLink, Row, TabContent, TabPane } from "reactstrap";
 import "leaflet/dist/leaflet.css";
 import PolygonMaps from "../../Components/MapIndo/PolygonMaps";
 import "./../Kependudukan/kependudukan.scss";
 import HorizontalBarChart from "../../Components/Chart/HorizontalBarChart";
 import PieChartNew from "../../Components/Chart/PieChart";
 import CountUp from "react-countup";
+import Pagination from "../../Components/Pagination/Pagination";
+import classnames from "classnames";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
 const ContentUhcV2 = () => {
-  const [customActiveTab, setcustomActiveTab] = useState("2");
+  const [customActiveTab, setcustomActiveTab] = useState("1");
   const toggleCustom = (tab) => {
     if (customActiveTab !== tab) {
       setcustomActiveTab(tab);
@@ -46,16 +48,16 @@ const ContentUhcV2 = () => {
 
         const dataUhc = await response.json();
 
-        const categoryPembiayaan = Object.keys(dataUhc.data.uhc_pembiayaan);
-        const valuePembiayaan = Object.values(dataUhc.data.uhc_pembiayaan);
+        setDataUhc(dataUhc.data); 
+        // const categoryPembiayaan = Object.keys(dataUhc.data.uhc_pembiayaan);
+        // const valuePembiayaan = Object.values(dataUhc.data.uhc_pembiayaan);
 
-        setDataUhc(dataUhc.data);
-        setDataCategoryChartPembiayaan(categoryPembiayaan)
-        setDataValueChartPembiayaan(valuePembiayaan)
+        // setDataCategoryChartPembiayaan(categoryPembiayaan)
+        // setDataValueChartPembiayaan(valuePembiayaan)
 
-        const dataGender = [dataUhc.data.uhc_jumlah_belum_masuk_bpjs.laki, dataUhc.data.uhc_jumlah_belum_masuk_bpjs.perempuan]
-        console.log(dataGender)
-        setDataChartGender(dataGender)
+        // const dataGender = [dataUhc.data.uhc_jumlah_belum_masuk_bpjs.laki, dataUhc.data.uhc_jumlah_belum_masuk_bpjs.perempuan]
+        // console.log(dataGender)
+        // setDataChartGender(dataGender)
 
       } catch (errorUhc) {
         setErrorUhc(errorUhc);
@@ -84,7 +86,7 @@ const ContentUhcV2 = () => {
         // /table_Bpjs_kabupaten
         // /table_stunting_provinsi
         const response = await fetch(
-          `${API_URI}/tabel_bpjs_Seprov`,
+          `${API_URI}/tabel_bpjs_seprov`,
           requestOptions
         );
 
@@ -142,6 +144,258 @@ const ContentUhcV2 = () => {
     fetchData();
   };
 
+  const [dataDetailAnggaran, setDataDetailAnggaran] = useState([])
+  const [loadingDetailAnggaran, setLoadingDetailAnggaran] = useState([]);
+  const [errorDetailAnggaran, setErrorDetailAnggaran] = useState([]);
+  const [dataDetailAnggaranSub, setDataDetailAnggaranSub] = useState([]);
+  const [loadingDetailAnggaranSub, setLoadingDetailAnggaranSub] = useState([]);
+  const [errorDetailAnggaranSub, setErrorDetailAnggaranSub] = useState([]);
+
+  const getDataDetailAnggaran = ({kodeDdn=""}) => {
+    const fetchData = async () => {
+      setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
+      try {
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({            
+            kode_ddn: kodeDdn            
+          }),
+        };
+  
+        const response = await fetch(
+          `${API_URI}/dashboard_uhc_sub_giat`,
+          requestOptions
+        );
+  
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+  
+        const dataDetailAnggaran = await response.json();
+        setDataDetailAnggaran(dataDetailAnggaran?.data?.uhc_sub_giat)
+        setCurrentPageDetail(1)
+        setCurrentPageDetailSub(1)
+        // Open the modal only after data is successfully fetched
+        setModall(true);
+      } catch (errorDetailAnggaran) {
+        setErrorDetailAnggaran(errorDetailAnggaran);
+      } finally {
+        setLoadingDetailAnggaran(false);
+      }
+    };
+  
+    fetchData();
+  };
+
+  const getDataDetailAnggaranSub = ({kodeDdn="", kodeSubGiat=""}) => {
+    const fetchData = async () => {
+      setLoadingDetailAnggaranSub(true); // Set loading state to true when starting the fetch
+      try {
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({            
+            kode_ddn: kodeDdn,
+            kode_sub_giat: kodeSubGiat
+          }),
+        };
+  
+        const response = await fetch(
+          `${API_URI}/dashboard_uhc_sro`,
+          requestOptions
+        );
+  
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+  
+        const dataDetailAnggaranSub = await response.json();    
+        setDataDetailAnggaranSub(dataDetailAnggaranSub?.data?.uhc_sro)    
+        setCurrentPageDetail(1)
+        setCurrentPageDetailSub(1)
+        // Open the modal only after data is successfully fetched
+        setModal(true)
+      } catch (errorDetailAnggaranSub) {
+        setErrorDetailAnggaranSub(errorDetailAnggaranSub);
+      } finally {
+        setLoadingDetailAnggaranSub(false);
+      }
+    };
+  
+    fetchData();
+  };
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPageKab, setCurrentPageKab] = useState(1);
+  const [currentPageDetail, setCurrentPageDetail] = useState(1);
+  const [currentPageDetailSub, setCurrentPageDetailSub] = useState(1);
+  const [itemsPerPage] = useState(10); // Set items per page
+  const [itemsPerPageKab] = useState(10); // Set items per page  
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: "ascending",
+  });
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;	
+
+  const indexOfLastItemKab = currentPageKab * itemsPerPageKab;
+  const indexOfFirstItemKab = indexOfLastItemKab - itemsPerPageKab;	
+
+  const indexOfLastItemDetail = currentPageDetail * itemsPerPage;
+  const indexOfFirstItemDetail = indexOfLastItemDetail - itemsPerPage;
+
+  const indexOfLastItemDetailSub = currentPageDetailSub * itemsPerPage;
+  const indexOfFirstItemDetailSub = indexOfLastItemDetailSub - itemsPerPage;
+
+  const sortedItems = React.useMemo(() => {
+    let sortableItems = [...(dataBpjsTabelSeprov || [])];
+    if (sortConfig.key !== null) {
+      sortableItems.sort((a, b) => {
+        const aValue = a[sortConfig.key] || 0;
+        const bValue = b[sortConfig.key] || 0;
+
+        if (aValue < bValue) {
+          return sortConfig.direction === "ascending" ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === "ascending" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [dataBpjsTabelSeprov, sortConfig]);
+
+  const sortedItemsKab = React.useMemo(() => {
+    let sortableItems = [...(dataBpjsTabelKabupaten || [])];
+    if (sortConfig.key !== null) {
+      sortableItems.sort((a, b) => {
+        const aValue = a[sortConfig.key] || 0;
+        const bValue = b[sortConfig.key] || 0;
+
+        if (aValue < bValue) {
+          return sortConfig.direction === "ascending" ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === "ascending" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [dataBpjsTabelKabupaten, sortConfig]);  
+
+  const sortedItemsDetail = React.useMemo(() => {
+    let sortableItems = [...(dataDetailAnggaran || [])];
+    if (sortConfig.key !== null) {
+      sortableItems.sort((a, b) => {
+        const aValue = a[sortConfig.key] || 0;
+        const bValue = b[sortConfig.key] || 0;
+
+        if (aValue < bValue) {
+          return sortConfig.direction === "ascending" ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === "ascending" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [dataDetailAnggaran, sortConfig]);
+
+  const sortedItemsDetailSub = React.useMemo(() => {
+    let sortableItems = [...(dataDetailAnggaranSub || [])];
+    if (sortConfig.key !== null) {
+      sortableItems.sort((a, b) => {
+        const aValue = a[sortConfig.key] || 0;
+        const bValue = b[sortConfig.key] || 0;
+
+        if (aValue < bValue) {
+          return sortConfig.direction === "ascending" ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === "ascending" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [dataDetailAnggaranSub, sortConfig]);
+
+  
+  const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);  
+  const currentItemsKab = sortedItemsKab.slice(indexOfFirstItemKab, indexOfLastItemKab);
+  const currentItemDetail = sortedItemsDetail.slice(indexOfFirstItemDetail, indexOfLastItemDetail);
+  const currentItemDetailSub = sortedItemsDetailSub.slice(indexOfFirstItemDetailSub, indexOfLastItemDetailSub);
+  
+  const totalPages = Math.ceil((dataBpjsTabelSeprov?.length || 0) / itemsPerPage);
+  const totalPagesKab = Math.ceil((dataBpjsTabelKabupaten?.length || 0) / itemsPerPage);
+  const totalPagesDetail = Math.ceil((dataDetailAnggaran?.length || 0) / itemsPerPage);
+  const totalPagesDetailSub = Math.ceil((dataDetailAnggaranSub?.length || 0) / itemsPerPage);
+  
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const paginateKab = (pageNumber) => setCurrentPageKab(pageNumber);
+  const paginateDetail = (pageNumber) => setCurrentPageDetail(pageNumber);
+  const paginateDetailSub = (pageNumber) => setCurrentPageDetailSub(pageNumber);
+
+  const requestSort = (key) => {
+    let direction = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
+    }
+    setSortConfig({ key, direction });
+  };
+
+  // Determine which icon to show for sorting using Unicode
+  const getSortIcon = (key) => {
+    if (sortConfig.key === key) {
+      return sortConfig.direction === "ascending" ? "▲" : "▼";
+    }
+    return "↕"; // Default icon for unsorted
+  };
+
+  const [modall, setModall] = useState(false)
+  const [modal, setModal] = useState(false)
+  const [dataRincianDetail, setDataRincianDetail] = useState(0)
+  const [dataRincianDetailSub, setDataRincianDetailSub] = useState(0)
+  const [dataJenisPemda, setDataJenisPemda] = useState("")
+  const [dataDetailNamaDaerah, setDataDetailNamaDaerah] = useState('')
+  const handleOpen = ({kodeDdn="", rincianDetail= 0, namaDaerah=""}) => {
+    getDataDetailAnggaran({kodeDdn: kodeDdn})      
+    setDataRincianDetail(rincianDetail)
+    setDataDetailNamaDaerah(namaDaerah)
+    setCardHead(null)
+  }
+
+  const [cardhead, setCardHead] = useState()
+  const [namaDaerahDetail, setNamaDaerahDetail] = useState("")
+  
+
+  const handleOpenNextModal = ({kodeDdn="", kodeSubGiat="", rincianDetail= 0}) => {    
+    getDataDetailAnggaranSub({kodeDdn: kodeDdn, kodeSubGiat: kodeSubGiat})
+    // setModal(true)
+    setDataRincianDetailSub(rincianDetail)
+    setCardHead(null)
+  }
+  const handleCloseNextModal = () => {
+    setModal(false)
+  }
+
+  const handleClose = () => {
+    setModall(false); // Close modal by setting modall to false
+  };
+
+  const [dataShowChartAnggaran, setDataShowChartAnggaran] = useState(false);
+  const [customActiveTabBelanja, setcustomActiveTabBelanja] = useState("1");
+  const toggleCustomBelanja = (tab) => {
+    if (customActiveTabBelanja !== tab) {
+      setcustomActiveTabBelanja(tab);
+    }
+  };
+
   useEffect(() => {
     getDataUhc();
     getDataTabelBpjsSeprov()
@@ -173,11 +427,199 @@ const ContentUhcV2 = () => {
           </Card>
         </Col>
         <Col md={6}>
-          <Card>
+          <Card className="card-height-100">
             <CardBody>
-              <div className="d-flex justify-content-start mb-2">
-                Capaian Universal Health Coverage (UHC)
-              </div>
+              <Row>
+                <Col md={6}>
+                  <Row>
+                    <Col>
+                      <Card className="card-animate">
+                        <CardBody>
+                          <div className="d-flex flex-column title-custom-card">
+                            <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                              <span>TOTAL BELANJA NASIONAL</span>
+                            </div>
+                            <div className="d-flex">
+                              <div className="avatar-xs-half flex-shrink-0">
+                                <span className="avatar-title bg-info-subtle rounded-4 fs-3">
+                                  <i className="bx bx-cart text-info"></i>
+                                </span>
+                              </div>
+                              <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                                <span>
+                                  <CountUp
+                                    start={0}
+                                    end={
+                                      dataUhc?.uhc_total_anggaran_nasional / 1000000000000
+                                    }
+                                    decimals={2}
+                                    decimal=","
+                                    separator="."
+                                    prefix="Rp "
+                                    suffix=" T"
+                                    duration={3}
+                                  />
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </CardBody>
+                      </Card>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>
+                      <Card className="card-animate">
+                        <CardBody>
+                          <TabContent
+                            activeTab={customActiveTabBelanja}
+                            className="text-muted"
+                          >
+                            <TabPane tabId="1" id="provinsi">
+                              <div className="d-flex flex-column title-custom-card">
+                                <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                                  <span>
+                                    TOTAL JAMKES
+                                  </span>
+                                </div>
+                                <div className="d-flex">
+                                  <div className="avatar-xs-half flex-shrink-0">
+                                    <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
+                                      <i className="ri-shopping-bag-line text-warning"></i>
+                                    </span>
+                                  </div>
+                                  <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                                    <span>
+                                      <CountUp
+                                        start={0}
+                                        end={
+                                          dataUhc?.uhc_total_anggaran_jamkes / 1000000000000
+                                        }
+                                        decimals={2}
+                                        decimal=","
+                                        separator="."
+                                        prefix="Rp "
+                                        suffix=" T"
+                                        duration={3}
+                                      />
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </TabPane>
+                            <TabPane tabId="2" id="kabupaten">
+                              <div className="d-flex flex-column title-custom-card">
+                                <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                                  <span>
+                                    TOTAL BELANJA UNTUK BIDANG URUSAN KESEHATAN
+                                  </span>
+                                </div>
+                                <div className="d-flex">
+                                  <div className="avatar-xs-half flex-shrink-0">
+                                    <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
+                                      <i className="ri-shopping-bag-line text-warning"></i>
+                                    </span>
+                                  </div>
+                                  <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                                    <span>
+                                      <CountUp
+                                        start={0}
+                                        end={
+                                          dataUhc?.uhc_total_anggaran_belanja_urusan_kesehatan / 1000000000000
+                                        }
+                                        decimals={2}
+                                        decimal=","
+                                        separator="."
+                                        prefix="Rp "
+                                        suffix=" T"
+                                        duration={3}
+                                      />
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </TabPane>
+                          </TabContent>
+                          <div className="nav-beranda">
+                            <Nav
+                              tabs
+                              className="nav nav-tabs nav-success nav-justified mb-3"
+                            >
+                              <NavItem>
+                                <NavLink
+                                  style={{ cursor: "pointer" }}
+                                  className={classnames("h-100", {
+                                    active: customActiveTabBelanja === "1",
+                                  })}
+                                  onClick={() => {
+                                    toggleCustomBelanja("1");
+                                    setDataShowChartAnggaran(false);
+                                  }}
+                                >
+                                  TOTAL JAMKES
+                                </NavLink>
+                              </NavItem>
+                              <NavItem>
+                                <NavLink
+                                  style={{ cursor: "pointer" }}
+                                  className={classnames("h-100", {
+                                    active: customActiveTabBelanja === "2",
+                                  })}
+                                  onClick={() => {
+                                    toggleCustomBelanja("2");
+                                    setDataShowChartAnggaran(true);
+                                  }}
+                                >
+                                  BIDANG URUSAN KESEHATAN
+                                </NavLink>
+                              </NavItem>
+                            </Nav>
+                          </div>
+                        </CardBody>
+                      </Card>
+                    </Col>
+                  </Row>
+                </Col>
+                <Col md={6}>
+                  {dataShowChartAnggaran ? (
+                    <>
+                      <PieChartNew
+                        dataChart={[dataUhc?.uhc_total_anggaran_nasional-dataUhc?.uhc_total_anggaran_belanja_urusan_kesehatan, dataUhc?.uhc_total_anggaran_belanja_urusan_kesehatan]}
+                        dataColors={'["#2DAED4", "#FCAD24"]'}
+                        categoryName={[
+                          "Bidang Urusan di Luar Kesehatan",
+                          "Bidang Urusan Kesehatan",
+                        ]}
+                        showLegend={false}
+                        percentOnly={true}
+                        pieChart={false}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <PieChartNew
+                        dataChart={[dataUhc?.uhc_total_anggaran_nasional-dataUhc?.uhc_total_anggaran_jamkes, dataUhc?.uhc_total_anggaran_jamkes]}
+                        dataColors={'["#2DAED4", "#FCAD24"]'}
+                        categoryName={[
+                          "Anggaran Untuk Lainnya",
+                          "Anggaran Penurunan dan Pencegahan Stunting",
+                        ]}                        
+                        pieChart={false}
+                        showLegend={false}
+                        percentOnly={true}
+                      />
+                    </>
+                  )}
+                </Col>
+              </Row>
+            </CardBody>
+          </Card>
+        </Col>
+      </Row>
+      <Row>
+      <Col md={12}>
+          <Card>
+            <CardBody>              
               <Row>
                 <Col>
                   <Card className="card-animate card-height-100">
@@ -196,7 +638,7 @@ const ContentUhcV2 = () => {
                             <span>
                             <CountUp
                             start={0}
-                            end={dataUhc?.uhc_total_jumlah_penduduk}
+                            end={dataUhc?.uhc_jmlpenduduk}
                             separator="."
                             prefix=""
                             suffix=" Jiwa"
@@ -211,12 +653,12 @@ const ContentUhcV2 = () => {
                 </Col>
               </Row>
               <Row>
-                <Col>
+                <Col md={6}>
                   <Card className="card-animate card-height-100">
                     <CardBody>
                       <div className="d-flex flex-column title-custom-card">
                         <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                          <span>JUMLAH BPJS KESEHATAN</span>
+                          <span>PESERTA BPJS KESEHATAN</span>
                           {/* <span className="title-percent">{dataJumlahPenduduk.persenLaki}</span> */}
                         </div>
                         <div className="d-flex">
@@ -242,14 +684,78 @@ const ContentUhcV2 = () => {
                     </CardBody>
                   </Card>
                 </Col>
+                <Col md={6}>
+                  <Card className="card-animate card-height-100">
+                    <CardBody>
+                      <div className="d-flex flex-column title-custom-card">
+                        <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                          <span>PESERTA NON BPJS KESEHATAN</span>
+                          {/* <span className="title-percent">{dataJumlahPenduduk.persenLaki}</span> */}
+                        </div>
+                        <div className="d-flex">
+                          <div className="avatar-xs-half flex-shrink-0">
+                            <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                              <i className="las la-briefcase-medical text-danger"></i>
+                            </span>
+                          </div>
+                          <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                            <span>
+                            <CountUp
+                            start={0}
+                            end={dataUhc?.uhc_jumlah_non_peserta_bpjs}
+                            separator="."
+                            prefix=""
+                            suffix=" Jiwa"
+                            duration={3}
+                          />
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </CardBody>
+                  </Card>
+                </Col>
               </Row>
               <Row>
-                <Col>
+                <Col md={6}>
                   <Card className="card-animate">
                     <CardBody>
                       <div className="d-flex flex-column title-custom-card">
                         <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                          <span>PERCENTASE</span>
+                          <span>PERSENTASE PESERTA</span>
+                        </div>
+                        <div className="d-flex">
+                          <div className="avatar-xs-half flex-shrink-0">
+                            <span className="avatar-title bg-info-subtle rounded-4 fs-3">
+                              <i className="ri-percent-line text-info"></i>
+                            </span>
+                          </div>
+                          <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                            <span>
+                            <CountUp
+                            start={0}
+                            end={(dataUhc?.uhc_jumlah_peserta_bpjs/dataUhc?.uhc_jmlpenduduk)*100}
+                            separator="."
+                            decimals={2}
+                            decimal=","
+                            prefix=""                            
+                            suffix="%"
+                            duration={3}
+                          />
+                              
+                              </span>
+                          </div>
+                        </div>
+                      </div>
+                    </CardBody>
+                  </Card>
+                </Col>
+                <Col md={6}>
+                  <Card className="card-animate">
+                    <CardBody>
+                      <div className="d-flex flex-column title-custom-card">
+                        <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                          <span>PERSENTASE NON PESERTA</span>
                         </div>
                         <div className="d-flex">
                           <div className="avatar-xs-half flex-shrink-0">
@@ -261,7 +767,7 @@ const ContentUhcV2 = () => {
                             <span>
                             <CountUp
                             start={0}
-                            end={(dataUhc?.uhc_jumlah_peserta_bpjs/dataUhc?.uhc_total_jumlah_penduduk)*100}
+                            end={(dataUhc?.uhc_jumlah_non_peserta_bpjs/dataUhc?.uhc_jmlpenduduk)*100}
                             separator="."
                             decimals={2}
                             decimal=","
@@ -282,82 +788,8 @@ const ContentUhcV2 = () => {
           </Card>
         </Col>
       </Row>
-      <Row>
-        <Col xl={6}>
-          <Card>
-            <CardBody>
-              <div className="separator">
-                <h4 className="card-title mb-0">
-                  Penduduk Belum Masuk Kepesertaan BPJS Kesehatan
-                </h4>
-              </div>
-              <Row>
-                <Col md={6}>
-                <Col>
-                <Card>
-                  <CardBody>
-                    <div className="d-flex flex-column title-custom-card">
-                      <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                        <span>Laki - Laki</span>
-                      </div>
-                      <div className="d-flex">
-                        <div className="avatar-xs-half flex-shrink-0">
-                          <span className="avatar-title bg-info-subtle rounded-4 fs-3">
-                            <i className="ri-men-line text-info"></i>
-                          </span>
-                        </div>
-                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                          <span>
-                            {dataUhc?.uhc_jumlah_belum_masuk_bpjs?.laki? dataUhc.uhc_jumlah_belum_masuk_bpjs.laki.toLocaleString("id-ID") : "N/A"}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardBody>
-                </Card>
-              </Col>
-              <Col>
-                <Card>
-                  <CardBody>
-                    <div className="d-flex flex-column title-custom-card">
-                      <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                        <span>Perempuan</span>
-                      </div>
-                      <div className="d-flex">
-                        <div className="avatar-xs-half flex-shrink-0">
-                          <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
-                            <i className=" ri-women-line text-danger"></i>
-                          </span>
-                        </div>
-                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                          <span>{dataUhc?.uhc_jumlah_belum_masuk_bpjs?.perempuan? dataUhc.uhc_jumlah_belum_masuk_bpjs.perempuan.toLocaleString("id-ID") : "N/A"}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardBody>
-                </Card>
-              </Col>
-                </Col>
-                <Col md={6}>
-                <PieChartNew
-                        dataChart={dataChartGender}
-                        dataColors={'["#2DAED4", "#FFA0BE"]'}
-                        categoryName={[
-                          "Laki - Laki",
-                          "Perempuan",
-                        ]}
-                        showLegend={false}
-                        percentOnly={true}
-                        legendHorizontal={true}
-                        heightChart="250px"
-                      />
-                </Col>
-              </Row>
-              
-            </CardBody>
-          </Card>
-        </Col>
-        <Col xl={6}>
+      <Row> 
+        <Col xl={12}>
           <Card>
             <CardBody>
               <div className="separator">
@@ -379,7 +811,7 @@ const ContentUhcV2 = () => {
                           </span>
                         </div>
                         <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                          <span>{dataUhc?.uhc_total_ditanggung_pemda?.total_pbpubp_pemda?.toLocaleString("id-ID")}</span>
+                          <span>{dataUhc?.uhc_total_ditanggung_pemda[0]?.jumlah?.toLocaleString("id-ID")}</span>
                         </div>
                       </div>
                     </div>
@@ -400,7 +832,7 @@ const ContentUhcV2 = () => {
                           </span>
                         </div>
                         <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                          <span>{dataUhc?.uhc_total_ditanggung_pemda?.total_pbpubp_kelas3?.toLocaleString("id-ID")}</span>
+                          <span>{dataUhc?.uhc_total_ditanggung_pemda[1]?.jumlah?.toLocaleString("id-ID")}</span>
                         </div>
                       </div>
                     </div>
@@ -415,184 +847,710 @@ const ContentUhcV2 = () => {
         <Col>
         <Card>
           <CardBody>
-            Tabel Seprov
-          <div style={{ overflowX: "auto" }}>
+          <div className="nav-beranda">
+                    <Nav
+                      tabs
+                      className="nav nav-tabs nav-success nav-justified mb-3"
+                    >
+                      <NavItem>
+                        <NavLink
+                          style={{ cursor: "pointer" }}
+                          className={classnames({
+                            active: customActiveTab === "1",
+                          })}
+                          onClick={() => {
+                            toggleCustom("1");
+                            // setCustomActiveTitleAnggaran("Nasional");
+                          }}
+                        >
+                          NASIONAL
+                        </NavLink>
+                      </NavItem>
+                      <NavItem>
+                        <NavLink
+                          style={{ cursor: "pointer" }}
+                          className={classnames({
+                            active: customActiveTab === "2",
+                          })}
+                          onClick={() => {
+                            toggleCustom("2");
+                            // setCustomActiveTitleAnggaran("Provinsi");
+                          }}
+                        >
+                          PROVINSI
+                        </NavLink>
+                      </NavItem>                      
+                    </Nav>
+                  </div>
+                  <TabContent
+                    activeTab={customActiveTab}
+                    className="text-muted"
+                  >
+                    <TabPane tabId="1">
+                    <div style={{ overflowX: "auto" }}>
                     <table
                       className="table table-bordered table-nowrap align-middle mb-0 custom-table"
                       style={{ width: "100%" }}
                     >
                       <thead className="table-light">
                         <tr>
-                          <th>
-                            No  
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}                            
+                            >
+                            No
                           </th>        
-                          <th>
-                            Provinsi  
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("nama")}
+                            >
+                            Provinsi {getSortIcon("nama")}
                           </th>        
-                          <th>
-                          jumlah_bp_pn
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("jumlah_bp_pn")}
+                            >
+                          jumlah_bp_pn {getSortIcon("jumlah_bp_pn")}
                           </th>     
-                          <th>
-                          jumlah_bp_swasta
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("jumlah_bp_swasta")}
+                            >
+                          jumlah_bp_swasta {getSortIcon("jumlah_bp_swasta")}
                           </th>     
-                          <th>
-                          jumlah_non_aktif
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("jumlah_non_aktif")}
+                            >
+                          jumlah_non_aktif {getSortIcon("jumlah_non_aktif")}
                           </th>     
-                          <th>
-                          jumlah_pbi_jk
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("jumlah_pbi_jk")}
+                            >
+                          jumlah_pbi_jk {getSortIcon("jumlah_pbi_jk")}
                           </th>     
-                          <th>
-                          jumlah_pbpu
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("jumlah_pbpu")}
+                            >
+                          jumlah_pbpu {getSortIcon("jumlah_pbpu")}
                           </th>     
-                          <th>
-                          jumlah_pbpu_bp_pemda
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("jumlah_pbpu_bp_pemda")}
+                            >
+                          jumlah_pbpu_bp_pemda {getSortIcon("jumlah_pbpu_bp_pemda")}
                           </th>     
-                          <th>
-                          jumlah_ppu_bu
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("jumlah_ppu_bu")}
+                            >
+                          jumlah_ppu_bu {getSortIcon("jumlah_ppu_bu")}
                           </th>     
-                          <th>
-                          jumlah_ppu_pn
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("jumlah_ppu_pn")}
+                            >
+                          jumlah_ppu_pn {getSortIcon("jumlah_ppu_pn")}
                           </th>     
-                          <th>
-                          total_anggaran
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("total_anggaran")}
+                            >
+                          total_anggaran {getSortIcon("total_anggaran")}
                           </th>     
-                          <th>
-                          total_anggaran_bpjs
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("total_anggaran_bpjs")}
+                            >
+                          total_anggaran_bpjs {getSortIcon("total_anggaran_bpjs")}
                           </th>     
-                          <th>
-                          total_bpjs
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("total_bpjs")}
+                            >
+                          total_bpjs {getSortIcon("total_bpjs")}
                           </th>     
-                          <th>
-                          total_penduduk_dukcapil
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",
+                              
+                              
+                            }}
+                            onClick={() => requestSort("total_penduduk_dukcapil")}
+                            >
+                          total_penduduk_dukcapil {getSortIcon("total_penduduk_dukcapil")}
+                          </th>     
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer", 
+                            }}
+                            >
+                              Action
                           </th>     
                         </tr>
                       </thead>
                       <tbody style={{ minHeight: "500px" }}>
-                  {dataBpjsTabelSeprov.map((item, index) =>(
+                  {currentItems.map((item, index) =>(
                     <tr key={index}>
                         <td>{index+1}</td>
                         <td>{item.nama}</td>
-                        <td>{item.jumlah_bp_pn}</td>
-                        <td>{item.jumlah_bp_swasta}</td>
-                        <td>{item.jumlah_non_aktif}</td>
-                        <td>{item.jumlah_pbi_jk}</td>
-                        <td>{item.jumlah_pbpu}</td>
-                        <td>{item.jumlah_pbpu_bp_pemda}</td>
-                        <td>{item.jumlah_ppu_bu}</td>
-                        <td>{item.jumlah_ppu_pn}</td>
-                        <td>{item.total_anggaran}</td>
-                        <td>{item.total_anggaran_bpjs}</td>
-                        <td>{item.total_bpjs}</td>
-                        <td>{item.total_penduduk_dukcapil}</td>  
+                        <td>{item.jumlah_bp_pn? parseInt(item.jumlah_bp_pn).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.jumlah_bp_swasta? parseInt(item.jumlah_bp_swasta).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.jumlah_non_aktif? parseInt(item.jumlah_non_aktif).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.jumlah_pbi_jk? parseInt(item.jumlah_pbi_jk).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.jumlah_pbpu? parseInt(item.jumlah_pbpu).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.jumlah_pbpu_bp_pemda? parseInt(item.jumlah_pbpu_bp_pemda).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.jumlah_ppu_bu? parseInt(item.jumlah_ppu_bu).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.jumlah_ppu_pn? parseInt(item.jumlah_ppu_pn).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.total_anggaran? parseInt(item.total_anggaran).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.total_anggaran_bpjs? parseInt(item.total_anggaran_bpjs).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.total_bpjs? parseInt(item.total_bpjs).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.total_penduduk_dukcapil? parseInt(item.total_penduduk_dukcapil).toLocaleString("id-ID")
+                        : "-"}</td>                        
+                        <td style={{textAlign: "center"}}>                    
+                          <i style={{                                            
+                          padding: "5px 10px",                      
+                          cursor: "pointer",
+                          fontSize: "25px"                      
+                        }} onClick={()=> handleOpen({kodeDdn: item.kode, rincianDetail: item.total_anggaran, namaDaerah: item.nama})} className="bx bx-list-ul text-primary"></i>                                                                                
+                        </td>
                     </tr>
-                    
                     ))}
                 </tbody>
             </table>
-            </div>    
-          </CardBody>
-        </Card>
-           
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-        <Card>
-          <CardBody>
-            Tabel Kabupaten
-          <div style={{ overflowX: "auto" }}>
+            </div>
+            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={paginate} />
+                    </TabPane>
+                    <TabPane tabId="2">
+                    <div style={{ overflowX: "auto" }}>
                     <table
                       className="table table-bordered table-nowrap align-middle mb-0 custom-table"
                       style={{ width: "100%" }}
                     >
                       <thead className="table-light">
-                        <tr>
-                          <th>
-                            No  
+                      <tr>
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}                            
+                            >
+                            No
                           </th>        
-                          <th>
-                            Provinsi  
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("kode_ddn")}
+                            >
+                            Nama Daerah {getSortIcon("kode_ddn")}
                           </th>        
-                          <th>
-                          jumlah_bp_pn
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("jumlah_bp_pn")}
+                            >
+                          jumlah_bp_pn {getSortIcon("jumlah_bp_pn")}
                           </th>     
-                          <th>
-                          jumlah_bp_swasta
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("jumlah_bp_swasta")}
+                            >
+                          jumlah_bp_swasta {getSortIcon("jumlah_bp_swasta")}
                           </th>     
-                          <th>
-                          jumlah_non_aktif
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => requestSort("jumlah_non_aktif")}
+                            >
+                          jumlah_non_aktif {getSortIcon("jumlah_non_aktif")}
                           </th>     
-                          <th>
-                          jumlah_pbi_jk
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("jumlah_pbi_jk")}
+                            >
+                          jumlah_pbi_jk {getSortIcon("jumlah_pbi_jk")}
                           </th>     
-                          <th>
-                          jumlah_pbpu
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("jumlah_pbpu")}
+                            >
+                          jumlah_pbpu {getSortIcon("jumlah_pbpu")}
                           </th>     
-                          <th>
-                          jumlah_pbpu_bp_pemda
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("jumlah_pbpu_bp_pemda")}
+                            >
+                          jumlah_pbpu_bp_pemda {getSortIcon("jumlah_pbpu_bp_pemda")}
                           </th>     
-                          <th>
-                          jumlah_ppu_bu
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("jumlah_ppu_bu")}
+                            >
+                          jumlah_ppu_bu {getSortIcon("jumlah_ppu_bu")}
                           </th>     
-                          <th>
-                          jumlah_ppu_pn
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("jumlah_ppu_pn")}
+                            >
+                          jumlah_ppu_pn {getSortIcon("jumlah_ppu_pn")}
                           </th>     
-                          <th>
-                          total_anggaran
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("total_anggaran")}
+                            >
+                          total_anggaran {getSortIcon("total_anggaran")}
                           </th>     
-                          <th>
-                          total_anggaran_bpjs
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("total_anggaran_bpjs")}
+                            >
+                          total_anggaran_bpjs {getSortIcon("total_anggaran_bpjs")}
                           </th>     
-                          <th>
-                          total_bpjs
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}
+                            onClick={() => requestSort("total_bpjs")}
+                            >
+                          total_bpjs {getSortIcon("total_bpjs")}
                           </th>     
-                          <th>
-                          total_penduduk_dukcapil
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",
+                              
+                              
+                            }}
+                            onClick={() => requestSort("total_penduduk_dukcapil")}
+                            >
+                          total_penduduk_dukcapil {getSortIcon("total_penduduk_dukcapil")}
+                          </th>     
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer", 
+                            }}
+                            >
+                              Action
                           </th>     
                         </tr>
                       </thead>
                       <tbody style={{ minHeight: "500px" }}>
-                  {dataBpjsTabelKabupaten.map((item, index) =>(
+                  {currentItemsKab.map((item, index) =>(
                     <tr key={index}>
                         <td>{index+1}</td>
                         <td>{item.nama_daerah}</td>
-                        <td>{item.jumlah_bp_pn}</td>
-                        <td>{item.jumlah_bp_swasta}</td>
-                        <td>{item.jumlah_non_aktif}</td>
-                        <td>{item.jumlah_pbi_jk}</td>
-                        <td>{item.jumlah_pbpu}</td>
-                        <td>{item.jumlah_pbpu_bp_pemda}</td>
-                        <td>{item.jumlah_ppu_bu}</td>
-                        <td>{item.jumlah_ppu_pn}</td>
-                        <td>{item.total_anggaran}</td>
-                        <td>{item.total_anggaran_bpjs}</td>
-                        <td>{item.total_bpjs}</td>
-                        <td>{item.total_penduduk_dukcapil}</td>  
-                    </tr>
-                    
+                        <td>{item.jumlah_bp_pn? parseInt(item.jumlah_bp_pn).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.jumlah_bp_swasta? parseInt(item.jumlah_bp_swasta).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.jumlah_non_aktif? parseInt(item.jumlah_non_aktif).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.jumlah_pbi_jk? parseInt(item.jumlah_pbi_jk).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.jumlah_pbpu? parseInt(item.jumlah_pbpu).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.jumlah_pbpu_bp_pemda? parseInt(item.jumlah_pbpu_bp_pemda).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.jumlah_ppu_bu? parseInt(item.jumlah_ppu_bu).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.jumlah_ppu_pn? parseInt(item.jumlah_ppu_pn).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.total_anggaran? parseInt(item.total_anggaran).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.total_anggaran_bpjs? parseInt(item.total_anggaran_bpjs).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.total_bpjs? parseInt(item.total_bpjs).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.total_penduduk_dukcapil? parseInt(item.total_penduduk_dukcapil).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td style={{textAlign: "center"}}>                    
+                          <i style={{                                            
+                          padding: "5px 10px",                      
+                          cursor: "pointer",
+                          fontSize: "25px"                      
+                        }} onClick={()=> handleOpen({kodeDdn: item.kode, rincianDetail: item.total_anggaran, namaDaerah: item.nama_daerah})} className="bx bx-list-ul text-primary"></i>                                                                                
+                        </td>
+                    </tr>                    
                     ))}
                 </tbody>
             </table>
-            </div>    
+            </div>  
+            <Pagination currentPage={currentPageKab} totalPages={totalPagesKab} onPageChange={paginateKab} />
+                    </TabPane>
+                  </TabContent>
           </CardBody>
-        </Card>
-           
+        </Card>           
         </Col>
       </Row>
-      <Row>
-        <Col>
-          <Card style={{ minHeight: "410px" }}>
-            <CardBody>
-              % Pembiayaan
-              <HorizontalBarChart
-                    valueChart={dataValueChartPembiayaan}
-                    categoryChart={dataCategoryChartPembiayaan}
-                    dataColors='["#57E7B4"]'
-                  />
-            </CardBody>
-          </Card>
-        </Col>
-      </Row>
+      <Modal size="xl" isOpen={modall} toggle={handleOpen} centered={true} backdrop="static">
+      <div className="modal-content border-0">
+        <ModalHeader className=" p-3 bg-info-subtle" toggle={handleClose}>Detail Anggaran {dataDetailNamaDaerah=="Aceh" ? "Provinsi Aceh" : dataDetailNamaDaerah}
+        </ModalHeader>
+        <ModalBody>
+        <Row>
+              <Col md={4}><Card className="card-animate card-height-100">
+                        <CardBody>
+                          <div
+                            className="d-flex flex-column title-custom-card"                            
+                          >
+                            <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                              <span>Total Anggaran</span>
+                            </div>
+                            <div className="d-flex">
+                              {/* <div className="avatar-xs-half flex-shrink-0">
+                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                          <i className=" ri-women-line text-danger"></i>
+                        </span>
+                      </div> */}
+                              <div className="d-flex justify-content-center align-items-center title-body">
+                                <span>
+                                  <CountUp
+                                    start={0}
+                                    end={
+                                      // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                                      dataRincianDetail
+                                    }
+                                    separator="."
+                                    prefix="Rp "
+                                    suffix=""
+                                    duration={3}
+                                  />
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </CardBody>
+                      </Card></Col>
+            </Row>
+          <div style={{ overflowY: "scroll", maxHeight:"500px"}}>
+          <table
+                  className="table table-bordered table-nowrap align-middle mb-0"
+                  style={{ width: "100%" }}
+                >
+                  <thead className="table-light" style={{ position: "sticky", top: 0, zIndex: 2 }}>
+                    <tr>
+                      <th style={{ verticalAlign: "middle", textAlign: "center" }}>
+                        NO
+                      </th>                      
+                      {/* {(dataJenisPemda =="prov" || dataJenisPemda =="kab" || dataJenisPemda =="kota")? (<></>):(<><th                        
+                        onClick={() => requestSort("nama_daerah")}
+                        style={{ cursor: "pointer", verticalAlign: "middle" }}
+                      >
+                        Nama Daerah {getSortIcon("nama_daerah")}
+                      </th></>)} */}
+                      
+                      {/* <th style={{ textAlign: "center" }}>
+                        Total Rincian
+                      </th> */}
+                      <th onClick={() => requestSort("kode_sub_giat")}
+                        style={{ cursor: "pointer", verticalAlign: "middle", textAlign: "center" }}>
+                        Kode Sub Giat {getSortIcon("kode_sub_giat")}
+                      </th>                      
+                      <th onClick={() => requestSort("nama_sub_giat")}
+                        style={{ cursor: "pointer", verticalAlign: "middle", textAlign: "center" }}>
+                        Nama Sub Giat {getSortIcon("nama_sub_giat")}
+                      </th>                      
+                      {/* <th onClick={() => requestSort("")}
+                        style={{ cursor: "pointer", textAlign: "center" }}>
+                        Rincian Sub Giat
+                      </th>                       */}
+                      <th onClick={() => requestSort("total_rinciansub")}
+                        style={{ cursor: "pointer", verticalAlign: "middle", textAlign: "center",whiteSpace: "normal", maxWidth:"100px",
+                          wordWrap: "break-word"}}>
+                        Total Rincian Sub Giat (Rp) {getSortIcon("total_rinciansub")}
+                      </th>
+                      <th onClick={() => requestSort("persentase")}
+                        style={{ cursor: "pointer", verticalAlign: "middle", textAlign: "center",whiteSpace: "normal",
+                          wordWrap: "break-word" }}>
+                        Persentase {getSortIcon("persentase")}
+                      </th>
+                      <th style={{verticalAlign: "middle", textAlign: "center", whiteSpace: "normal", wordWrap: "break-word",maxWidth:"100px"  }}>
+                        Lihat Sub Rincian Objek 
+                      </th>
+                    </tr>                  
+                  </thead>
+                  <tbody style={{ minHeight: "500px" }}>
+                    {currentItemDetail?.map((item, index) => (
+                      <tr key={index}>
+                        {/* <td>{item.kode_prop}</td> */}
+                        <td style={{textAlign: "center",
+                        verticalAlign: "middle"}}>
+                          { index + 1}
+                        </td>
+                        {/* {(dataJenisPemda =="prov" || dataJenisPemda =="kab" || dataJenisPemda =="kota") ? (<></>):(<><td style={{ maxWidth: "250px" }}>
+                          {" "}
+                          {item.nama_daerah || "-"}
+                        </td></>)}                         */}
+                        {/* <td>
+                          Rp {item.total_rincian_daerah? parseInt(item.total_rincian_daerah).toLocaleString("id-ID")
+                            : "-"}
+                        </td> */}
+                        <td>
+                          {item?.kode_sub_giat}
+                        </td>
+                        <td style={{
+                            whiteSpace: "normal",  // Membolehkan teks turun ke baris berikutnya
+                            wordWrap: "break-word",  // Memastikan teks panjang terpotong dan turun ke bawah
+                            maxWidth: "200px"  // Menetapkan lebar maksimum sel (sesuaikan dengan kebutuhan)
+                          }}>
+                          {item?.nama_sub_giat}
+                        </td>
+                        {/* <td>
+                         Rp {item.rincian_sub_giat ? parseInt(item.rincian_sub_giat).toLocaleString("id-ID")
+                            : "-"}
+                        </td> */}
+                        <td>
+                          <span style={{float: "right"}}>{item?.total_rinciansub ? parseInt(item?.total_rinciansub).toLocaleString("id-ID")
+                            : "-"}</span>
+                         
+                        </td>
+                        <td>
+                        <span style={{float: "right"}}>
+                        {item.persentase
+                          ? (item.persentase >= 1
+                              ? `${Number(item.persentase).toLocaleString("id-ID", {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                })}%`
+                              : `${Number(item.persentase).toLocaleString("id-ID", {
+                                  minimumFractionDigits: 4,
+                                })}%`
+                            )
+                          : "-"}
+                        </span>
+                        </td>
+                        <td style={{verticalAlign: "middle", textAlign: "center" }}>            
+                        {/* <button style={{
+                      backgroundColor: "#28a745",
+                      color: "white",
+                      padding: "5px 10px",
+                      border: "none",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                      fontSize: "16px"
+                    }} onClick={()=>dataJenisPemda=="prov" ? handleOpenNextModal("", item.kode_sub_giat, item.kode_ddn, "") : (dataJenisPemda=="kab" || dataJenisPemda=="kota") ? handleOpenNextModal("", item.kode_sub_giat, "", item.kode_ddn) : handleOpenNextModal(item.kode_prov, item.kode_sub_giat, "", "")}>Lihat Detail</button> */}
+                    <i style={{                                            
+                      padding: "5px 10px",                      
+                      cursor: "pointer",
+                      fontSize: "30px"
+                    }} onClick={()=>handleOpenNextModal({kodeDdn: item.kode_ddn, kodeSubGiat: item.kode, rincianDetail: item.total_rinciansub})} className="bx bx-list-ul text-primary"></i>
+                        </td>          
+                      </tr>
+                    ))}
+                    {/* {placeholders} */}
+                  </tbody>
+                </table>
+          </div>        
+          <Pagination currentPage={currentPageDetail} totalPages={totalPagesDetail} onPageChange={paginateDetail} />
+        </ModalBody>
+      </div>          
+      </Modal>   
+
+      <Modal size="xl" isOpen={modal} toggle={handleOpenNextModal} centered={true} backdrop="static">
+      <div className="modal-content border-0">
+        <ModalHeader className=" p-3 bg-info-subtle" toggle={handleCloseNextModal}>Sub Rincian Objek
+        </ModalHeader>
+        <ModalBody>
+        <Row>
+            <Col md={4}><Card className="card-animate card-height-100">
+                        <CardBody>
+                          <div
+                            className="d-flex flex-column title-custom-card"                            
+                          >
+                            <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                              <span>Total Anggaran Sub Kegiatan</span>
+                            </div>
+                            <div className="d-flex">
+                              {/* <div className="avatar-xs-half flex-shrink-0">
+                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                          <i className=" ri-women-line text-danger"></i>
+                        </span>
+                      </div> */}
+                              <div className="d-flex justify-content-center align-items-center title-body">
+                                <span>
+                                  <CountUp
+                                    start={0}
+                                    end={
+                                      // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                                      dataRincianDetailSub
+                                    }
+                                    separator="."
+                                    prefix="Rp "
+                                    suffix=""
+                                    duration={3}
+                                  />
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </CardBody>
+                      </Card></Col>
+          </Row>
+          <div style={{ overflowY: "scroll", maxHeight:"500px"}}>
+          <table
+                  className="table table-bordered table-nowrap align-middle mb-0"
+                  // style={{ width: "100%" }}
+                >
+                  <thead className="table-light" style={{ position: "sticky", top: 0, zIndex: 2 }}>
+                    <tr>
+                      <th style={{ verticalAlign: "middle", textAlign: "center" }}>
+                        NO
+                      </th>                      
+                      <th                        
+                        onClick={() => requestSort("kode_sro")}
+                        style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
+                          wordWrap: "break-word", maxWidth:"100px" }}
+                      >
+                        Kode Sub Rincian Objek {getSortIcon("kode_sro")}
+                      </th>                                                                  
+                      <th onClick={() => requestSort("nama_sro")}
+                        style={{ cursor: "pointer", textAlign: "center", whiteSpace: "normal",
+                          wordWrap: "break-word", maxWidth:"100px" }}>
+                        Nama Sub Rincian Objek {getSortIcon("nam_sro")}
+                      </th>  
+                      <th onClick={() => requestSort("total_rinciansro")}
+                        style={{ cursor: "pointer", textAlign: "center" }}>
+                        Total Rincian (Rp) {getSortIcon("total_rinciansro")}
+                      </th>
+                      <th onClick={() => requestSort("persentase")}
+                        style={{ cursor: "pointer", textAlign: "center",whiteSpace: "normal",
+                          wordWrap: "break-word" }}>
+                        Persentase {getSortIcon("persentase")}
+                      </th>                                                                
+                    </tr>                  
+                  </thead>
+                  <tbody style={{ minHeight: "500px" }}>
+                    {currentItemDetailSub.map((item, index) => (
+                      <tr key={index}>                        
+                        <td style={{textAlign: "center",
+                        verticalAlign: "middle"}}>
+                          { index + 1}
+                        </td>
+                        <td>
+                          {item.kode_sro}
+                        </td>
+                        <td style={{
+                            whiteSpace: "normal",  // Membolehkan teks turun ke baris berikutnya
+                            wordWrap: "break-word",  // Memastikan teks panjang terpotong dan turun ke bawah
+                            maxWidth: "200px"  // Menetapkan lebar maksimum sel (sesuaikan dengan kebutuhan)
+                          }}>
+                          {" "}
+                          {item.nama_sro || "-"}
+                        </td>                                                                        
+                        <td>
+                        <span style={{float: "right"}}>{item.total_rinciansub ? parseInt(item.total_rinciansub).toLocaleString("id-ID")
+                            : "-"}</span>
+                        </td>                          
+                        <td>
+                        <span style={{float: "right"}}>
+                        {item.persentase
+                          ? (item.persentase >= 1
+                              ? `${Number(item.persentase).toLocaleString("id-ID", {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                })}%`
+                              : `${Number(item.persentase).toLocaleString("id-ID", {
+                                  minimumFractionDigits: 4,
+                                })}%`
+                            )
+                          : "-"}
+                        </span>   
+                        </td>
+                      </tr>
+                    ))}
+                    {/* {placeholders} */}
+                  </tbody>
+                </table>
+          </div> 
+          <Pagination currentPage={currentPageDetailSub} totalPages={totalPagesDetailSub} onPageChange={paginateDetailSub} />
+        </ModalBody>
+      </div>          
+      </Modal>   
     </React.Fragment>
   );
 };

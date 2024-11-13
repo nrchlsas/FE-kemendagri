@@ -2103,9 +2103,9 @@ const ContentDapodikV2 = () => {
                           <th
                             rowSpan="2"
                             style={{
+                              textAlign: "center",
                               cursor: "pointer",
                               verticalAlign: "middle",
-                              textAlign: "center"
                             }}
                           >
                             No
@@ -2296,6 +2296,7 @@ const ContentDapodikV2 = () => {
                             style={{
                               cursor: "pointer",
                               verticalAlign: "middle",
+                              textAlign: "center"
                             }}
                           >
                             No
@@ -2324,7 +2325,7 @@ const ContentDapodikV2 = () => {
                           <th colSpan="2" style={{ textAlign: "center" }}>
                             Anak Tidak Sekolah
                           </th>
-                          <th
+                          {showNextData ? (<></>) : (<><th
                             rowSpan="2"
                             style={{
                               textAlign: "center",
@@ -2368,7 +2369,7 @@ const ContentDapodikV2 = () => {
                             }}
                           >
                             Detail Anggaran Pendidikan
-                          </th>
+                          </th></>)}                          
                         </tr>
                         <tr>
                           {/* <th
