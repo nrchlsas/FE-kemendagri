@@ -792,12 +792,35 @@ const ContentUhcV2 = () => {
         <Col xl={12}>
           <Card>
             <CardBody>
-              <div className="separator">
-                <h4 className="card-title mb-0">
+              <div className="separator mb-2">
+                <h4 className="card-title">
                   Peserja BPJS Kesehatan Yang Ditanggung Pemda
                 </h4>
               </div>
-              <Col>
+              {dataUhc?.uhc_total_ditanggung_pemda?.map((item, index) => (
+                <Col key={index}>
+                <Card>
+                  <CardBody>
+                    <div className="d-flex flex-column title-custom-card">
+                      <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                        <span>{item?.key}</span>
+                      </div>
+                      <div className="d-flex">
+                        <div className="avatar-xs-half flex-shrink-0">
+                          <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
+                            <i className="ri-account-circle-line text-warning"></i>
+                          </span>
+                        </div>
+                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                          <span>{item?.jumlah?.toLocaleString("id-ID")}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+              ))}
+              {/* <Col>
                 <Card>
                   <CardBody>
                     <div className="d-flex flex-column title-custom-card">
@@ -838,7 +861,7 @@ const ContentUhcV2 = () => {
                     </div>
                   </CardBody>
                 </Card>
-              </Col>
+              </Col> */}
             </CardBody>
           </Card>
         </Col>
