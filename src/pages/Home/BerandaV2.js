@@ -334,7 +334,7 @@ const BerandaV2 = () => {
     }
   };
 
-  const [selectedTahap, setSelectedTahap] = useState("28"); // State untuk menyimpan pilihan dropdown
+  const [selectedTahap, setSelectedTahap] = useState("99"); // State untuk menyimpan pilihan dropdown
   const handleSelectChange = (e) => {
     const { name, value } = e.target;
     const selectedValue = value;
@@ -1081,8 +1081,8 @@ const BerandaV2 = () => {
                       onChange={handleSelectChange}
                     >
                     <option value="28">Murni</option>
-                    <option value="29">Perubahan</option>
                     <option value="30">Pergeseran</option>
+                    <option value="29">Perubahan</option>
                     <option value="32">Pergeseran Setelah</option>
                     <option value="99">APBD Akhir</option>
                     </select>

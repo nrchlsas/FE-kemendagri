@@ -476,7 +476,7 @@ const ContentRealisasi = () => {
                           return (
                             <tr key={index}>
                               <td>{item.kode_prov}</td>
-                              <td>{item.nama_prov}</td>
+                              <td>{item.nama_prov.replace("Provinsi ", "")}</td>
                               <td>
                                 <div
                                   className="progress"

@@ -1051,13 +1051,13 @@ const ContentRealisasiDetailDaerah = () => {
                       onClick={() => requestSort("total_rinciansro")}
                       style={{ cursor: "pointer", textAlign: "center" }}
                     >
-                      Pagu (Rp) {getSortIcon("total_rinciansro")}
+                      Realisasi {getSortIcon("total_rinciansro")}
                     </th>
                     <th
                       onClick={() => requestSort("total_rinciansro")}
                       style={{ cursor: "pointer", textAlign: "center" }}
                     >
-                      Realisasi {getSortIcon("total_rinciansro")}
+                      Pagu (Rp) {getSortIcon("total_rinciansro")}
                     </th>
                     <th
                       onClick={() => requestSort("persentase")}
@@ -1096,16 +1096,7 @@ const ContentRealisasiDetailDaerah = () => {
                          Rp {item.rincian_sub_giat ? parseInt(item.rincian_sub_giat).toLocaleString("id-ID")
                             : "-"}
                         </td> */}
-                      <td>
-                      <span style={{ float: "right" }}>
-                        {item.anggarangeser
-                          ? parseInt(item.anggarangeser).toLocaleString(
-                              "id-ID"
-                            )
-                          : "-"}
-                      </span>
-                    </td>
-                      <td>
+                        <td>
                         <span style={{ float: "right" }}>
                           {item.realisasi
                             ? parseInt(item.realisasi).toLocaleString(
@@ -1114,6 +1105,15 @@ const ContentRealisasiDetailDaerah = () => {
                             : "-"}
                         </span>
                       </td>
+                      <td>
+                      <span style={{ float: "right" }}>
+                        {item.anggarangeser
+                          ? parseInt(item.anggarangeser).toLocaleString(
+                              "id-ID"
+                            )
+                          : "-"}
+                      </span>
+                    </td>                      
                       <td>
                         <span style={{ float: "right" }}>
                           {`${((item.realisasi/item.anggarangeser)*100).toLocaleString(

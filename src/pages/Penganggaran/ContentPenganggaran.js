@@ -220,7 +220,7 @@ const ContentPenganggaran = () => {
 
     useEffect(() => {
         // getDataPenganggaranNasional();
-        getDataPenganggaranNasionalPersentase();
+        getDataPenganggaranNasionalPersentase();        
     }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -349,6 +349,7 @@ const ContentPenganggaran = () => {
   const [dataRincianDetail, setDataRincianDetail] = useState(0);
   const [dataDetailNamaUnitSkpd, setDataDetailNamaUnitSkpd] = useState("");
   const [cardhead, setCardHead] = useState();
+  const [totalDaerahSudahBelum, setTotalDaerahSudahBelum] = useState([]);
 
   const handleOpen = ({kodeDdn}) => {   
     getDataPenganggaranNasionalProgress({kodeDdn: kodeDdn})   
@@ -375,44 +376,49 @@ const ContentPenganggaran = () => {
     return "↕"; // Default icon for unsorted
   };
 
-  const itemsSudah = currentItemsSudahDanBelum.filter((item) => {
-    const tahapData = {
-      5: item?.daerah_rapbd,
-      40: item?.daerah_kuappas,
-      30: item?.daerah_apbdgeser,
-      41: item?.daerah_kupa,
-      8: item?.daerah_rapbdubah,
-      29: item?.daerah_apbdubah,
-      28: item?.daerah_apbd,
-      32: item?.daerah_apbdgeserpasca,
-    };
-    return tahapData[selectedSingleTahapan] > 0;
-  });
   
-  const itemsBelum = currentItemsSudahDanBelum.filter((item) => {
-    const tahapData = {
-      5: item?.daerah_rapbd,
-      40: item?.daerah_kuappas,
-      30: item?.daerah_apbdgeser,
-      41: item?.daerah_kupa,
-      8: item?.daerah_rapbdubah,
-      29: item?.daerah_apbdubah,
-      28: item?.daerah_apbd,
-      32: item?.daerah_apbdgeserpasca,
-    };
-    return tahapData[selectedSingleTahapan] === 0;
-  });
-  
-  // Sesuaikan panjang array dengan menambahkan baris kosong ke array yang lebih pendek
-  const maxLength = Math.max(itemsSudah.length, itemsBelum.length);
-  
-  while (itemsSudah.length < maxLength) {
-    itemsSudah.push({ kode_ddn: "", nama_daerah: "" });
-  }
-  
-  while (itemsBelum.length < maxLength) {
-    itemsBelum.push({ kode_ddn: "", nama_daerah: "" });
-  }
+    const itemsSudah = currentItemsSudahDanBelum.filter((item) => {
+      const tahapData = {
+        5: item?.daerah_rapbd,
+        40: item?.daerah_kuappas,
+        30: item?.daerah_apbdgeser,
+        41: item?.daerah_kupa,
+        8: item?.daerah_rapbdubah,
+        29: item?.daerah_apbdubah,
+        28: item?.daerah_apbd,
+        32: item?.daerah_apbdgeserpasca,
+      };
+      return tahapData[selectedSingleTahapan] > 0;
+    });
+    
+    const itemsBelum = currentItemsSudahDanBelum.filter((item) => {
+      const tahapData = {
+        5: item?.daerah_rapbd,
+        40: item?.daerah_kuappas,
+        30: item?.daerah_apbdgeser,
+        41: item?.daerah_kupa,
+        8: item?.daerah_rapbdubah,
+        29: item?.daerah_apbdubah,
+        28: item?.daerah_apbd,
+        32: item?.daerah_apbdgeserpasca,
+      };
+      return tahapData[selectedSingleTahapan] === 0;
+    });
+    
+    const totalDaerahSudah = itemsSudah.length
+    const totalDaerahBelum = itemsBelum.length
+
+    console.log(itemsBelum, itemsSudah)
+      
+    const maxLength = Math.max(itemsSudah.length, itemsBelum.length);
+    
+    while (itemsSudah.length < maxLength) {
+      itemsSudah.push({ kode_ddn: "", nama_daerah: "" });
+    }
+    
+    while (itemsBelum.length < maxLength) {
+      itemsBelum.push({ kode_ddn: "", nama_daerah: "" });
+    }
 
   return (
     <React.Fragment>
@@ -720,7 +726,7 @@ const ContentPenganggaran = () => {
                           return (
                             <tr key={index}>
                               <td>{item.kode_prov}</td>
-                              <td>{item.nama_prov}</td>
+                              <td>{item.nama_prov.replace("Provinsi ", "")}</td>
                               <td>
                                 <div onClick={()=> (handleOpen({kodeDdn: item.kode_prov}), setCurrentPageSudahDanBelum(1))}
                                   className="progress"
@@ -803,12 +809,72 @@ const ContentPenganggaran = () => {
             Tahapan {dataDetailNamaTahap}
           </ModalHeader>
           <ModalBody>
-            {/* <div>
-              Total Anggaran: {dataRincianDetail}
-            </div> */}
-            
-
-            {/* <div style={{ overflowY: "scroll", maxHeight: "500px" }}> */}
+          <Row>
+              <Col md={4}>
+                <Card className="card-animate card-height-100">
+                  <CardBody>
+                    <div className="d-flex flex-column title-custom-card">
+                      <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                        <span>{customActiveTab == "1" ? "Total Daerah Sudah" : "Total Daerah Melakukan"}</span>
+                      </div>
+                      <div className="d-flex">
+                        {/* <div className="avatar-xs-half flex-shrink-0">
+                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                          <i className=" ri-women-line text-danger"></i>
+                        </span>
+                      </div> */}
+                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                          <span>
+                            <CountUp
+                              start={0}
+                              end={
+                                // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                                totalDaerahSudah
+                              }
+                              separator="."                              
+                              suffix=" Daerah"
+                              duration={3}
+                            />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+              <Col md={4}>
+                <Card className="card-animate card-height-100">
+                  <CardBody>
+                    <div className="d-flex flex-column title-custom-card">
+                      <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                        <span>{customActiveTab == "1" ? "Total Daerah Belum" : "Total Daerah Tidak Melakukan"}</span>
+                      </div>
+                      <div className="d-flex">
+                        {/* <div className="avatar-xs-half flex-shrink-0">
+                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                          <i className=" ri-women-line text-danger"></i>
+                        </span>
+                      </div> */}
+                        <div className="d-flex justify-content-center align-items-center title-body">
+                          <span>
+                            <CountUp
+                              start={0}
+                              end={
+                                // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                                totalDaerahBelum
+                              }
+                              separator="."                   
+                              suffix=" Daerah"
+                              duration={3}
+                            />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+            </Row>
                      <div className="d-flex" style={{height:"450px", overflowX: "auto"}}>
   <table
     className="table table-bordered table-nowrap align-middle mb-0"

@@ -2013,7 +2013,7 @@ const ContentMiskinEkstremV2 = () => {
                       {indexOfFirstItem + index + 1}
                     </td>
                     <td className={showNextData ? "click-data" : ""} style={{ minWidth: "270px" }} onClick={(e)=> {showNextData ?  getDataMiskinEkstremTabelKab(item.kode_prov, e) : "", showNextData ? setNamaDaerahDetail(item.nama_prov) : ""}}>                      
-                      {item.nama_prov ? item.nama_prov=="Aceh"? "Provinsi Aceh": item.nama_prov : item.nama_daerah=="Aceh"? "Provinsi Aceh": item.nama_daerah}
+                      {item.nama_prov ? item.nama_prov.replace("Provinsi ", "") : item.nama_daerah.replace("Provinsi ", "")}
                     </td>
                     <td>
                       {item.jumlah_keluarga_desil_all

@@ -1885,9 +1885,8 @@ const ContentStunting = () => {
                                   ), dataKolomNamaDaerah == "Se-Provinsi" ? setNamaDaerahDetail(item.nama_prov) : ""}                                
                               }
                             >
-                              {item.nama_kabupaten
-                                ? item.nama_kabupaten =="Aceh"? "Provinsi Aceh": item.nama_kabupaten || "-"
-                                : item.nama_prov=="Aceh"? "Provinsi Aceh": item.nama_prov || "-"}
+                              {item.nama_kabupaten? item.nama_kabupaten.replace("Provinsi ", "") || "-"
+                                : item.nama_prov.replace("Provinsi ", "") || "-"}
                             </td>
                             <td>
                               {item.jumlah_keluarga
