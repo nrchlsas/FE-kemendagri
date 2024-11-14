@@ -632,19 +632,6 @@ const ContentRealisasiDetailDaerah = () => {
                               NAMA UNIT SKPD {getSortIcon("nama_unit_skpd")}
                             </th>
                             <th
-                            onClick={() => requestSort("realisasi")}
-                              style={{
-                                textAlign: "center",
-                                verticalAlign: "middle",
-                                cursor: "pointer",
-                                whiteSpace: "normal",
-                                overflowWrap: "break-word",
-                              }}
-                              scope="col"
-                            >
-                              REALISASI (Rp) {getSortIcon("realisasi")}
-                            </th>
-                            <th
                             onClick={() => requestSort("anggarangeser")}
                               style={{
                                 textAlign: "center",
@@ -656,6 +643,19 @@ const ContentRealisasiDetailDaerah = () => {
                               scope="col"
                             >
                               ANGGARAN (Rp) {getSortIcon("anggarangeser")}
+                            </th>
+                            <th
+                            onClick={() => requestSort("realisasi")}
+                              style={{
+                                textAlign: "center",
+                                verticalAlign: "middle",
+                                cursor: "pointer",
+                                whiteSpace: "normal",
+                                overflowWrap: "break-word",
+                              }}
+                              scope="col"
+                            >
+                              REALISASI (Rp) {getSortIcon("realisasi")}
                             </th>
                             <th
                               style={{
@@ -692,8 +692,8 @@ const ContentRealisasiDetailDaerah = () => {
                                 </td>
                                 <td>
                                   <span style={{ float: "right" }}>
-                                  {item.realisasi
-                                    ? parseInt(item.realisasi).toLocaleString(
+                                  {item.anggarangeser
+                                    ? parseInt(item.anggarangeser).toLocaleString(
                                         "id-ID"
                                       )
                                     : "-"}
@@ -701,8 +701,8 @@ const ContentRealisasiDetailDaerah = () => {
                                 </td>
                                 <td>
                                   <span style={{ float: "right" }}>
-                                  {item.anggarangeser
-                                    ? parseInt(item.anggarangeser).toLocaleString(
+                                  {item.realisasi
+                                    ? parseInt(item.realisasi).toLocaleString(
                                         "id-ID"
                                       )
                                     : "-"}
@@ -859,7 +859,7 @@ const ContentRealisasiDetailDaerah = () => {
                       onClick={() => requestSortDetail("pagu_validasi")}
                       style={{ cursor: "pointer", textAlign: "center" }}
                     >
-                      Pagu (Rp){" "}
+                      Anggaran (Rp){" "}
                       {getSortIconDetail("pagu_validasi")}
                     </th>             
                     <th
@@ -1051,13 +1051,13 @@ const ContentRealisasiDetailDaerah = () => {
                       onClick={() => requestSort("total_rinciansro")}
                       style={{ cursor: "pointer", textAlign: "center" }}
                     >
-                      Realisasi {getSortIcon("total_rinciansro")}
+                      Anggaran (Rp) {getSortIcon("total_rinciansro")}
                     </th>
                     <th
                       onClick={() => requestSort("total_rinciansro")}
                       style={{ cursor: "pointer", textAlign: "center" }}
                     >
-                      Pagu (Rp) {getSortIcon("total_rinciansro")}
+                      Realisasi {getSortIcon("total_rinciansro")}
                     </th>
                     <th
                       onClick={() => requestSort("persentase")}
@@ -1096,15 +1096,6 @@ const ContentRealisasiDetailDaerah = () => {
                          Rp {item.rincian_sub_giat ? parseInt(item.rincian_sub_giat).toLocaleString("id-ID")
                             : "-"}
                         </td> */}
-                        <td>
-                        <span style={{ float: "right" }}>
-                          {item.realisasi
-                            ? parseInt(item.realisasi).toLocaleString(
-                                "id-ID"
-                              )
-                            : "-"}
-                        </span>
-                      </td>
                       <td>
                       <span style={{ float: "right" }}>
                         {item.anggarangeser
@@ -1114,6 +1105,15 @@ const ContentRealisasiDetailDaerah = () => {
                           : "-"}
                       </span>
                     </td>                      
+                        <td>
+                        <span style={{ float: "right" }}>
+                          {item.realisasi
+                            ? parseInt(item.realisasi).toLocaleString(
+                                "id-ID"
+                              )
+                            : "-"}
+                        </span>
+                      </td>
                       <td>
                         <span style={{ float: "right" }}>
                           {`${((item.realisasi/item.anggarangeser)*100).toLocaleString(
