@@ -346,6 +346,9 @@ const ContentPerencanaan = () => {
     };
     return tahapData[customActiveTab] == "BELUM";
   });
+
+  const totalDaerahSudah = itemsSudah.length
+  const totalDaerahBelum = itemsBelum.length
   
   // Sesuaikan panjang array dengan menambahkan baris kosong ke array yang lebih pendek
   const maxLength = Math.max(itemsSudah.length, itemsBelum.length);
@@ -802,125 +805,72 @@ const ContentPerencanaan = () => {
             Tahapan {dataDetailNamaTahap}
           </ModalHeader>
           <ModalBody>
-            {/* <div>
-              Total Anggaran: {dataRincianDetail}
-            </div> */}
-            
-
-            {/* <div style={{ overflowY: "scroll", maxHeight: "500px" }}> */}
-           
-              {/* <table
-                className="table table-bordered table-nowrap align-middle mb-0"
-                style={{ width: "100%" }}
-              >
-                <thead
-                  className="table-light"
-                  style={{ position: "sticky", top: 0, zIndex: 2 }}
-                >
-                  <tr>
-                  <th
-                      onClick={() => ""}
-                      style={{ cursor: "pointer", textAlign: "center" }}
-                    >
-                      Kode
-                    </th>
-                    <th
-                      onClick={() => ""}
-                      style={{ cursor: "pointer", textAlign: "center" }}
-                    >
-                      Nama Daerah
-                    </th>
-                    <th
-                      onClick={() => ""}
-                      style={{ cursor: "pointer", textAlign: "center" }}
-                    >
-                      Persiapan
-                    </th>
-                    <th
-                      onClick={() => ""}
-                      style={{ cursor: "pointer", textAlign: "center" }}
-                    >
-                      Ranwal
-                    </th>
-                    <th
-                      onClick={() => ""}
-                      style={{ cursor: "pointer", textAlign: "center" }}
-                    >
-                      Rancangan
-                    </th>
-                    <th
-                      onClick={() => ""}
-                      style={{ cursor: "pointer", textAlign: "center" }}
-                    >
-                      Musrenbang
-                    </th>
-                    <th
-                      onClick={() => ""}
-                      style={{ cursor: "pointer", textAlign: "center" }}
-                    >
-                      Rankhir
-                    </th>
-                    <th
-                      onClick={() => ""}
-                      style={{ cursor: "pointer", textAlign: "center" }}
-                    >
-                      Penetapan
-                    </th>
-                  </tr>
-                </thead>
-                <tbody style={{ minHeight: "500px" }}>
-                  
-                {currentItemsSudahDanBelum?.map((item, index)=>{
-                   const tahapData = {
-                      5: item?.daerah_rapbd,
-                      40: item?.daerah_kuappas,
-                      30: item?.daerah_apbdgeser,
-                      41: item?.daerah_kupa,
-                      8: item?.daerah_rapbdubah,
-                      29: item?.daerah_apbdubah,
-                      28: item?.daerah_apbd,
-                      32: item?.daerah_apbdgeserpasca,
-                    }
-                    return (
-                      <tr key={index}>                        
-                        <td style={{maxHeight: "45px"}}>{item.kode_ddn}</td>
-                        <td style={{maxHeight: "45px"}}>{item.nama_daerah}</td>
-                        <td style={{maxHeight: "45px"}}>
-                          <div className="d-flex justify-content-center align-items-center" style={{ backgroundColor: item.persiapan == "SUDAH" ? "#57E7B4" : "#F35F52", color: "black", padding: "5px 10px", border: "none", borderRadius: "5px", fontSize: "16px", fontFamily:"poppins"}}>
-                             {item.persiapan}
-                          </div>
-                        </td>
-                        <td style={{maxHeight: "45px"}}>
-                          <div className="d-flex justify-content-center align-items-center" style={{ backgroundColor: item.rancangan_awal == "SUDAH" ? "#57E7B4" : "#F35F52", color: "black", padding: "5px 10px", border: "none", borderRadius: "5px", fontSize: "16px", fontFamily:"poppins"}}>
-                             {item.rancangan_awal}
-                          </div>
-                        </td>
-                        <td style={{maxHeight: "45px"}}>
-                          <div className="d-flex justify-content-center align-items-center" style={{ backgroundColor: item.rancangan == "SUDAH" ? "#57E7B4" : "#F35F52", color: "black", padding: "5px 10px", border: "none", borderRadius: "5px", fontSize: "16px", fontFamily:"poppins"}}>
-                             {item.rancangan}
-                          </div>
-                        </td>
-                        <td style={{maxHeight: "45px"}}>
-                          <div className="d-flex justify-content-center align-items-center" style={{ backgroundColor: item.musrenbang == "SUDAH" ? "#57E7B4" : "#F35F52", color: "black", padding: "5px 10px", border: "none", borderRadius: "5px", fontSize: "16px", fontFamily:"poppins"}}>
-                             {item.musrenbang}
-                          </div>
-                        </td>
-                        <td style={{maxHeight: "45px"}}>
-                          <div className="d-flex justify-content-center align-items-center" style={{ backgroundColor: item.rancangan_akhir == "SUDAH" ? "#57E7B4" : "#F35F52", color: "black", padding: "5px 10px", border: "none", borderRadius: "5px", fontSize: "16px", fontFamily:"poppins"}}>
-                             {item.rancangan_akhir}
-                          </div>
-                        </td>
-                        <td style={{maxHeight: "45px"}}>
-                          <div className="d-flex justify-content-center align-items-center" style={{ backgroundColor: item.penetapan == "SUDAH" ? "#57E7B4" : "#F35F52", color: "black", padding: "5px 10px", border: "none", borderRadius: "5px", fontSize: "16px", fontFamily:"poppins"}}>
-                             {item.penetapan}
-                          </div>
-                        </td>
-                      </tr>
-                    )
-                  })}
-  
-                </tbody>
-              </table> */}
+            <Row>
+              <Col md={4}>
+              <Card className="card-animate card-height-100">
+                  <CardBody>
+                    <div className="d-flex flex-column title-custom-card">
+                      <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                        <span>Total Daerah Sudah</span>
+                      </div>
+                      <div className="d-flex">
+                        {/* <div className="avatar-xs-half flex-shrink-0">
+                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                          <i className=" ri-women-line text-danger"></i>
+                        </span>
+                      </div> */}
+                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                          <span>
+                            <CountUp
+                              start={0}
+                              end={
+                                // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                                totalDaerahSudah
+                              }
+                              separator="."                              
+                              suffix=" Daerah"
+                              duration={3}
+                            />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+              <Col md={4}>
+              <Card className="card-animate card-height-100">
+                  <CardBody>
+                    <div className="d-flex flex-column title-custom-card">
+                      <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                        <span>Total Daerah Belum</span>
+                      </div>
+                      <div className="d-flex">
+                        {/* <div className="avatar-xs-half flex-shrink-0">
+                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                          <i className=" ri-women-line text-danger"></i>
+                        </span>
+                      </div> */}
+                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                          <span>
+                            <CountUp
+                              start={0}
+                              end={
+                                // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                                totalDaerahBelum
+                              }
+                              separator="."                              
+                              suffix=" Daerah"
+                              duration={3}
+                            />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+            </Row>
                               <div className="d-flex" style={{height:"450px", overflowX: "auto"}}>
   <table
     className="table table-bordered table-nowrap align-middle mb-0"
