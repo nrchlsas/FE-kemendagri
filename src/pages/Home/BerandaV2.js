@@ -280,7 +280,7 @@ const BerandaV2 = () => {
   useEffect(() => {
     // getDataBeranda();
     getDataBerandaPerencanaan("1");
-    getDataBerandaPenganggaran({idTahap:"28"});
+    getDataBerandaPenganggaran({idTahap:"99"});
     getDataBerandaRealisasi();
     getDataBerandaSpm();
     getPiePerencanaan();
