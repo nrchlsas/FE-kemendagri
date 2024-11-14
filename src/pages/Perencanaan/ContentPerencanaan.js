@@ -715,7 +715,7 @@ const ContentPerencanaan = () => {
                           return (
                             <tr key={index}>
                               <td>{item.kode_ddn}</td>
-                              <td>{item.nama_daerah}</td>
+                              <td>{item.nama_daerah.replace("Provinsi ", "")}</td>
                               <td>
                                 <div onClick={()=> (handleOpen({kodeDdn: item.kode_ddn}), setCurrentPageSudahDanBelum(1))}
                                   className="progress"
