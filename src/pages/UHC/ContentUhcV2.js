@@ -71,6 +71,7 @@ const ContentUhcV2 = () => {
   const [dataBpjsTabelSeprov, setDataBpjsTabelSeprov] = useState([])
   const [loadingBpjsTabel, setLoadingBpjsTabel] = useState([]);
   const [errorBpjsTabel, setErrorBpjsTabel] = useState([]);
+  const [showNextData, setShowNextData] = useState(false);
 
   const getDataTabelBpjsSeprov = () => {
     const fetchData = async () => {
@@ -95,7 +96,7 @@ const ContentUhcV2 = () => {
         }
 
         const dataBpjsTabelSeprov = await response.json();
-
+        setShowNextData(false)
         setDataBpjsTabelSeprov(dataBpjsTabelSeprov?.data);
       } catch (errorBpjsTabel) {
         setErrorBpjsTabel(errorBpjsTabel);
@@ -109,14 +110,16 @@ const ContentUhcV2 = () => {
   const [dataBpjsTabelKabupaten, setDataBpjsTabelKabupaten] = useState([])
   const [loadingBpjsTabelKabupaten, setLoadingBpjsTabelKabupaten] = useState([]);
   const [errorBpjsTabelKabupaten, setErrorBpjsTabelKabupaten] = useState([]);
+  
 
-  const getDataTabelBpjsKabupaten = () => {
+  const getDataTabelBpjsKabupaten = ({kodeDdn = "", e}) => {
     const fetchData = async () => {
       try {
         const requestOptions = {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
+            kode_ddn: kodeDdn
             // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
           }),
         };
@@ -133,8 +136,9 @@ const ContentUhcV2 = () => {
         }
 
         const dataBpjsTabelKabupaten = await response.json();
-
-        setDataBpjsTabelKabupaten(dataBpjsTabelKabupaten?.data);
+        setShowNextData(true)
+        e.stopPropagation(); // Mencegah event bubbling jika dibutuhkan        
+        setDataBpjsTabelSeprov(dataBpjsTabelKabupaten?.data);
       } catch (errorBpjsTabelKabupaten) {
         setErrorBpjsTabelKabupaten(errorBpjsTabelKabupaten);
       } finally {
@@ -396,10 +400,12 @@ const ContentUhcV2 = () => {
     }
   };
 
+  
+
   useEffect(() => {
     getDataUhc();
-    getDataTabelBpjsSeprov()
-    getDataTabelBpjsKabupaten()
+    getDataTabelBpjsSeprov();
+    // getDataTabelBpjsKabupaten()
   }, []);
 
   return (
@@ -888,21 +894,7 @@ const ContentUhcV2 = () => {
                         >
                           NASIONAL
                         </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink
-                          style={{ cursor: "pointer" }}
-                          className={classnames({
-                            active: customActiveTab === "2",
-                          })}
-                          onClick={() => {
-                            toggleCustom("2");
-                            // setCustomActiveTitleAnggaran("Provinsi");
-                          }}
-                        >
-                          PROVINSI
-                        </NavLink>
-                      </NavItem>                      
+                      </NavItem>                                        
                     </Nav>
                   </div>
                   <TabContent
@@ -910,6 +902,16 @@ const ContentUhcV2 = () => {
                     className="text-muted"
                   >
                     <TabPane tabId="1">
+                    {showNextData ? (<><button style={{
+                        backgroundColor: "#007bff",
+                        color: "white",
+                        padding: "10px 20px",
+                        border: "none",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                        fontSize: "16px",
+                        marginBottom: "8px"
+                    }} onClick={()=>getDataTabelBpjsSeprov()}>Kembali ke Provinsi</button></>) : (<></>)}
                     <div style={{ overflowX: "auto" }}>
                     <table
                       className="table table-bordered table-nowrap align-middle mb-0 custom-table"
@@ -930,9 +932,9 @@ const ContentUhcV2 = () => {
                               verticalAlign: "middle",
                               cursor: "pointer",                              
                             }}
-                            onClick={() => requestSort("nama")}
+                            onClick={() => showNextData ? requestSort("nama_daerah") : requestSort("nama")}
                             >
-                            Provinsi {getSortIcon("nama")}
+                            {showNextData ? "Nama Daerah" : "Provinsi"} {getSortIcon("nama")}
                           </th>        
                           <th style={{
                               textAlign: "center",
@@ -1058,7 +1060,7 @@ const ContentUhcV2 = () => {
                   {currentItems.map((item, index) =>(
                     <tr key={index}>
                         <td>{index+1}</td>
-                        <td>{item.nama}</td>
+                        <td className={showNextData ? "" : "click-data" } style={{ minWidth: "270px" }} onClick={(e)=> showNextData ? "" : getDataTabelBpjsKabupaten({kodeDdn: item.kode, e})}>{showNextData ? item.nama_daerah : item.nama}</td>
                         <td>{item.jumlah_bp_pn? parseInt(item.jumlah_bp_pn).toLocaleString("id-ID")
                         : "-"}</td>
                         <td>{item.jumlah_bp_swasta? parseInt(item.jumlah_bp_swasta).toLocaleString("id-ID")
@@ -1097,7 +1099,7 @@ const ContentUhcV2 = () => {
             </div>
             <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={paginate} />
                     </TabPane>
-                    <TabPane tabId="2">
+                    {/* <TabPane tabId="2">
                     <div style={{ overflowX: "auto" }}>
                     <table
                       className="table table-bordered table-nowrap align-middle mb-0 custom-table"
@@ -1284,7 +1286,7 @@ const ContentUhcV2 = () => {
             </table>
             </div>  
             <Pagination currentPage={currentPageKab} totalPages={totalPagesKab} onPageChange={paginateKab} />
-                    </TabPane>
+                    </TabPane> */}
                   </TabContent>
           </CardBody>
         </Card>           

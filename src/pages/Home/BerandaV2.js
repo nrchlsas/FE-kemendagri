@@ -146,6 +146,7 @@ const BerandaV2 = () => {
     fetchData();
   };
 
+  const [executeDate, setExcecuteDate] = useState('')
   const getDataBerandaPenganggaran = ({idTahap=""}) => {
     const fetchData = async () => {
       try {
@@ -168,6 +169,15 @@ const BerandaV2 = () => {
           
         const dataBerandaPenganggaran = await responsePenganggaran.json();  
         
+        const date = new Date(dataBerandaPenganggaran.data.beranda_card_penganggaran[0].execute_time);        
+        // Format date as DD-MM-YYYY                
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
+        const year = date.getFullYear();
+        
+        const formattedDate = `${year}-${month}-${day}`; // Example output: "31-12-2022"
+        
+        setExcecuteDate(formattedDate)
         setDataBerandaPenganggaran(dataBerandaPenganggaran.data.beranda_card_penganggaran[0])
         
       } catch (errorBeranda) {
@@ -283,7 +293,7 @@ const BerandaV2 = () => {
     getDataBerandaPenganggaran({idTahap:"99"});
     getDataBerandaRealisasi();
     getDataBerandaSpm();
-    getPiePerencanaan();
+    // getPiePerencanaan();
   }, []);
 
   const [selectedSingle, setSelectedSingle] = useState(SingleOptions[0]); // Set default value
@@ -1389,7 +1399,7 @@ const BerandaV2 = () => {
             </CardBody>
             <CardFooter>
               <div className="d-flex justify-content-end align-items-end" style={{color:"#929FB1"}}>
-                *update date: {dataBerandaPenganggaran?.execute_time ? dataBerandaPenganggaran?.execute_time : "-"}
+                *update date: {executeDate}
               </div>              
             </CardFooter>              
           </Card>
