@@ -8,6 +8,7 @@ import PieChartNew from "../../Components/Chart/PieChart";
 import CountUp from "react-countup";
 import Pagination from "../../Components/Pagination/Pagination";
 import classnames from "classnames";
+import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
@@ -19,6 +20,11 @@ const ContentUhcV2 = () => {
     }
   };
 
+  const [titleMap, setTitleMap] = useState("Total Peserta Aktif")
+  const [valueMap, setValueMap] = useState([]);
+  const [maxValueMap, setmaxValueMap] = useState(0)
+  const [dataWidth, setDataWidth] = useState(6)  
+  const [roam, setRoam] = useState(false);
   const [dataUhc, setDataUhc] = useState([]);
   const [dataCategoryChartPembiayaan, setDataCategoryChartPembiayaan] = useState([])
   const [dataValueChartPembiayaan, setDataValueChartPembiayaan] = useState([])
@@ -96,6 +102,21 @@ const ContentUhcV2 = () => {
         }
 
         const dataBpjsTabelSeprov = await response.json();
+        const desilData = {
+            bpjsAktif: dataBpjsTabelSeprov.data.map(item => ({
+            name: item.nama,
+            value: item.total_bpjs
+          })),
+            nonAktif: dataBpjsTabelSeprov.data.map(item => ({
+            name:item.nama,
+            value: item.jumlah_non_aktif
+          }))
+        }
+        
+        setValueMap(desilData.bpjsAktif);
+        const maxValue = Math.max(...desilData.bpjsAktif.map(item => item.value));
+        setmaxValueMap(maxValue);
+
         setShowNextData(false)
         setDataBpjsTabelSeprov(dataBpjsTabelSeprov?.data);
       } catch (errorBpjsTabel) {
@@ -425,14 +446,44 @@ const ContentUhcV2 = () => {
         </Col>
       </Row>
       <Row>
-        <Col md={6}>
+        <Col md={dataWidth}>
+        
           <Card className="card-height-100">
             <CardBody>
-              <PolygonMaps />
+              <div className="d-flex justify-content-between mb-2">
+              {dataWidth==6 ? (<><button onClick={()=>{
+                  setDataWidth(12)
+                  setRoam(true)
+                  }} style={{
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    padding: "5px 10px",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontSize: "16px",
+                  }}>
+                    Maximize Map
+                  </button></>) : (<><button onClick={()=>{
+                    setDataWidth(6)
+                    setRoam(false)
+                  }} style={{
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    padding: "5px 10px",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontSize: "16px",
+                  }}>
+                    Minimize Map
+                  </button></>)}
+              </div>                          
+              <MapIndoChart chartTitle={titleMap} roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#D1ED87","#B9D676","#A1BF66","#89A855","#719145","#597A34"]} />
             </CardBody>
           </Card>
         </Col>
-        <Col md={6}>
+        <Col md={dataWidth}>
           <Card className="card-height-100">
             <CardBody>
               <Row>

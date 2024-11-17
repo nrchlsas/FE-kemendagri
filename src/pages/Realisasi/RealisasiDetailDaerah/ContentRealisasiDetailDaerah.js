@@ -109,7 +109,7 @@ const ContentRealisasiDetailDaerah = () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               kode_ddn: kodeDdn,
-              kode_skpd: kodeUnitSkpd,
+              kode_unit_skpd: kodeUnitSkpd,
               tahun : tahun,
             }),
           };
@@ -717,7 +717,7 @@ const ContentRealisasiDetailDaerah = () => {
                                   }}
                                 >
                                   <i
-                                  onClick={()=> handleOpen({ kodeUnitSkpd: item.kode_skpd, namaUnitSkpd:item.nama_unit_skpd, realisasi: item.realisasi, anggaran:item.anggarangeser })}
+                                  onClick={()=> handleOpen({ kodeUnitSkpd: item.kode_unit_skpd, namaUnitSkpd:item.nama_unit_skpd, realisasi: item.realisasi, anggaran:item.anggarangeser })}
                                     style={{
                                       padding: "5px 10px",
                                       cursor: "pointer",
