@@ -195,6 +195,7 @@ const ContentPenganggaranDetailDaerah = () => {
       kodeDdn=_id,
       idTahap=selectedSingleTahapan,
       kodeSubGiat="",
+      kodeUnitSkpd=""
     }      
     ) => {
       const fetchData = async () => {
@@ -207,7 +208,8 @@ const ContentPenganggaranDetailDaerah = () => {
               kode_ddn: kodeDdn,
               kode_sub_giat: kodeSubGiat,
               tahun : tahun,
-              id_tahap: idTahap
+              id_tahap: idTahap,
+              kode_unit_skpd: kodeUnitSkpd
             }),
           };
   
@@ -424,9 +426,10 @@ const ContentPenganggaranDetailDaerah = () => {
       kodeSubGiat = "",
       namaSubGiat = "",
       anggaran = "",      
+      kodeUnitSkpd=""
     }
     ) => {
-      getDataDetailUnitSkpdSro( {kodeSubGiat : kodeSubGiat, idTahap: selectedSingleTahapan} )
+      getDataDetailUnitSkpdSro( {kodeUnitSkpd: kodeUnitSkpd, kodeSubGiat : kodeSubGiat, idTahap: selectedSingleTahapan} )
       setModal(true);
       setDataDetailNamaSubRincinianObjek(namaSubGiat)
       setDataRincianDetailAnggaranSub(anggaran);      
@@ -953,7 +956,7 @@ const ContentPenganggaranDetailDaerah = () => {
                         overflowWrap: "break-word",
                       }}>
                       <i
-                      onClick={()=> handleOpenNextModal({ kodeSubGiat: item.kode_sub_giat, namaSubGiat:item.nama_sub_giat, realisasi: item.realisasi, anggaran: tahapData[selectedSingleTahapan] })}
+                      onClick={()=> handleOpenNextModal({ kodeSubGiat: item.kode_sub_giat, kodeUnitSkpd:item.kode_unit_skpd, namaSubGiat:item.nama_sub_giat, realisasi: item.realisasi, anggaran: tahapData[selectedSingleTahapan] })}
                         style={{
                           padding: "5px 10px",
                           cursor: "pointer",

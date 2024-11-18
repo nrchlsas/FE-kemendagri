@@ -148,6 +148,7 @@ const ContentRealisasiDetailDaerah = () => {
       tahun= "2024",
       kodeDdn=_id,
       kodeSubGiat="",
+      kodeUnitSkpd=""
     }      
     ) => {
       const fetchData = async () => {
@@ -160,6 +161,7 @@ const ContentRealisasiDetailDaerah = () => {
               kode_ddn: kodeDdn,
               kode_sub_giat: kodeSubGiat,
               tahun : tahun,
+              kode_unit_skpd: kodeUnitSkpd
             }),
           };
   
@@ -382,9 +384,10 @@ const ContentRealisasiDetailDaerah = () => {
       namaSubGiat = "",
       anggaran = "",
       realisasi="",
+      kodeUnitSkpd=""
     }
     ) => {
-      getDataDetailUnitSkpdSro( {kodeSubGiat : kodeSubGiat} )
+      getDataDetailUnitSkpdSro( {kodeUnitSkpd: kodeUnitSkpd, kodeSubGiat: kodeSubGiat} )
       setModal(true);
       setDataDetailNamaSubRincinianObjek(namaSubGiat)
       setDataRincianDetailAnggaranSub(anggaran);
@@ -916,7 +919,7 @@ const ContentRealisasiDetailDaerah = () => {
                       }}
                       >
                       <i
-                      onClick={()=> handleOpenNextModal({ kodeSubGiat: item.kode_sub_giat, namaSubGiat:item.nama_sub_giat, realisasi: item.realisasi, anggaran: item.anggarangeser })}
+                      onClick={()=> handleOpenNextModal({ kodeUnitSkpd: item.kode_unit_skpd, kodeSubGiat: item.kode_sub_giat, namaSubGiat:item.nama_sub_giat, realisasi: item.realisasi, anggaran: item.anggarangeser })}
                         style={{
                           padding: "5px 10px",
                           cursor: "pointer",
