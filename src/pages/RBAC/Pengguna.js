@@ -1,31 +1,33 @@
-import React, {useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Col,
-  Row,
-  Button,
-  Card,
-  CardBody,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  Label
+    Col,
+    Row,
+    Button,
+    Card,
+    CardBody,
+    Modal,
+    ModalHeader,
+    ModalBody,
+    Label,
+    FormGroup
 } from "reactstrap";
 import FormInput from "../../Components/FormFactory/FormInput";
 import { Status } from "../APIKey/APIKeyCol";
+import { APIClient } from "../../helpers/api_helper";
 
 
 
-const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
+const API_9007_URI = `${process.env.REACT_APP_API_URL_9007}`;
 const permissionForm = {
     email: {
-      id: "email",  
-      label: "Menu",
-      type: "text",
-      placeholder: "Input email",
-      defaultValue: "",
-      rules: {
-        required: true,
-      },
+        id: "email",
+        label: "Menu",
+        type: "text",
+        placeholder: "Input email",
+        defaultValue: "",
+        rules: {
+            required: true,
+        },
     },
     status: {
         id: "status",
@@ -34,241 +36,207 @@ const permissionForm = {
         placeholder: "",
         defaultValue: true,
         rules: {
-          required: true,
+            required: true,
         },
-      },
-      is_verifikasi: {
+    },
+    is_verifikasi: {
         id: "is_verifikasi",
         label: "Verifikasi",
         type: "checkbox",
         placeholder: "",
         defaultValue: true,
         rules: {
-          required: true,
+            required: true,
         },
-      },
-      roles: {
-        id: "roles",  
+    },
+    roles: {
+        id: "roles",
         label: "Role",
         type: "select",
         placeholder: "Input nama role",
         defaultValue: "",
         rules: {
-          required: true,
+            required: true,
         },
-      },
-      
+    },
+
+};
+const api = new APIClient();
+const isEmailValid = (email) => {
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+    return emailPattern.test(email);
 };
 
-const dataRoles = [
-    {
-        val:1,
-        text:"Direktur"
-    },
-    {
-        val:2,
-        text:"DIRJEN"
-    },
-    {
-        val:3,
-        text:"KASUBDIT"
-    }
-]
-
 const Pengguna = () => {
-    const[ val,setVal] = useState()
-    const[ formData,setFormData] = useState({
-        email:0,
-        status:0,
-        is_verifikasi:false,
-        roles:false
+    const [val, setVal] = useState()
+    const [formData, setFormData] = useState({
+        id: 0,
+        email: '',
+        status: false,
+        is_verifikasi: false,
+        roles: 0
     });
-    const [show,setShow] = useState(false)
+    const [show, setShow] = useState(false)
     const [modal_center, setmodal_center] = useState(false);
+    const [list_role, setListRole] = useState([]);
+    const [resultData, setResultData] = useState([]);
+    const [submitProcess, setSubmitProcess] = useState(false)
+    const [is_valid, setIsValid] = useState(false)
 
+    useEffect(() => {
+        populate_data();
+        populate_roles();
+    }, [])
 
-    const resultData = {
-        "success": true,
-        "code": 200,
-        "message": "List Data Users",
-        "data": [
-            {
-                "id": 1,
-                "uuid": "3e245163-bc03-4bd1-9e12-f7d4c4b7afea",
-                "email": "kayla@gmail.com",
-                "client_id": "FF&8LxDgyM",
-                "status": true,
-                "next_login": 2,
-                "is_verifikasi": false,
-                "is_update_password": false,
-                "id_roles": 1,
-                "roles": "DIREKTUR"
-            },
-            {
-                "id": 2,
-                "uuid": "25704f3c-9b4d-4081-ba96-09b5c8643235",
-                "email": "chandra@gmail.com",
-                "client_id": "3^q73)lsU9",
-                "status": false,
-                "next_login": 0,
-                "is_verifikasi": false,
-                "is_update_password": false,
-                "id_roles": 1,
-                "roles": "DIRJEN"
-            },
-            {
-                "id": 3,
-                "uuid": "040666d5-611c-463b-af33-42de7c44c0cb",
-                "email": "chandraa@gmail.com",
-                "client_id": "MjNo(rSAX8",
-                "status": true,
-                "next_login": 1,
-                "is_verifikasi": false,
-                "is_update_password": false,
-                "id_roles": 5,
-                "roles": "KASUBDIT"
-            },
-            {
-                "id": 4,
-                "uuid": "64663a01-3178-4180-9d4c-d078b705fb5c",
-                "email": "kyoooo@gmail.com",
-                "client_id": "kuysaaaa",
-                "status": false,
-                "next_login": 2,
-                "is_verifikasi": false,
-                "is_update_password": false,
-                "id_roles": 1,
-                "roles": "STAFF"
-            },
-            {
-                "id": 5,
-                "uuid": "1b99ec60-45a2-491c-b822-7191b158b23a",
-                "email": "kyoooo@gmaill.com",
-                "client_id": null,
-                "status": false,
-                "next_login": 0,
-                "is_verifikasi": false,
-                "is_update_password": false,
-                "id_roles": 5,
-                "roles": "STAFF"
-            },
-            {
-                "id": 6,
-                "uuid": "1c648a2d-c8bb-4945-9229-6087473de770",
-                "email": "kyoooo1@gmail.com",
-                "client_id": "D2EIcOu&oV",
-                "status": false,
-                "next_login": 10,
-                "is_verifikasi": false,
-                "is_update_password": false,
-                "id_roles": 1,
-                "roles": "STAFF"
-            },
-            {
-                "id": 7,
-                "uuid": "915f6586-4dff-450c-9b0f-7763f4de7b81",
-                "email": "key@gmail.com",
-                "client_id": "JNsz$oQhyY",
-                "status": false,
-                "next_login": 1,
-                "is_verifikasi": false,
-                "is_update_password": false,
-                "id_roles": 3,
-                "roles": "ADMIN"
-            },
-            {
-                "id": 8,
-                "uuid": "2700ce2d-dd17-4a29-bfc1-01c3125a8450",
-                "email": "kut@gmail.com",
-                "client_id": "p^o!v$SqnD",
-                "status": false,
-                "next_login": 1,
-                "is_verifikasi": false,
-                "is_update_password": false,
-                "id_roles": 5,
-                "roles": "ADMIN"
-            },
-            {
-                "id": 9,
-                "uuid": "bf96387a-8d19-43d7-9d0d-a51cc01b9600",
-                "email": "alfian2892@yahoo.com",
-                "client_id": null,
-                "status": false,
-                "next_login": 0,
-                "is_verifikasi": false,
-                "is_update_password": false,
-                "id_roles": 5,
-                "roles": "STAFF"
-            },
-            {
-                "id": 10,
-                "uuid": "e625b4d1-dc28-45bf-bc66-e04e784e0f7c",
-                "email": "admin@gmail.com",
-                "client_id": "v4VMD#49!t",
-                "status": true,
-                "next_login": 1,
-                "is_verifikasi": true,
-                "is_update_password": false,
-                "id_roles": 1,
-                "roles": "STAFF"
-            }
-        ],
-        "currentPage": 1,
-        "totalPages": 1,
-        "totalData": 10,
-        "pageSize": 16
-    };
+    useEffect(() => {
+        let is_valid = true;
+        console.log('formData', formData);
+        if (!formData.email) is_valid = false;
+        if (!isEmailValid(formData.email)) is_valid = false;
+        setIsValid(is_valid);
+    }, [formData])
 
-    
-    
-    const onSubmit = (e) => {
-        console.log(JSON.stringify(formData));
+    async function populate_roles() {
+        // populate list role
+        let response = api.get(`${API_9007_URI}/rbac/list-roles-all`);
+        let data = await response;
+        if (data.code === 200) {
+            setListRole(data.list); // .filter(d => d.status)
+        }
     }
-    function changeValue (e) {
-        const {name,value,checked} = e.target;
-         
-        setFormData({ ...formData,[name]:checked == undefined ? value: checked})
-        setVal(e)
-        
+
+    async function populate_data() {
+        const json = {
+            "page": 1,
+            "size": 100
+        }
+        let response = api.create(`${API_9007_URI}/users/list-users`, json);
+        let data = await response;
+        if (data.code === 200) {
+            setResultData(data.data);
+        }
+    }
+
+    const onSubmit = async (e) => {
+        e.preventDefault();
+        const json = Object.assign({}, formData);
+        let response = api.create(`${API_9007_URI}/users/register`, json);
+
+        setSubmitProcess(true);
+        let data = await response;
+        console.log({ data });
+        if (data.code === 200) {
+            populate_data();
+        }
+        setSubmitProcess(false);
+        return false;
+    }
+
+    function changeValue(e) {
+        const { name, value, checked, type } = e.target;
+        setFormData({ ...formData, [name]: type == "checkbox" ? checked : type == "select-one" ? parseInt(value) : value })
+        // setVal(e)
     }
 
     function tog_center() {
         setmodal_center(!modal_center);
     }
- 
+
+    function onEdit(data) {
+        setShow(true);
+        setFormData(Object.assign({}, formData, {
+            id: data.id,
+            email: data.email,
+            status: data.status,
+            is_verifikasi: data.is_verifikasi,
+            roles: data.id_roles
+        }));
+        window.scrollTo(0, 0)
+    }
+
+    function cancel_form() {
+        setFormData({
+            id: 0,
+            email: '',
+            status: false,
+            is_verifikasi: false,
+            roles: 0
+        })
+        setShow(false);
+    }
+
     return (
         <>
             <div className="page-content">
-                <Row style={{display:show && "inline" || "none"}}>
+                <Row style={{ display: show && "inline" || "none" }}>
                     <Col>
                         <Card>
                             <CardBody>
-                                <form onSubmit={(e)=>{
-                                    e.preventDefault() 
+                                <form onSubmit={(e) => {
+                                    e.preventDefault()
                                     onSubmit(e)
-                                    }}>
-                                        <Row>
-                                            <Col>
-                                                
-                                                {
-                                                    Object.keys(permissionForm).map((e) =>(
-                                                        <FormInput key={e} dynamicForm={permissionForm[e]} changeValue={changeValue} dataRoles={dataRoles}/>
-                                                    ))
-                                                }
+                                }}>
+                                    <Row>
+                                        <Col>
+                                            <FormGroup>
+                                                <Label>Email</Label>
+                                                <input type="email" name="email"
+                                                    onChange={(e) => changeValue(e)}
+                                                    className="form-control"
+                                                    value={formData.email}
+                                                />
+                                            </FormGroup>
+                                            <FormGroup check>
+                                                <Label>
+                                                    <input type="checkbox" name="status"
+                                                        onChange={(e) => changeValue(e)}
+                                                        className="form-check-input"
+                                                        checked={formData.status}
+                                                    />
+                                                    <span>Status</span>
+                                                </Label>
+                                            </FormGroup>
+                                            <FormGroup check>
+                                                <Label>
+                                                    <input type="checkbox" name="is_verifikasi"
+                                                        onChange={(e) => changeValue(e)}
+                                                        className="form-check-input"
+                                                        checked={formData.is_verifikasi}
+                                                    />
+                                                    <span>Varifikasi</span>
+                                                </Label>
+                                            </FormGroup>
+                                            <FormGroup>
+                                                <Label>Role</Label>
+                                                <select name="roles"
+                                                    onChange={(e) => changeValue(e)}
+                                                    className="form-select"
+                                                    value={formData.roles}>
+                                                    {list_role.map(item => (
+                                                        <option key={'option_roles_' + item.id} value={item.id}>
+                                                            {item.nama_roles}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </FormGroup>
+                                            {/* {
+                                                Object.keys(permissionForm).map((e) => (
+                                                    <FormInput key={e} dynamicForm={permissionForm[e]} changeValue={changeValue} dataRoles={dataRoles} />
+                                                ))
+                                            } */}
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col>
+                                            <Button color="primary" className="mt-3" style={{ marginRight: "6px" }} disabled={!is_valid || submitProcess}>
+                                                Simpan
+                                            </Button>
+                                            <Button color="warning" className="mt-3" onClick={() => cancel_form()}>
+                                                Batal
+                                            </Button>
+                                        </Col>
+                                    </Row>
 
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col>
-                                                <Button color="primary" className="mt-3" style={{marginRight:"6px"}}>
-                                                    Simpan
-                                                </Button>
-                                                <Button color="warning" className="mt-3" onClick={()=> setShow(false)}>
-                                                    Batal
-                                                </Button>
-                                            </Col>
-                                        </Row>
-                                    
                                 </form>
                             </CardBody>
                         </Card>
@@ -278,28 +246,26 @@ const Pengguna = () => {
                     <Col>
                         <Card>
                             <CardBody>
-                            <button style={{
-                                backgroundColor: "#007bff",
-                                color: "white",
-                                padding: "10px 20px",
-                                border: "none",
-                                borderRadius: "5px",
-                                cursor: "pointer",
-                                fontSize: "12px",
-                                marginBottom:"6px"
-                            }} onClick={()=> setShow(true)}>Tambah</button>
-                            <table
-                                className="table table-bordered table-nowrap align-middle mb-0"
-                                style={{ width: "100%" }}
+                                <button style={{
+                                    backgroundColor: "#007bff",
+                                    color: "white",
+                                    padding: "10px 20px",
+                                    border: "none",
+                                    borderRadius: "5px",
+                                    cursor: "pointer",
+                                    fontSize: "12px",
+                                    marginBottom: "6px"
+                                }} onClick={() => setShow(true)}>Tambah</button>
+                                <table
+                                    className="table table-bordered table-nowrap align-middle mb-0"
+                                    style={{ width: "100%" }}
                                 >
                                     <thead className="table-light">
                                         <tr>
                                             <th>
                                                 NO
                                             </th>
-                                            <th
-                                                style={{ cursor: "pointer", verticalAlign: "middle" }}
-                                            >
+                                            <th style={{ cursor: "pointer", verticalAlign: "middle" }}>
                                                 Email
                                             </th>
                                             <th>
@@ -320,9 +286,9 @@ const Pengguna = () => {
                                         </tr>
                                     </thead>
                                     <tbody style={{ minHeight: "500px" }}>
-                                        {resultData.data.map((item, index) => (
+                                        {resultData.map((item, index) => (
                                             <tr key={index}>
-                                                <td 
+                                                <td
                                                     style={
                                                         {
                                                             textAlign: "center",
@@ -331,43 +297,43 @@ const Pengguna = () => {
                                                     {index + 1}
                                                 </td>
                                                 <td>
-                                                   {item.email}
+                                                    {item.email}
                                                 </td>
                                                 <td>
-                                                    <input type="checkbox" key={index} checked={item.status} />
+                                                    <input type="checkbox" key={index} checked={item.status} readOnly />
                                                 </td>
                                                 <td>
-                                                    <input type="checkbox" key={index} checked={item.is_verifikasi} />
+                                                    <input type="checkbox" key={index} checked={item.is_verifikasi} readOnly />
                                                 </td>
                                                 <td>
-                                                    <input type="checkbox" key={index} checked={item.is_update_password} />
+                                                    <input type="checkbox" key={index} checked={item.is_update_password} readOnly />
                                                 </td>
                                                 <td>
-                                                    <Button color="danger" style={{marginRight:"3px"}}onClick={()=> {
+                                                    <Button color="danger" style={{ marginRight: "3px" }} onClick={() => {
                                                         setShow(false)
                                                         tog_center()
                                                     }}>Hapus</Button>
-                                                    <Button color="primary" onClick={()=> setShow(true)}>Ubah</Button>
+                                                    <Button color="primary" onClick={() => onEdit(item)}>Ubah</Button>
                                                 </td>
                                             </tr>
                                         ))}
-                                        
+
                                     </tbody>
-                                    </table>
+                                </table>
                             </CardBody>
                         </Card>
                     </Col>
                 </Row>
-            </div>    
+            </div>
 
             <Modal
                 isOpen={modal_center}
                 toggle={() => tog_center}
                 centered
             >
-                <ModalHeader 
+                <ModalHeader
                     className=" p-3 bg-info-subtle" toggle={tog_center}>
-                        Hapus Data Pengguna
+                    Hapus Data Pengguna
                 </ModalHeader>
                 <ModalBody>
                     <Row>
@@ -376,11 +342,11 @@ const Pengguna = () => {
                         </Col>
                     </Row>
                     <Row>
-                        <Col  className="d-flex justify-content-center align-items-center" >
-                            <Button color="primary" className="mt-3" style={{marginRight:"6px"}} onClick={()=> tog_center()}>
+                        <Col className="d-flex justify-content-center align-items-center" >
+                            <Button color="primary" className="mt-3" style={{ marginRight: "6px" }} onClick={() => tog_center()}>
                                 Hapus
                             </Button>
-                            <Button color="warning" className="mt-3" onClick={()=> tog_center()}>
+                            <Button color="warning" className="mt-3" onClick={() => tog_center()}>
                                 Batal
                             </Button>
                         </Col>
