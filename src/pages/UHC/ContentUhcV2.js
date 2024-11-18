@@ -13,6 +13,28 @@ import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
 const ContentUhcV2 = () => {
+
+  const [selectedDesil, setSelectedDesil] = useState("1"); // State untuk menyimpan pilihan dropdown
+  const handleSelectChange = (e) => {
+    const { name, value } = e.target;
+    const selectedValue = value;
+    setSelectedDesil(selectedValue); // Update state dengan pilihan yang dipilih
+    // if(selectedValue == "5"){
+    //   setTitleMap(`Keluarga Berisiko Stunting ${name} >4`)
+    // }else{
+    //   setTitleMap(`Keluarga Berisiko Stunting ${name} ${value}`)
+    // }
+  
+    // Ambil data desil yang sesuai dan update valueMap
+    const selectedData = dataPeserta[`bpjs${selectedValue}`]; // Ambil data sesuai pilihan
+    console.log(selectedData,'ini')
+    if (selectedData) {
+      setValueMap(selectedData);
+      const maxValue = Math.max(...selectedData.map(item => item.value));
+      setmaxValueMap(maxValue);
+    }
+  };
+
   const [customActiveTab, setcustomActiveTab] = useState("1");
   const toggleCustom = (tab) => {
     if (customActiveTab !== tab) {
@@ -78,6 +100,7 @@ const ContentUhcV2 = () => {
   const [loadingBpjsTabel, setLoadingBpjsTabel] = useState([]);
   const [errorBpjsTabel, setErrorBpjsTabel] = useState([]);
   const [showNextData, setShowNextData] = useState(false);
+  const [dataPeserta, setDataPeserta] = useState([])
 
   const getDataTabelBpjsSeprov = () => {
     const fetchData = async () => {
@@ -102,23 +125,25 @@ const ContentUhcV2 = () => {
         }
 
         const dataBpjsTabelSeprov = await response.json();
-        const desilData = {
-            bpjsAktif: dataBpjsTabelSeprov.data.map(item => ({
+        setDataBpjsTabelSeprov(dataBpjsTabelSeprov?.data);
+        const dataPeserta = {
+            bpjs1: dataBpjsTabelSeprov.data.map(item => ({
             name: item.nama,
             value: item.total_bpjs
           })),
-            nonAktif: dataBpjsTabelSeprov.data.map(item => ({
+            bpjs2: dataBpjsTabelSeprov.data.map(item => ({
             name:item.nama,
             value: item.jumlah_non_aktif
           }))
         }
-        
-        setValueMap(desilData.bpjsAktif);
-        const maxValue = Math.max(...desilData.bpjsAktif.map(item => item.value));
+        console.log(dataPeserta, 'ini isi data peserta')
+        setValueMap(dataPeserta.bpjs1);
+        const maxValue = Math.max(...dataPeserta.bpjs1.map(item => item.value));
         setmaxValueMap(maxValue);
-
+        
         setShowNextData(false)
-        setDataBpjsTabelSeprov(dataBpjsTabelSeprov?.data);
+        setDataPeserta(dataPeserta)
+        
       } catch (errorBpjsTabel) {
         setErrorBpjsTabel(errorBpjsTabel);
       } finally {
@@ -450,7 +475,8 @@ const ContentUhcV2 = () => {
         
           <Card className="card-height-100">
             <CardBody>
-              <div className="d-flex justify-content-between mb-2">
+            <div className="d-flex justify-content-between mb-2">
+              <div className="d-flex justify-content-center align-items-center">
               {dataWidth==6 ? (<><button onClick={()=>{
                   setDataWidth(12)
                   setRoam(true)
@@ -478,8 +504,32 @@ const ContentUhcV2 = () => {
                   }}>
                     Minimize Map
                   </button></>)}
-              </div>                          
-              <MapIndoChart chartTitle={titleMap} roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#D1ED87","#B9D676","#A1BF66","#89A855","#719145","#597A34"]} />
+              </div>
+              
+              <div className="d-flex nav-beranda">
+              <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                TOTAL PESERTA:
+              </div>
+                  <select
+                    name="bpjs"
+                      style={{
+                        padding: "10px 30px 10px 10px",
+                        fontSize: "16px",
+                        borderRadius: "5px",
+                        border: "1px solid #ccc",
+                        backgroundColor: "#ffffff",
+                        cursor: "pointer",
+                        marginLeft: "10px"
+                      }}
+                      value={selectedDesil}
+                      onChange={handleSelectChange}
+                    >
+                    <option value="1">AKTIF</option>
+                    <option value="2">TIDAK AKTIF</option>                    
+                    </select>
+                </div>
+              </div>        
+              <MapIndoChart roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#D1ED87","#B9D676","#A1BF66","#89A855","#719145","#597A34"]} />
             </CardBody>
           </Card>
         </Col>
