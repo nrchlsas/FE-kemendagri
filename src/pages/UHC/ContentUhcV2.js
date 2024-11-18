@@ -464,7 +464,7 @@ const ContentUhcV2 = () => {
                 <i className="ri-account-circle-line text-dark fs-1"></i>
               </div>
               <div className="d-flex justify-content-center align-items-center">
-                <span>Universal Health Coverage</span>
+                <span>BPJS Kesehatan</span>
               </div>
             </div>
           </Card>
@@ -765,7 +765,7 @@ const ContentUhcV2 = () => {
                     <CardBody>
                       <div className="d-flex flex-column title-custom-card">
                         <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                          <span>PESERTA BPJS KESEHATAN</span>
+                          <span>PESERTA AKTIF</span>
                           {/* <span className="title-percent">{dataJumlahPenduduk.persenLaki}</span> */}
                         </div>
                         <div className="d-flex">
@@ -796,7 +796,7 @@ const ContentUhcV2 = () => {
                     <CardBody>
                       <div className="d-flex flex-column title-custom-card">
                         <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                          <span>PESERTA NON BPJS KESEHATAN</span>
+                          <span>PESERTA TIDAK AKTIF</span>
                           {/* <span className="title-percent">{dataJumlahPenduduk.persenLaki}</span> */}
                         </div>
                         <div className="d-flex">
@@ -829,7 +829,7 @@ const ContentUhcV2 = () => {
                     <CardBody>
                       <div className="d-flex flex-column title-custom-card">
                         <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                          <span>PERSENTASE PESERTA</span>
+                          <span>PERSENTASE PESERTA AKTIF</span>
                         </div>
                         <div className="d-flex">
                           <div className="avatar-xs-half flex-shrink-0">
@@ -862,7 +862,7 @@ const ContentUhcV2 = () => {
                     <CardBody>
                       <div className="d-flex flex-column title-custom-card">
                         <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                          <span>PERSENTASE NON PESERTA</span>
+                          <span>PERSENTASE PESERTA TIDAK AKTIF</span>
                         </div>
                         <div className="d-flex">
                           <div className="avatar-xs-half flex-shrink-0">
@@ -1020,7 +1020,7 @@ const ContentUhcV2 = () => {
                     >
                       <thead className="table-light">
                         <tr>
-                          <th style={{
+                        <th rowSpan="3" style={{
                               textAlign: "center",
                               verticalAlign: "middle",
                               cursor: "pointer",                              
@@ -1028,7 +1028,7 @@ const ContentUhcV2 = () => {
                             >
                             No
                           </th>        
-                          <th style={{
+                          <th rowSpan="3" style={{
                               textAlign: "center",
                               verticalAlign: "middle",
                               cursor: "pointer",                              
@@ -1037,125 +1037,141 @@ const ContentUhcV2 = () => {
                             >
                             {showNextData ? "Nama Daerah" : "Provinsi"} {getSortIcon("nama")}
                           </th>        
-                          <th style={{
+                          <th colSpan="7" style={{
                               textAlign: "center",
                               verticalAlign: "middle",
                               cursor: "pointer",                              
-                            }}
-                            onClick={() => requestSort("jumlah_bp_pn")}
+                            }}                            
                             >
-                          jumlah_bp_pn {getSortIcon("jumlah_bp_pn")}
-                          </th>     
-                          <th style={{
+                            Jumlah Aktif
+                          </th>        
+                          <th rowSpan="3" style={{
                               textAlign: "center",
                               verticalAlign: "middle",
                               cursor: "pointer",                              
-                            }}
-                            onClick={() => requestSort("jumlah_bp_swasta")}
+                            }}                            
                             >
-                          jumlah_bp_swasta {getSortIcon("jumlah_bp_swasta")}
-                          </th>     
-                          <th style={{
+                            Jumlah Tidak Aktif
+                          </th>        
+                          <th rowSpan="3" style={{
                               textAlign: "center",
                               verticalAlign: "middle",
                               cursor: "pointer",                              
-                            }}
-                            onClick={() => requestSort("jumlah_non_aktif")}
+                            }}                            
                             >
-                          jumlah_non_aktif {getSortIcon("jumlah_non_aktif")}
-                          </th>     
-                          <th style={{
+                            Jumlah Penduduk
+                          </th>        
+                          <th rowSpan="3" style={{
                               textAlign: "center",
                               verticalAlign: "middle",
                               cursor: "pointer",                              
-                            }}
-                            onClick={() => requestSort("jumlah_pbi_jk")}
+                            }}                            
                             >
-                          jumlah_pbi_jk {getSortIcon("jumlah_pbi_jk")}
-                          </th>     
-                          <th style={{
+                            Total Anggaran
+                          </th>        
+                          <th rowSpan="3" style={{
                               textAlign: "center",
                               verticalAlign: "middle",
                               cursor: "pointer",                              
-                            }}
-                            onClick={() => requestSort("jumlah_pbpu")}
+                            }}                            
                             >
-                          jumlah_pbpu {getSortIcon("jumlah_pbpu")}
-                          </th>     
-                          <th style={{
+                            Total Anggaran Iuran Jaminan Kesehatan
+                          </th>        
+                          <th rowSpan="3" style={{
                               textAlign: "center",
                               verticalAlign: "middle",
                               cursor: "pointer",                              
-                            }}
-                            onClick={() => requestSort("jumlah_pbpu_bp_pemda")}
+                            }}                            
                             >
-                          jumlah_pbpu_bp_pemda {getSortIcon("jumlah_pbpu_bp_pemda")}
-                          </th>     
-                          <th style={{
+                            Persentase
+                          </th>        
+                          <th rowSpan="3" style={{
                               textAlign: "center",
                               verticalAlign: "middle",
                               cursor: "pointer",                              
-                            }}
-                            onClick={() => requestSort("jumlah_ppu_bu")}
+                            }}                            
                             >
-                          jumlah_ppu_bu {getSortIcon("jumlah_ppu_bu")}
-                          </th>     
-                          <th style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",                              
-                            }}
-                            onClick={() => requestSort("jumlah_ppu_pn")}
-                            >
-                          jumlah_ppu_pn {getSortIcon("jumlah_ppu_pn")}
-                          </th>     
-                          <th style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",                              
-                            }}
-                            onClick={() => requestSort("total_anggaran")}
-                            >
-                          total_anggaran {getSortIcon("total_anggaran")}
-                          </th>     
-                          <th style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",                              
-                            }}
-                            onClick={() => requestSort("total_anggaran_bpjs")}
-                            >
-                          total_anggaran_bpjs {getSortIcon("total_anggaran_bpjs")}
-                          </th>     
-                          <th style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",                              
-                            }}
-                            onClick={() => requestSort("total_bpjs")}
-                            >
-                          total_bpjs {getSortIcon("total_bpjs")}
-                          </th>     
-                          <th style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",
-                              
-                              
-                            }}
-                            onClick={() => requestSort("total_penduduk_dukcapil")}
-                            >
-                          total_penduduk_dukcapil {getSortIcon("total_penduduk_dukcapil")}
-                          </th>     
-                          <th style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer", 
-                            }}
-                            >
-                              Action
-                          </th>     
+                            Action
+                          </th>        
                         </tr>
+
+                        <tr>
+                          <th colSpan="2" style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}                            
+                            >
+                            BP
+                          </th>        
+                          <th rowSpan="2" style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}                            
+                            >
+                            PBI_JK
+                          </th>        
+                          <th rowSpan="2" style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}                            
+                            >
+                            PBPU
+                          </th>        
+                          <th rowSpan="2" style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}                            
+                            >
+                            PBPU BP Pemda
+                          </th>        
+                          <th colSpan="2" style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}                            
+                            >
+                            PPU
+                          </th>        
+                        </tr>
+
+                        <tr>
+                        <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}                            
+                            >
+                            PN
+                          </th>
+                        <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}                            
+                            >
+                            SWASTA
+                          </th>
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}                            
+                            >
+                            BU
+                          </th>
+                          <th style={{
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",                              
+                            }}                            
+                            >
+                            PN
+                          </th>
+                        </tr>                        
                       </thead>
                       <tbody style={{ minHeight: "500px" }}>
                   {currentItems.map((item, index) =>(
@@ -1165,8 +1181,6 @@ const ContentUhcV2 = () => {
                         <td>{item.jumlah_bp_pn? parseInt(item.jumlah_bp_pn).toLocaleString("id-ID")
                         : "-"}</td>
                         <td>{item.jumlah_bp_swasta? parseInt(item.jumlah_bp_swasta).toLocaleString("id-ID")
-                        : "-"}</td>
-                        <td>{item.jumlah_non_aktif? parseInt(item.jumlah_non_aktif).toLocaleString("id-ID")
                         : "-"}</td>
                         <td>{item.jumlah_pbi_jk? parseInt(item.jumlah_pbi_jk).toLocaleString("id-ID")
                         : "-"}</td>
@@ -1178,14 +1192,21 @@ const ContentUhcV2 = () => {
                         : "-"}</td>
                         <td>{item.jumlah_ppu_pn? parseInt(item.jumlah_ppu_pn).toLocaleString("id-ID")
                         : "-"}</td>
+                        <td>{item.jumlah_non_aktif? parseInt(item.jumlah_non_aktif).toLocaleString("id-ID")
+                        : "-"}</td>
+                        <td>{item.total_penduduk_dukcapil? parseInt(item.total_penduduk_dukcapil).toLocaleString("id-ID")
+                        : "-"}</td>                        
                         <td>{item.total_anggaran? parseInt(item.total_anggaran).toLocaleString("id-ID")
                         : "-"}</td>
                         <td>{item.total_anggaran_bpjs? parseInt(item.total_anggaran_bpjs).toLocaleString("id-ID")
                         : "-"}</td>
-                        <td>{item.total_bpjs? parseInt(item.total_bpjs).toLocaleString("id-ID")
-                        : "-"}</td>
-                        <td>{item.total_penduduk_dukcapil? parseInt(item.total_penduduk_dukcapil).toLocaleString("id-ID")
-                        : "-"}</td>                        
+                        <td style={{ textAlign: "center" }}>
+                              {`${item.persentase_anggaran?.toLocaleString("id-ID",
+                                  {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  })}%`}
+                            </td>                        
                         <td style={{textAlign: "center"}}>                    
                           <i style={{                                            
                           padding: "5px 10px",                      

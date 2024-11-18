@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Card, CardBody, Col, Row,Nav, NavItem, NavLink, Modal, ModalHeader, ModalBody } from 'reactstrap'
-import classnames from "classnames";
 import Pagination from "../../../Components/Pagination/Pagination";
-import PolygonMaps from "../../../Components/MapIndo/PolygonMaps";
-import VerticalBarChart from "../../../Components/Chart/VerticalBarChart";
 import PieChartNew from '../../../Components/Chart/PieChart';
 import '../../../Components/ProgressArrowBar/ProgressArrowBar.scss'
-import BreadCrumb from '../../../Components/Common/BreadCrumb';
 import logoKemendagri from "../../../assets/images/logo-kemendagri/logo-kemendagri-home.png"
 import CountUp from 'react-countup';
 import "./../../Kependudukan/kependudukan.scss";
@@ -146,6 +142,7 @@ const ContentPerencanaanDetailDaerah = () => {
       idTahap="1"
     }      
     ) => {
+      console.log(kodeDdn, _id)
       const fetchData = async () => {
         setLoadingDetailUnitSkpd(true); // Set loading state to true when starting the fetch
         try {
@@ -190,15 +187,14 @@ const ContentPerencanaanDetailDaerah = () => {
     const [dataRincianDetail, setDataRincianDetail] = useState(0);
     const [dataDetailNamaUnitSkpd, setDataDetailNamaUnitSkpd] = useState("");
 
-    const handleOpen = ({idTahap,
-      kodeDdn = "",
+    const handleOpen = ({idTahap,      
       kodeUnitSkpd = "",
       tahun = "",
       namaUnitSkpd="",
       paguValidasi=0
     }
     ) => {
-      getDataDetailUnitSkpd({idTahap: idTahap, kodeDdn: kodeDdn, kodeUnitSkpd:kodeUnitSkpd, tahun:tahun})
+      getDataDetailUnitSkpd({idTahap: idTahap, kodeUnitSkpd:kodeUnitSkpd, tahun:tahun})
       setDataDetailNamaUnitSkpd(namaUnitSkpd);    
       setDataRincianDetail(paguValidasi) 
       setCardHead(null);
@@ -641,7 +637,7 @@ const ContentPerencanaanDetailDaerah = () => {
                                   }}
                                 >
                                   <i
-                                  onClick={()=> handleOpen({idTahap: item.id_tahap, tahun:item.tahun, kodeUnitSkpd: item.kode_unit_skpd, kodeDdn: item.kode_ddn, namaUnitSkpd:item.nama_unit_skpd, paguValidasi: item.pagu_validasi})}
+                                  onClick={()=> handleOpen({idTahap: item.id_tahap, tahun:item.tahun, kodeUnitSkpd: item.kode_unit_skpd, namaUnitSkpd:item.nama_unit_skpd, paguValidasi: item.pagu_validasi})}
                                     style={{
                                       padding: "5px 10px",
                                       cursor: "pointer",
