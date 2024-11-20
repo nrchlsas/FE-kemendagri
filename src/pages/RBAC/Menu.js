@@ -65,6 +65,8 @@ const Menu = () => {
     const [show, setShow] = useState(false)
     const [submitProcess, setSubmitProcess] = useState(false)
     const [modal_center, setmodal_center] = useState(false);
+    const [delete_data, setDeleteData] = useState(null);
+    const [is_edit, setIsEdit] = useState(false);
 
     // pagination
     const [paging, setPaging] = useState({
@@ -82,7 +84,6 @@ const Menu = () => {
         setPaging(Object.assign({}, paging, { page: page - 1 }));
     }
     useEffect(() => {
-        console.log('paging', paging);
         populate_data();
     }, [paging])
     function paging_content() {
@@ -120,11 +121,15 @@ const Menu = () => {
                 url: formData.url,
                 isMenu: true
             }
-            let response = api.create(`${API_9007_URI}/rbac/create-menu`, json);
+            let response = null;
+            if (is_edit) {
+                response = api.create(`${API_9007_URI}/rbac/update-menu`, json);
+            } else {
+                response = api.create(`${API_9007_URI}/rbac/create-menu`, json);
+            }
 
             setSubmitProcess(true);
             let data = await response;
-            console.log({ data });
             if (data.code === 200) {
                 populate_data();
                 setShow(false);
@@ -160,7 +165,6 @@ const Menu = () => {
             page: paging.page,
             size: paging.size
         }
-        console.log('list data', json);
         let response = api.get(`${API_9007_URI}/rbac/list-menu`);
 
         let data = await response;
@@ -171,12 +175,14 @@ const Menu = () => {
     }
 
     function onEdit(data) {
+        setIsEdit(true);
         setShow(true);
         setFormData(JSON.parse(JSON.stringify(data)));
         window.scrollTo(0, 0)
     }
 
     function cancel_form() {
+        setIsEdit(false);
         setFormData({
             id: 0,
             nama_menu: "",
@@ -188,24 +194,16 @@ const Menu = () => {
 
     async function do_delete() {
         try {
-            const json = {
-                namaMenu: formData.nama_menu,
-                namaSubMenu: formData.nama_sub_menu,
-                url: formData.url,
-                isMenu: true
-            }
+            const json = Object.assign({}, delete_data);
             let response = api.create(`${API_9007_URI}/rbac/delete-menu`, json);
-
-            setSubmitProcess(true);
             let data = await response;
-            console.log({ data });
             if (data.code === 200) {
                 populate_data();
+                setModalSuccess(Object.assign({}, mSuccess, { title: "Hapus Data", message: "Proses hapus data berhasil", open: true }))
             }
         } catch (error) {
-            alert('Error Simpan data');
+            setModalError(Object.assign({}, mError, { title: "Error Hapus Data", message: error, open: true }))
         } finally {
-            setSubmitProcess(false);
         }
         tog_center();
     }
@@ -283,7 +281,7 @@ const Menu = () => {
                                     cursor: "pointer",
                                     fontSize: "12px",
                                     marginBottom: "6px"
-                                }} onClick={() => setShow(true)}>Tambah</button>
+                                }} onClick={() => { setIsEdit(false); setShow(true); }}>Tambah</button>
 
                                 <div className="paging-container d-flex justify-content-center">{paging_content()}</div>
                                 <table
@@ -333,6 +331,7 @@ const Menu = () => {
                                                 </td>
                                                 <td>
                                                     <Button color="danger" style={{ marginRight: "3px" }} onClick={() => {
+                                                        setDeleteData(item);
                                                         setShow(false);
                                                         tog_center();
                                                     }}>Hapus</Button>
