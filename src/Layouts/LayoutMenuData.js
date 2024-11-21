@@ -294,12 +294,12 @@ const Navdata = () => {
           link: "/miskin-ekstrim",
           parentId: "integrasi",
         },
-        // {
-        //   id: "bpjsKesehatan",
-        //   label: "BPJS KESEHATAN",
-        //   link: "/pages-development",
-        //   parentId: "integrasi",
-        // },
+        {
+          id: "bpjsKesehatan",
+          label: "BPJS KESEHATAN",
+          link: "/bpjs-kesehatan",
+          parentId: "integrasi",
+        },
         // {
         //   id: "regsosek",
         //   label: "BAPPENAS",
