@@ -344,17 +344,18 @@ const BerandaV2 = () => {
     }
   };
 
-  const [selectedTahap, setSelectedTahap] = useState("99"); // State untuk menyimpan pilihan dropdown
+  const [selectedTahapPenganggaran, setSelectedTahapPenganggaran] = useState("99"); // State untuk menyimpan pilihan dropdown
+  const [selectedTahapPerencanaan, setSelectedTahapPerencanaan] = useState("1"); // State untuk menyimpan pilihan dropdown
   const handleSelectChange = (e) => {
     const { name, value } = e.target;
     const selectedValue = value;
-    console.log(selectedValue, 'ini selected vlue')
-    if (name == "Tahap Perencanaan") {
+    if (name == "perencanaan") {
       getDataBerandaPerencanaan({idTahap : value});
-    }else if (name== "Tahap"){
+      setSelectedTahapPerencanaan(selectedValue); // Update state dengan pilihan yang dipilih
+    }else if (name == "penganggaran"){
       getDataBerandaPenganggaran({idTahap : value});
+      setSelectedTahapPenganggaran(selectedValue); // Update state dengan pilihan yang dipilih
     }
-    setSelectedTahap(selectedValue); // Update state dengan pilihan yang dipilih
   };
 
   // const handleSelectChange = (e) => {
@@ -373,499 +374,17 @@ const BerandaV2 = () => {
 
   return (
     <React.Fragment>
-      {/* <Card>
-        <CardBody>
-          <div className="nav-beranda">
-            <Nav tabs className="nav nav-tabs nav-success nav-justified mb-3">
-              <NavItem>
-                <NavLink
-                  style={{ cursor: "pointer" }}
-                  className={classnames({
-                    active: customActiveTabPerencanaan === "1",
-                  })}
-                  onClick={() => {
-                    toggleCustom("1");
-                  }}
-                >
-                  Perencanaan
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink
-                  style={{ cursor: "pointer" }}
-                  className={classnames({
-                    active: customActiveTabPerencanaan === "2",
-                  })}
-                  onClick={() => {
-                    toggleCustom("2");
-                  }}
-                >
-                  Penganggaran
-                </NavLink>
-              </NavItem>
-              <NavItem>
-                <NavLink
-                  style={{ cursor: "pointer" }}
-                  className={classnames({
-                    active: customActiveTabPerencanaan === "3",
-                  })}
-                  onClick={() => {
-                    toggleCustom("3");
-                  }}
-                >
-                  Realisasi
-                </NavLink>
-              </NavItem>
-            </Nav>
-          </div>
-        </CardBody>
-      </Card>
-      <TabContent activeTabPerencanaan={customActiveTabPerencanaan}
-                className="text-muted">
-      <Row style={{ fontFamily: "bookmanoldstyle" }}>
-        <TabPane tabId="1" id="chats">
-          <Row>
-            <Col md={6}>
-            <Card className="card-animate" style={{ minHeight: "650px" }}>
-              <CardBody>
-                <div className="d-flex flex-column align-items-center">
-                  <div
-                    className="card-title mb-3"
-                    style={{
-                      fontColor: "#333333",
-                      fontSize: "30px",
-                      fontWeight: 650,
-                    }}
-                  >
-                    Perencanaan
-                  </div>
-                </div>
-                <div style={{ fontSize: "20px" }}>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>Pagu Belanja</div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataBeranda.rkpdPaguBelanja}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>Jumlah Urusan</div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataBeranda.rkpdJumlahUrusan}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>Jumlah Program</div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataBeranda.rkpdJumlahProgram}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>Jumlah Kegiatan</div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataBeranda.rkpdJumlahGiat}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>
-                      Jumlah Sub Kegiatan
-                    </div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataBeranda.rkpdJumlahSubGiat}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>
-                      Pagu Kemiskinan Ekstrem
-                    </div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataBeranda.rkpdMiskinEkstrem}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>Pagu Stunting</div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataBeranda.rkpdStunting}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>Pagu SPM</div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>{dataBeranda.rkpdSpm}</div>
-                  </div>
-                </div>
-              </CardBody>
-            </Card>
-            </Col>
-            <Col md={6}>
-            <Card className="card-animate" style={{ minHeight: "650px" }}>
-              <CardBody>
-                <div className="d-flex flex-column align-items-center">
-                  <div
-                    className="card-title mb-3"
-                    style={{
-                      fontColor: "#333333",
-                      fontSize: "30px",
-                      fontWeight: 650,
-                    }}
-                  >
-                    Tahapan Perencanaan
-                  </div>
-                  <div className="d-flex">
-                    <div
-                      className="d-flex justify-content-center align-items-center"
-                      style={{ marginRight: "20px", fontSize: "18px" }}
-                    >
-                      Tahun :
-                    </div>
-                    <div>
-                      <select
-                        style={{
-                          padding: "8px 12px",
-                          fontSize: "16px",
-                          borderRadius: "4px",
-                          border: "1px solid #ccc",
-                          backgroundColor: "#f8f8f8",
-                          color: "#333",
-                          cursor: "pointer",
-                          outline: "none",
-                        }}
-                        value={selectedSingle}
-                        onChange={handleSelectChange}
-                      >
-                        <option value="">Select an option</option>
-                        <option value="2024">2024</option>
-                        <option value="2025">2025</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
-                <SimplePieTahapanRencana dataColors='["#FF5733", "#33FFF2", "#3357FF", "#FF33A1", "#A133FF", "#388E3C"]' />
-              </CardBody>
-            </Card>
-            </Col>
-          </Row>
-        </TabPane>
-        <TabPane tabId="2" id="chats">
-          <Row>
-            <Col md={6}>
-            <Card className="card-animate" style={{ minHeight: "650px" }}>
-              <CardBody>
-                <div className="d-flex flex-column justify-content-center align-items-center">
-                  <div
-                    className="card-title mb-3"
-                    style={{
-                      fontColor: "#333333",
-                      fontSize: "30px",
-                      fontWeight: 650,
-                    }}
-                  >
-                    Penganggaran
-                  </div>
-                </div>
-                <div style={{ fontSize: "20px" }}>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>Total Rincian</div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataBeranda.apbdPaguBelanja}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>Jumlah Urusan</div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataBeranda.apbdJumlahUrusan}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>Jumlah Program</div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataBeranda.apbdJumlahProgram}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>Jumlah Kegiatan</div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataBeranda.apbdJumlahGiat}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>
-                      Jumlah Sub Kegiatan
-                    </div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataBeranda.apbdJumlahSubGiat}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>
-                      Rincian Kemiskinan Ekstrem
-                    </div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataBeranda.apbdPaguKemiskinanEkstrem}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>Rincian Stunting</div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataBeranda.apbdPaguStunting}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>Rincian SPM</div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataBeranda.apbdPaguSpm}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>Pendapatan</div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataBeranda.apbdPaguPendapatan}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>
-                      Pembiayaan Penerimaan
-                    </div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataBeranda.apbdPembiayaanPenerimaan}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>
-                      Pembiayaan Pengeluaran
-                    </div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataBeranda.apbdPembiayaanPengeluaran}
-                    </div>
-                  </div>
-                </div>
-              </CardBody>
-            </Card>
-            </Col>
-            <Col md={6}>
-            <Card className="card-animate" style={{ minHeight: "650px" }}>
-              <CardBody>
-                <div className="d-flex flex-column align-items-center">
-                  <div
-                    className="card-title mb-3"
-                    style={{
-                      fontColor: "#333333",
-                      fontSize: "30px",
-                      fontWeight: 650,
-                    }}
-                  >
-                    Tahapan Penganggaran
-                  </div>
-                </div>
-                <SimplePieTahapanAnggaran dataColors='["--vz-primary", "--vz-success", "--vz-warning", "--vz-danger", "--vz-info"]' />
-                <div>
-                sumber data : SIPD                
-              </div>
-              <div>
-                di-update pada : {}
-              </div>
-              </CardBody>
-            </Card>
-            </Col>
-          </Row>
-          
-        </TabPane>
-        <TabPane tabId="3" id="chats">
-          <Row>
-            <Col md={6}>            
-            <Card className="card-animate" style={{ minHeight: "650px" }}>
-              <CardBody>
-                <div className="d-flex flex-column justify-content-center align-items-center">
-                  <div
-                    className="card-title mb-3"
-                    style={{
-                      fontSize: "30px",
-                      fontWeight: 650,
-                    }}
-                  >
-                    Realisasi
-                  </div>
-                </div>
-                <div style={{ fontSize: "20px" }}>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>Jumlah Daerah</div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataRealisasi.jumlahRealisasi}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>Realisasi Belanja</div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataRealisasi.jumlahRealisasi}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>Jumlah Urusan</div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataRealisasi.jumlahBidang}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>Jumlah Program</div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataRealisasi.program}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>Jumlah Kegiatan</div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataRealisasi.jumlahKegiatan}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>
-                      Jumlah Sub Kegiatan
-                    </div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataRealisasi.jumlahSubKegiatan}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>
-                      Realisasi Kemiskinan Ekstrem
-                    </div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataRealisasi.realisasiKemiskinanEkstrem}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>Realisasi Stunting</div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataRealisasi.realisasiStunting}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>Realisasi SPM</div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataRealisasi.realisasiSpm}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>
-                      Realisasi Pendapatan
-                    </div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>
-                      {dataRealisasi.realisasiPendapatan}
-                    </div>
-                  </div>
-                  <div className="d-flex mb-3">
-                    <div style={{ flexBasis: "220px" }}>
-                      Realisasi Pembiayaan
-                    </div>
-                    <div>:&nbsp;</div>
-                    <div style={{ fontWeight: 650 }}>         
-                    </div>
-                  </div>                  
-                </div>                
-              </CardBody>
-            </Card>
-            </Col>
-            <Col md={6}>
-            <Card className="card-animate" style={{ minHeight: "650px" }}>
-              <CardBody>
-                <div className="d-flex flex-column align-items-center">
-                  <div
-                    className="card-title mb-3"
-                    style={{
-                      fontColor: "#333333",
-                      fontSize: "30px",
-                      fontWeight: 650,
-                    }}
-                  >
-                    Tahapan Realisasi
-                  </div>
-                </div>
-                <SimplePieTahapanRealisasi dataColors='["--vz-primary", "--vz-success", "--vz-warning", "--vz-danger", "--vz-info"]' />
-                <div>
-                sumber data : SIPD                
-              </div>
-              <div>
-                di-update pada : {}
-              </div>
-              </CardBody>
-            </Card>
-            </Col>
-          </Row>
-        </TabPane>
-      </Row>
-      </TabContent>  */}
+    
       <Row style={{ fontFamily: "poppins" }}>
         <Col md={4}>
           <Card className="card-animate card-height-100">
-            <CardHeader className="border-bottom-0">
-              {/* <Nav
-                className="nav-tabs-custom card-header-tabs border-bottom-0"
-                role="tablist"
-              >
-                <NavItem>
-                  <NavLink
-                    className={classnames(
-                      { active: activeTabPerencanaan === "1" },
-                      "fw-semibold"
-                    )}
-                    onClick={() => {
-                      toggleTabPerencanaan("1", "all");
-                      getDataBerandaPerencanaan({idTahap : "1"});
-                    }}
-                    style={{ cursor: "pointer" }}
-                  >
-                    Murni{" "}                    
-                  </NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink
-                    className={classnames(
-                      { active: activeTabPerencanaan === "2" },
-                      "fw-semibold"
-                    )}
-                    onClick={() => {
-                      toggleTabPerencanaan("2", "published");
-                      getDataBerandaPerencanaan({idTahap : "3"});
-                    }}
-                    style={{ cursor: "pointer" }}
-                  >
-                    Perubahan{" "}
-                  </NavLink>
-                </NavItem>
-              </Nav> */}
+            <CardHeader className="border-bottom-0">            
               <div className="d-flex">
               <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
                 Pilih Tahap:
               </div>
               <select
-                    name="Tahap Perencanaan"
+                    name="perencanaan"
                       style={{
                         padding: "2px 7px 2px 7px",
                         fontSize: "16px",
@@ -875,7 +394,7 @@ const BerandaV2 = () => {
                         cursor: "pointer",
                         marginLeft: "10px"
                       }}
-                      value={selectedTahap}
+                      value={selectedTahapPerencanaan}
                       onChange={handleSelectChange}
                     >
                     <option value="1">Murni</option>
@@ -1077,7 +596,7 @@ const BerandaV2 = () => {
                 Pilih Tahap:
               </div>
               <select
-                    name="Tahap"
+                    name="penganggaran"
                       style={{
                         padding: "2px 7px 2px 7px",
                         fontSize: "16px",
@@ -1087,7 +606,7 @@ const BerandaV2 = () => {
                         cursor: "pointer",
                         marginLeft: "10px"
                       }}
-                      value={selectedTahap}
+                      value={selectedTahapPenganggaran}
                       onChange={handleSelectChange}
                     >
                     <option value="28">Murni</option>

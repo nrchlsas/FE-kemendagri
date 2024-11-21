@@ -476,42 +476,8 @@ const ContentRealisasiDaerah = () => {
       </Row>
          
       <Row>
-        <Col md={6}>
-          <Card className='card-height-100'>
-            <CardBody>
-            <div className="separator">
-                    <h4 className="card-title mb-0">Realisasi Nasional</h4>
-                    <h4 className="card-title mb-0">Republik Indonesia</h4>
-                  </div>
-                  <PolygonMaps />
-                  <div className="d-flex justify-content-between">
-                    <div className="d-flex flex-column justify-content-evenly">
-                    <div className="d-flex align-items-center mb-2">
-                        <div style={{ height: "10px", width: "10px", backgroundColor: "#57E7B4", marginRight: "8px" }}></div>
-                        <span style={{fontStyle:"poppins", color:"#929FB1"}}>Ketika 100% Pemda</span>
-                    </div>                
-                    <div className="d-flex align-items-center mb-2">
-                        <div style={{ height: "10px", width: "10px", backgroundColor: "#FCAD24", marginRight: "8px" }}></div>
-                        <span style={{fontStyle:"poppins", color:"#929FB1"}}>Ketika 1%-99% Pemda</span>
-                    </div>                    
-                    <div className="d-flex align-items-center">
-                        <div style={{ height: "10px", width: "10px", backgroundColor: "#EFF2F7", marginRight: "8px" }}></div>
-                        <span style={{fontStyle:"poppins", color:"#929FB1"}}>Ketika 0% Pemda</span>
-                    </div>
-                    </div>
-                    {/* <div className="d-flex mt-4 align-items-end">
-                        <span
-                        onClick={() => handleShowDataSumberUsulan(true)}
-                        style={{ cursor: "pointer", color: "#2DAED4" }}
-                        >
-                        Lihat Sumber Usulan
-                        </span>
-                    </div> */}
-                  </div>
-            </CardBody>
-          </Card>
-        </Col>
-        <Col md={6}>
+        
+        <Col md={12}>
         <Card className="card-height-100">
             <CardBody>
               <div className="separator">

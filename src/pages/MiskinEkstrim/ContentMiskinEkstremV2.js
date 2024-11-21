@@ -697,8 +697,6 @@ const ContentMiskinEkstremV2 = () => {
     }
   };
 
- 
-
   const handleShowDataKeluargaDesil1 = (value) => {
     setDataShowKeluargaDesil1(value);
   };
@@ -787,7 +785,7 @@ const ContentMiskinEkstremV2 = () => {
 
   const [dataMiskinEkstremTabelKab, setDataMiskinEkstremTabelKab] = useState([],[]);
   const [dataKolomNamaDaerah, setDataKolomNamaDaerah] = useState("Se-Provinsi");
-  const [showNextData, setShowNextData] = useState(true);  
+  const [showNextData, setShowNextData] = useState(true);
   
   const getDataMiskinEkstremTabelKab = (kodeDdn="", e) => {
     const fetchData = async () => {
@@ -1845,7 +1843,7 @@ const ContentMiskinEkstremV2 = () => {
                         cursor: "pointer",
                         fontSize: "16px",
                         marginBottom: "8px"
-                      }} onClick={()=>getDataMiskinEkstremTabel()}>Kembali ke Provinsi</button></>)}                       
+                      }} onClick={()=>getDataMiskinEkstremTabel()}>Kembali ke Provinsi</button></>)}         
                     <div style={{ overflowX: "auto" }}>
                     <table
                       className="table table-bordered table-nowrap align-middle mb-0 custom-table"
@@ -2012,7 +2010,7 @@ const ContentMiskinEkstremV2 = () => {
                         verticalAlign: "middle"}}>
                       {indexOfFirstItem + index + 1}
                     </td>
-                    <td className={showNextData ? "click-data" : ""} style={{ minWidth: "270px" }} onClick={(e)=> {showNextData ?  getDataMiskinEkstremTabelKab(item.kode_prov, e) : "", showNextData ? setNamaDaerahDetail(item.nama_prov) : ""}}>                      
+                    <td className={showNextData ? "click-data" : ""} style={{ minWidth: "270px" }} onClick={(e)=> {showNextData ?  getDataMiskinEkstremTabelKab(item.kode_prov, e) : "", showNextData ? setNamaDaerahDetail(item.nama_prov) : ""}}>
                       {item.nama_prov ? item.nama_prov.replace("Provinsi ", "") : item.nama_daerah.replace("Provinsi ", "")}
                     </td>
                     <td>

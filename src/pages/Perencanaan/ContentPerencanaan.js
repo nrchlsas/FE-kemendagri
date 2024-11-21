@@ -27,18 +27,28 @@ import logoKemenkoPmk from "../../assets/images/logo-kemendagri/logo-kemenko-pmk
 import "./../Dapodik/dapodik.scss";
 import { useNavigate } from "react-router-dom";
 import BreadCrumb from "../../Components/Common/BreadCrumb";
+import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
-const SingleOptions = [
-    { value: "2024", label: "2024" },
-    { value: "2025", label: "2025" },
-  ];
 
 const ContentPerencanaan = () => {
+  const [titleMap, setTitleMap] = useState("Total Peserta Aktif")
+  const [valueMap, setValueMap] = useState([]);
+  const [maxValueMap, setmaxValueMap] = useState(0)
+  const [dataWidth, setDataWidth] = useState(6)  
+  const [roam, setRoam] = useState(false);
+  const [dataPersentaseMap, setDataPersentaseMap] = useState({}); 
+  
+ 
+
   const [customActiveTab, setcustomActiveTab] = useState("6");
   const toggleCustom = (tab) => {
     if (customActiveTab !== tab) {
       setcustomActiveTab(tab);
+      const selectedData = dataPersentaseMap[`tahap${tab}`]; // Ambil data sesuai pilihan
+      setValueMap(selectedData);
+      const maxValue = Math.max(...selectedData.map(item => item.value));
+      setmaxValueMap(maxValue);
     }
   };
   const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
@@ -96,6 +106,18 @@ const ContentPerencanaan = () => {
     fetchData();
   };
 
+  const handleSelectChangeMap = () => {      
+    // Ambil data desil yang sesuai dan update valueMap
+    console.log(dataPersentaseMap, 'ini persentase map')
+    console.log(selectedData, `tahap${customActiveTab}`)
+    if (selectedData) {
+      const selectedData = dataPersentaseMap[`tahap${customActiveTab}`]; // Ambil data sesuai pilihan
+      setValueMap(selectedData);
+      const maxValue = Math.max(...selectedData.map(item => item.value));
+      setmaxValueMap(maxValue);
+    }
+  };
+
   const getDataPerencanaanRkpdNasionalPersentase = ({
     tahun = "2024",
     tahapan = "1",    
@@ -124,6 +146,38 @@ const ContentPerencanaan = () => {
         setDataPerencanaanPersentase(
           dataPerencanaanRkpdNasionalPersentase.data
         );
+
+        const dataPersentasePerencanaan = {
+          tahap1: dataPerencanaanRkpdNasionalPersentase.data.map(item => ({
+          name: item.nama_daerah,
+          value: item.persiapan
+        })),
+          tahap2: dataPerencanaanRkpdNasionalPersentase.data.map(item => ({
+          name:item.nama_daerah,
+          value: item.rancangan_awal
+        })),
+          tahap3: dataPerencanaanRkpdNasionalPersentase.data.map(item => ({
+          name:item.nama_daerah,
+          value: item.rancangan
+        })),
+          tahap4: dataPerencanaanRkpdNasionalPersentase.data.map(item => ({
+          name:item.nama_daerah,
+          value: item.musrenbang
+        })),
+          tahap5: dataPerencanaanRkpdNasionalPersentase.data.map(item => ({
+          name:item.nama_daerah,
+          value: item.rancangan_akhir
+        })),
+          tahap6: dataPerencanaanRkpdNasionalPersentase.data.map(item => ({
+          name:item.nama_daerah,
+          value: item.penetapan
+        })),
+      }
+      setDataPersentaseMap(dataPersentasePerencanaan)
+      setValueMap(dataPersentasePerencanaan.tahap6);
+      const maxValue = Math.max(...dataPersentasePerencanaan.tahap6.map(item => item.value));
+      setmaxValueMap(maxValue);
+      
       } catch (errorPerencanaan) {
         setErrorPerencanaan(errorPerencanaan);
       } finally {
@@ -266,8 +320,7 @@ const ContentPerencanaan = () => {
     setDataShowSumberUsulan(value);
   };
 
-  const [namaTahapan, setNamaTahapan] = useState("Penetapan")
-  
+  const [namaTahapan, setNamaTahapan] = useState("Penetapan")  
 
   const handleSelectChange = (e) => {
     const { name, value } = e.target;
@@ -276,7 +329,7 @@ const ContentPerencanaan = () => {
       setcustomActiveTab("3")
     }else{
       setcustomActiveTab("6")
-    } // Misalnya, untuk dropdown jenis dokumen
+    }
     if (name === 'tahun') {
         setSelectedSingleTahun(value); // Misalnya, untuk dropdown tahun
     } else if (name === 'tahap') {
@@ -390,7 +443,7 @@ const ContentPerencanaan = () => {
                         })}
                         onClick={() => {
                           toggleCustom("1");
-                          setNamaTahapan("Persiapan")
+                          setNamaTahapan("Persiapan")                          
                         }}
                       >
                         Persiapan
@@ -404,7 +457,7 @@ const ContentPerencanaan = () => {
                         })}
                         onClick={() => {
                           toggleCustom("2");
-                          setNamaTahapan("Rancangan Awal")
+                          setNamaTahapan("Rancangan Awal")                          
                         }}
                       >
                         Ranwal
@@ -418,7 +471,7 @@ const ContentPerencanaan = () => {
                         })}
                         onClick={() => {
                           toggleCustom("3");
-                          setNamaTahapan("Rancangan")
+                          setNamaTahapan("Rancangan")                          
                         }}
                       >
                         Rancangan
@@ -432,7 +485,7 @@ const ContentPerencanaan = () => {
                         })}
                         onClick={() => {
                           toggleCustom("4");
-                          setNamaTahapan("Musrenbang")
+                          setNamaTahapan("Musrenbang")                          
                         }}
                       >
                         Musrenbang
@@ -446,7 +499,7 @@ const ContentPerencanaan = () => {
                         })}
                         onClick={() => {
                           toggleCustom("5");
-                          setNamaTahapan("Rancangan Akhir")
+                          setNamaTahapan("Rancangan Akhir")                          
                         }}
                       >
                         Rankhir
@@ -460,7 +513,7 @@ const ContentPerencanaan = () => {
                         })}
                         onClick={() => {
                           toggleCustom("6");
-                          setNamaTahapan("Penetapan")
+                          setNamaTahapan("Penetapan")                          
                         }}
                       >
                         Penetapan
@@ -474,7 +527,7 @@ const ContentPerencanaan = () => {
                         })}
                         onClick={() => {
                           toggleCustom("3");
-                          setNamaTahapan("Rancangan")
+                          setNamaTahapan("Rancangan")                          
                         }}
                       >
                         Rancangan
@@ -488,7 +541,7 @@ const ContentPerencanaan = () => {
                         })}
                         onClick={() => {
                           toggleCustom("5");
-                          setNamaTahapan("Rancangan Akhir")
+                          setNamaTahapan("Rancangan Akhir")                          
                         }}
                       >
                         Rankhir
@@ -502,7 +555,7 @@ const ContentPerencanaan = () => {
                         })}
                         onClick={() => {
                           toggleCustom("6");
-                          setNamaTahapan("Penetapan")
+                          setNamaTahapan("Penetapan")                          
                         }}
                       >
                         Penetapan
@@ -518,7 +571,7 @@ const ContentPerencanaan = () => {
         </Col>        
     </Row>    
       <Row>
-        <Col md={6} xl={6}>
+        <Col md={dataWidth} xl={dataWidth}>
           <Card className="card-height-100">
             <CardBody>
               {dataShowSumberUsulan ? (
@@ -548,7 +601,38 @@ const ContentPerencanaan = () => {
                     <h4 className="card-title mb-0">Perencanaan Nasional</h4>
                     <h4 className="card-title mb-0">Republik Indonesia</h4>
                   </div>
-                  <PolygonMaps />
+                  <div className="d-flex justify-content-between mb-2 mt-2">
+              <div className="d-flex justify-content-center align-items-center">
+              {dataWidth==6 ? (<><button onClick={()=>{
+                  setDataWidth(12)
+                  setRoam(true)
+                  }} style={{
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    padding: "5px 10px",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontSize: "16px",
+                  }}>
+                    Maximize Map
+                  </button></>) : (<><button onClick={()=>{
+                    setDataWidth(6)
+                    setRoam(false)
+                  }} style={{
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    padding: "5px 10px",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontSize: "16px",
+                  }}>
+                    Minimize Map
+                  </button></>)}
+              </div>                          
+              </div>
+                  <MapIndoChart roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#FCAD24", "#57E7B4"]} />
                   <div className="d-flex justify-content-between">
                     <div className="d-flex flex-column justify-content-evenly">
                     <div className="d-flex align-items-center mb-2">
@@ -579,7 +663,7 @@ const ContentPerencanaan = () => {
             </CardBody>
           </Card>
         </Col>
-        <Col md={6} xl={6}>
+        <Col md={dataWidth} xl={dataWidth}>
           <Card>
             <CardBody>
               <div className="separator">

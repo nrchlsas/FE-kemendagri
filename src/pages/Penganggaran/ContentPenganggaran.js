@@ -27,6 +27,7 @@ import logoKemenkoPmk from "../../assets/images/logo-kemendagri/logo-kemenko-pmk
 import "./../Dapodik/dapodik.scss";
 import { useNavigate } from "react-router-dom";
 import BreadCrumb from "../../Components/Common/BreadCrumb";
+import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
@@ -50,6 +51,13 @@ const ContentPenganggaran = () => {
   const [dataPenganggaranSudahDanBelum, setDataPenganggaranSudahDanBelum] = useState(
     []
   );
+
+  const [titleMap, setTitleMap] = useState("Total Peserta Aktif")
+  const [valueMap, setValueMap] = useState([]);
+  const [maxValueMap, setmaxValueMap] = useState(0)
+  const [dataWidth, setDataWidth] = useState(6)  
+  const [roam, setRoam] = useState(false);
+  const [dataPersentaseMap, setDataPersentaseMap] = useState({}); 
 
   const getDataPenganggaranNasional = ({
     tahun = "2024",
@@ -139,7 +147,6 @@ const ContentPenganggaran = () => {
             tahapData[selectedSingleTahapan] > 0
           )
         });
-        console.log(sudahData, 'ini sudah ')
 
         const belumData = dataPenganggaranNasionalPersentase.data.penganggaran_level_2.filter((item) => {
           const tahapData = {
@@ -156,8 +163,7 @@ const ContentPenganggaran = () => {
           return (
             tahapData[selectedSingleTahapan] == 0
           )
-        });
-        console.log(belumData, 'ini belum')
+        });        
         setDataPenganggaranSudahDanBelum(
           dataPenganggaranNasionalPersentase.data.penganggaran_level_2
         )
@@ -196,10 +202,51 @@ const ContentPenganggaran = () => {
         }
 
         const dataPenganggaranNasionalPersentase = await response.json();
-
         setDataPenganggaranPersentase(
           dataPenganggaranNasionalPersentase.data.penganggaran_level_1
-        );        
+        );
+        const dataPersentasePenganggaran = {
+          tahap40: dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
+          name: item.nama_prov,
+          value: item.persen_daerah_kuappas
+        })),
+          tahap5: dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
+          name:item.nama_prov,
+          value: item.persen_daerah_rapbd        
+        })),
+          tahap28: dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
+          name: item.nama_prov,
+          value: item.persen_daerah_apbd       
+        })),
+          tahap30: dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
+          name:item.nama_prov,
+          value: item.persen_daerah_apbdgeser
+        })),
+          tahap41: dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
+          name:item.nama_prov,
+          value: item.persen_daerah_kupa
+        })),
+          tahap8: dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({            
+          name:item.nama_prov,
+          value: item.persen_daerah_rapbdubah
+        })),
+          tahap29: dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
+          name:item.nama_prov,
+          value: item.persen_daerah_apbdubah
+        })),
+          tahap32: dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
+          name:item.nama_prov,
+          value: item.persen_daerah_apbdgeserpasca
+        })),
+      }
+      
+      const selectedData = dataPersentasePenganggaran[`tahap${selectedSingleTahapan}`]; // Ambil data sesuai pilihan
+      const maxValue = Math.max(...selectedData.map(item => item.value));
+      // setDataPersentaseMap(dataPersentasePenganggaran)
+      setValueMap(selectedData);
+      setmaxValueMap(maxValue);
+      // const maxValue = Math.max(...dataPersentasePenganggaran.tahap28.map(item => item.value));
+      
       } catch (errorPenganggaran) {
         setErrorPenganggaran(errorPenganggaran);
       } finally {
@@ -300,9 +347,9 @@ const ContentPenganggaran = () => {
   };  
   
   const handleSelectChange = (e) => {
-    const { name, value } = e.target;
-    console.log(`${name}: ${value}`, 'ini isi selected value');
-
+    console.log('oii')
+    const { name, value } = e.target;    
+    
     switch (value) {
       case "40":
        setDataDetailNamaTahap("KUA & PPAS");
@@ -311,13 +358,13 @@ const ContentPenganggaran = () => {
        setDataDetailNamaTahap("RAPBD")
        break;
       case "28":
-       setDataDetailNamaTahap("Penetapan APBD")
+       setDataDetailNamaTahap("Penetapan APBD")      
        break;
       case "30":
        setDataDetailNamaTahap("APBD Pergeseran")
        break;
       case "41":
-       setDataDetailNamaTahap("KUPA & PPAS")
+       setDataDetailNamaTahap("KUPA & PPAS")   
        break;
       case "8":
        setDataDetailNamaTahap("RAPBD Perubahan")
@@ -326,8 +373,8 @@ const ContentPenganggaran = () => {
        setDataDetailNamaTahap("Penetapan APBD Perubahan")
        break;
       default:
-       setDataDetailNamaTahap("APBD Pergeseran Setelah APBD Perubahan")
-    }
+       setDataDetailNamaTahap("APBD Pergeseran Setelah APBD Perubahan")    
+    }    
     
     if (name === 'tahun') {
         setSelectedSingleTahun(value); // Misalnya, untuk dropdown tahun
@@ -406,9 +453,7 @@ const ContentPenganggaran = () => {
     });
     
     const totalDaerahSudah = itemsSudah.length
-    const totalDaerahBelum = itemsBelum.length
-
-    console.log(itemsBelum, itemsSudah)
+    const totalDaerahBelum = itemsBelum.length  
       
     const maxLength = Math.max(itemsSudah.length, itemsBelum.length);
     
@@ -508,7 +553,7 @@ const ContentPenganggaran = () => {
         </Col>        
     </Row>    
       <Row>
-        <Col md={6} xl={6}>
+        <Col md={dataWidth} xl={dataWidth}>
           <Card className="card-height-100">
             <CardBody>
               {dataShowSumberUsulan ? (
@@ -538,7 +583,38 @@ const ContentPenganggaran = () => {
                     <h4 className="card-title mb-0">Penganggaran Nasional</h4>
                     <h4 className="card-title mb-0">Republik Indonesia</h4>
                   </div>
-                  <PolygonMaps />
+                  <div className="d-flex justify-content-between mb-2 mt-2">
+              <div className="d-flex justify-content-center align-items-center">
+              {dataWidth==6 ? (<><button onClick={()=>{
+                  setDataWidth(12)
+                  setRoam(true)
+                  }} style={{
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    padding: "5px 10px",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontSize: "16px",
+                  }}>
+                    Maximize Map
+                  </button></>) : (<><button onClick={()=>{
+                    setDataWidth(6)
+                    setRoam(false)
+                  }} style={{
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    padding: "5px 10px",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontSize: "16px",
+                  }}>
+                    Minimize Map
+                  </button></>)}
+              </div>                          
+              </div>
+                  <MapIndoChart roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#FCAD24", "#57E7B4"]} />
                   <div className="d-flex justify-content-between">
                     <div className="d-flex flex-column justify-content-evenly">
                     <div className="d-flex align-items-center mb-2">
@@ -569,7 +645,7 @@ const ContentPenganggaran = () => {
             </CardBody>
           </Card>
         </Col>
-        <Col md={6} xl={6}>
+        <Col md={dataWidth} xl={dataWidth}>
           <Card>
             <CardBody>
               <div className="separator">

@@ -27,14 +27,17 @@ import logoKemenkoPmk from "../../assets/images/logo-kemendagri/logo-kemenko-pmk
 import "./../Dapodik/dapodik.scss";
 import { useNavigate } from "react-router-dom";
 import BreadCrumb from "../../Components/Common/BreadCrumb";
+import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
-const SingleOptions = [
-    { value: "2024", label: "2024" },
-    { value: "2025", label: "2025" },
-  ];
 
 const ContentRealisasi = () => {
+  const [titleMap, setTitleMap] = useState("Total Peserta Aktif")
+  const [valueMap, setValueMap] = useState([]);
+  const [maxValueMap, setmaxValueMap] = useState(0)
+  const [dataWidth, setDataWidth] = useState(6)  
+  const [roam, setRoam] = useState(false);
+  const [dataPersentaseMap, setDataPersentaseMap] = useState({}); 
   const [customActiveTab, setcustomActiveTab] = useState("6");
   const toggleCustom = (tab) => {
     if (customActiveTab !== tab) {
@@ -75,12 +78,18 @@ const ContentRealisasi = () => {
         }
 
         const dataRealisasiNasionalPersentase = await response.json();
-
-        console.log(dataRealisasiNasionalPersentase,'ini data realisasi')
-
         setDataRealisasiPersentase(
           dataRealisasiNasionalPersentase.data.realisasi_level_1
         );
+        const dataPersentaseMap = dataRealisasiNasionalPersentase.data.realisasi_level_1.map(item => ({
+          name: item.nama_prov,
+          value: item.persenrealisasianggaran
+        }))
+
+        setValueMap(dataPersentaseMap)
+        const maxValue = Math.max(...dataPersentaseMap.map(item => item.value));
+        setmaxValueMap(maxValue);        
+
       } catch (errorRealisasi) {
         setErrorRealisasi(errorRealisasi);
       } finally {
@@ -309,7 +318,7 @@ const ContentRealisasi = () => {
                     <h4 className="card-title mb-0">Realisasi Nasional</h4>
                     <h4 className="card-title mb-0">Republik Indonesia</h4>
                   </div>
-                  <PolygonMaps />
+                  <MapIndoChart roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#FCAD24", "#57E7B4"]} />
                   <div className="d-flex justify-content-between">
                     <div className="d-flex flex-column justify-content-evenly">
                     <div className="d-flex align-items-center mb-2">
