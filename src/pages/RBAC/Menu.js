@@ -15,7 +15,6 @@ import {
 import { useEffect } from "react";
 import { APIClient } from "../../helpers/api_helper";
 
-const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 const API_9007_URI = `${process.env.REACT_APP_API_URL_9007}`;
 const menuForm = {
     namaMenu: {
@@ -60,7 +59,8 @@ const Menu = () => {
         id: 0,
         nama_menu: "",
         url: "",
-        nama_sub_menu: ""
+        nama_sub_menu: "",
+        is_menu: false
     });
     const [show, setShow] = useState(false)
     const [submitProcess, setSubmitProcess] = useState(false)
@@ -71,7 +71,7 @@ const Menu = () => {
     // pagination
     const [paging, setPaging] = useState({
         page: 1,
-        max: 5,
+        max: 1,
         size: 10
     })
     function page_goto(page) {
@@ -115,16 +115,24 @@ const Menu = () => {
         e.preventDefault();
 
         try {
-            const json = {
-                namaMenu: formData.nama_menu,
-                namaSubMenu: formData.nama_sub_menu,
-                url: formData.url,
-                isMenu: true
-            }
             let response = null;
             if (is_edit) {
-                response = api.create(`${API_9007_URI}/rbac/update-menu`, json);
+                const edit_json = {
+                    "nama_menu": formData.nama_menu,
+                    "url": formData.nama_menu,
+                    "nama_sub_menu": formData.nama_menu,
+                    "is_menu": formData.is_menu,
+                    "id_menu": formData.id,
+                    "updated_by": ''
+                }
+                response = api.create(`${API_9007_URI}/rbac/update-menu`, edit_json);
             } else {
+                const json = {
+                    namaMenu: formData.nama_menu,
+                    namaSubMenu: formData.nama_sub_menu,
+                    url: formData.url,
+                    isMenu: formData.is_menu
+                }
                 response = api.create(`${API_9007_URI}/rbac/create-menu`, json);
             }
 
@@ -133,6 +141,7 @@ const Menu = () => {
             if (data.code === 200) {
                 populate_data();
                 setShow(false);
+                reset_form();
                 setModalSuccess(Object.assign({}, mSuccess, { title: "Simpan Data", message: "Proses simpan data berhasil", open: true }))
             }
         } catch (error) {
@@ -143,8 +152,8 @@ const Menu = () => {
         return false;
     }
     function changeValue(e) {
-        const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value })
+        const { name, value, checked, type } = e.target;
+        setFormData({ ...formData, [name]: type == "checkbox" ? checked : type == "select-one" ? parseInt(value) : value })
         setVal(e);
     }
 
@@ -165,13 +174,21 @@ const Menu = () => {
             page: paging.page,
             size: paging.size
         }
-        let response = api.get(`${API_9007_URI}/rbac/list-menu`);
+        let response = api.create(`${API_9007_URI}/rbac/list-menu`, json);
 
         let data = await response;
 
         if (data.code === 200) {
-            setResultData(data.list); // .filter(d => d.is_menu)
+            calculate_paging(data.customResponse);
+            setResultData(data.customResponse.data);
         }
+    }
+
+    function calculate_paging(resp) {
+        const { totalPages, currentPage, pageSize } = resp;
+        paging.page = currentPage;
+        paging.max = totalPages;
+        paging.size = pageSize;
     }
 
     function onEdit(data) {
@@ -182,19 +199,27 @@ const Menu = () => {
     }
 
     function cancel_form() {
+        reset_form();
+        setShow(false);
+    }
+
+    function reset_form() {
         setIsEdit(false);
         setFormData({
             id: 0,
             nama_menu: "",
             url: "",
-            nama_sub_menu: ""
+            nama_sub_menu: "",
+            is_menu: false
         })
-        setShow(false);
     }
 
     async function do_delete() {
         try {
-            const json = Object.assign({}, delete_data);
+            const json = {
+                "id_menu": delete_data.id,
+                "is_deleted": true
+            }
             let response = api.create(`${API_9007_URI}/rbac/delete-menu`, json);
             let data = await response;
             if (data.code === 200) {
@@ -245,6 +270,17 @@ const Menu = () => {
                                                 />
                                             </FormGroup>
 
+                                            <FormGroup check>
+                                                <Label>
+                                                    <input type="checkbox" name="is_menu"
+                                                        onChange={(e) => changeValue(e)}
+                                                        className="form-check-input"
+                                                        checked={formData.is_menu}
+                                                    />
+                                                    <span>Menu Utama</span>
+                                                </Label>
+                                            </FormGroup>
+
                                             {/* {
                                                 Object.keys(menuForm).map((e) => (
                                                     <FormInput key={e} dynamicForm={menuForm[e]} changeValue={changeValue} />
@@ -256,7 +292,7 @@ const Menu = () => {
                                     <Row>
                                         <Col>
                                             <Button color="primary" className="mt-3" style={{ marginRight: "6px" }} disabled={submitProcess}>
-                                                Simpan
+                                                {is_edit ? 'Ubah' : 'Simpan'}
                                             </Button>
                                             <Button color="warning" className="mt-3" onClick={() => cancel_form()}>
                                                 Batal
@@ -281,9 +317,8 @@ const Menu = () => {
                                     cursor: "pointer",
                                     fontSize: "12px",
                                     marginBottom: "6px"
-                                }} onClick={() => { setIsEdit(false); setShow(true); }}>Tambah</button>
+                                }} onClick={() => { reset_form(); setShow(true); }}>Tambah</button>
 
-                                <div className="paging-container d-flex justify-content-center">{paging_content()}</div>
                                 <table
                                     className="table table-bordered table-nowrap align-middle mb-0"
                                     style={{ width: "100%" }}
@@ -318,7 +353,7 @@ const Menu = () => {
                                                             textAlign: "center",
                                                             verticalAlign: "middle"
                                                         }}>
-                                                    {index + 1}
+                                                    {(paging.page - 1) * paging.size + index + 1}
                                                 </td>
                                                 <td style={{ maxWidth: "10%" }}>
                                                     {item.nama_menu}
@@ -329,7 +364,7 @@ const Menu = () => {
                                                 <td style={{ maxWidth: "400px" }} className="text-wrap">
                                                     {item.nama_sub_menu}
                                                 </td>
-                                                <td>
+                                                <td style={{ width: "160px" }}>
                                                     <Button color="danger" style={{ marginRight: "3px" }} onClick={() => {
                                                         setDeleteData(item);
                                                         setShow(false);
@@ -342,6 +377,7 @@ const Menu = () => {
 
                                     </tbody>
                                 </table>
+                                <div className="paging-container d-flex justify-content-center mt-3">{paging_content()}</div>
                             </CardBody>
                         </Card>
                     </Col>
