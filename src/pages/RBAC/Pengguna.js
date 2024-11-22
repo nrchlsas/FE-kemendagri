@@ -14,6 +14,8 @@ import {
 import FormInput from "../../Components/FormFactory/FormInput";
 import { Status } from "../APIKey/APIKeyCol";
 import { APIClient } from "../../helpers/api_helper";
+import { type } from "@testing-library/user-event/dist/cjs/utility/type.js";
+import { size } from "lodash";
 
 
 
@@ -68,7 +70,6 @@ const isEmailValid = (email) => {
 };
 
 const Pengguna = () => {
-    const [val, setVal] = useState()
     const [formData, setFormData] = useState({
         id: 0,
         email: '',
@@ -81,7 +82,14 @@ const Pengguna = () => {
     const [list_role, setListRole] = useState([]);
     const [resultData, setResultData] = useState([]);
     const [submitProcess, setSubmitProcess] = useState(false)
-    const [is_valid, setIsValid] = useState(false)
+    const [is_valid, setIsValid] = useState(false);
+    const [is_edit, setIsEdit] = useState(false);
+    const [modal_alert, setModalAlert] = useState({
+        open: false,
+        type: 'error', // [success|error]
+        title: 'Title',
+        message: 'Message'
+    })
 
     useEffect(() => {
         populate_data();
@@ -93,15 +101,17 @@ const Pengguna = () => {
         console.log('formData', formData);
         if (!formData.email) is_valid = false;
         if (!isEmailValid(formData.email)) is_valid = false;
+        if (formData.roles == 0) is_valid = false;
         setIsValid(is_valid);
     }, [formData])
 
     async function populate_roles() {
         // populate list role
-        let response = api.get(`${API_9007_URI}/rbac/list-roles-all`);
+        const json = { page: 1, size: 100 }
+        let response = api.create(`${API_9007_URI}/rbac/list-roles-all`);
         let data = await response;
         if (data.code === 200) {
-            setListRole(data.list); // .filter(d => d.status)
+            setListRole(data.data); // .filter(d => d.status)
         }
     }
 
@@ -119,23 +129,46 @@ const Pengguna = () => {
 
     const onSubmit = async (e) => {
         e.preventDefault();
-        const json = Object.assign({}, formData);
-        let response = api.create(`${API_9007_URI}/users/register`, json);
 
-        setSubmitProcess(true);
-        let data = await response;
-        console.log({ data });
-        if (data.code === 200) {
-            populate_data();
+        try {
+            const json = Object.assign({}, formData);
+            let response = null;
+
+            if (is_edit) {
+                response = api.create(`${API_9007_URI}/users/update-user`, json);
+            } else {
+                response = api.create(`${API_9007_URI}/users/register`, json);
+            }
+
+            setSubmitProcess(true);
+            let data = await response;
+            console.log({ data });
+            if (data.code === 200) {
+                populate_data();
+                reset_form();
+                setModalAlert({
+                    open: true,
+                    type: 'success',
+                    title: 'Simpan Data',
+                    message: 'Proses simpan data berhasil'
+                });
+            }
+        } catch (error) {
+            setModalAlert({
+                open: true,
+                type: 'error',
+                title: 'Error Simpan Data',
+                message: error
+            })
+        } finally {
+            setSubmitProcess(false);
         }
-        setSubmitProcess(false);
         return false;
     }
 
     function changeValue(e) {
         const { name, value, checked, type } = e.target;
         setFormData({ ...formData, [name]: type == "checkbox" ? checked : type == "select-one" ? parseInt(value) : value })
-        // setVal(e)
     }
 
     function tog_center() {
@@ -143,6 +176,7 @@ const Pengguna = () => {
     }
 
     function onEdit(data) {
+        setIsEdit(true);
         setShow(true);
         setFormData(Object.assign({}, formData, {
             id: data.id,
@@ -155,6 +189,12 @@ const Pengguna = () => {
     }
 
     function cancel_form() {
+        reset_form();
+        setShow(false);
+    }
+
+    function reset_form() {
+        setIsEdit(false);
         setFormData({
             id: 0,
             email: '',
@@ -162,7 +202,22 @@ const Pengguna = () => {
             is_verifikasi: false,
             roles: 0
         })
-        setShow(false);
+    }
+
+    async function do_delete() {
+        try {
+            const json = Object.assign({}, formData);
+            let response = api.create(`${API_9007_URI}/users/delete-user`, json);
+            let data = await response;
+            if (data.code === 200) {
+                populate_data();
+                setModalAlert(Object.assign({}, modal_alert, { type: 'success', title: "Hapus Data", message: "Proses hapus data berhasil", open: true }))
+            }
+        } catch (error) {
+            setModalAlert(Object.assign({}, modal_alert, { type: 'error', title: "Error Hapus Data", message: error, open: true }))
+        } finally {
+        }
+        tog_center();
     }
 
     return (
@@ -212,6 +267,7 @@ const Pengguna = () => {
                                                     onChange={(e) => changeValue(e)}
                                                     className="form-select"
                                                     value={formData.roles}>
+                                                    <option value={0}>-- Pilih Data --</option>
                                                     {list_role.map(item => (
                                                         <option key={'option_roles_' + item.id} value={item.id}>
                                                             {item.nama_roles}
@@ -229,7 +285,7 @@ const Pengguna = () => {
                                     <Row>
                                         <Col>
                                             <Button color="primary" className="mt-3" style={{ marginRight: "6px" }} disabled={!is_valid || submitProcess}>
-                                                Simpan
+                                                {is_edit ? 'Ubah' : 'Simpan'}
                                             </Button>
                                             <Button color="warning" className="mt-3" onClick={() => cancel_form()}>
                                                 Batal
@@ -255,7 +311,7 @@ const Pengguna = () => {
                                     cursor: "pointer",
                                     fontSize: "12px",
                                     marginBottom: "6px"
-                                }} onClick={() => setShow(true)}>Tambah</button>
+                                }} onClick={() => { reset_form(); setShow(true) }}>Tambah</button>
                                 <table
                                     className="table table-bordered table-nowrap align-middle mb-0"
                                     style={{ width: "100%" }}
@@ -296,9 +352,7 @@ const Pengguna = () => {
                                                         }}>
                                                     {index + 1}
                                                 </td>
-                                                <td>
-                                                    {item.email}
-                                                </td>
+                                                <td>{item.email}</td>
                                                 <td>
                                                     <input type="checkbox" key={index} checked={item.status} readOnly />
                                                 </td>
@@ -308,7 +362,8 @@ const Pengguna = () => {
                                                 <td>
                                                     <input type="checkbox" key={index} checked={item.is_update_password} readOnly />
                                                 </td>
-                                                <td>
+                                                <td>{item.id_roles}</td>
+                                                <td style={{ width: "160px" }}>
                                                     <Button color="danger" style={{ marginRight: "3px" }} onClick={() => {
                                                         setShow(false)
                                                         tog_center()
@@ -343,7 +398,7 @@ const Pengguna = () => {
                     </Row>
                     <Row>
                         <Col className="d-flex justify-content-center align-items-center" >
-                            <Button color="primary" className="mt-3" style={{ marginRight: "6px" }} onClick={() => tog_center()}>
+                            <Button color="primary" className="mt-3" style={{ marginRight: "6px" }} onClick={() => do_delete()}>
                                 Hapus
                             </Button>
                             <Button color="warning" className="mt-3" onClick={() => tog_center()}>
@@ -352,6 +407,30 @@ const Pengguna = () => {
                         </Col>
                     </Row>
                 </ModalBody>
+            </Modal>
+
+            <Modal
+                isOpen={modal_alert.open}
+                backdrop="static"
+                keyboard={false}
+                toggle={() => setModalAlert(Object.assign({}, modal_alert, { open: false }))}
+                centered
+            >
+                <div className=" text-center p-5">
+                    <lord-icon
+                        src={modal_alert.type == "error" ? 'https://cdn.lordicon.com/tdrtiskw.json' : 'https://cdn.lordicon.com/lupuorrc.json'}
+                        trigger="loop"
+                        colors="primary:#f7b84b,secondary:#405189"
+                        style={{ width: "130px", height: "130px" }}>
+                    </lord-icon>
+                    <div className="mt-4 pt-4">
+                        <h4>{modal_alert.title}</h4>
+                        <p className="text-muted"> {modal_alert.message} </p>
+                        <button className="btn btn-warning" onClick={() => setModalAlert(Object.assign({}, modal_alert, { open: false }))}>
+                            {modal_alert.type == "error" ? 'Continue' : 'Complete'}
+                        </button>
+                    </div>
+                </div>
             </Modal>
         </>
     );
