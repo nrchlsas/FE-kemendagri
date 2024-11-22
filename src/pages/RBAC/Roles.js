@@ -13,6 +13,7 @@ import {
 } from "reactstrap";
 import FormInput from "../../Components/FormFactory/FormInput";
 import { APIClient } from "../../helpers/api_helper";
+import { type } from "@testing-library/user-event/dist/cjs/utility/index.js";
 
 const API_9007_URI = `${process.env.REACT_APP_API_URL_9007}`;
 const api = new APIClient();
@@ -52,7 +53,45 @@ const Roles = () => {
     const [resultData, setResultData] = useState([]);
     const [submitProcess, setSubmitProcess] = useState(false);
     const [is_valid, setIsValid] = useState(false);
+    const [delete_data, setDeleteData] = useState(null);
     const [is_edit, setIsEdit] = useState(false);
+    const [modal_alert, setModalAlert] = useState({
+        open: false,
+        type: 'error', // [success|error]
+        title: 'Title',
+        message: 'Message'
+    })
+
+    // pagination
+    const [paging, setPaging] = useState({
+        page: 1,
+        max: 1,
+        size: 10
+    })
+    function page_goto(page) {
+        if (page == paging.page) return;
+        setPaging(Object.assign({}, paging, { page }));
+    }
+    useEffect(() => {
+        populate_data();
+    }, [paging])
+    function paging_content() {
+        let content = [];
+        for (let i = 0; i < paging.max; i++) {
+            content.push(<div
+                key={'paging-item-' + i}
+                onClick={() => page_goto(i + 1)}
+                className={`page-item d-flex align-items-center justify-content-center ${i + 1 == paging.page ? 'disabled' : ''}`}>
+                {i + 1}</div>)
+        }
+        return content;
+    }
+    function calculate_paging(resp) {
+        const { totalPages, currentPage, pageSize } = resp;
+        paging.page = currentPage;
+        paging.max = totalPages;
+        paging.size = pageSize;
+    }
 
     const onSubmit = async (e) => {
         e.preventDefault();
@@ -74,9 +113,20 @@ const Roles = () => {
             if (data.code === 200) {
                 populate_data();
                 cancel_form();
+                setModalAlert({
+                    open: true,
+                    type: 'success',
+                    title: 'Simpan Data',
+                    message: 'Proses simpan data berhasil'
+                });
             }
         } catch (error) {
-            alert('Error Simpan data');
+            setModalAlert({
+                open: true,
+                type: 'error',
+                title: 'Error Simpan Data',
+                message: error
+            })
         } finally {
             setSubmitProcess(false);
         }
@@ -103,10 +153,15 @@ const Roles = () => {
     }, [])
 
     async function populate_data() {
-        let response = api.get(`${API_9007_URI}/rbac/list-roles-all`);
+        const json = {
+            page: paging.page,
+            size: paging.size
+        }
+        let response = api.create(`${API_9007_URI}/rbac/list-roles-all`, json);
         let data = await response;
         if (data.code === 200) {
-            setResultData(data.list);
+            calculate_paging(data);
+            setResultData(data.data);
         }
     }
 
@@ -123,6 +178,11 @@ const Roles = () => {
     }
 
     function cancel_form() {
+        reset_form();
+        setShow(false);
+    }
+
+    function reset_form() {
         setIsEdit(false);
         setFormData({
             id: 0,
@@ -130,7 +190,31 @@ const Roles = () => {
             nama_roles: '',
             status: false,
         })
-        setShow(false);
+    }
+
+    async function do_delete() {
+        try {
+            const json = {
+                "id_role": delete_data.id,
+                "is_deleted": true
+            }
+            let response = api.create(`${API_9007_URI}/rbac/delete-menu`, json);
+            let data = await response;
+            if (data.code === 200) {
+                populate_data();
+                // setModalAlert({ type: 'success', title: "Hapus Data", message: "Proses hapus data berhasil", open: true })
+            }
+        } catch (error) {
+            console.log('ini error', error);
+            setModalAlert({
+                type: 'error',
+                title: "Error Hapus Data",
+                message: error || 'error',
+                open: true,
+            })
+        } finally {
+        }
+        tog_center();
     }
 
     return (
@@ -174,7 +258,7 @@ const Roles = () => {
                                     <Row>
                                         <Col>
                                             <Button color="primary" className="mt-3" style={{ marginRight: "6px" }} disabled={!is_valid || submitProcess}>
-                                                Simpan
+                                                {is_edit ? 'Ubah' : 'Simpan'}
                                             </Button>
                                             <Button color="warning" className="mt-3" onClick={() => cancel_form()}>
                                                 Batal
@@ -199,7 +283,7 @@ const Roles = () => {
                                     cursor: "pointer",
                                     fontSize: "12px",
                                     marginBottom: "6px"
-                                }} onClick={() => setShow(true)}>Tambah</button>
+                                }} onClick={() => { reset_form(); setShow(true) }}>Tambah</button>
                                 <table
                                     className="table table-bordered table-nowrap align-middle mb-0"
                                     style={{ width: "100%" }}
@@ -231,7 +315,7 @@ const Roles = () => {
                                                             textAlign: "center",
                                                             verticalAlign: "middle"
                                                         }}>
-                                                    {index + 1}
+                                                    {(paging.page - 1) * paging.size + index + 1}
                                                 </td>
                                                 <td>
                                                     {item.nama_roles}
@@ -241,8 +325,9 @@ const Roles = () => {
                                                 </td>
                                                 <td>
                                                     <Button color="danger" style={{ marginRight: "3px" }} onClick={() => {
-                                                        setShow(false)
-                                                        tog_center()
+                                                        setDeleteData(item);
+                                                        setShow(false);
+                                                        tog_center();
                                                     }}>Hapus</Button>
                                                     <Button color="primary" onClick={() => onEdit(item)}>Ubah</Button>
                                                 </td>
@@ -251,6 +336,7 @@ const Roles = () => {
 
                                     </tbody>
                                 </table>
+                                <div className="paging-container d-flex justify-content-center mt-3">{paging_content()}</div>
                             </CardBody>
                         </Card>
                     </Col>
@@ -272,7 +358,7 @@ const Roles = () => {
                         </Row>
                         <Row>
                             <Col className="d-flex justify-content-center align-items-center" >
-                                <Button color="primary" className="mt-3" style={{ marginRight: "6px" }} onClick={() => tog_center()}>
+                                <Button color="primary" className="mt-3" style={{ marginRight: "6px" }} onClick={() => do_delete()}>
                                     Hapus
                                 </Button>
                                 <Button color="warning" className="mt-3" onClick={() => tog_center()}>
@@ -283,6 +369,30 @@ const Roles = () => {
                     </ModalBody>
                 </Modal>
             </div>
+
+            <Modal
+                isOpen={modal_alert.open}
+                backdrop="static"
+                keyboard={false}
+                toggle={() => setModalAlert(Object.assign({}, modal_alert, { open: false }))}
+                centered
+            >
+                <div className=" text-center p-5">
+                    <lord-icon
+                        src={modal_alert.type == "error" ? 'https://cdn.lordicon.com/tdrtiskw.json' : 'https://cdn.lordicon.com/lupuorrc.json'}
+                        trigger="loop"
+                        colors="primary:#f7b84b,secondary:#405189"
+                        style={{ width: "130px", height: "130px" }}>
+                    </lord-icon>
+                    <div className="mt-4 pt-4">
+                        <h4>{modal_alert.title}</h4>
+                        <p className="text-muted"> {modal_alert.message} </p>
+                        <button className="btn btn-warning" onClick={() => setModalAlert(Object.assign({}, modal_alert, { open: false }))}>
+                            {modal_alert.type == "error" ? 'Continue' : 'Complete'}
+                        </button>
+                    </div>
+                </div>
+            </Modal>
         </>
     );
 }
