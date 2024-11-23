@@ -205,6 +205,7 @@ const Permission = () => {
     }
 
     function onEdit(data) {
+        console.log(data);
         setShow(true);
         setIsEdit(true);
         setFormData(Object.assign({}, formData, {

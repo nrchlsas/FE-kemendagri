@@ -362,7 +362,7 @@ const Pengguna = () => {
                                                 <td>
                                                     <input type="checkbox" key={index} checked={item.is_update_password} readOnly />
                                                 </td>
-                                                <td>{item.id_roles}</td>
+                                                <td>{item.nama_roles || '-'}</td>
                                                 <td style={{ width: "160px" }}>
                                                     <Button color="danger" style={{ marginRight: "3px" }} onClick={() => {
                                                         setShow(false)

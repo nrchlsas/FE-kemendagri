@@ -323,7 +323,7 @@ const Roles = () => {
                                                 <td>
                                                     <input type="checkbox" key={index} checked={item.status} readOnly />
                                                 </td>
-                                                <td>
+                                                <td style={{ width: "160px" }}>
                                                     <Button color="danger" style={{ marginRight: "3px" }} onClick={() => {
                                                         setDeleteData(item);
                                                         setShow(false);
