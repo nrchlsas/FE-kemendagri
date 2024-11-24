@@ -8,6 +8,13 @@ const StackedBarChart = ({
   valueCharts=[], // Array of arrays for each series
   categoryChart=[],
   legendNames=[], // Array of legend names for each series
+  namaProv = [],  
+  namaKab = [],
+  namaKec = [],  
+  kabupaten = false,
+  kecamatan = false,
+  kelurahan = false,
+  fasilitasLingkungan = false,
   dataZoom=false,
   dataTotal = 10,
   breakWord = false
@@ -22,7 +29,7 @@ const StackedBarChart = ({
   const startIndex = 0;  // Mulai dari indeks pertama
   const endIndex = limit - 1
 
-  console.log(limit, 'ini limit')
+  // console.log(limit, 'ini limit')
 
   // Buat series secara dinamis berdasarkan jumlah valueCharts yang diberikan
   var seriesData = valueCharts.map((values, index) => ({    
@@ -51,6 +58,46 @@ const StackedBarChart = ({
       axisPointer: {
         type: "shadow",
       },
+      // formatter: function (params) {
+      //   const data = params[0];
+      //   let categoryName = params[0].axisValueLabel;
+
+      //   // Find the index of the category name in categoryChart
+      //   let categoryIndex = categoryChart.indexOf(categoryName);
+
+      //   // Get the corresponding value from additionalData and convert it to a string
+      //   let namaProvinsi = namaProv[categoryIndex] || 'N/A';
+      //   let namaKabupaten = namaKab[categoryIndex] || 'N/A';
+      //   let namaKecamatan = namaKec[categoryIndex] || 'N/A';
+
+      //   let tooltipItems = params.map(function (item) {
+      //     // Ambil marker untuk warna setiap series (untuk menunjukkan warna pada tooltip)
+      //     let marker = item.marker;
+      //     // Periksa jenis series (bar atau line) dan format nilainya sesuai
+      //     if (kabupaten) {
+      //       // Format angka untuk series bar dengan titik sebagai pemisah ribuan
+      //       return `Provinsi: ${namaProvinsi}<br/>` + `Jumlah Penduduk: ${item.value.toLocaleString(
+      //         "id-ID"
+      //       )}`;
+      //     } else if (kecamatan){
+      //       // Format angka untuk series line dengan persentase
+      //       return `Provinsi: ${namaProvinsi}<br/>` + `Kabupaten/Kota: ${namaKabupaten} <br/>` + `Jumlah Penduduk: ${item.value.toLocaleString(
+      //         "id-ID"
+      //       )}`;
+      //     }else if (kelurahan) {
+      //       return `Provinsi: ${namaProvinsi}<br/>` + `Kabupaten/Kota: ${namaKabupaten} <br/>`+ `Kecamatan: ${namaKecamatan} <br/>` + `Jumlah Penduduk: ${item.value.toLocaleString(
+      //         "id-ID"
+      //       )}`;
+      //     }else if (fasilitasLingkungan){
+      //       return `${marker} ${data.name}: ${(item.value).toLocaleString('id-ID')} <br/>` + `Click Untuk Melihat Detail`;
+      //     }else{
+      //       return `${marker} ${data.name}: ${(item.value).toLocaleString('id-ID')} `;
+      //     }
+      //   });
+
+      //   // Tambahkan kategori di bagian atas tooltip
+      //   return `${tooltipItems}`;
+      // },
     },
     legend: {
       data: legendNames, // Legend names from props

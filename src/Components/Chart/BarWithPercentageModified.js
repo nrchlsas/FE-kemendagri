@@ -59,7 +59,6 @@ const BarWithPercentageModified = ({dataColors, valueChart=[], percentageChart1=
                 }else{
                     return `${categoryName}<br/>` + `Total Anggaran Provinsi: ${additionalValue}<br/>` + tooltipItems.join('<br/>');
                 }
-                
             },
             axisPointer: {
                 type: 'cross',

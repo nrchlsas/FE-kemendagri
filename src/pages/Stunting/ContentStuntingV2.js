@@ -109,7 +109,6 @@ const ContentStunting = () => {
   const [dataShowAkunBelanja, setDataShowAkunBelanja] = useState(false);
   const handleShowDataAkun = (value) => {
     setDataShowAkunBelanja(value);
-    console.log(dataShowAkunBelanja, "ini isinyaaa");
   };
 
   const [dataStunting, setDataStunting] = useState([]);
@@ -249,12 +248,17 @@ const ContentStunting = () => {
         // kabupaten
         try {
           const categoryNamesKab =
-            dataStunting.data.compare_resiko_by_kabupaten.data.map(
-              (item) => item.kabupaten
-            );
-
+          dataStunting.data.compare_resiko_by_kabupaten.reduce(
+            (acc, item) => {
+              acc[0].push(item.kabupaten);
+              acc[1].push(item.provinsi)
+              return acc;
+            },
+            [[], []]
+          );
+            
           const resultChartStackedKab =
-            dataStunting.data.compare_resiko_by_kabupaten.data.reduce(
+            dataStunting.data.compare_resiko_by_kabupaten.reduce(
               (acc, item) => {
                 acc[0].push(item.jumlah_keluarga_beresiko);
                 acc[1].push(item.jumlah_keluarga_tidak_beresiko);
@@ -263,6 +267,8 @@ const ContentStunting = () => {
               [[], []]
             );
 
+            console.log(categoryNamesKab, 'ini')
+            console.log(resultChartStackedKab, 'ini')
           setDataCategoryChartKabupaten(categoryNamesKab);
           setDataBeresikoKabupaten(resultChartStackedKab);
         } catch (error) {
@@ -557,7 +563,6 @@ const ContentStunting = () => {
 
           const resultChartPus4Terlalu = [values, keys]
           // const resultChartPus4Terlalu = [dataStunting.data.pus_4_terlalu.jumlah_terlalu_banyak, dataStunting.data.pus_4_terlalu.jumlah_terlalu_dekat, dataStunting.data.pus_4_terlalu.jumlah_terlalu_muda, dataStunting.data.pus_4_terlalu.jumlah_terlalu_tua]
-          console.log(resultChartPus4Terlalu, 'ini isi result')
             setDataChartPus4Terlalu(resultChartPus4Terlalu)
         } catch (error) {
           console.error("Error processing top 5 akun belanja", error);
@@ -684,7 +689,6 @@ const ContentStunting = () => {
   const [dataKolomNamaDaerah, setDataKolomNamaDaerah] = useState("Se-Provinsi");
   const [showNextData, setShowNextData] = useState(true);
 
-  console.log(dataKolomNamaDaerah, 'ini data kolom nama daerah')
   const getDataStuntingTabelKabupaten = (kodeDdn = "", e) => {
     const fetchData = async () => {
       try {
@@ -2640,6 +2644,9 @@ const ContentStunting = () => {
                   >
                     <TabPane tabId="1" id="provinsi">
                       <StackedBarChart
+                        dataTotal={10}
+                        dataZoom={true}
+                        breakWord={true}
                         dataColors='["#2DAED4", "#57E7B4"]'
                         valueCharts={dataBeresikoProvinsi}
                         categoryChart={dataCategoryChartProvinsi}
@@ -2648,10 +2655,15 @@ const ContentStunting = () => {
                     </TabPane>
                     <TabPane tabId="2" id="kabupaten">
                       <StackedBarChart
+                        dataTotal={10}
+                        dataZoom={true}
+                        breakWord={true}
+                        // kabupaten={true}
+                        // namaProv={dataCategoryChartKabupaten[1]}
                         dataColors='["#2DAED4", "#57E7B4"]'
                         valueCharts={dataBeresikoKabupaten}
                         legendNames={["Berisiko", "Tidak Berisiko"]}
-                        categoryChart={dataCategoryChartKabupaten}
+                        categoryChart={dataCategoryChartKabupaten[0]}
                       />
                     </TabPane>
                     {/* <TabPane tabId="3" id="kecamatan">

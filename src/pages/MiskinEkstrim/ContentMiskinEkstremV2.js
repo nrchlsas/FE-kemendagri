@@ -3217,7 +3217,7 @@ const ContentMiskinEkstremV2 = () => {
                       <></>
                     ) : (
                       <>
-                        <Col md={6}>
+                        {/* <Col md={6}>
                           <div className="nav-beranda">
                             <Nav
                               tabs
@@ -3255,7 +3255,7 @@ const ContentMiskinEkstremV2 = () => {
                               </NavItem>
                             </Nav>
                           </div>
-                        </Col>
+                        </Col> */}
                       </>
                     )}
                   </Row>

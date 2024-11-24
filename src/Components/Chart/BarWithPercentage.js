@@ -2,8 +2,13 @@ import React from "react";
 import getChartColorsArray from "../Common/ChartsDynamicColor";
 import ReactEcharts from "echarts-for-react";
 
-const BarWithPercentage = ({dataColors, valueChart, percentageChart, categoryChart, additionalData=[], axisY=["Anggaran Kemiskinan Ekstrem", "Persentase Dari Total Anggaran"]}) => {
+const BarWithPercentage = ({dataColors=[], valueChart=[], percentageChart=[], categoryChart=[], additionalData=[], axisY=["Anggaran Kemiskinan Ekstrem", "Persentase Dari Total Anggaran"], dataTotal=10}) => {
+    const limit = dataTotal;  // Misal kita ingin menampilkan hanya 10 data
 
+    // Periksa apakah limit lebih besar dari total data
+// Tentukan `startIndex` dan `endIndex` berdasarkan limit
+    const startIndex = 0;  // Mulai dari indeks pertama
+    const endIndex = limit - 1 
     var chartBarColors = getChartColorsArray(dataColors);
     var option = {
         // title: {
@@ -133,7 +138,24 @@ const BarWithPercentage = ({dataColors, valueChart, percentageChart, categoryCha
                     }
                 }
             }
-        ]
+        ],
+        dataZoom: [
+            {
+              type: 'slider',  // Jenis slider untuk scroll
+              show: true,
+            //   start: 0,        // Posisi awal (0%)
+            //   end: dataTotal,         // Posisi akhir (50%)
+            startValue: startIndex,
+            endValue: endIndex
+            },
+            {type : 'inside'}
+          ]
+        , 
+        toolbox: {
+            feature: {              
+              saveAsImage: {}
+            }
+          },
     };
 
     return (
