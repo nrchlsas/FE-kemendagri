@@ -272,6 +272,7 @@ import Penganggaran from "../pages/Penganggaran";
 import PenganggaranDaerah from "../pages/Penganggaran/PenganggaranDaerah";
 import PenganggaranDetailDaerah from "../pages/Penganggaran/PenganggaranDetailDaerah";
 import Apbd from "../pages/APDB";
+import DashboardAnalisis from "../pages/DashboardAnalisis";
 
 //home
 
@@ -298,6 +299,7 @@ const authProtectedRoutes = [
   { path: "/keluarga-beresiko-stunting", component: <Stunting />},
   { path: "/detail-anggaran-bidang-pendidikan", component: <DetailPendidikan />},
   { path: "/kementerian-dan-lembaga", component: <KementerianDanLembaga />},
+  { path: "/dashboard-analisis", component: <DashboardAnalisis />},
 
   { path: "/dashboard-analytics", component: <DashboardAnalytics /> },
   { path: "/dashboard-crm", component : <DashboardCrm /> },

@@ -1067,7 +1067,7 @@ const ContentUhcV2 = () => {
                               cursor: "pointer",                              
                             }}                            
                             >
-                            Total Anggaran
+                            Total Anggaran (Rp)
                           </th>        
                           <th rowSpan="3" style={{
                               textAlign: "center",
@@ -1075,7 +1075,7 @@ const ContentUhcV2 = () => {
                               cursor: "pointer",                              
                             }}                            
                             >
-                            Total Anggaran Iuran Jaminan Kesehatan
+                            Total Anggaran Iuran Jaminan Kesehatan (Rp)
                           </th>        
                           <th rowSpan="3" style={{
                               textAlign: "center",
@@ -1110,7 +1110,7 @@ const ContentUhcV2 = () => {
                               cursor: "pointer",                              
                             }}                            
                             >
-                            PBI_JK
+                            PBI JK
                           </th>        
                           <th rowSpan="2" style={{
                               textAlign: "center",
@@ -1212,7 +1212,7 @@ const ContentUhcV2 = () => {
                           padding: "5px 10px",                      
                           cursor: "pointer",
                           fontSize: "25px"                      
-                        }} onClick={()=> handleOpen({kodeDdn: item.kode, rincianDetail: item.total_anggaran, namaDaerah: item.nama})} className="bx bx-list-ul text-primary"></i>                                                                                
+                        }} onClick={()=> handleOpen({kodeDdn: showNextData? item.kode_ddn :item.kode, rincianDetail: item.total_anggaran, namaDaerah: item.nama})} className="bx bx-list-ul text-primary"></i>                                                                                
                         </td>
                     </tr>
                     ))}
