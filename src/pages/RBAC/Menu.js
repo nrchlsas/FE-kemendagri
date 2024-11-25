@@ -173,13 +173,13 @@ const Menu = () => {
             page: paging.page,
             size: paging.size
         }
-        let response = api.create(`${API_9007_URI}/rbac/list-menu`, json);
+        let response = api.create(`${API_9007_URI}/rbac/list-menu-table`, json);
 
         let data = await response;
 
         if (data.code === 200) {
-            calculate_paging(data.customResponse);
-            setResultData(data.customResponse.data);
+            calculate_paging(data);
+            setResultData(data.data);
         }
     }
 

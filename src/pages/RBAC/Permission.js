@@ -154,7 +154,7 @@ const Permission = () => {
     async function populate_role() {
         const json = {
             page: 1,
-            size: 100
+            size: 500
         }
         let response = api.create(`${API_9007_URI}/rbac/list-roles-all`, json);
         let data = await response;
@@ -166,12 +166,12 @@ const Permission = () => {
     async function populate_menu() {
         const json = {
             page: 1,
-            size: 100
+            size: 500
         }
-        let response = api.create(`${API_9007_URI}/rbac/list-menu`, json);
+        let response = api.create(`${API_9007_URI}/rbac/list-menu-table`, json);
         let data = await response;
         if (data.code === 200) {
-            setListMenu(data.customResponse.data);
+            setListMenu(data.data);
         }
     }
 
