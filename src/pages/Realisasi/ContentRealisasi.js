@@ -318,6 +318,37 @@ const ContentRealisasi = () => {
                     <h4 className="card-title mb-0">Realisasi Nasional</h4>
                     <h4 className="card-title mb-0">Republik Indonesia</h4>
                   </div>
+                  <div className="d-flex justify-content-between mb-2 mt-2">
+              <div className="d-flex justify-content-center align-items-center">
+              {dataWidth==6 ? (<><button onClick={()=>{
+                  setDataWidth(12)
+                  setRoam(true)
+                  }} style={{
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    padding: "5px 10px",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontSize: "16px",
+                  }}>
+                    Maximize Map
+                  </button></>) : (<><button onClick={()=>{
+                    setDataWidth(6)
+                    setRoam(false)
+                  }} style={{
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    padding: "5px 10px",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontSize: "16px",
+                  }}>
+                    Minimize Map
+                  </button></>)}
+              </div>                          
+              </div>
                   <MapIndoChart roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#FCAD24", "#57E7B4"]} />
                   <div className="d-flex justify-content-between">
                     <div className="d-flex flex-column justify-content-evenly">
@@ -342,8 +373,7 @@ const ContentRealisasi = () => {
                         Lihat Sumber Usulan
                         </span>
                     </div> */}
-                  </div>
-                  
+                  </div>                  
                 </>
               )}
             </CardBody>
