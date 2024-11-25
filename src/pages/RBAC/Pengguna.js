@@ -75,7 +75,9 @@ const Pengguna = () => {
         email: '',
         status: false,
         is_verifikasi: false,
-        roles: 0
+        roles: 0,
+        first_name: "",
+        last_name: "",
     });
     const [show, setShow] = useState(false)
     const [modal_center, setmodal_center] = useState(false);
@@ -90,6 +92,7 @@ const Pengguna = () => {
         title: 'Title',
         message: 'Message'
     })
+    const [delete_data, setDeleteData] = useState(null);
 
     useEffect(() => {
         populate_data();
@@ -181,7 +184,9 @@ const Pengguna = () => {
             email: data.email,
             status: data.status,
             is_verifikasi: data.is_verifikasi,
-            roles: data.id_roles
+            roles: data.id_roles,
+            first_name: data.first_name || "",
+            last_name: data.last_name || "",
         }));
         window.scrollTo(0, 0)
     }
@@ -198,13 +203,18 @@ const Pengguna = () => {
             email: '',
             status: false,
             is_verifikasi: false,
-            roles: 0
+            roles: 0,
+            first_name: "",
+            last_name: "",
         })
     }
 
     async function do_delete() {
         try {
-            const json = Object.assign({}, formData);
+            const json = {
+                id: delete_data.id,
+                "is_deleted": true
+            };
             let response = api.create(`${API_9007_URI}/users/delete-user`, json);
             let data = await response;
             if (data.code === 200) {
@@ -237,6 +247,22 @@ const Pengguna = () => {
                                                     onChange={(e) => changeValue(e)}
                                                     className="form-control"
                                                     value={formData.email}
+                                                />
+                                            </FormGroup>
+                                            <FormGroup>
+                                                <Label>First Name</Label>
+                                                <input type="text" name="first_name"
+                                                    onChange={(e) => changeValue(e)}
+                                                    className="form-control"
+                                                    value={formData.first_name}
+                                                />
+                                            </FormGroup>
+                                            <FormGroup>
+                                                <Label>Last Name</Label>
+                                                <input type="text" name="last_name"
+                                                    onChange={(e) => changeValue(e)}
+                                                    className="form-control"
+                                                    value={formData.last_name}
                                                 />
                                             </FormGroup>
                                             <FormGroup check>
@@ -316,27 +342,17 @@ const Pengguna = () => {
                                 >
                                     <thead className="table-light">
                                         <tr>
-                                            <th>
-                                                NO
-                                            </th>
+                                            <th>NO</th>
                                             <th style={{ cursor: "pointer", verticalAlign: "middle" }}>
                                                 Email
                                             </th>
-                                            <th>
-                                                Status
-                                            </th>
-                                            <th>
-                                                Verifikasi
-                                            </th>
-                                            <th>
-                                                Update Password
-                                            </th>
-                                            <th>
-                                                Roles
-                                            </th>
-                                            <th>
-                                                Aksi
-                                            </th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
+                                            <th>Status</th>
+                                            <th>Verifikasi</th>
+                                            <th>Update Password</th>
+                                            <th>Roles</th>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody style={{ minHeight: "500px" }}>
@@ -351,6 +367,8 @@ const Pengguna = () => {
                                                     {index + 1}
                                                 </td>
                                                 <td>{item.email}</td>
+                                                <td>{item.first_name || '-'}</td>
+                                                <td>{item.last_name || '-'}</td>
                                                 <td>
                                                     <input type="checkbox" key={index} checked={item.status} readOnly />
                                                 </td>
@@ -363,8 +381,9 @@ const Pengguna = () => {
                                                 <td>{item.nama_roles || '-'}</td>
                                                 <td style={{ width: "160px" }}>
                                                     <Button color="danger" style={{ marginRight: "3px" }} onClick={() => {
-                                                        setShow(false)
-                                                        tog_center()
+                                                        setDeleteData(item);
+                                                        setShow(false);
+                                                        tog_center();
                                                     }}>Hapus</Button>
                                                     <Button color="primary" onClick={() => onEdit(item)}>Ubah</Button>
                                                 </td>

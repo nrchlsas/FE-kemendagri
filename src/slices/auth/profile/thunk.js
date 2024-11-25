@@ -60,7 +60,7 @@ export const load_menu_by_profile = (user) => async (dispatch) => {
 
     let list_menu = [];
     if (data.code == 200) {
-        list_menu = data.list;
+        list_menu = data.data;
     }
 
     dispatch(update_list_menu(list_menu));
