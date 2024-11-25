@@ -130,10 +130,16 @@ const Permission = () => {
     const [submitProcess, setSubmitProcess] = useState(false);
     const [list_menu, setListMenu] = useState([]);
     const [list_role, setListRole] = useState([]);
+    const [delete_data, setDeleteData] = useState(null);
+    const [modal_alert, setModalAlert] = useState({
+        open: false,
+        type: 'error', // [success|error]
+        title: 'Title',
+        message: 'Message'
+    })
 
     useEffect(() => {
         let is_valid = true;
-        console.log('formData', formData);
         if (!formData.idMenu) is_valid = false;
         if (!formData.idRoles) is_valid = false;
         setIsValid(is_valid);
@@ -146,18 +152,26 @@ const Permission = () => {
     }, [])
 
     async function populate_role() {
-        let response = api.get(`${API_9007_URI}/rbac/list-roles-all`);
+        const json = {
+            page: 1,
+            size: 100
+        }
+        let response = api.create(`${API_9007_URI}/rbac/list-roles-all`, json);
         let data = await response;
         if (data.code === 200) {
-            setListRole(data.list);
+            setListRole(data.data);
         }
     }
 
     async function populate_menu() {
-        let response = api.get(`${API_9007_URI}/rbac/list-menu`);
+        const json = {
+            page: 1,
+            size: 100
+        }
+        let response = api.create(`${API_9007_URI}/rbac/list-menu`, json);
         let data = await response;
         if (data.code === 200) {
-            setListMenu(data.list);
+            setListMenu(data.customResponse.data);
         }
     }
 
@@ -181,12 +195,23 @@ const Permission = () => {
             }
             setSubmitProcess(true);
             let data = await response;
-            if (data.code === 200) {
+            if (data.code === 200 || data.customResponse.code === 200) {
                 populate_data();
                 cancel_form();
+                setModalAlert({
+                    open: true,
+                    type: 'success',
+                    title: 'Simpan Data',
+                    message: 'Proses simpan data berhasil'
+                });
             }
         } catch (error) {
-            alert('Error Simpan data');
+            setModalAlert({
+                open: true,
+                type: 'error',
+                title: 'Error Simpan Data',
+                message: error
+            })
         } finally {
             setSubmitProcess(false);
         }
@@ -204,17 +229,16 @@ const Permission = () => {
         setmodal_center(!modal_center);
     }
 
-    function onEdit(data) {
-        console.log(data);
+    function onEdit(sItem, mItem,) {
         setShow(true);
         setIsEdit(true);
         setFormData(Object.assign({}, formData, {
-            idMenu: 0,
-            idRoles: 0,
-            createPermission: false,
-            updatePermission: false,
-            deletePermission: false,
-            readPermission: false,
+            idMenu: mItem.id_menu,
+            idRoles: mItem.id_role,
+            createPermission: sItem.create_permission,
+            updatePermission: sItem.update_permission,
+            deletePermission: sItem.delete_permission,
+            readPermission: sItem.read_permission,
         }));
         window.scrollTo(0, 0)
     }
@@ -230,6 +254,32 @@ const Permission = () => {
             readPermission: false,
         })
         setShow(false);
+    }
+
+    async function do_delete() {
+        try {
+            const json = {
+                "id_role": delete_data.id,
+                "id_menu": delete_data.menus[0].id_menu,
+                "id_id_rolemenu": delete_data.menus[0].id_role,
+                "is_deleted": true
+            }
+            let response = api.create(`${API_9007_URI}/rbac/delete-permission`, json);
+            let data = await response;
+            if (data.code === 200) {
+                populate_data();
+                // setModalAlert({ type: 'success', title: "Hapus Data", message: "Proses hapus data berhasil", open: true })
+            }
+        } catch (error) {
+            setModalAlert({
+                type: 'error',
+                title: "Error Hapus Data",
+                message: error || 'error',
+                open: true,
+            })
+        } finally {
+        }
+        tog_center();
     }
 
     return (
@@ -330,7 +380,7 @@ const Permission = () => {
                                     <Row>
                                         <Col>
                                             <Button color="primary" className="mt-3" style={{ marginRight: "6px" }} disabled={!is_valid || submitProcess}>
-                                                Simpan
+                                                {is_edit ? 'Ubah' : 'Simpan'}
                                             </Button>
                                             <Button color="warning" className="mt-3" onClick={() => cancel_form()}>
                                                 Batal
@@ -360,7 +410,7 @@ const Permission = () => {
                                             marginBottom: "6px"
                                         }} onClick={() => setShow(true)}>Tambah</button></div>
                                     <div>
-                                        <spam>Filter: </spam>
+                                        <span>Filter: </span>
                                         <select name="idRoles"
                                             onChange={(e) =>
                                                 setFilter({ ...formFilter, idRoles: parseInt(e.target.value) })
@@ -418,10 +468,10 @@ const Permission = () => {
                                                             <td>
                                                                 {item.nama_roles}
                                                             </td>
-                                                            <td>
+                                                            <td style={{ maxWidth: "400px" }} className="text-wrap">
                                                                 {mItem.nama_menu}
                                                             </td>
-                                                            <td>
+                                                            <td style={{ maxWidth: "400px" }} className="text-wrap">
                                                                 {sItem.nama_sub_menu}
                                                             </td>
                                                             <td>
@@ -436,12 +486,13 @@ const Permission = () => {
                                                             <td>
                                                                 <input type="checkbox" checked={sItem.delete_permission} readOnly />
                                                             </td>
-                                                            <td>
+                                                            <td style={{ width: "160px" }}>
                                                                 <Button color="danger" style={{ marginRight: "3px" }} onClick={() => {
-                                                                    setShow(false)
-                                                                    tog_center()
+                                                                    setDeleteData(item);
+                                                                    setShow(false);
+                                                                    tog_center();
                                                                 }}>Hapus</Button>
-                                                                <Button color="primary" onClick={() => onEdit(sItem)}>Ubah</Button>
+                                                                <Button color="primary" onClick={() => onEdit(sItem, mItem)}>Ubah</Button>
                                                             </td>
                                                         </tr>
                                                     ))
@@ -474,7 +525,7 @@ const Permission = () => {
                     </Row>
                     <Row>
                         <Col className="d-flex justify-content-center align-items-center" >
-                            <Button color="primary" className="mt-3" style={{ marginRight: "6px" }} onClick={() => tog_center()}>
+                            <Button color="primary" className="mt-3" style={{ marginRight: "6px" }} onClick={() => do_delete()}>
                                 Hapus
                             </Button>
                             <Button color="warning" className="mt-3" onClick={() => tog_center()}>
@@ -483,6 +534,30 @@ const Permission = () => {
                         </Col>
                     </Row>
                 </ModalBody>
+            </Modal>
+
+            <Modal
+                isOpen={modal_alert.open}
+                backdrop="static"
+                keyboard={false}
+                toggle={() => setModalAlert(Object.assign({}, modal_alert, { open: false }))}
+                centered
+            >
+                <div className=" text-center p-5">
+                    <lord-icon
+                        src={modal_alert.type == "error" ? 'https://cdn.lordicon.com/tdrtiskw.json' : 'https://cdn.lordicon.com/lupuorrc.json'}
+                        trigger="loop"
+                        colors="primary:#f7b84b,secondary:#405189"
+                        style={{ width: "130px", height: "130px" }}>
+                    </lord-icon>
+                    <div className="mt-4 pt-4">
+                        <h4>{modal_alert.title}</h4>
+                        <p className="text-muted"> {modal_alert.message} </p>
+                        <button className="btn btn-warning" onClick={() => setModalAlert(Object.assign({}, modal_alert, { open: false }))}>
+                            {modal_alert.type == "error" ? 'Continue' : 'Complete'}
+                        </button>
+                    </div>
+                </div>
             </Modal>
         </>
     );

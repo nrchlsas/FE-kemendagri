@@ -143,7 +143,6 @@ const Roles = () => {
 
     useEffect(() => {
         let is_valid = true;
-        console.log('formData', formData);
         if (!formData.nama_roles) is_valid = false;
         setIsValid(is_valid);
     }, [formData])
@@ -205,7 +204,6 @@ const Roles = () => {
                 // setModalAlert({ type: 'success', title: "Hapus Data", message: "Proses hapus data berhasil", open: true })
             }
         } catch (error) {
-            console.log('ini error', error);
             setModalAlert({
                 type: 'error',
                 title: "Error Hapus Data",

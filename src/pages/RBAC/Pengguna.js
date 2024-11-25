@@ -98,7 +98,6 @@ const Pengguna = () => {
 
     useEffect(() => {
         let is_valid = true;
-        console.log('formData', formData);
         if (!formData.email) is_valid = false;
         if (!isEmailValid(formData.email)) is_valid = false;
         if (formData.roles == 0) is_valid = false;
@@ -142,7 +141,6 @@ const Pengguna = () => {
 
             setSubmitProcess(true);
             let data = await response;
-            console.log({ data });
             if (data.code === 200) {
                 populate_data();
                 reset_form();

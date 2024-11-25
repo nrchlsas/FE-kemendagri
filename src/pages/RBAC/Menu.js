@@ -162,7 +162,6 @@ const Menu = () => {
     }
 
     useEffect(() => {
-        console.log('formData', formData);
     }, [formData])
 
     useEffect(() => {
