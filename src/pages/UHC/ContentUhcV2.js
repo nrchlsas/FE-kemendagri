@@ -993,7 +993,7 @@ const ContentUhcV2 = () => {
                             // setCustomActiveTitleAnggaran("Nasional");
                           }}
                         >
-                          NASIONAL
+                          {showNextData ?"Se-Provinsi" : "NASIONAL"}
                         </NavLink>
                       </NavItem>                                        
                     </Nav>
@@ -1084,8 +1084,9 @@ const ContentUhcV2 = () => {
                             }}                            
                             >
                             Persentase
-                          </th>        
-                          <th rowSpan="3" style={{
+                          </th>
+                          {showNextData ? <>
+                            <th rowSpan="3" style={{
                               textAlign: "center",
                               verticalAlign: "middle",
                               cursor: "pointer",                              
@@ -1093,8 +1094,8 @@ const ContentUhcV2 = () => {
                             >
                             Action
                           </th>        
+                          </> : <></>}                          
                         </tr>
-
                         <tr>
                           <th colSpan="2" style={{
                               textAlign: "center",
@@ -1206,14 +1207,17 @@ const ContentUhcV2 = () => {
                                     minimumFractionDigits: 2,
                                     maximumFractionDigits: 2,
                                   })}%`}
-                            </td>                        
-                        <td style={{textAlign: "center"}}>                    
-                          <i style={{                                            
-                          padding: "5px 10px",                      
-                          cursor: "pointer",
-                          fontSize: "25px"                      
-                        }} onClick={()=> handleOpen({kodeDdn: showNextData? item.kode_ddn :item.kode, rincianDetail: item.total_anggaran, namaDaerah: item.nama})} className="bx bx-list-ul text-primary"></i>                                                                                
-                        </td>
+                            </td>
+                            {showNextData ? 
+                            <>
+                            <td style={{textAlign: "center"}}>                    
+                              <i style={{                                            
+                              padding: "5px 10px",                      
+                              cursor: "pointer",
+                              fontSize: "25px"                      
+                            }} onClick={()=> handleOpen({kodeDdn: showNextData? item.kode_ddn :item.kode, rincianDetail: item.total_anggaran_bpjs, namaDaerah: item.nama})} className="bx bx-list-ul text-primary"></i>                                                                                
+                            </td>
+                            </> : <></>}
                     </tr>
                     ))}
                 </tbody>
