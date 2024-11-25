@@ -121,7 +121,7 @@ const FilterRightSide = () => {
                         <SimpleBar className="h-100 p-2">
                                 <Row >
                                     <Col md={6}>
-                                        <Card className='card-animate'>
+                                        <Card className='card-height-100 card-animate'>
                                             <CardBody>
                                         <div className='mb-2'>
                                             <span style={{
@@ -145,8 +145,8 @@ const FilterRightSide = () => {
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
                                         {dataFilter?.anggaran_filter_list_fungsi?.map((item, index) => (
                                             <div key={index} class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id={`check${index}`} value={item.kode_fungsi}/>
-                                                <label class="form-check-label" for={`check${index}`}>
+                                                <input class="form-check-input" type="checkbox" id={`check-fungsi-${index}`} value={item.kode_fungsi}/>
+                                                <label class="form-check-label" for={`check-fungsi-${index}`}>
                                                     {item.nama_fungsi}
                                                 </label>
                                             </div>
@@ -172,8 +172,8 @@ const FilterRightSide = () => {
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
                                         {dataFilter?.anggaran_filter_list_spm?.map((item, index) => (
                                             <div key={index} class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id={`check${index}`} value={item.id_spm}/>
-                                                <label class="form-check-label" for={`check${index}`}>
+                                                <input class="form-check-input" type="checkbox" id={`check-spm-${index}`} value={item.id_spm}/>
+                                                <label class="form-check-label" for={`check-spm-${index}`}>
                                                     {item.spm_teks}
                                                 </label>
                                             </div>
@@ -210,8 +210,8 @@ const FilterRightSide = () => {
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
                                         {dataFilter?.anggaran_filter_list_urusan?.map((item, index) => (
                                             <div key={index} class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id={`check${index}`} value={item.kode_urusan}/>
-                                                <label class="form-check-label" for={`check${index}`}>
+                                                <input class="form-check-input" type="checkbox" id={`check-urusan-${index}`} value={item.kode_urusan}/>
+                                                <label class="form-check-label" for={`check-urusan-${index}`}>
                                                     {item.nama_urusan}
                                                 </label>
                                             </div>
@@ -237,8 +237,8 @@ const FilterRightSide = () => {
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
                                         {dataFilter?.anggaran_filter_list_bidang_urusan?.map((item, index) => (
                                             <div key={index} class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id={`check${index}`} value={item.kode_bidang_urusan}/>
-                                                <label class="form-check-label" for={`check${index}`}>
+                                                <input class="form-check-input" type="checkbox" id={`check-bidang-urusan-${index}`} value={item.kode_bidang_urusan}/>
+                                                <label class="form-check-label" for={`check-bidang-urusan-${index}`}>
                                                     {item.nama_bidang_urusan}
                                                 </label>
                                             </div>
@@ -275,8 +275,8 @@ const FilterRightSide = () => {
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
                                         {dataFilter?.anggaran_filter_list_program?.map((item, index) => (
                                             <div key={index} class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id={`check${index}`} value={item.kode_program}/>
-                                                <label class="form-check-label" for={`check${index}`}>
+                                                <input class="form-check-input" type="checkbox" id={`check-program-${index}`} value={item.kode_program}/>
+                                                <label class="form-check-label" for={`check-program-${index}`}>
                                                     {item.nama_program}
                                                 </label>
                                             </div>
@@ -302,8 +302,8 @@ const FilterRightSide = () => {
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
                                         {dataFilter?.anggaran_filter_list_giat?.map((item, index) => (
                                             <div key={index} class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id={`check${index}`} value={item.kode_giat}/>
-                                                <label class="form-check-label" for={`check${index}`}>
+                                                <input class="form-check-input" type="checkbox" id={`check-kegiatan-${index}`} value={item.kode_giat}/>
+                                                <label class="form-check-label" for={`check-kegiatan-${index}`}>
                                                     {item.nama_giat}
                                                 </label>
                                             </div>
@@ -340,8 +340,8 @@ const FilterRightSide = () => {
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
                                         {dataFilter?.anggaran_filter_list_sub_giat?.slice(0,5).map((item, index) => (
                                             <div key={index} class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id={`check${index}`} value={item.kode_sub_giat}/>
-                                                <label class="form-check-label" for={`check${index}`}>
+                                                <input class="form-check-input" type="checkbox" id={`check-sub-kegiatan-${index}`} value={item.kode_sub_giat}/>
+                                                <label class="form-check-label" for={`check-sub-kegiatan-${index}`}>
                                                     {item.nama_sub_giat}
                                                 </label>
                                             </div>
@@ -367,8 +367,8 @@ const FilterRightSide = () => {
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
                                         {dataFilter?.anggaran_filter_list_objek?.slice(0,5).map((item, index) => (
                                             <div key={index} class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id={`check${index}`} value={item.kode_objek}/>
-                                                <label class="form-check-label" for={`check${index}`}>
+                                                <input class="form-check-input" type="checkbox" id={`check-objek-${index}`} value={item.kode_objek}/>
+                                                <label class="form-check-label" for={`check-objek-${index}`}>
                                                     {item.nama_objek}
                                                 </label>
                                             </div>
@@ -404,8 +404,8 @@ const FilterRightSide = () => {
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
                                         {dataFilter?.anggaran_filter_list_rincian_objek?.slice(0,5).map((item, index) => (
                                             <div key={index} class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id={`check${index}`} value={item.kode_ro}/>
-                                                <label class="form-check-label" for={`check${index}`}>
+                                                <input class="form-check-input" type="checkbox" id={`check-rincian-objek-${index}`} value={item.kode_ro}/>
+                                                <label class="form-check-label" for={`check-rincian-objek-${index}`}>
                                                     {item.nama_ro}
                                                 </label>
                                             </div>
@@ -431,8 +431,8 @@ const FilterRightSide = () => {
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
                                         {dataFilter?.anggaran_filter_list_rincian_sub_objek?.slice(0,5).map((item, index) => (
                                             <div key={index} class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id={`check${index}`} value={item.kode_sro}/>
-                                                <label class="form-check-label" for={`check${index}`}>
+                                                <input class="form-check-input" type="checkbox" id={`check-sub-rincian-objek-${index}`} value={item.kode_sro}/>
+                                                <label class="form-check-label" for={`check-sub-rincian-objek-${index}`}>
                                                     {item.nama_sro}
                                                 </label>
                                             </div>
@@ -442,7 +442,7 @@ const FilterRightSide = () => {
                                         </Card>
                                     </Col>
                                 </Row>
-                                <Row >
+                                {/* <Row >
                                     <Col md={6}>
                                         <Card className='card-animate'>
                                             <CardBody>
@@ -456,20 +456,12 @@ const FilterRightSide = () => {
                                                 width:"30%",
                                                 fontSize: "10px",
                                             }}>Akun Sumber Dana</span>
-                                        </div>
-                                            {/* {Array.from({length:7}, (_, index)=>(
-                                        <div key={index} class="form-check mb-2">
-                                            <input class="form-check-input" type="checkbox" id={`check${index}`} checked={checkboxes[index]} onChange={() => handleCheckboxChange(index)}/>
-                                            <label class="form-check-label" for={`check${index}`}>
-                                                Default checkbox
-                                            </label>
-                                        </div>
-                                        ))} */}
+                                        </div>                                            
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
                                         {dataFilter?.anggaran_filter_list_rincian_objek?.slice(0,5).map((item, index) => (
                                             <div key={index} class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id={`check${index}`} value={item.kode_ro}/>
-                                                <label class="form-check-label" for={`check${index}`}>
+                                                <input class="form-check-input" type="checkbox" id={`check-akun-sumber-dana-${index}`} value={item.kode_ro}/>
+                                                <label class="form-check-label" for={`check-akun-sumber-dana-${index}`}>
                                                     {item.nama_ro}
                                                 </label>
                                             </div>
@@ -495,8 +487,8 @@ const FilterRightSide = () => {
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
                                         {dataFilter?.anggaran_filter_list_rincian_sub_objek?.slice(0,5).map((item, index) => (
                                             <div key={index} class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id={`check${index}`} value={item.kode_sro}/>
-                                                <label class="form-check-label" for={`check${index}`}>
+                                                <input class="form-check-input" type="checkbox" id={`check-sumber-dana-${index}`} value={item.kode_sro}/>
+                                                <label class="form-check-label" for={`check-sumber-dana-${index}`}>
                                                     {item.nama_sro}
                                                 </label>
                                             </div>
@@ -505,9 +497,8 @@ const FilterRightSide = () => {
                                             </CardBody>
                                         </Card>
                                     </Col>
-                                </Row>
+                                </Row> */}
                         </SimpleBar>
-
                     </OffcanvasBody>
                 </Offcanvas>
             </div>
