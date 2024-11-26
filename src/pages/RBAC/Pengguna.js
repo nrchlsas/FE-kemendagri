@@ -78,6 +78,7 @@ const Pengguna = () => {
         roles: 0,
         first_name: "",
         last_name: "",
+        id_daerah: 0,
     });
     const [show, setShow] = useState(false)
     const [modal_center, setmodal_center] = useState(false);
@@ -133,10 +134,14 @@ const Pengguna = () => {
         e.preventDefault();
 
         try {
-            const json = Object.assign({}, formData);
+            const json = Object.assign({}, formData, { is_deleted: false });
             let response = null;
 
             if (is_edit) {
+                json.id_user = parseInt(formData.id);
+                json.id_roles = parseInt(formData.roles);
+                delete json.id;
+                delete json.roles;
                 response = api.create(`${API_9007_URI}/users/update-user`, json);
             } else {
                 response = api.create(`${API_9007_URI}/users/register`, json);
@@ -206,6 +211,7 @@ const Pengguna = () => {
             roles: 0,
             first_name: "",
             last_name: "",
+            id_daerah: 0,
         })
     }
 
