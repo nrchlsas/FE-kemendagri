@@ -1928,8 +1928,8 @@ const ContentDapodikV2 = () => {
                             </>)}                                                        
                             <td>
                               <span style={{ float: "right" }}>
-                                {item.totalanggaran
-                                  ? parseInt(item.totalanggaran).toLocaleString(
+                                {item.total_anggaran
+                                  ? parseInt(item.total_anggaran).toLocaleString(
                                       "id-ID"
                                     )
                                   : "-"}
