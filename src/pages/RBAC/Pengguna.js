@@ -20,49 +20,6 @@ import { size } from "lodash";
 
 
 const API_9007_URI = `${process.env.REACT_APP_API_URL_9007}`;
-const permissionForm = {
-    email: {
-        id: "email",
-        label: "Menu",
-        type: "text",
-        placeholder: "Input email",
-        defaultValue: "",
-        rules: {
-            required: true,
-        },
-    },
-    status: {
-        id: "status",
-        label: "Status",
-        type: "checkbox",
-        placeholder: "",
-        defaultValue: true,
-        rules: {
-            required: true,
-        },
-    },
-    is_verifikasi: {
-        id: "is_verifikasi",
-        label: "Verifikasi",
-        type: "checkbox",
-        placeholder: "",
-        defaultValue: true,
-        rules: {
-            required: true,
-        },
-    },
-    roles: {
-        id: "roles",
-        label: "Role",
-        type: "select",
-        placeholder: "Input nama role",
-        defaultValue: "",
-        rules: {
-            required: true,
-        },
-    },
-
-};
 const api = new APIClient();
 const isEmailValid = (email) => {
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
@@ -83,6 +40,7 @@ const Pengguna = () => {
     const [show, setShow] = useState(false)
     const [modal_center, setmodal_center] = useState(false);
     const [list_role, setListRole] = useState([]);
+    const [list_daerah, setListDaerah] = useState([]);
     const [resultData, setResultData] = useState([]);
     const [submitProcess, setSubmitProcess] = useState(false)
     const [is_valid, setIsValid] = useState(false);
@@ -98,6 +56,7 @@ const Pengguna = () => {
     useEffect(() => {
         populate_data();
         populate_roles();
+        populate_daerah();
     }, [])
 
     useEffect(() => {
@@ -106,7 +65,26 @@ const Pengguna = () => {
         if (!isEmailValid(formData.email)) is_valid = false;
         if (formData.roles == 0) is_valid = false;
         setIsValid(is_valid);
+        // console.log('formData', formData);
     }, [formData])
+
+    async function populate_daerah() {
+        // populate list role
+        const json = { page: 1, size: 100 }
+        let response = api.get(`${API_9007_URI}/rbac/list-daerah`);
+        let data = await response;
+        if (data.code === 200) {
+            const list_area = data.data.map(d => {
+                return {
+                    id_daerah: d.id_daerah,
+                    kode_ddn: parseInt(d.kode_ddn),
+                    nama_daerah: d.nama_daerah
+                }
+            });
+            console.log({ list_area });
+            setListDaerah(list_area);
+        }
+    }
 
     async function populate_roles() {
         // populate list role
@@ -192,6 +170,7 @@ const Pengguna = () => {
             roles: data.id_roles,
             first_name: data.first_name || "",
             last_name: data.last_name || "",
+            id_daerah: data.id_daerah || 0
         }));
         window.scrollTo(0, 0)
     }
@@ -218,8 +197,8 @@ const Pengguna = () => {
     async function do_delete() {
         try {
             const json = {
-                id: delete_data.id,
-                "is_deleted": true
+                id_user: parseInt(delete_data.id),
+                is_deleted: true
             };
             let response = api.create(`${API_9007_URI}/users/delete-user`, json);
             let data = await response;
@@ -290,6 +269,20 @@ const Pengguna = () => {
                                                     />
                                                     <span>Varifikasi</span>
                                                 </Label>
+                                            </FormGroup>
+                                            <FormGroup>
+                                                <Label>Daerah</Label>
+                                                <select name="id_daerah"
+                                                    onChange={(e) => changeValue(e)}
+                                                    className="form-select"
+                                                    value={formData.id_daerah}>
+                                                    <option value={0}>-- Pilih Data --</option>
+                                                    {list_daerah.map(item => (
+                                                        <option key={'option_daerah_' + item.id_daerah} value={item.id_daerah}>
+                                                            {item.nama_daerah}
+                                                        </option>
+                                                    ))}
+                                                </select>
                                             </FormGroup>
                                             <FormGroup>
                                                 <Label>Role</Label>
