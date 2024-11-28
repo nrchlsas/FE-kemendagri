@@ -104,7 +104,13 @@ const Roles = () => {
         try {
             let response = null;
             if (is_edit) {
-                response = api.create(`${API_9007_URI}/rbac/update-roles`, json);
+                const json_edit = {
+                    id: formData.id,
+                    status: formData.status,
+                    uuid: formData.uuid,
+                    nama_roles: formData.nama_roles,
+                }
+                response = api.create(`${API_9007_URI}/rbac/update-roles`, json_edit);
             } else {
                 response = api.create(`${API_9007_URI}/rbac/create-roles`, json);
             }
@@ -195,13 +201,19 @@ const Roles = () => {
         try {
             const json = {
                 "id_role": delete_data.id,
-                "is_deleted": true
+                "is_deleted": true,
+                uuid: delete_data.uuid
             }
-            let response = api.create(`${API_9007_URI}/rbac/delete-menu`, json);
+            let response = api.create(`${API_9007_URI}/rbac/delete-roles`, json);
             let data = await response;
             if (data.code === 200) {
                 populate_data();
-                // setModalAlert({ type: 'success', title: "Hapus Data", message: "Proses hapus data berhasil", open: true })
+                setModalAlert({
+                    open: true,
+                    type: 'success',
+                    title: 'Hapus Data',
+                    message: 'Proses hapus data berhasil'
+                });
             }
         } catch (error) {
             setModalAlert({
