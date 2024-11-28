@@ -85,7 +85,101 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
         // Kirimkan payload ke parent
         onSelectFilter(cleanedFilters);
     };
+
+    const [displayedData, setDisplayedData] = useState({
+        program: [],
+        kegiatan: [],
+        subKegiatan: [],
+        objek: [],
+        rincianObjek: [],
+        subRincianObjek:[]
+    });
+    const [dataToShow, setDataToShow] = useState({
+        program: 10,
+        kegiatan: 10,
+        subKegiatan: 10,
+        objek: 10,
+        rincianObjek: 10,
+        subRincianObjek:10
+    });
+    const [isLoading, setIsLoading] = useState(false);
     
+    // Fungsi untuk memuat lebih banyak data berdasarkan kategori
+    const loadMoreData = (namaField, dataKey) => {
+        if (dataFilter[namaField] && !isLoading) {
+            setIsLoading(true);
+    
+            // Menambahkan data baru ke data yang sudah ada
+            const newData = dataFilter[namaField].slice(0, dataToShow[dataKey] + 5);
+            setDisplayedData((prev) => ({
+                ...prev,
+                [dataKey]: newData,
+            }));
+    
+            // Update jumlah data yang ditampilkan
+            setDataToShow((prev) => ({
+                ...prev,
+                [dataKey]: prev[dataKey] + 5,
+            }));
+    
+            setIsLoading(false);
+        }
+    };
+    
+    // Fungsi untuk menangani scroll
+    const handleScroll = (e, namaField, dataKey) => {
+        const bottom = e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight <= 10;
+        if (bottom) {
+            loadMoreData(namaField, dataKey);
+        }
+    };
+    
+    // Gunakan useEffect untuk setiap kategori
+    useEffect(() => {
+        loadMoreData("filter_program", "program");
+    }, [dataFilter]);
+
+    useEffect(() => {
+        loadMoreData("filter_subgiat", "subKegiatan");
+    }, [dataFilter]);
+    
+    useEffect(() => {
+        loadMoreData("filter_giat", "kegiatan");
+    }, [dataFilter]);
+    
+    useEffect(() => {
+        loadMoreData("filter_objek", "objek");
+    }, [dataFilter]);
+    
+    useEffect(() => {
+        loadMoreData("filter_ro", "rincianObjek");
+    }, [dataFilter]);
+
+    useEffect(() => {
+        loadMoreData("filter_sro", "subRincianObjek");
+    }, [dataFilter]);
+
+    
+    const resetFilters = () => {
+        // Reset state selectedValues ke nilai awal
+        const initialValues = {
+            fungsi: [],
+            spm: [],
+            urusan: [],
+            bidangUrusan: [],
+            program: [],
+            kegiatan: [],
+            subKegiatan: [],
+            objek: [],
+            rincianObjek: [],
+            subRincianObjek: [],
+        };
+    
+        setSelectedValues(initialValues);
+    
+        // Kirimkan payload kosong ke parent
+        onSelectFilter(cleanPayload(initialValues));
+    };
     return (
         <React.Fragment>
             <button
@@ -102,7 +196,19 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                 </div>
                 <Offcanvas style={{width: "700px"}} isOpen={open} toggle={toggleLeftCanvas} direction="end" className="bg-light offcanvas-end border-0">
                     <OffcanvasHeader className="d-flex align-items-center bg-light bg-gradient p-3 offcanvas-header-light" toggle={toggleLeftCanvas}>
-                    <i className='mdi mdi-filter-outline fs-22'></i><span className="m-0 me-2 text-dark">FILTER</span>
+                    <i className='mdi mdi-filter-outline fs-22'></i><span className="m-0 me-2 text-dark">FILTER</span> 
+                    <button onClick={resetFilters} style={{
+                                        backgroundColor: "#007bff",
+                                        color: "white",
+                                        padding: "5px 10px",
+                                        border: "none",
+                                        borderRadius: "5px",
+                                        cursor: "pointer",
+                                        fontSize: "16px",
+                                        marginBottom: "16px"
+                                    }}>
+                                        Reset Filter
+                                    </button>
                     </OffcanvasHeader>
                     <OffcanvasBody className="p-0">
                         <SimpleBar className="h-100 p-2">
@@ -110,15 +216,15 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                     <Col md={6}>
                                         <Card className='card-height-100 card-animate'>
                                             <CardBody>
-                                        <div className='mb-2'>
+                                        <div className='mb-3'>
                                             <span style={{
-                                                backgroundColor: "#007bff",
-                                                color: "white",
-                                                padding: "2px 5px",
+                                                backgroundColor: "#FCAD24",
+                                                color: "black",
+                                                padding: "5px 10px",
                                                 border: "none",
                                                 borderRadius: "5px",
                                                 width:"30%",
-                                                fontSize: "10px",
+                                                fontSize: "12px",
                                             }}>Fungsi</span>
                                         </div>                                            
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
@@ -137,14 +243,14 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                     <Col md={6}>
                                         <Card className='card-height-100 card-animate'>
                                             <CardBody>
-                                            <div className='mb-2'>
+                                            <div className='mb-3'>
                                             <span style={{
-                                            backgroundColor: "#007bff",
-                                            color: "white",
-                                            padding: "2px 5px",
+                                            backgroundColor: "#F35F52",
+                                            color: "black",
+                                            padding: "5px 10px",
                                             border: "none",
                                             borderRadius: "5px",
-                                            fontSize: "10px",
+                                            fontSize: "12px",
                                         }}>SPM</span>
                                         </div>
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
@@ -166,15 +272,15 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                     <Col md={6}>
                                         <Card className='card-height-100 card-animate'>
                                             <CardBody>
-                                        <div className='mb-2'>
+                                        <div className='mb-3'>
                                             <span style={{
-                                                backgroundColor: "#007bff",
-                                                color: "white",
-                                                padding: "2px 5px",
+                                                backgroundColor: "#FFB7F1",
+                                                color: "black",
+                                                padding: "5px 10px",
                                                 border: "none",
                                                 borderRadius: "5px",
                                                 width:"30%",
-                                                fontSize: "10px",
+                                                fontSize: "12px",
                                             }}>Urusan</span>
                                         </div>                                            
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
@@ -193,15 +299,15 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                     <Col md={6}>
                                         <Card className='card-height-100 card-animate'>
                                             <CardBody>
-                                            <div className='mb-2'>
+                                            <div className='mb-3'>
                                             <span style={{
-                                            backgroundColor: "#007bff",
-                                            color: "white",
-                                            padding: "2px 5px",
+                                            backgroundColor: "#65FFDC",
+                                            color: "black",
+                                            padding: "5px 10px",
                                             border: "none",
                                             borderRadius: "5px",
                                             
-                                            fontSize: "10px",
+                                            fontSize: "12px",
                                         }}>Bidang Urusan</span>
                                         </div>
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
@@ -223,15 +329,15 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                     <Col md={6}>
                                         <Card className='card-height-100 card-animate'>
                                             <CardBody>
-                                        <div className='mb-2'>
+                                        <div className='mb-3'>
                                             <span style={{
                                                 backgroundColor: "#007bff",
-                                                color: "white",
-                                                padding: "2px 5px",
+                                                color: "black",
+                                                padding: "5px 10px",
                                                 border: "none",
                                                 borderRadius: "5px",
                                                 width:"30%",
-                                                fontSize: "10px",
+                                                fontSize: "12px",
                                             }}>Program</span>
                                         </div>
                                             {/* {Array.from({length:7}, (_, index)=>(
@@ -242,8 +348,8 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                             </label>
                                         </div>
                                         ))} */}
-                                        <div style={{overflowY: "auto", maxHeight:"300px"}}>
-                                        {dataFilter?.filter_program?.map((item, index) => (
+                                        <div style={{overflowY: "auto", maxHeight:"300px"}} onScroll={(e) => handleScroll(e, "filter_program", "program")}>
+                                        {displayedData?.program?.map((item, index) => (
                                             <div key={index} class="form-check mb-2">
                                                 <input onChange={(e)=>handleCheckboxChange(e, "program")} checked={selectedValues.program.includes(item.kode_program)} class="form-check-input" type="checkbox" id={`check-program-${index}`} value={item.kode_program}/>
                                                 <label class="form-check-label" for={`check-program-${index}`}>
@@ -256,21 +362,21 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                         </Card>
                                     </Col>
                                     <Col md={6}>
-                                        <Card className='card-height-100 card-animate' onScroll={(e)=>handleScroll(e, 'filter_giat')}>
+                                        <Card className='card-height-100 card-animate' onScroll={(e) => handleScroll(e, "filter_kegiatan", "kegiatan")}>
                                             <CardBody>
-                                            <div className='mb-2'>
+                                            <div className='mb-3'>
                                             <span style={{
-                                            backgroundColor: "#007bff",
-                                            color: "white",
-                                            padding: "2px 5px",
+                                            backgroundColor: "#2DAED4",
+                                            color: "black",
+                                            padding: "5px 10px",
                                             border: "none",
                                             borderRadius: "5px",
                                             
-                                            fontSize: "10px",
+                                            fontSize: "12px",
                                         }}>Kegiatan</span>
                                         </div>
-                                        <div style={{overflowY: "auto", maxHeight:"300px"}}>
-                                        {dataFilter?.filter_giat?.map((item, index) => (
+                                        <div style={{overflowY: "auto", maxHeight:"300px"}} onScroll={(e) => handleScroll(e, "filter_giat", "kegiatan")}>
+                                        {displayedData.kegiatan.map((item, index) => (
                                             <div key={index} class="form-check mb-2">
                                                 <input onChange={(e)=>handleCheckboxChange(e, "kegiatan")} checked={selectedValues.kegiatan.includes(item.kode_giat)} class="form-check-input" type="checkbox" id={`check-kegiatan-${index}`} value={item.kode_giat}/>
                                                 <label class="form-check-label" for={`check-kegiatan-${index}`}>
@@ -288,19 +394,19 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                     <Col md={6}>
                                         <Card className='card-height-100 card-animate'>
                                             <CardBody>
-                                        <div className='mb-2'>
+                                        <div className='mb-3'>
                                             <span style={{
-                                                backgroundColor: "#007bff",
-                                                color: "white",
-                                                padding: "2px 5px",
+                                                backgroundColor: "#FFE038",
+                                                color: "black",
+                                                padding: "5px 10px",
                                                 border: "none",
                                                 borderRadius: "5px",
                                                 width:"30%",
-                                                fontSize: "10px",
+                                                fontSize: "12px",
                                             }}>Sub Kegiatan</span>
                                         </div>                                            
-                                        <div style={{overflowY: "auto", maxHeight:"300px"}} >
-                                        {dataFilter?.filter_subgiat?.map((item, index) => (
+                                        <div style={{overflowY: "auto", maxHeight:"300px"}} onScroll={(e) => handleScroll(e, "filter_subgiat", "subKegiatan")}>
+                                        {displayedData.subKegiatan.map((item, index) => (
                                             <div key={index} class="form-check mb-2">
                                                 <input onChange={(e)=>handleCheckboxChange(e, "subKegiatan")} checked={selectedValues.subKegiatan.includes(item.kode_sub_giat)} class="form-check-input" type="checkbox" id={`check-sub-kegiatan-${index}`} value={item.kode_sub_giat}/>
                                                 <label class="form-check-label" for={`check-sub-kegiatan-${index}`}>
@@ -315,19 +421,19 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                     <Col md={6}>
                                         <Card className='card-height-100 card-animate'>
                                             <CardBody>
-                                            <div className='mb-2'>
+                                            <div className='mb-3'>
                                             <span style={{
-                                            backgroundColor: "#007bff",
-                                            color: "white",
-                                            padding: "2px 5px",
+                                            backgroundColor: "#AE9DF7",
+                                            color: "black",
+                                            padding: "5px 10px",
                                             border: "none",
                                             borderRadius: "5px",
                                             
-                                            fontSize: "10px",
+                                            fontSize: "12px",
                                         }}>Objek</span>
                                         </div>
-                                        <div style={{overflowY: "auto", maxHeight:"300px"}}>
-                                        {dataFilter?.filter_objek?.slice(0,5).map((item, index) => (
+                                        <div style={{overflowY: "auto", maxHeight:"300px"}} onScroll={(e) => handleScroll(e, "filter_objek", "objek")}>
+                                        {displayedData?.objek?.map((item, index) => (
                                             <div key={index} class="form-check mb-2">
                                                 <input onChange={(e)=>handleCheckboxChange(e, "objek")} checked={selectedValues.objek.includes(item.kode_objek)} class="form-check-input" type="checkbox" id={`check-objek-${index}`} value={item.kode_objek}/>
                                                 <label class="form-check-label" for={`check-objek-${index}`}>
@@ -344,19 +450,19 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                     <Col md={6}>
                                         <Card className='card-height-100 card-animate'>
                                             <CardBody>
-                                        <div className='mb-2'>
+                                        <div className='mb-3'>
                                             <span style={{
-                                                backgroundColor: "#007bff",
-                                                color: "white",
-                                                padding: "2px 5px",
+                                                backgroundColor: "#E5D3B4",
+                                                color: "black",
+                                                padding: "5px 10px",
                                                 border: "none",
                                                 borderRadius: "5px",
                                                 width:"30%",
-                                                fontSize: "10px",
+                                                fontSize: "12px",
                                             }}>Rincian Objek</span>
                                         </div>
-                                        <div style={{overflowY: "auto", maxHeight:"300px"}}>
-                                        {dataFilter?.filter_ro?.slice(0,5).map((item, index) => (
+                                        <div style={{overflowY: "auto", maxHeight:"300px"}} onScroll={(e) => handleScroll(e, "filter_ro", "rincianObjek")}>
+                                        {displayedData?.rincianObjek?.map((item, index) => (
                                             <div key={index} class="form-check mb-2">
                                                 <input onChange={(e)=>handleCheckboxChange(e, "rincianObjek")} checked={selectedValues.rincianObjek.includes(item.kode_ro)} class="form-check-input" type="checkbox" id={`check-rincian-objek-${index}`} value={item.kode_ro}/>
                                                 <label class="form-check-label" for={`check-rincian-objek-${index}`}>
@@ -371,19 +477,19 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                     <Col md={6}>
                                         <Card className='card-height-100 card-animate'>
                                             <CardBody>
-                                            <div className='mb-2'>
+                                            <div className='mb-3'>
                                             <span style={{
-                                            backgroundColor: "#007bff",
-                                            color: "white",
-                                            padding: "2px 5px",
+                                            backgroundColor: "#B7EBF2",
+                                            color: "black",
+                                            padding: "5px 10px",
                                             border: "none",
                                             borderRadius: "5px",
                                             
-                                            fontSize: "10px",
+                                            fontSize: "12px",
                                         }}>Sub Rincian Objek</span>
                                         </div>
-                                        <div style={{overflowY: "auto", maxHeight:"300px"}}>
-                                        {dataFilter?.filter_sro?.slice(0,5).map((item, index) => (
+                                        <div style={{overflowY: "auto", maxHeight:"300px"}} onScroll={(e) => handleScroll(e, "filter_sro", "subRincianObjek")}>
+                                        {displayedData?.subRincianObjek?.map((item, index) => (
                                             <div key={index} class="form-check mb-2">
                                                 <input onChange={(e)=>handleCheckboxChange(e, "subRincianObjek")}  checked={selectedValues.subRincianObjek.includes(item.kode_sro)} class="form-check-input" type="checkbox" id={`check-sub-rincian-objek-${index}`} value={item.kode_sro}/>
                                                 <label class="form-check-label" for={`check-sub-rincian-objek-${index}`}>
