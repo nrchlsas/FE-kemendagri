@@ -16,7 +16,7 @@ import SimpleBar from "simplebar-react";
 // const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
 const FilterRightSide = ({ dataFilter, onSelectFilter }) => {    
-
+    console.log(dataFilter, 'ini filter side')
     // open offcanvas
     const [open, setOpen] = useState(false);
     const toggleLeftCanvas = () => {
@@ -41,74 +41,51 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
     const toTop = () => {
         document.body.scrollTop = 0;
         document.documentElement.scrollTop = 0;
-    };        
-
-
-    // const [dataFilter, setDataFilter] = useState([])
-    // const [errorDataFilter, setErrorDataFilter] = useState([])
-    // const [loadingDataFilter, setLoadingDataFilter] = useState([])
-
-    // const getDataFilter = () => {
-    // const fetchData = async () => {
-    //     try {
-    //       const requestOptions = {
-    //         method: "POST",
-    //         headers: { "Content-Type": "application/json" },
-    //         body: JSON.stringify({
-
-    //         }),
-    //       };          
-    //       const response = await fetch(
-    //         `${API_URI}/dashboard_anggaran_analisis`,
-    //         requestOptions
-    //       );
-  
-    //       if (!response.ok) {
-    //         throw new Error("Network response was not ok");
-    //       }
-    //       const dataFilter = await response.json();
-
-    //       setDataFilter(dataFilter?.data)
-          
-    //     } catch (errorDapodikTabel) {
-    //         setErrorDataFilter(errorDapodikTabel);
-    //     } finally {
-    //         setLoadingDataFilter(false);
-    //     }
-    //   };
-    //   fetchData();
-    // };
-
-    // useEffect(() => {
-    //     getDataFilter()
-    // },[])
+    };            
 
     const [selectedValues, setSelectedValues] = useState({
         fungsi: [],
-        // spm: [],
-        // urusan: [],
-        // bidangUrusan: [],
-      });
+        spm: [],
+        urusan: [],
+        bidangUrusan:[],
+        program:[],
+        kegiatan:[],
+        subKegiatan: [],
+        objek: [],
+        rincianObjek: [],
+        subRincianObjek: [],
+    });
     
-      // Fungsi untuk menangani perubahan checkbox
-      const handleCheckboxChange = (event, filterType) => {
+    const cleanPayload = (payload) => {
+        return Object.fromEntries(
+            Object.entries(payload).filter(([_, value]) => !(Array.isArray(value) && value.length === 0))
+        );
+    };
+    
+    const handleCheckboxChange = (event, filterType) => {
         const { value, checked } = event.target;
     
+        // Salin state filter saat ini
         const updatedValues = { ...selectedValues };
+    
         if (checked) {
-          // Tambahkan nilai jika dicentang
-          updatedValues[filterType].push(value);
+            // Tambahkan nilai jika checkbox dicentang
+            updatedValues[filterType].push(value);
         } else {
-          // Hapus nilai jika tidak dicentang
-          updatedValues[filterType] = updatedValues[filterType].filter(
-            (item) => item !== value
-          );
+            // Hapus nilai jika checkbox tidak dicentang
+            updatedValues[filterType] = updatedValues[filterType].filter((item) => item !== value);
         }
     
+        // Perbarui state filter di child
         setSelectedValues(updatedValues);
-        onSelectFilter(updatedValues);
-      };
-
+    
+        // Bersihkan payload sebelum dikirim ke parent
+        const cleanedFilters = cleanPayload(updatedValues);
+    
+        // Kirimkan payload ke parent
+        onSelectFilter(cleanedFilters);
+    };
+    
     return (
         <React.Fragment>
             <button
@@ -116,14 +93,6 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                 className="btn btn-danger btn-icon" id="back-to-top">
                 <i className="ri-arrow-up-line"></i>
             </button>
-
-            {/* {preloader === "enable" && <div id="preloader">
-                <div id="status">
-                    <div className="spinner-border text-primary avatar-sm" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </div>
-                </div>
-            </div>} */}
 
             <div>
                 <div className="customizer-setting d-none d-md-block">
@@ -153,9 +122,9 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                             }}>Fungsi</span>
                                         </div>                                            
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
-                                        {dataFilter?.anggaran_filter_list_fungsi?.map((item, index) => (
+                                        {dataFilter?.filter_fungsi?.map((item, index) => (
                                             <div key={index} class="form-check mb-2">
-                                                <input onChange={(e) => handleCheckboxChange(e, "fungsi")} class="form-check-input" type="checkbox" id={`check-fungsi-${index}`} value={item.kode_fungsi}/>
+                                                <input onChange={(e) => handleCheckboxChange(e, "fungsi")} checked={selectedValues.fungsi.includes(item.kode_fungsi)} class="form-check-input" type="checkbox" id={`check-fungsi-${index}`} value={item.kode_fungsi}/>
                                                 <label class="form-check-label" for={`check-fungsi-${index}`}>
                                                     {item.nama_fungsi}
                                                 </label>
@@ -175,14 +144,13 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                             padding: "2px 5px",
                                             border: "none",
                                             borderRadius: "5px",
-                                            
                                             fontSize: "10px",
                                         }}>SPM</span>
                                         </div>
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
-                                        {dataFilter?.anggaran_filter_list_spm?.map((item, index) => (
+                                        {dataFilter?.filter_spm?.map((item, index) => (
                                             <div key={index} class="form-check mb-2">
-                                                <input onChange={handleCheckboxChange} class="form-check-input" type="checkbox" id={`check-spm-${index}`} value={item.id_spm}/>
+                                                <input onChange={(e)=>handleCheckboxChange(e, "spm")} checked={selectedValues.spm.includes(item.spm_teks)} class="form-check-input" type="checkbox" id={`check-spm-${index}`} value={item.spm_teks}/>
                                                 <label class="form-check-label" for={`check-spm-${index}`}>
                                                     {item.spm_teks}
                                                 </label>
@@ -196,7 +164,7 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                 </Row>   
                                 <Row >
                                     <Col md={6}>
-                                        <Card className='card-animate'>
+                                        <Card className='card-height-100 card-animate'>
                                             <CardBody>
                                         <div className='mb-2'>
                                             <span style={{
@@ -210,9 +178,9 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                             }}>Urusan</span>
                                         </div>                                            
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
-                                        {dataFilter?.anggaran_filter_list_urusan?.map((item, index) => (
+                                        {dataFilter?.filter_urusan?.map((item, index) => (
                                             <div key={index} class="form-check mb-2">
-                                                <input onChange={handleCheckboxChange} class="form-check-input" type="checkbox" id={`check-urusan-${index}`} value={item.kode_urusan}/>
+                                                <input onChange={(e)=>handleCheckboxChange(e, "urusan")} checked={selectedValues.urusan.includes(item.kode_urusan)} class="form-check-input" type="checkbox" id={`check-urusan-${index}`} value={item.kode_urusan}/>
                                                 <label class="form-check-label" for={`check-urusan-${index}`}>
                                                     {item.nama_urusan}
                                                 </label>
@@ -237,9 +205,9 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                         }}>Bidang Urusan</span>
                                         </div>
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
-                                        {dataFilter?.anggaran_filter_list_bidang_urusan?.map((item, index) => (
+                                        {dataFilter?.filter_bidang_urusan?.map((item, index) => (
                                             <div key={index} class="form-check mb-2">
-                                                <input onChange={handleCheckboxChange} class="form-check-input" type="checkbox" id={`check-bidang-urusan-${index}`} value={item.kode_bidang_urusan}/>
+                                                <input onChange={(e)=>handleCheckboxChange(e, "bidangUrusan")} checked={selectedValues.bidangUrusan.includes(item.kode_bidang_urusan)} class="form-check-input" type="checkbox" id={`check-bidang-urusan-${index}`} value={item.kode_bidang_urusan}/>
                                                 <label class="form-check-label" for={`check-bidang-urusan-${index}`}>
                                                     {item.nama_bidang_urusan}
                                                 </label>
@@ -253,7 +221,7 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                 </Row>  
                                 <Row >
                                     <Col md={6}>
-                                        <Card className='card-animate'>
+                                        <Card className='card-height-100 card-animate'>
                                             <CardBody>
                                         <div className='mb-2'>
                                             <span style={{
@@ -275,9 +243,9 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                         </div>
                                         ))} */}
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
-                                        {dataFilter?.anggaran_filter_list_program?.map((item, index) => (
+                                        {dataFilter?.filter_program?.map((item, index) => (
                                             <div key={index} class="form-check mb-2">
-                                                <input onChange={handleCheckboxChange} class="form-check-input" type="checkbox" id={`check-program-${index}`} value={item.kode_program}/>
+                                                <input onChange={(e)=>handleCheckboxChange(e, "program")} checked={selectedValues.program.includes(item.kode_program)} class="form-check-input" type="checkbox" id={`check-program-${index}`} value={item.kode_program}/>
                                                 <label class="form-check-label" for={`check-program-${index}`}>
                                                     {item.nama_program}
                                                 </label>
@@ -288,7 +256,7 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                         </Card>
                                     </Col>
                                     <Col md={6}>
-                                        <Card className='card-height-100 card-animate'>
+                                        <Card className='card-height-100 card-animate' onScroll={(e)=>handleScroll(e, 'filter_giat')}>
                                             <CardBody>
                                             <div className='mb-2'>
                                             <span style={{
@@ -302,9 +270,9 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                         }}>Kegiatan</span>
                                         </div>
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
-                                        {dataFilter?.anggaran_filter_list_giat?.map((item, index) => (
+                                        {dataFilter?.filter_giat?.map((item, index) => (
                                             <div key={index} class="form-check mb-2">
-                                                <input onChange={handleCheckboxChange} class="form-check-input" type="checkbox" id={`check-kegiatan-${index}`} value={item.kode_giat}/>
+                                                <input onChange={(e)=>handleCheckboxChange(e, "kegiatan")} checked={selectedValues.kegiatan.includes(item.kode_giat)} class="form-check-input" type="checkbox" id={`check-kegiatan-${index}`} value={item.kode_giat}/>
                                                 <label class="form-check-label" for={`check-kegiatan-${index}`}>
                                                     {item.nama_giat}
                                                 </label>
@@ -318,7 +286,7 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                 </Row>
                                 <Row >
                                     <Col md={6}>
-                                        <Card className='card-animate'>
+                                        <Card className='card-height-100 card-animate'>
                                             <CardBody>
                                         <div className='mb-2'>
                                             <span style={{
@@ -330,19 +298,11 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                                 width:"30%",
                                                 fontSize: "10px",
                                             }}>Sub Kegiatan</span>
-                                        </div>
-                                            {/* {Array.from({length:7}, (_, index)=>(
-                                        <div key={index} class="form-check mb-2">
-                                            <input onChange={handleCheckboxChange} class="form-check-input" type="checkbox" id={`check${index}`} checked={checkboxes[index]} onChange={() => handleCheckboxChange(index)}/>
-                                            <label class="form-check-label" for={`check${index}`}>
-                                                Default checkbox
-                                            </label>
-                                        </div>
-                                        ))} */}
-                                        <div style={{overflowY: "auto", maxHeight:"300px"}}>
-                                        {dataFilter?.anggaran_filter_list_sub_giat?.slice(0,5).map((item, index) => (
+                                        </div>                                            
+                                        <div style={{overflowY: "auto", maxHeight:"300px"}} >
+                                        {dataFilter?.filter_subgiat?.map((item, index) => (
                                             <div key={index} class="form-check mb-2">
-                                                <input onChange={handleCheckboxChange} class="form-check-input" type="checkbox" id={`check-sub-kegiatan-${index}`} value={item.kode_sub_giat}/>
+                                                <input onChange={(e)=>handleCheckboxChange(e, "subKegiatan")} checked={selectedValues.subKegiatan.includes(item.kode_sub_giat)} class="form-check-input" type="checkbox" id={`check-sub-kegiatan-${index}`} value={item.kode_sub_giat}/>
                                                 <label class="form-check-label" for={`check-sub-kegiatan-${index}`}>
                                                     {item.nama_sub_giat}
                                                 </label>
@@ -367,9 +327,9 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                         }}>Objek</span>
                                         </div>
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
-                                        {dataFilter?.anggaran_filter_list_objek?.slice(0,5).map((item, index) => (
+                                        {dataFilter?.filter_objek?.slice(0,5).map((item, index) => (
                                             <div key={index} class="form-check mb-2">
-                                                <input onChange={handleCheckboxChange} class="form-check-input" type="checkbox" id={`check-objek-${index}`} value={item.kode_objek}/>
+                                                <input onChange={(e)=>handleCheckboxChange(e, "objek")} checked={selectedValues.objek.includes(item.kode_objek)} class="form-check-input" type="checkbox" id={`check-objek-${index}`} value={item.kode_objek}/>
                                                 <label class="form-check-label" for={`check-objek-${index}`}>
                                                     {item.nama_objek}
                                                 </label>
@@ -382,7 +342,7 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                 </Row>
                                 <Row >
                                     <Col md={6}>
-                                        <Card className='card-animate'>
+                                        <Card className='card-height-100 card-animate'>
                                             <CardBody>
                                         <div className='mb-2'>
                                             <span style={{
@@ -395,18 +355,10 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                                 fontSize: "10px",
                                             }}>Rincian Objek</span>
                                         </div>
-                                            {/* {Array.from({length:7}, (_, index)=>(
-                                        <div key={index} class="form-check mb-2">
-                                            <input onChange={handleCheckboxChange} class="form-check-input" type="checkbox" id={`check${index}`} checked={checkboxes[index]} onChange={() => handleCheckboxChange(index)}/>
-                                            <label class="form-check-label" for={`check${index}`}>
-                                                Default checkbox
-                                            </label>
-                                        </div>
-                                        ))} */}
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
-                                        {dataFilter?.anggaran_filter_list_rincian_objek?.slice(0,5).map((item, index) => (
+                                        {dataFilter?.filter_ro?.slice(0,5).map((item, index) => (
                                             <div key={index} class="form-check mb-2">
-                                                <input onChange={handleCheckboxChange} class="form-check-input" type="checkbox" id={`check-rincian-objek-${index}`} value={item.kode_ro}/>
+                                                <input onChange={(e)=>handleCheckboxChange(e, "rincianObjek")} checked={selectedValues.rincianObjek.includes(item.kode_ro)} class="form-check-input" type="checkbox" id={`check-rincian-objek-${index}`} value={item.kode_ro}/>
                                                 <label class="form-check-label" for={`check-rincian-objek-${index}`}>
                                                     {item.nama_ro}
                                                 </label>
@@ -431,9 +383,9 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                         }}>Sub Rincian Objek</span>
                                         </div>
                                         <div style={{overflowY: "auto", maxHeight:"300px"}}>
-                                        {dataFilter?.anggaran_filter_list_rincian_sub_objek?.slice(0,5).map((item, index) => (
+                                        {dataFilter?.filter_sro?.slice(0,5).map((item, index) => (
                                             <div key={index} class="form-check mb-2">
-                                                <input onChange={handleCheckboxChange} class="form-check-input" type="checkbox" id={`check-sub-rincian-objek-${index}`} value={item.kode_sro}/>
+                                                <input onChange={(e)=>handleCheckboxChange(e, "subRincianObjek")}  checked={selectedValues.subRincianObjek.includes(item.kode_sro)} class="form-check-input" type="checkbox" id={`check-sub-rincian-objek-${index}`} value={item.kode_sro}/>
                                                 <label class="form-check-label" for={`check-sub-rincian-objek-${index}`}>
                                                     {item.nama_sro}
                                                 </label>
@@ -443,63 +395,7 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                                             </CardBody>
                                         </Card>
                                     </Col>
-                                </Row>
-                                {/* <Row >
-                                    <Col md={6}>
-                                        <Card className='card-animate'>
-                                            <CardBody>
-                                        <div className='mb-2'>
-                                            <span style={{
-                                                backgroundColor: "#007bff",
-                                                color: "white",
-                                                padding: "2px 5px",
-                                                border: "none",
-                                                borderRadius: "5px",
-                                                width:"30%",
-                                                fontSize: "10px",
-                                            }}>Akun Sumber Dana</span>
-                                        </div>                                            
-                                        <div style={{overflowY: "auto", maxHeight:"300px"}}>
-                                        {dataFilter?.anggaran_filter_list_rincian_objek?.slice(0,5).map((item, index) => (
-                                            <div key={index} class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id={`check-akun-sumber-dana-${index}`} value={item.kode_ro}/>
-                                                <label class="form-check-label" for={`check-akun-sumber-dana-${index}`}>
-                                                    {item.nama_ro}
-                                                </label>
-                                            </div>
-                                        ))}
-                                        </div>
-                                            </CardBody>
-                                        </Card>
-                                    </Col>
-                                    <Col md={6}>
-                                        <Card className='card-height-100 card-animate'>
-                                            <CardBody>
-                                            <div className='mb-2'>
-                                            <span style={{
-                                            backgroundColor: "#007bff",
-                                            color: "white",
-                                            padding: "2px 5px",
-                                            border: "none",
-                                            borderRadius: "5px",
-                                            
-                                            fontSize: "10px",
-                                        }}>Sumber Dana</span>
-                                        </div>
-                                        <div style={{overflowY: "auto", maxHeight:"300px"}}>
-                                        {dataFilter?.anggaran_filter_list_rincian_sub_objek?.slice(0,5).map((item, index) => (
-                                            <div key={index} class="form-check mb-2">
-                                                <input class="form-check-input" type="checkbox" id={`check-sumber-dana-${index}`} value={item.kode_sro}/>
-                                                <label class="form-check-label" for={`check-sumber-dana-${index}`}>
-                                                    {item.nama_sro}
-                                                </label>
-                                            </div>
-                                        ))}    
-                                        </div>
-                                            </CardBody>
-                                        </Card>
-                                    </Col>
-                                </Row> */}
+                                </Row>                                
                         </SimpleBar>
                     </OffcanvasBody>
                 </Offcanvas>

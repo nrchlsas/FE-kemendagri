@@ -106,8 +106,7 @@ const ContentDashboardAnalisis = () => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
-        const dataDashboardAnalisis = await response.json();
-
+        const dataDashboardAnalisis = await response.json();        
         setDataDashboardAnalisis(dataDashboardAnalisis?.data || []);
       } catch (errorDashboardAnalisis) {
         setErrorDataDashboardAnalisis(errorDashboardAnalisis);
@@ -124,23 +123,45 @@ const ContentDashboardAnalisis = () => {
   
   const [selectedFilters, setSelectedFilters] = useState({
     fungsi: [],
-    // spm: [],
-    // urusan: [],
-    // bidangUrusan: [],
-  });
-  
-  // Fungsi untuk mengupdate filter dari child
-  const handleFilterUpdate = (filters) => {
+    spm: [],
+    urusan: [],
+    bidangUrusan:[],
+    program:[],
+    kegiatan:[],
+    subKegiatan: [],
+    objek: [],
+    rincianObjek: [],
+    subRincianObjek: [],
+});
+
+const cleanPayload = (payload) => {
+    return Object.fromEntries(
+        Object.entries(payload).filter(([_, value]) => !(Array.isArray(value) && value.length === 0))
+    );
+};
+
+const handleFilterUpdate = (filters) => {
     setSelectedFilters(filters);
-  
-    // Panggil ulang fungsi getDataDashboardAnalisis dengan filter baru
+
+    // Bersihkan payload
+    const cleanedFilters = cleanPayload(filters);
+
+    // Kirimkan request berdasarkan filter yang dipilih
     getDataDashboardAnalisis({
-      kodeFungsi: filters.fungsi,
-    //   idSpm: filters.spm,
-    //   kodeUrusan: filters.urusan,
-    //   kodeBidangUrusan: filters.bidangUrusan,
+        kodeFungsi: cleanedFilters.fungsi,
+        idSpm: cleanedFilters.spm,
+        kodeUrusan: cleanedFilters.urusan,
+        kodeBidangUrusan: cleanedFilters.bidangUrusan,
+        kodeProgram: cleanedFilters.program,
+        kodeGiat: cleanedFilters.kegiatan,
+        kodeSubGiat: cleanedFilters.subKegiatan,
+        kodeObjek: cleanedFilters.objek,
+        kodeRo: cleanedFilters.rincianObjek,
+        kodeSro: cleanedFilters.subRincianObjek
     });
-  };
+};
+
+// Pass `handleFilterUpdate` to child as `onSelectFilter`
 
   return (
     <React.Fragment>
@@ -202,42 +223,42 @@ const ContentDashboardAnalisis = () => {
                       style={{ fontSize: "18px" }}
                     >
                       <span className="mb-2">
-                        {dataDashboardAnalisis?.total_skpd?.toLocaleString(
+                        {dataDashboardAnalisis?.data_dashboard?.total_skpd?.toLocaleString(
                           "id-ID"
                         )}
                       </span>
                       <span className="mb-2">
-                        {dataDashboardAnalisis?.total_unit_skpd?.toLocaleString(
+                        {dataDashboardAnalisis?.data_dashboard?.total_unit_skpd?.toLocaleString(
                           "id-ID"
                         )}
                       </span>
                       <span className="mb-2">
-                        {dataDashboardAnalisis?.total_program?.toLocaleString(
+                        {dataDashboardAnalisis?.data_dashboard?.total_program?.toLocaleString(
                           "id-ID"
                         )}
                       </span>
                       <span className="mb-2">
-                        {dataDashboardAnalisis?.total_kegiatan?.toLocaleString(
+                        {dataDashboardAnalisis?.data_dashboard?.total_kegiatan?.toLocaleString(
                           "id-ID"
                         )}
                       </span>
                       <span className="mb-2">
-                        {dataDashboardAnalisis?.total_sub_kegiatan?.toLocaleString(
+                        {dataDashboardAnalisis?.data_dashboard?.total_sub_kegiatan?.toLocaleString(
                           "id-ID"
                         )}
                       </span>
                       <span className="mb-2">
-                        {dataDashboardAnalisis?.rekening_pendapatan?.toLocaleString(
+                        {dataDashboardAnalisis?.data_dashboard?.rekening_pendapatan?.toLocaleString(
                           "id-ID"
                         )}
                       </span>
                       <span className="mb-2">
-                        {dataDashboardAnalisis?.rekening_belanja?.toLocaleString(
+                        {dataDashboardAnalisis?.data_dashboard?.rekening_belanja?.toLocaleString(
                           "id-ID"
                         )}
                       </span>
                       <span className="mb-2">
-                        {dataDashboardAnalisis?.rekening_pembiayaan?.toLocaleString(
+                        {dataDashboardAnalisis?.data_dashboard?.rekening_pembiayaan?.toLocaleString(
                           "id-ID"
                         )}
                       </span>
@@ -260,16 +281,16 @@ const ContentDashboardAnalisis = () => {
                         <div className="d-flex">
                           <div className="avatar-xs-half flex-shrink-0">
                             <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
-                              <i className="ri-account-circle-line text-warning"></i>
+                              <i className="bx bx-donate-heart text-warning"></i>
                             </span>
                           </div>
                           <div className="d-flex justify-content-center align-items-center ms-2 title-body">
                             <span>
                               <CountUp
                                 start={0}
-                                end={dataDashboardAnalisis?.total_anggaran_spm}
+                                end={dataDashboardAnalisis?.data_dashboard?.total_anggaran_spm}
                                 separator="."
-                                prefix=""
+                                prefix="Rp "
                                 suffix=""
                                 duration={3}
                               />
@@ -290,16 +311,16 @@ const ContentDashboardAnalisis = () => {
                         <div className="d-flex">
                           <div className="avatar-xs-half flex-shrink-0">
                             <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
-                              <i className="ri-account-circle-line text-warning"></i>
+                              <i className="bx bx-wallet text-warning"></i>
                             </span>
                           </div>
                           <div className="d-flex justify-content-center align-items-center ms-2 title-body">
                             <span>
                               <CountUp
                                 start={0}
-                                end={dataDashboardAnalisis?.total_pendapatan}
+                                end={dataDashboardAnalisis?.data_dashboard?.total_pendapatan}
                                 separator="."
-                                prefix=""
+                                prefix="Rp "
                                 suffix=""
                                 duration={3}
                               />
@@ -322,7 +343,7 @@ const ContentDashboardAnalisis = () => {
                         <div className="d-flex">
                           <div className="avatar-xs-half flex-shrink-0">
                             <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
-                              <i className="ri-account-circle-line text-warning"></i>
+                              <i className="bx bx-body text-warning"></i>
                             </span>
                           </div>
                           <div className="d-flex justify-content-center align-items-center ms-2 title-body">
@@ -330,10 +351,10 @@ const ContentDashboardAnalisis = () => {
                               <CountUp
                                 start={0}
                                 end={
-                                  dataDashboardAnalisis?.total_anggaran_miskin_ekstrem
+                                  dataDashboardAnalisis?.data_dashboard?.total_anggaran_miskin_ekstrem
                                 }
                                 separator="."
-                                prefix=""
+                                prefix="Rp "
                                 suffix=""
                                 duration={3}
                               />
@@ -354,16 +375,16 @@ const ContentDashboardAnalisis = () => {
                         <div className="d-flex">
                           <div className="avatar-xs-half flex-shrink-0">
                             <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
-                              <i className="ri-account-circle-line text-warning"></i>
+                              <i className="bx bx-calculator text-warning"></i>
                             </span>
                           </div>
                           <div className="d-flex justify-content-center align-items-center ms-2 title-body">
                             <span>
                               <CountUp
                                 start={0}
-                                end={dataDashboardAnalisis?.total_pembiayaan}
+                                end={dataDashboardAnalisis?.data_dashboard?.total_pembiayaan}
                                 separator="."
-                                prefix=""
+                                prefix="Rp "
                                 suffix=""
                                 duration={3}
                               />
@@ -386,16 +407,16 @@ const ContentDashboardAnalisis = () => {
                         <div className="d-flex">
                           <div className="avatar-xs-half flex-shrink-0">
                             <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
-                              <i className="ri-account-circle-line text-warning"></i>
+                              <i className="bx bx-cart-alt text-warning"></i>
                             </span>
                           </div>
                           <div className="d-flex justify-content-start align-items-start ms-2 title-body">
                             <span>
                               <CountUp
                                 start={0}
-                                end={dataDashboardAnalisis?.total_belanja}
+                                end={dataDashboardAnalisis?.data_dashboard?.total_belanja}
                                 separator="."
-                                prefix=""
+                                prefix="Rp "
                                 suffix=""
                                 duration={3}
                               />
