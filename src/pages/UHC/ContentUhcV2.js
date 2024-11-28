@@ -209,7 +209,7 @@ const ContentUhcV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({            
-            kode_ddn: kodeDdn            
+            kode_ddn: kodeDdn,            
           }),
         };
   
@@ -414,7 +414,7 @@ const ContentUhcV2 = () => {
   const [dataJenisPemda, setDataJenisPemda] = useState("")
   const [dataDetailNamaDaerah, setDataDetailNamaDaerah] = useState('')
   const handleOpen = ({kodeDdn="", rincianDetail= 0, namaDaerah=""}) => {
-    getDataDetailAnggaran({kodeDdn: kodeDdn})      
+    getDataDetailAnggaran({kodeDdn: kodeDdn })      
     setDataRincianDetail(rincianDetail)
     setDataDetailNamaDaerah(namaDaerah)
     setCardHead(null)
@@ -1177,12 +1177,10 @@ const ContentUhcV2 = () => {
                       <tbody style={{ minHeight: "500px" }}>
                   {currentItems.map((item, index) =>(
                     <tr key={index}>
-                        <td>{index+1}</td>
+                        <td>{index+1}</td>                        
                         <td className={showNextData ? "" : "click-data" } style={{ minWidth: "270px" }} onClick={(e)=> showNextData ? "" : getDataTabelBpjsKabupaten({kodeDdn: item.kode, e})}>{showNextData ? item.nama_daerah : item.nama}</td>
-                        <td>{item.jumlah_bp_pn? parseInt(item.jumlah_bp_pn).toLocaleString("id-ID")
-                        : "-"}</td>
-                        <td>{item.jumlah_bp_swasta? parseInt(item.jumlah_bp_swasta).toLocaleString("id-ID")
-                        : "-"}</td>
+                        <td>{item.jumlah_bp_pn? parseInt(item.jumlah_bp_pn).toLocaleString("id-ID") : "-"}</td>
+                        <td>{item.jumlah_bp_swasta? parseInt(item.jumlah_bp_swasta).toLocaleString("id-ID") : "-"}</td>
                         <td>{item.jumlah_pbi_jk? parseInt(item.jumlah_pbi_jk).toLocaleString("id-ID")
                         : "-"}</td>
                         <td>{item.jumlah_pbpu? parseInt(item.jumlah_pbpu).toLocaleString("id-ID")
@@ -1215,7 +1213,7 @@ const ContentUhcV2 = () => {
                               padding: "5px 10px",                      
                               cursor: "pointer",
                               fontSize: "25px"                      
-                            }} onClick={()=> handleOpen({kodeDdn: showNextData? item.kode_ddn :item.kode, rincianDetail: item.total_anggaran_bpjs, namaDaerah: item.nama})} className="bx bx-list-ul text-primary"></i>                                                                                
+                            }} onClick={()=> handleOpen({kodeSubGiat: item.kode_sub_giat, kodeDdn: showNextData? item.kode_ddn :item.kode, rincianDetail: item.total_anggaran_bpjs, namaDaerah: item.nama})} className="bx bx-list-ul text-primary"></i>                                                                                
                             </td>
                             </> : <></>}
                     </tr>
@@ -1224,195 +1222,7 @@ const ContentUhcV2 = () => {
             </table>
             </div>
             <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={paginate} />
-                    </TabPane>
-                    {/* <TabPane tabId="2">
-                    <div style={{ overflowX: "auto" }}>
-                    <table
-                      className="table table-bordered table-nowrap align-middle mb-0 custom-table"
-                      style={{ width: "100%" }}
-                    >
-                      <thead className="table-light">
-                      <tr>
-                          <th style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",                              
-                            }}                            
-                            >
-                            No
-                          </th>        
-                          <th style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",                              
-                            }}
-                            onClick={() => requestSort("kode_ddn")}
-                            >
-                            Nama Daerah {getSortIcon("kode_ddn")}
-                          </th>        
-                          <th style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",                              
-                            }}
-                            onClick={() => requestSort("jumlah_bp_pn")}
-                            >
-                          jumlah_bp_pn {getSortIcon("jumlah_bp_pn")}
-                          </th>     
-                          <th style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",                              
-                            }}
-                            onClick={() => requestSort("jumlah_bp_swasta")}
-                            >
-                          jumlah_bp_swasta {getSortIcon("jumlah_bp_swasta")}
-                          </th>     
-                          <th style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => requestSort("jumlah_non_aktif")}
-                            >
-                          jumlah_non_aktif {getSortIcon("jumlah_non_aktif")}
-                          </th>     
-                          <th style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",                              
-                            }}
-                            onClick={() => requestSort("jumlah_pbi_jk")}
-                            >
-                          jumlah_pbi_jk {getSortIcon("jumlah_pbi_jk")}
-                          </th>     
-                          <th style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",                              
-                            }}
-                            onClick={() => requestSort("jumlah_pbpu")}
-                            >
-                          jumlah_pbpu {getSortIcon("jumlah_pbpu")}
-                          </th>     
-                          <th style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",                              
-                            }}
-                            onClick={() => requestSort("jumlah_pbpu_bp_pemda")}
-                            >
-                          jumlah_pbpu_bp_pemda {getSortIcon("jumlah_pbpu_bp_pemda")}
-                          </th>     
-                          <th style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",                              
-                            }}
-                            onClick={() => requestSort("jumlah_ppu_bu")}
-                            >
-                          jumlah_ppu_bu {getSortIcon("jumlah_ppu_bu")}
-                          </th>     
-                          <th style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",                              
-                            }}
-                            onClick={() => requestSort("jumlah_ppu_pn")}
-                            >
-                          jumlah_ppu_pn {getSortIcon("jumlah_ppu_pn")}
-                          </th>     
-                          <th style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",                              
-                            }}
-                            onClick={() => requestSort("total_anggaran")}
-                            >
-                          total_anggaran {getSortIcon("total_anggaran")}
-                          </th>     
-                          <th style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",                              
-                            }}
-                            onClick={() => requestSort("total_anggaran_bpjs")}
-                            >
-                          total_anggaran_bpjs {getSortIcon("total_anggaran_bpjs")}
-                          </th>     
-                          <th style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",                              
-                            }}
-                            onClick={() => requestSort("total_bpjs")}
-                            >
-                          total_bpjs {getSortIcon("total_bpjs")}
-                          </th>     
-                          <th style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",
-                              
-                              
-                            }}
-                            onClick={() => requestSort("total_penduduk_dukcapil")}
-                            >
-                          total_penduduk_dukcapil {getSortIcon("total_penduduk_dukcapil")}
-                          </th>     
-                          <th style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer", 
-                            }}
-                            >
-                              Action
-                          </th>     
-                        </tr>
-                      </thead>
-                      <tbody style={{ minHeight: "500px" }}>
-                  {currentItemsKab.map((item, index) =>(
-                    <tr key={index}>
-                        <td>{index+1}</td>
-                        <td>{item.nama_daerah}</td>
-                        <td>{item.jumlah_bp_pn? parseInt(item.jumlah_bp_pn).toLocaleString("id-ID")
-                        : "-"}</td>
-                        <td>{item.jumlah_bp_swasta? parseInt(item.jumlah_bp_swasta).toLocaleString("id-ID")
-                        : "-"}</td>
-                        <td>{item.jumlah_non_aktif? parseInt(item.jumlah_non_aktif).toLocaleString("id-ID")
-                        : "-"}</td>
-                        <td>{item.jumlah_pbi_jk? parseInt(item.jumlah_pbi_jk).toLocaleString("id-ID")
-                        : "-"}</td>
-                        <td>{item.jumlah_pbpu? parseInt(item.jumlah_pbpu).toLocaleString("id-ID")
-                        : "-"}</td>
-                        <td>{item.jumlah_pbpu_bp_pemda? parseInt(item.jumlah_pbpu_bp_pemda).toLocaleString("id-ID")
-                        : "-"}</td>
-                        <td>{item.jumlah_ppu_bu? parseInt(item.jumlah_ppu_bu).toLocaleString("id-ID")
-                        : "-"}</td>
-                        <td>{item.jumlah_ppu_pn? parseInt(item.jumlah_ppu_pn).toLocaleString("id-ID")
-                        : "-"}</td>
-                        <td>{item.total_anggaran? parseInt(item.total_anggaran).toLocaleString("id-ID")
-                        : "-"}</td>
-                        <td>{item.total_anggaran_bpjs? parseInt(item.total_anggaran_bpjs).toLocaleString("id-ID")
-                        : "-"}</td>
-                        <td>{item.total_bpjs? parseInt(item.total_bpjs).toLocaleString("id-ID")
-                        : "-"}</td>
-                        <td>{item.total_penduduk_dukcapil? parseInt(item.total_penduduk_dukcapil).toLocaleString("id-ID")
-                        : "-"}</td>
-                        <td style={{textAlign: "center"}}>                    
-                          <i style={{                                            
-                          padding: "5px 10px",                      
-                          cursor: "pointer",
-                          fontSize: "25px"                      
-                        }} onClick={()=> handleOpen({kodeDdn: item.kode, rincianDetail: item.total_anggaran, namaDaerah: item.nama_daerah})} className="bx bx-list-ul text-primary"></i>                                                                                
-                        </td>
-                    </tr>                    
-                    ))}
-                </tbody>
-            </table>
-            </div>  
-            <Pagination currentPage={currentPageKab} totalPages={totalPagesKab} onPageChange={paginateKab} />
-                    </TabPane> */}
+                    </TabPane>                    
                   </TabContent>
           </CardBody>
         </Card>           
@@ -1569,7 +1379,7 @@ const ContentUhcV2 = () => {
                       padding: "5px 10px",                      
                       cursor: "pointer",
                       fontSize: "30px"
-                    }} onClick={()=>handleOpenNextModal({kodeDdn: item.kode_ddn, kodeSubGiat: item.kode, rincianDetail: item.total_rinciansub})} className="bx bx-list-ul text-primary"></i>
+                    }} onClick={()=>handleOpenNextModal({kodeDdn: item.kode_ddn, kodeSubGiat: item.kode_sub_giat, rincianDetail: item.total_rinciansub})} className="bx bx-list-ul text-primary"></i>
                         </td>          
                       </tr>
                     ))}
