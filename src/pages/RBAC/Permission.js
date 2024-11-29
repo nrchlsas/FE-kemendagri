@@ -228,7 +228,7 @@ const Permission = () => {
         try {
             let response = null;
             if (is_edit) {
-                response = api.create(`${API_9007_URI}/rbac/update-roles`, json);
+                response = api.create(`${API_9007_URI}/rbac/update-permission`, json);
             } else {
                 response = api.create(`${API_9007_URI}/rbac/create-permission`, json);
             }
