@@ -291,7 +291,7 @@ const handleFilterUpdate = (filters) => {
                             <span>
                               <CountUp
                                 start={0}
-                                end={dataDashboardAnalisis?.data_dashboard?.total_anggaran_spm}
+                                end={dataDashboardAnalisis?.data_dashboard_nasional?.total_anggaran_spm}
                                 separator="."
                                 prefix="Rp "
                                 suffix=""
@@ -321,7 +321,7 @@ const handleFilterUpdate = (filters) => {
                             <span>
                               <CountUp
                                 start={0}
-                                end={dataDashboardAnalisis?.data_dashboard?.total_pendapatan}
+                                end={dataDashboardAnalisis?.data_dashboard_nasional?.total_pendapatan}
                                 separator="."
                                 prefix="Rp "
                                 suffix=""
@@ -354,7 +354,7 @@ const handleFilterUpdate = (filters) => {
                               <CountUp
                                 start={0}
                                 end={
-                                  dataDashboardAnalisis?.data_dashboard?.total_anggaran_miskin_ekstrem
+                                  dataDashboardAnalisis?.data_dashboard_nasional?.total_anggaran_miskin_ekstrem
                                 }
                                 separator="."
                                 prefix="Rp "
@@ -373,6 +373,38 @@ const handleFilterUpdate = (filters) => {
                     <CardBody>
                     <div className="d-flex flex-column title-custom-card">
                         <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                          <span>Total Anggaran Stunting</span>
+                        </div>
+                        <div className="d-flex">
+                          <div className="avatar-xs-half flex-shrink-0">
+                            <span className="avatar-title bg-primary-subtle rounded-4 fs-3">
+                              <i className="bx bx-receipt text-primary"></i>
+                            </span>
+                          </div>
+                          <div className="d-flex justify-content-start align-items-start ms-2 title-body">
+                            <span>
+                              <CountUp
+                                start={0}
+                                end={dataDashboardAnalisis?.data_dashboard_nasional?.total_anggaran_stunting}
+                                separator="."
+                                prefix="Rp "
+                                suffix=""
+                                duration={3}
+                              />
+                            </span>
+                          </div>
+                        </div>
+                      </div>  
+                    </CardBody>
+                  </Card>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={6}>
+                  <Card className="card-height-100 card-animate">
+                    <CardBody>
+                      <div className="d-flex flex-column title-custom-card">
+                        <div className="d-flex justify-content-start align-items-start mb-1 title-card">
                           <span>Total Pembiayaan</span>
                         </div>
                         <div className="d-flex">
@@ -385,7 +417,7 @@ const handleFilterUpdate = (filters) => {
                             <span>
                               <CountUp
                                 start={0}
-                                end={dataDashboardAnalisis?.data_dashboard?.total_pembiayaan}
+                                end={dataDashboardAnalisis?.data_dashboard_nasional?.total_pembiayaan}
                                 separator="."
                                 prefix="Rp "
                                 suffix=""
@@ -394,17 +426,15 @@ const handleFilterUpdate = (filters) => {
                             </span>
                           </div>
                         </div>
-                      </div>
+                      </div>                  
                     </CardBody>
                   </Card>
                 </Col>
-              </Row>
-              <Row>
-                <Col>
-                  <Card className="card-height-100 card-animate">
+                <Col md={6}>
+                <Card className="card-height-100 card-animate">
                     <CardBody>
-                    <div className="d-flex flex-column justify-content-center align-items-center title-custom-card">
-                        <div className="d-flex justify-content-center align-items-center mb-1 title-card">
+                    <div className="d-flex flex-column title-custom-card">
+                        <div className="d-flex justify-content-start align-items-start mb-1 title-card">
                           <span>Total Belanja</span>
                         </div>
                         <div className="d-flex">
@@ -413,11 +443,11 @@ const handleFilterUpdate = (filters) => {
                               <i className="bx bx-cart-alt text-info"></i>
                             </span>
                           </div>
-                          <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                          <div className="d-flex justify-content-start align-items-start ms-2 title-body">
                             <span>
                               <CountUp
                                 start={0}
-                                end={dataDashboardAnalisis?.data_dashboard?.total_belanja}
+                                end={dataDashboardAnalisis?.data_dashboard_nasional?.total_belanja}
                                 separator="."
                                 prefix="Rp "
                                 suffix=""
@@ -426,7 +456,7 @@ const handleFilterUpdate = (filters) => {
                             </span>
                           </div>
                         </div>
-                      </div>                      
+                      </div>                 
                     </CardBody>
                   </Card>
                 </Col>

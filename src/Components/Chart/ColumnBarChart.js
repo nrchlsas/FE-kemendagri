@@ -34,7 +34,7 @@ const ColBarChart = ({dataTotal=10, dataColors, valueChart=[], categoryChart=[],
         grid: {
           left: '5%',   
           right: '5%',  
-          bottom: '10%', 
+          bottom: '20%', 
           containLabel: true  
         },
         xAxis: {
@@ -65,7 +65,8 @@ const ColBarChart = ({dataTotal=10, dataColors, valueChart=[], categoryChart=[],
         },
         legend: {
           data: seriesName, // Nama-nama seri yang akan ditampilkan di legenda
-          bottom: 0, // Meletakkan legenda di bagian bawah chart
+          bottom: 0,
+          top:10, // Meletakkan legenda di bagian bawah chart
           orient: 'horizontal', // Menyusun legenda secara horizontal
           left: 'center' // Menempatkan legend di tengah
         },
@@ -77,7 +78,8 @@ const ColBarChart = ({dataTotal=10, dataColors, valueChart=[], categoryChart=[],
             type: 'slider', // Jenis slider untuk scroll
             show: true,
           startValue: startIndex,
-          endValue: endIndex
+          endValue: endIndex,
+          bottom: 20, // Memberikan jarak antara slider dan grid bawah
           },
           {type : 'inside'}
         ]
