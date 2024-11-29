@@ -63,7 +63,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                 document.body.classList.remove('vertical-sidebar-enable');
                 (document.documentElement.getAttribute('data-sidebar-size') === 'lg') ? document.documentElement.setAttribute('data-sidebar-size', 'sm') : document.documentElement.setAttribute('data-sidebar-size', 'lg');
             } else if (windowSize <= 767) {
-                document.body.classList.add('vertical-sidebar-enable');
+                // document.body.classList.add('vertical-sidebar-enable');
                 document.documentElement.setAttribute('data-sidebar-size', 'lg');
             }
         }

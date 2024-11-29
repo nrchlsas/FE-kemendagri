@@ -9,27 +9,13 @@
     padding: 10px;
 }
 
-// .nav-item {
-//     .nav-link {
-//         // color: rgba($white, 0.75);
-
-//         &.active {
-//             // color: $white;
-//             // background-color: rgba($white, 0.1);
-//         }
-//     }
-// }
-
-// &.nav-custom-light {
-//     .nav-item {
-//         .nav-link {
-//             // color: rgba(var(--#{$prefix}body-rgb), 0.75);
-
-//             &.active {
-//                 // color: $light;
-//                 // background-color: $primary;
-//             }
-//         }
-//     }
-// }
-
+@keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }

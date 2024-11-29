@@ -193,6 +193,7 @@ const handleFilterUpdate = (filters) => {
             <Col md={4}>
               <Card>
                 <CardHeader>
+                  <div>
                   <div
                     style={{
                       fontColor: "#00000",
@@ -202,6 +203,8 @@ const handleFilterUpdate = (filters) => {
                   >
                     Data
                   </div>
+                  </div>
+                  
                 </CardHeader>
                 <CardBody>
                   <div className="d-flex justify-content-between align-items-start">
@@ -270,7 +273,7 @@ const handleFilterUpdate = (filters) => {
             <Col md={8}>
               <Row>
                 <Col md={6}>
-                  <Card>
+                  <Card className="card-height-100 card-animate">
                     <CardBody>
                       <div className="d-flex flex-column title-custom-card">
                         <div className="d-flex justify-content-start align-items-start mb-1 title-card">
@@ -280,8 +283,8 @@ const handleFilterUpdate = (filters) => {
                         </div>
                         <div className="d-flex">
                           <div className="avatar-xs-half flex-shrink-0">
-                            <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
-                              <i className="bx bx-donate-heart text-warning"></i>
+                            <span className="avatar-title bg-secondary-subtle rounded-4 fs-3">
+                              <i className="bx bx-donate-heart text-secondary"></i>
                             </span>
                           </div>
                           <div className="d-flex justify-content-center align-items-center ms-2 title-body">
@@ -302,7 +305,7 @@ const handleFilterUpdate = (filters) => {
                   </Card>
                 </Col>
                 <Col md={6}>
-                  <Card>
+                  <Card className="card-height-100 card-animate">
                     <CardBody>
                     <div className="d-flex flex-column justify-content-start align-items-start title-custom-card">
                         <div className="d-flex justify-content-start align-items-start mb-1 title-card">
@@ -310,8 +313,8 @@ const handleFilterUpdate = (filters) => {
                         </div>
                         <div className="d-flex">
                           <div className="avatar-xs-half flex-shrink-0">
-                            <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
-                              <i className="bx bx-wallet text-warning"></i>
+                            <span className="avatar-title bg-success-subtle rounded-4 fs-3">
+                              <i className="bx bx-wallet text-success"></i>
                             </span>
                           </div>
                           <div className="d-flex justify-content-center align-items-center ms-2 title-body">
@@ -334,7 +337,7 @@ const handleFilterUpdate = (filters) => {
               </Row>
               <Row>
                 <Col md={6}>
-                  <Card>
+                  <Card className="card-height-100 card-animate">
                     <CardBody>
                       <div className="d-flex flex-column title-custom-card">
                         <div className="d-flex justify-content-start align-items-start mb-1 title-card">
@@ -342,8 +345,8 @@ const handleFilterUpdate = (filters) => {
                         </div>
                         <div className="d-flex">
                           <div className="avatar-xs-half flex-shrink-0">
-                            <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
-                              <i className="bx bx-body text-warning"></i>
+                            <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                              <i className="bx bx-body text-danger"></i>
                             </span>
                           </div>
                           <div className="d-flex justify-content-center align-items-center ms-2 title-body">
@@ -366,7 +369,7 @@ const handleFilterUpdate = (filters) => {
                   </Card>
                 </Col>
                 <Col md={6}>
-                  <Card>
+                  <Card className="card-height-100 card-animate">
                     <CardBody>
                     <div className="d-flex flex-column title-custom-card">
                         <div className="d-flex justify-content-start align-items-start mb-1 title-card">
@@ -398,19 +401,19 @@ const handleFilterUpdate = (filters) => {
               </Row>
               <Row>
                 <Col>
-                  <Card>
+                  <Card className="card-height-100 card-animate">
                     <CardBody>
-                    <div className="d-flex flex-column title-custom-card">
-                        <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                    <div className="d-flex flex-column justify-content-center align-items-center title-custom-card">
+                        <div className="d-flex justify-content-center align-items-center mb-1 title-card">
                           <span>Total Belanja</span>
                         </div>
                         <div className="d-flex">
                           <div className="avatar-xs-half flex-shrink-0">
-                            <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
-                              <i className="bx bx-cart-alt text-warning"></i>
+                            <span className="avatar-title bg-info-subtle rounded-4 fs-3">
+                              <i className="bx bx-cart-alt text-info"></i>
                             </span>
                           </div>
-                          <div className="d-flex justify-content-start align-items-start ms-2 title-body">
+                          <div className="d-flex justify-content-center align-items-center ms-2 title-body">
                             <span>
                               <CountUp
                                 start={0}
@@ -432,9 +435,9 @@ const handleFilterUpdate = (filters) => {
           </Row>
         </Col>
       </Row>
-      <Row>
+      {/* <Row>
         <Col>
-          <Card>
+          <Card className="card-height-100 card-animate">
             <CardHeader>
               <div
                 style={{
@@ -919,7 +922,7 @@ const handleFilterUpdate = (filters) => {
             </CardBody>
           </Card>
         </Col>
-      </Row>
+      </Row> */}
       <FilterRightSide dataFilter={dataDashboardAnalisis} onSelectFilter={handleFilterUpdate} />
     </React.Fragment>
   );

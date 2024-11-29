@@ -2,12 +2,18 @@ import React from "react";
 import getChartColorsArray from "../../Components/Common/ChartsDynamicColor";
 import ReactEcharts from "echarts-for-react";
 
-const ColBarChart = ({dataColors, valueChart, categoryChart, seriesName}) => {
+const ColBarChart = ({dataTotal=10, dataColors, valueChart=[], categoryChart=[], seriesName=[]}) => {
+  const limit = dataTotal;  // Misal kita ingin menampilkan hanya 10 data
+
+  // Periksa apakah limit lebih besar dari total data
+  // Tentukan `startIndex` dan `endIndex` berdasarkan limit
+  const startIndex = 0;  // Mulai dari indeks pertama
+  const endIndex = limit - 1
   const series = seriesName.map((name, index) => ({
     name: name,
     data: valueChart[index],
     type: 'bar',
-    barWidth: 40,
+    barWidth: 30,
     label: {
       show: true,
       position: 'top', // Shows the label on top of the bar
@@ -59,12 +65,23 @@ const ColBarChart = ({dataColors, valueChart, categoryChart, seriesName}) => {
         },
         legend: {
           data: seriesName, // Nama-nama seri yang akan ditampilkan di legenda
-          bottom: '0%', // Meletakkan legenda di bagian bawah chart
-          orient: 'horizontal' // Menyusun legenda secara horizontal
+          bottom: 0, // Meletakkan legenda di bagian bawah chart
+          orient: 'horizontal', // Menyusun legenda secara horizontal
+          left: 'center' // Menempatkan legend di tengah
         },
         series: series,
         barCategoryGap: '50%',
-        barGap: '10%'
+        barGap: '10%',
+        dataZoom: [
+          {
+            type: 'slider', // Jenis slider untuk scroll
+            show: true,
+          startValue: startIndex,
+          endValue: endIndex
+          },
+          {type : 'inside'}
+        ]
+      , 
       };
 
     return (

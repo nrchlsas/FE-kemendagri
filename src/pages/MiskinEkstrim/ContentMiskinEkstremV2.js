@@ -468,8 +468,10 @@ const ContentMiskinEkstremV2 = () => {
         const resultChartFasilitasRumahStatusRumah =
           dataKemiskinanEkstrem.data.ke_status_rumah.reduce(
             (acc, item) => {
-              acc[0].push(item.value);
-              acc[1].push(item.key);
+              if (item.key && item.value !== undefined) {
+                acc[0].push(item.value);
+                acc[1].push(item.key);
+              }              
               return acc;
             },
             [[], []]
@@ -481,8 +483,10 @@ const ContentMiskinEkstremV2 = () => {
         const resultChartFasilitasRumahDayaListrik =
           dataKemiskinanEkstrem.data.ke_daya_listrik_rumah.reduce(
             (acc, item) => {
-              acc[0].push(item.value);
-              acc[1].push(item.key);
+              if (item.key && item.value !== undefined) {
+                acc[0].push(item.value);
+                acc[1].push(item.key);
+              }
               return acc;
             },
             [[], []]
@@ -494,8 +498,10 @@ const ContentMiskinEkstremV2 = () => {
         const resultChartFasilitasRumahMemasak =
           dataKemiskinanEkstrem.data.ke_memasak.reduce(
             (acc, item) => {
-              acc[0].push(item.value);
-              acc[1].push(item.key);
+              if (item.key && item.value !== undefined) {
+                acc[0].push(item.value);
+                acc[1].push(item.key);
+              }              
               return acc;
             },
             [[], []]
@@ -506,8 +512,10 @@ const ContentMiskinEkstremV2 = () => {
         const resultChartFasilitasSanitasi =
           dataKemiskinanEkstrem.data.ke_fasilitas_sanitasi.reduce(
             (acc, item) => {
+              if (item.key && item.value !== undefined) {
               acc[0].push(item.value);
               acc[1].push(item.key);
+              }
               return acc;
             },
             [[], []]
@@ -517,8 +525,10 @@ const ContentMiskinEkstremV2 = () => {
         const resultChartJenisPekerjaanKepalaKeluarga =
           dataKemiskinanEkstrem.data.ke_jenis_pekerjaan_kepala_keluarga.reduce(
             (acc, item) => {
+              if (item.key && item.value !== undefined) {
               acc[0].push(item.value);
               acc[1].push(item.key);
+              }
               return acc;
             },
             [[], []]
@@ -530,8 +540,10 @@ const ContentMiskinEkstremV2 = () => {
         const resultChartJenisPekerjaanIndividu =
           dataKemiskinanEkstrem.data.ke_jenis_pekerjaan_individu.reduce(
             (acc, item) => {
+              if (item.key && item.value !== undefined) {
               acc[0].push(item.value);
               acc[1].push(item.key);
+              }
               return acc;
             },
             [[], []]
@@ -593,8 +605,10 @@ const ContentMiskinEkstremV2 = () => {
         const resultChartKepalaKeluargaPerempuan =
           dataKemiskinanEkstrem.data.ke_kategori_umur_kepala_keluarga_perempuan.reduce(
             (acc, item) => {
+              if (item.key && item.value !== undefined) {
               acc[0].push(item.value);
               acc[1].push(item.key);
+              }
               return acc;
             },
             [[], []]

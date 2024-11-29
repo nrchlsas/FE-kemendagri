@@ -14,11 +14,9 @@ import {
   CardFooter,
 } from "reactstrap";
 import classnames from "classnames";
-import getChartColorsArray from "../../Components/Common/ChartsDynamicColor";
-import ReactApexChart from "react-apexcharts";
-import { useNavigate } from "react-router-dom";
 import PieChartNew from "../../Components/Chart/PieChart";
 import CountUp from "react-countup";
+import logoKemendagri from "../../assets/images/logo-kemendagri/Animasi.gif"
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
@@ -356,26 +354,13 @@ const BerandaV2 = () => {
       getDataBerandaPenganggaran({idTahap : value});
       setSelectedTahapPenganggaran(selectedValue); // Update state dengan pilihan yang dipilih
     }
-  };
+  };  
 
-  // const handleSelectChange = (e) => {
-  //   const selectedValue = e.target.value;
-  //   console.log("Selected value:", selectedValue); // Debugging
-
-  //   setSelectedSingle(selectedValue);
-  //   getPiePerencanaan(selectedValue); // Panggil API dengan filter yang dipilih
-  // };
-
-  const navigate = useNavigate();
-
-  const handleClick = () => {
-    navigate("/detail-anggaran-bidang-pendidikan");
-  };
+  const [showBerandaSipd, setShowBerandaSipd] = useState(false)  
 
   return (
     <React.Fragment>
-    
-      <Row style={{ fontFamily: "poppins" }}>
+      {showBerandaSipd ? (<><Row style={{ fontFamily: "poppins" }}>
         <Col md={4}>
           <Card className="card-animate card-height-100">
             <CardHeader className="border-bottom-0">            
@@ -1135,244 +1120,103 @@ const BerandaV2 = () => {
             </CardFooter>              
           </Card>
         </Col>
-      </Row>
-      {/* <Row>
-        <Col md={4}>
-          <Card className="card-animate card-height-100">
-            <div className="d-flex flex-column justify-content-center align-items-center">
-              <div
-                className="card-title mb-2"
-                style={{
-                  fontColor: "#333333",
-                  fontSize: "20px",
-                  fontWeight: 650,
-                  padding: "4px",
-                }}
-              >
-                SPM Pendidikan
-              </div>
-            </div>
-
-            <CardBody>
-              <PieChartNew
-                dataChart={dataChartSpmPendidikan}
-                dataColors={'["#2DAED4", "#FCAD24"]'}
-                categoryName={["Sisa Anggaran", "Realisasi"]}
-                pieChart={false}
-                showLegend={true}
-                percentOnly={true}
-                // legendHorizontal={true}
-                heightChart="350px"
-              />
-              <Button
-                type="button"
-                color="success"
-                className="btn w-100"
-                onClick={handleClick}
-              >
-                Lihat Detail
-              </Button>
-              <button className="btn" onClick={handleClick}>
-                Lihat Detail
-              </button>
-            </CardBody>
-          </Card>
-        </Col>
-        <Col md={4}>
-          <Card className="card-animate card-height-100">
-            <div className="d-flex flex-column justify-content-center align-items-center">
-              <div
-                className="card-title mb-2"
-                style={{
-                  fontColor: "#333333",
-                  fontSize: "20px",
-                  fontWeight: 650,
-                  padding: "4px",
-                }}
-              >
-                SPM Kesehatan
-              </div>
-            </div>
-
-            <CardBody>
-              <PieChartNew
-                dataChart={dataChartSpmKesehatan}
-                dataColors={'["#2DAED4", "#FCAD24"]'}
-                categoryName={["Sisa Anggaran", "Realisasi"]}
-                pieChart={false}
-                showLegend={true}
-                percentOnly={true}
-                // legendHorizontal={true}
-                heightChart="350px"
-              />
-              <Button
-                type="button"
-                color="success"
-                className="btn w-100"
-                onClick={handleClick}
-              >
-                Lihat Detail
-              </Button>
-            </CardBody>
-          </Card>
-        </Col>
-        <Col md={4}>
-          <Card className="card-animate card-height-100">
-            <div className="d-flex flex-column justify-content-center align-items-center">
-              <div
-                className="card-title mb-2"
-                style={{
-                  fontColor: "#333333",
-                  fontSize: "20px",
-                  fontWeight: 650,
-                  padding: "4px",
-                }}
-              >
-                SPM Pekerjaan Umum dan Penataan Ruang
-              </div>
-            </div>
-
-            <CardBody>
-              <PieChartNew
-                dataChart={dataChartSpmPekerjaanUmum}
-                dataColors={'["#2DAED4", "#FCAD24"]'}
-                categoryName={["Sisa Anggaran", "Realisasi"]}
-                pieChart={false}
-                showLegend={true}
-                percentOnly={true}
-                // legendHorizontal={true}
-                heightChart="350px"
-              />
-              <Button
-                type="button"
-                color="success"
-                className="btn w-100"
-                onClick={handleClick}
-              >
-                Lihat Detail
-              </Button>
-            </CardBody>
-          </Card>
-        </Col>
-      </Row>
-      <Row>
-        <Col md={4}>
-          <Card className="card-animate card-height-100">
-            <div className="d-flex flex-column justify-content-center align-items-center">
-              <div
-                className="card-title mb-2"
-                style={{
-                  fontColor: "#333333",
-                  fontSize: "20px",
-                  fontWeight: 650,
-                  padding: "4px",
-                }}
-              >
-                SPM Perumahan Rakyat dan Kawasan Permukiman
-              </div>
-            </div>
-
-            <CardBody>
-              <PieChartNew
-                dataChart={dataChartSpmPerumahanRakyat}
-                dataColors={'["#2DAED4", "#FCAD24"]'}
-                categoryName={["Sisa Anggaran", "Realisasi"]}
-                pieChart={false}
-                showLegend={true}
-                percentOnly={true}
-                // legendHorizontal={true}
-                heightChart="350px"
-              />
-              <Button
-                type="button"
-                color="success"
-                className="btn w-100"
-                onClick={handleClick}
-              >
-                Lihat Detail
-              </Button>
-            </CardBody>
-          </Card>
-        </Col>
-        <Col md={4}>
-          <Card className="card-animate card-height-100">
-            <div className="d-flex flex-column justify-content-center align-items-center">
-              <div
-                className="card-title mb-2"
-                style={{
-                  fontColor: "#333333",
-                  fontSize: "20px",
-                  fontWeight: 650,
-                  padding: "4px",
-                }}
-              >
-                SPM Pelindungan Masyarakat
-              </div>
-            </div>
-
-            <CardBody>
-              <PieChartNew
-                dataChart={dataChartSpmPelindungMasyarakat}
-                dataColors={'["#2DAED4", "#FCAD24"]'}
-                categoryName={["Sisa Anggaran", "Realisasi"]}
-                pieChart={false}
-                showLegend={true}
-                percentOnly={true}
-                // legendHorizontal={true}
-                heightChart="350px"
-              />
-              <Button
-                type="button"
-                color="success"
-                className="btn w-100"
-                onClick={handleClick}
-              >
-                Lihat Detail
-              </Button>
-            </CardBody>
-          </Card>
-        </Col>
-        <Col md={4}>
-          <Card className="card-animate card-height-100">
-            <div className="d-flex flex-column justify-content-center align-items-center">
-              <div
-                className="card-title mb-2"
-                style={{
-                  fontColor: "#333333",
-                  fontSize: "20px",
-                  fontWeight: 650,
-                  padding: "4px",
-                }}
-              >
-                SPM Sosial
-              </div>
-            </div>
-
-            <CardBody>
-              <PieChartNew
-                dataChart={dataChartSpmSosial}
-                dataColors={'["#2DAED4", "#FCAD24"]'}
-                categoryName={["Sisa Anggaran", "Realisasi"]}
-                pieChart={false}
-                showLegend={true}
-                percentOnly={true}
-                // legendHorizontal={true}
-                heightChart="350px"
-              />
-              <Button
-                type="button"
-                color="success"
-                className="btn w-100"
-                onClick={handleClick}
-              >
-                Lihat Detail
-              </Button>
-            </CardBody>
-          </Card>
-        </Col>
-      </Row> */}
-
-      {/* </TabContent> */}
+      </Row> </>) : (<>         
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "90vh",
+            background:`radial-gradient(rgb(174, 198, 207) 20%, rgb(243, 246, 249) 70%)`,            
+            backgroundRepeat: "no-repeat",            
+            textAlign: "center",
+            fontFamily: "'Poppins', sans-serif",
+          }}
+        >
+          <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "90vh",
+            marginLeft:"20px",
+            background:`url(${logoKemendagri})`,
+            backgroundSize: "850px 550px",
+            backgroundPosition: "250px 0px",
+            backgroundRepeat: "no-repeat",
+            color: "black",
+            fontWeight:500,
+            textAlign: "center",
+            fontFamily: "'Poppins', sans-serif",
+          }}
+        >
+          <h1
+            style={{
+              fontSize: "3rem",
+              marginBottom: "1rem",
+              animation: "fadeIn 1s ease-in-out",
+            }}
+          >
+            Selamat Datang di <span style={{ fontWeight: "bold" }}>Dashboard SIPD-HUB</span>
+          </h1>
+          <p
+            style={{
+              fontSize: "1.2rem",
+              marginBottom: "2rem",
+              width: "900px",
+              animation: "fadeIn 2s ease-in-out",
+              color: "black", // Warna teks
+              backgroundColor: "rgba(255, 255, 255, 0.2)", // Transparan untuk mendukung blur
+              backdropFilter: "blur(1px)", // Efek blur
+              borderRadius: "10px", // Sudut melengkung untuk tampilan lebih menarik
+              padding: "5px", // Spasi di dalam elemen
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Bayangan untuk menonjolkan elemene
+            }}
+          >
+            Platform visualisasi data dari berbagai Kementerian/Lembaga untuk mendukung pengambilan kebijakan dalam penyusunan perencanaan pembangunan dan penganggaran keuangan daerah sehingga lebih tepat sasaran.
+          </p>
+          <button
+            onClick={() => setShowBerandaSipd(true)}
+            style={{
+              backgroundColor: "#ffffff",
+              color: "#007bff",
+              padding: "12px 20px",
+              border: "none",
+              borderRadius: "25px",
+              cursor: "pointer",
+              fontSize: "16px",
+              fontWeight: "bold",
+              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+              transition: "transform 0.2s ease, box-shadow 0.2s ease",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = "scale(1.05)";
+              e.target.style.boxShadow = "0px 6px 12px rgba(0, 0, 0, 0.3)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = "scale(1)";
+              e.target.style.boxShadow = "0px 4px 8px rgba(0, 0, 0, 0.2)";
+            }}
+          >
+            Lihat Dashboard
+            <span
+              style={{
+                display: "inline-block",
+                marginLeft: "8px",
+                transition: "transform 0.3s ease",
+              }}
+            >
+              →
+            </span>
+          </button>
+        </div>                  
+        </div>
+        </>)}               
     </React.Fragment>
   );
 };

@@ -1,19 +1,12 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
-import Welcome from "./welcome";
-import { Card, CardBody, Col, Nav, NavItem, NavLink, Row, TabContent } from "reactstrap";
-import classnames from "classnames";
-import { SimplePie } from "../Charts/ApexCharts/PieCharts/PieCharts";
-import Beranda from "./beranda";
-import Filter from "./Filter";
+import { Card, CardBody, Col, Container, Nav, NavItem, NavLink, Row, TabContent } from "reactstrap";
 import BerandaV2 from "./BerandaV2";
 import { get_permission_by_url } from "../../slices/thunks";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { createSelector } from "reselect";
 import { useSelector } from "react-redux";
-// import { Card, CardBody, Col, Label, Row, Container } from 'reactstrap';
-// import FilterWilayah from './filterWilayah';
-// import ContentApbd from './contentApbd'
+import BreadCrumb from "../../Components/Common/BreadCrumb";
 
 const Home = () => {
   document.title = "BERANDA | SIPD-HUB";
@@ -52,48 +45,17 @@ const Home = () => {
       setcustomActiveTab(tab);
     }
   };
-  // const [data, setData] = useState([]);
-  // const [loading, setLoading] = useState(true);
-  // const [error, setError] = useState(null);
 
-  // useEffect(() => {
-  //     const fetchData = async () => {
-  //     try {
-  //         const response = await fetch('http://localhost:3002/getData');
-  //         if (!response.ok) {
-  //         throw new Error('Network response was not ok');
-  //         }
-  //         const data = await response.json();
-  //         setData(data.data);
-  //         // console.log(data.data._source, 'ini data')
-  //     } catch (error) {
-  //         setError(error);
-  //     } finally {
-  //         setLoading(false);
-  //     }
-  //     };
-
-  //     fetchData();
-  // }, []);
-
-  // if (loading) {
-  //     return <div>Loading...</div>;
-  // }
-
-  // if (error) {
-  //     return <div>Error: {error.message}</div>;
-  // }
   return (
     <React.Fragment>
       <div className="page-content">
+      <Container fluid>      
         <Row>
-          <Col>
+          <Col xs={12}>
             <BerandaV2 />
           </Col>
-          {/* <Col md={3}>
-              <Filter />
-           </Col> */}
         </Row>
+      </Container>      
       </div>
     </React.Fragment>
   );
