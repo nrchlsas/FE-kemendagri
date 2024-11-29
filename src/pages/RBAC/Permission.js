@@ -115,6 +115,7 @@ const Permission = () => {
         idRoles: 0,
     });
     const [formData, setFormData] = useState({
+        id_permission: 0,
         idMenu: 0,
         idRoles: 0,
         createPermission: false,
@@ -131,6 +132,7 @@ const Permission = () => {
     const [list_menu, setListMenu] = useState([]);
     const [list_role, setListRole] = useState([]);
     const [delete_data, setDeleteData] = useState(null);
+    const [menu_delete_data, setMenuDeleteData] = useState(null);
     const [modal_alert, setModalAlert] = useState({
         open: false,
         type: 'error', // [success|error]
@@ -138,11 +140,43 @@ const Permission = () => {
         message: 'Message'
     })
 
+    // pagination
+    const [paging, setPaging] = useState({
+        page: 1,
+        max: 1,
+        size: 10
+    })
+    function page_goto(page) {
+        if (page == paging.page) return;
+        setPaging(Object.assign({}, paging, { page }));
+    }
+    useEffect(() => {
+        populate_data();
+    }, [paging])
+    function paging_content() {
+        let content = [];
+        for (let i = 0; i < paging.max; i++) {
+            content.push(<div
+                key={'paging-item-' + i}
+                onClick={() => page_goto(i + 1)}
+                className={`page-item d-flex align-items-center justify-content-center ${i + 1 == paging.page ? 'disabled' : ''}`}>
+                {i + 1}</div>)
+        }
+        return content;
+    }
+    function calculate_paging(resp) {
+        const { totalPages, currentPage, pageSize } = resp;
+        paging.page = currentPage;
+        paging.max = totalPages;
+        paging.size = pageSize;
+    }
+
     useEffect(() => {
         let is_valid = true;
         if (!formData.idMenu) is_valid = false;
         if (!formData.idRoles) is_valid = false;
         setIsValid(is_valid);
+        console.log(formData)
     }, [formData])
 
     useEffect(() => {
@@ -176,9 +210,14 @@ const Permission = () => {
     }
 
     async function populate_data() {
-        let response = api.get(`${API_9007_URI}/rbac/list-permission`);
+        const json = {
+            page: paging.page,
+            size: paging.size
+        }
+        let response = api.create(`${API_9007_URI}/rbac/list-permission`, json);
         let data = await response;
         if (data.code === 200) {
+            calculate_paging(data);
             setResultData(data.listData);
         }
     }
@@ -189,12 +228,13 @@ const Permission = () => {
         try {
             let response = null;
             if (is_edit) {
-                response = api.put(`${API_9007_URI}/rbac/update-roles`, json);
+                response = api.create(`${API_9007_URI}/rbac/update-roles`, json);
             } else {
                 response = api.create(`${API_9007_URI}/rbac/create-permission`, json);
             }
             setSubmitProcess(true);
             let data = await response;
+            console.log({ data });
             if (data.code === 200 || data.customResponse.code === 200) {
                 populate_data();
                 cancel_form();
@@ -206,11 +246,12 @@ const Permission = () => {
                 });
             }
         } catch (error) {
+            console.log({ error });
             setModalAlert({
                 open: true,
                 type: 'error',
                 title: 'Error Simpan Data',
-                message: error
+                message: error.message || error
             })
         } finally {
             setSubmitProcess(false);
@@ -233,6 +274,7 @@ const Permission = () => {
         setShow(true);
         setIsEdit(true);
         setFormData(Object.assign({}, formData, {
+            id_permission: sItem.id_permission,
             idMenu: mItem.id_menu,
             idRoles: mItem.id_role,
             createPermission: sItem.create_permission,
@@ -244,8 +286,14 @@ const Permission = () => {
     }
 
     function cancel_form() {
+        reset_form();
+        setShow(false);
+    }
+
+    function reset_form() {
         setIsEdit(false);
         setFormData({
+            id_permission: 0,
             idMenu: 0,
             idRoles: 0,
             createPermission: false,
@@ -253,15 +301,15 @@ const Permission = () => {
             deletePermission: false,
             readPermission: false,
         })
-        setShow(false);
     }
 
     async function do_delete() {
+        console.log({ delete_data, menu_delete_data });
         try {
             const json = {
-                "id_role": delete_data.id,
-                "id_menu": delete_data.menus[0].id_menu,
-                "id_id_rolemenu": delete_data.menus[0].id_role,
+                "id_permission": delete_data.id_permission,
+                "id_menu": menu_delete_data.id_menu,
+                "id_role": menu_delete_data.id_role,
                 "is_deleted": true
             }
             let response = api.create(`${API_9007_URI}/rbac/delete-permission`, json);
@@ -488,7 +536,8 @@ const Permission = () => {
                                                             </td>
                                                             <td style={{ width: "160px" }}>
                                                                 <Button color="danger" style={{ marginRight: "3px" }} onClick={() => {
-                                                                    setDeleteData(item);
+                                                                    setDeleteData(sItem);
+                                                                    setMenuDeleteData(mItem);
                                                                     setShow(false);
                                                                     tog_center();
                                                                 }}>Hapus</Button>
@@ -502,6 +551,7 @@ const Permission = () => {
 
                                     </tbody>
                                 </table>
+                                <div className="paging-container d-flex justify-content-center mt-3">{paging_content()}</div>
                             </CardBody>
                         </Card>
                     </Col>
