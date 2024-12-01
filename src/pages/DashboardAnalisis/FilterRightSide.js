@@ -15,7 +15,7 @@ import SimpleBar from "simplebar-react";
 
 // const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
-const FilterRightSide = ({ dataFilter, onSelectFilter }) => {    
+const FilterRightSide = ({ dataFilter=[], onSelectFilter }) => {    
     console.log(dataFilter, 'ini filter side')
     // open offcanvas
     const [open, setOpen] = useState(false);
@@ -45,6 +45,8 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
 
     const [selectedValues, setSelectedValues] = useState({
         fungsi: [],
+        skpd:[],
+        daerah:[],
         spm: [],
         urusan: [],
         bidangUrusan:[],
@@ -87,6 +89,8 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
     };
 
     const [displayedData, setDisplayedData] = useState({
+        daerah:[],
+        skpd: [],
         program: [],
         kegiatan: [],
         subKegiatan: [],
@@ -95,6 +99,8 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
         subRincianObjek:[]
     });
     const [dataToShow, setDataToShow] = useState({
+        daerah: 10,
+        skpd: 10,
         program: 10,
         kegiatan: 10,
         subKegiatan: 10,
@@ -108,9 +114,9 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
     const loadMoreData = (namaField, dataKey) => {
         if (dataFilter[namaField] && !isLoading) {
             setIsLoading(true);
-    
-            // Menambahkan data baru ke data yang sudah ada
+
             const newData = dataFilter[namaField].slice(0, dataToShow[dataKey] + 5);
+        
             setDisplayedData((prev) => ({
                 ...prev,
                 [dataKey]: newData,
@@ -123,6 +129,9 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
             }));
     
             setIsLoading(false);
+            
+
+         
         }
     };
     
@@ -158,11 +167,20 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
     useEffect(() => {
         loadMoreData("filter_sro", "subRincianObjek");
     }, [dataFilter]);
+    
+    useEffect(() => {
+        loadMoreData("filter_skpd", "skpd");
+    }, [dataFilter]);
 
+    useEffect(() => {
+        loadMoreData("filter_daerah", "daerah");
+    }, [dataFilter]);
     
     const resetFilters = () => {
         // Reset state selectedValues ke nilai awal
         const initialValues = {
+            skpd: [],
+            daerah: [],
             fungsi: [],
             spm: [],
             urusan: [],
@@ -212,6 +230,61 @@ const FilterRightSide = ({ dataFilter, onSelectFilter }) => {
                     </OffcanvasHeader>
                     <OffcanvasBody className="p-0">
                         <SimpleBar className="h-100 p-2">
+                                <Row >
+                                    <Col md={6}>
+                                        <Card className='card-height-100 card-animate'>
+                                            <CardBody>
+                                        <div className='mb-3'>
+                                            <span style={{
+                                                backgroundColor: "#FFE038",
+                                                color: "black",
+                                                padding: "5px 10px",
+                                                border: "none",
+                                                borderRadius: "5px",
+                                                width:"30%",
+                                                fontSize: "12px",
+                                            }}>Daerah</span>
+                                        </div>                                            
+                                        <div style={{overflowY: "auto", maxHeight:"300px"}} onScroll={(e) => handleScroll(e, "filter_daerah", "daerah")}>
+                                        {displayedData?.daerah?.map((item, index) => (
+                                            <div key={index} class="form-check mb-2">
+                                                <input onChange={(e) => handleCheckboxChange(e, "daerah")} checked={selectedValues.daerah.includes(item.kode_ddn)} class="form-check-input" type="checkbox" id={`check-daerah-${index}`} value={item.kode_ddn}/>
+                                                <label class="form-check-label" for={`check-daerah-${index}`}>
+                                                    {item.nama_daerah}
+                                                </label>
+                                            </div>
+                                        ))}
+                                        </div>
+                                            </CardBody>
+                                        </Card>
+                                    </Col>
+                                    <Col md={6}>
+                                        <Card className='card-height-100 card-animate'>
+                                            <CardBody>
+                                            <div className='mb-3'>
+                                            <span style={{
+                                            backgroundColor: "#B7EBF2",
+                                            color: "black",
+                                            padding: "5px 10px",
+                                            border: "none",
+                                            borderRadius: "5px",
+                                            fontSize: "12px",
+                                        }}>SKPD</span>
+                                        </div>
+                                        <div style={{overflowY: "auto", maxHeight:"300px"}} onScroll={(e) => handleScroll(e, "filter_skpd", "skpd")}>
+                                        {displayedData?.skpd?.map((item, index) => (
+                                            <div key={index} class="form-check mb-2">
+                                                <input onChange={(e)=>handleCheckboxChange(e, "skpd")} checked={selectedValues.skpd.includes(item.kode_skpd)} class="form-check-input" type="checkbox" id={`check-skpd-${index}`} value={item.kode_skpd}/>
+                                                <label class="form-check-label" for={`check-skpd-${index}`}>
+                                                    {item.nama_skpd}
+                                                </label>
+                                            </div>
+                                        ))}    
+                                        </div>                                        
+                                            </CardBody>
+                                        </Card>
+                                    </Col>
+                                </Row>   
                                 <Row >
                                     <Col md={6}>
                                         <Card className='card-height-100 card-animate'>

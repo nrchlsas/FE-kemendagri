@@ -41,7 +41,7 @@ const ContentDashboardAnalisis = () => {
     useState([]);
 
   const getDataDashboardAnalisis = ({
-    kodeDdn,
+    kodeDaerah,
     namaDaerah,
     kodeFungsi,
     namaFungsi,
@@ -72,7 +72,7 @@ const ContentDashboardAnalisis = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            kode_ddn: kodeDdn,
+            kode_daerah: kodeDaerah,
             nama_daerah: namaDaerah,
             kode_fungsi: kodeFungsi,
             nama_fungsi: namaFungsi,
@@ -122,6 +122,8 @@ const ContentDashboardAnalisis = () => {
   }, []);
   
   const [selectedFilters, setSelectedFilters] = useState({
+    daerah: [],
+    skpd:[],
     fungsi: [],
     spm: [],
     urusan: [],
@@ -148,6 +150,8 @@ const handleFilterUpdate = (filters) => {
 
     // Kirimkan request berdasarkan filter yang dipilih
     getDataDashboardAnalisis({
+        kodeDaerah: cleanedFilters.daerah,
+        kodeSkpd: cleanedFilters.skpd,
         kodeFungsi: cleanedFilters.fungsi,
         idSpm: cleanedFilters.spm,
         kodeUrusan: cleanedFilters.urusan,
@@ -160,8 +164,6 @@ const handleFilterUpdate = (filters) => {
         kodeSro: cleanedFilters.subRincianObjek
     });
 };
-
-// Pass `handleFilterUpdate` to child as `onSelectFilter`
 
   return (
     <React.Fragment>
