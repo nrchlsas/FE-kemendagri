@@ -17,12 +17,14 @@ const HorizontalBarChart = ({
   trillion = false,
   dataZoom = false,
   dataTotal = 10,
+  idParam = [],
   onBarClick,
+  onBarClickProv,
   breakWord = false,
 }) => {
   // Tentukan limit berapa banyak data yang ingin ditampilkan
   const limit = Math.min(dataTotal, valueChart.length); // Misal kita ingin menampilkan hanya 10 data
-
+  
   // Periksa apakah limit lebih besar dari total data
   // Tentukan `startIndex` dan `endIndex` berdasarkan limit
   const startIndex = 0; // Mulai dari indeks pertama
@@ -212,9 +214,41 @@ const HorizontalBarChart = ({
     click: (params) => {
       if (onBarClick) {
         onBarClick(params);
-      }
+      }else if (onBarClickProv) {      
+        const clickedIndex = params.dataIndex;
+        const clickedId = idParam[clickedIndex]; // Ambil ID berdasarkan indeks
+        const clickedCategory = categoryChart[clickedIndex]; // Ambil kategori berdasarkan indeks
+        const clickedValue = valueChart[clickedIndex]; // Ambil nilai berdasarkan indeks
+  
+        // Kirim data lengkap ke handler
+        onBarClickProv({
+          id: clickedId,
+          category: clickedCategory,
+          value: clickedValue,
+          index: clickedIndex,
+        });
+      }      
     },
   };
+
+  // const onEvents = {
+  //   click: (params) => {
+  //     if (onBarClick) {
+  //       const clickedIndex = params.dataIndex;
+  //       const clickedId = idParam[clickedIndex]; // Ambil ID berdasarkan indeks
+  //       const clickedCategory = categoryChart[clickedIndex]; // Ambil kategori berdasarkan indeks
+  //       const clickedValue = valueChart[clickedIndex]; // Ambil nilai berdasarkan indeks
+  
+  //       // Kirim data lengkap ke handler
+  //       onBarClick({
+  //         id: clickedId,
+  //         category: clickedCategory,
+  //         value: clickedValue,
+  //         index: clickedIndex,
+  //       });
+  //     }
+  //   },
+  // };
 
   return (
     <React.Fragment>
