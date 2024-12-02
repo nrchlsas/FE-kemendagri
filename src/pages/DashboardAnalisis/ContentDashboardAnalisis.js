@@ -41,7 +41,7 @@ const ContentDashboardAnalisis = () => {
     useState([]);
 
   const getDataDashboardAnalisis = ({
-    kodeDaerah,
+    kodeDdn,
     namaDaerah,
     kodeFungsi,
     namaFungsi,
@@ -72,7 +72,7 @@ const ContentDashboardAnalisis = () => {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            kode_daerah: kodeDaerah,
+            kode_ddn: kodeDdn,
             nama_daerah: namaDaerah,
             kode_fungsi: kodeFungsi,
             nama_fungsi: namaFungsi,
@@ -150,7 +150,7 @@ const handleFilterUpdate = (filters) => {
 
     // Kirimkan request berdasarkan filter yang dipilih
     getDataDashboardAnalisis({
-        kodeDaerah: cleanedFilters.daerah,
+        kodeDdn: cleanedFilters.daerah,
         kodeSkpd: cleanedFilters.skpd,
         kodeFungsi: cleanedFilters.fungsi,
         idSpm: cleanedFilters.spm,
