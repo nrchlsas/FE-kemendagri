@@ -1305,6 +1305,69 @@ const ContentMiskinEkstremV2 = () => {
               </div>
               <Row>
                 <Col>
+                <div className="nav-beranda">
+                    <Nav
+                      tabs
+                      className="nav nav-tabs nav-success nav-justified mb-3"
+                    >
+                      <NavItem>
+                        <NavLink
+                          style={{ cursor: "pointer" }}
+                          className={classnames({
+                            active: customActiveTab === "1",
+                          })}
+                          onClick={() => {
+                            toggleCustom("1");
+                            setCustomActiveTitleAnggaran("Nasional");
+                          }}
+                        >
+                          NASIONAL
+                        </NavLink>
+                      </NavItem>
+                      <NavItem>
+                        <NavLink
+                          style={{ cursor: "pointer" }}
+                          className={classnames({
+                            active: customActiveTab === "2",
+                          })}
+                          onClick={() => {
+                            toggleCustom("2");
+                            setCustomActiveTitleAnggaran("Provinsi");
+                          }}
+                        >
+                          PROVINSI
+                        </NavLink>
+                      </NavItem>
+                      <NavItem>
+                        <NavLink
+                          style={{ cursor: "pointer" }}
+                          className={classnames({
+                            active: customActiveTab === "3",
+                          })}
+                          onClick={() => {
+                            toggleCustom("3");
+                            setCustomActiveTitleAnggaran("Kabupaten");
+                          }}
+                        >
+                          KABUPATEN
+                        </NavLink>
+                      </NavItem>
+                      <NavItem>
+                        <NavLink
+                          style={{ cursor: "pointer" }}
+                          className={classnames({
+                            active: customActiveTab === "4",
+                          })}
+                          onClick={() => {
+                            toggleCustom("4");
+                            setCustomActiveTitleAnggaran("Kota");
+                          }}
+                        >
+                          KOTA
+                        </NavLink>
+                      </NavItem>
+                    </Nav>
+                  </div>
                   <TabContent
                     activeTab={customActiveTab}
                     className="text-muted"
@@ -1731,70 +1794,6 @@ const ContentMiskinEkstremV2 = () => {
                       </Row>
                     </TabPane>
                   </TabContent>
-                  <div className="nav-beranda">
-                    <Nav
-                      tabs
-                      className="nav nav-tabs nav-success nav-justified mb-3"
-                    >
-                      <NavItem>
-                        <NavLink
-                          style={{ cursor: "pointer" }}
-                          className={classnames({
-                            active: customActiveTab === "1",
-                          })}
-                          onClick={() => {
-                            toggleCustom("1");
-                            setCustomActiveTitleAnggaran("Nasional");
-                          }}
-                        >
-                          NASIONAL
-                        </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink
-                          style={{ cursor: "pointer" }}
-                          className={classnames({
-                            active: customActiveTab === "2",
-                          })}
-                          onClick={() => {
-                            toggleCustom("2");
-                            setCustomActiveTitleAnggaran("Provinsi");
-                          }}
-                        >
-                          PROVINSI
-                        </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink
-                          style={{ cursor: "pointer" }}
-                          className={classnames({
-                            active: customActiveTab === "3",
-                          })}
-                          onClick={() => {
-                            toggleCustom("3");
-                            setCustomActiveTitleAnggaran("Kabupaten");
-                          }}
-                        >
-                          KABUPATEN
-                        </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink
-                          style={{ cursor: "pointer" }}
-                          className={classnames({
-                            active: customActiveTab === "4",
-                          })}
-                          onClick={() => {
-                            toggleCustom("4");
-                            setCustomActiveTitleAnggaran("Kota");
-                          }}
-                        >
-                          KOTA
-                        </NavLink>
-                      </NavItem>
-                    </Nav>
-                  </div>
-
                   {/* disini nav link nya */}
                 </Col>
               </Row>
