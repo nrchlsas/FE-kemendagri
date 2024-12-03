@@ -1064,9 +1064,11 @@ const ContentStunting = () => {
 
   const [dataShowChartAnggaran, setDataShowChartAnggaran] = useState(false);
   const [dataShowChartFasilitasProvinsi, setShowDataChartFasilitasProvinsi] = useState(false)
+  const [dataShowChartFasilitasPemda, setShowDataChartFasilitasPemda] = useState(false)
   const [currentCategoryClicked, setCurrentCategoryClicked] = useState(null)
-  const [dataChartDetailFasilitasProvinsi, setDataChartDetailFasilitasProvinsi] = useState([],[])    
+  const [dataChartDetailFasilitasProvinsi, setDataChartDetailFasilitasProvinsi] = useState([],[],0,[])    
   const [namaDaerahDetail, setNamaDaerahDetail] = useState([],[])
+  const [fasilitasShow, setFasilitasShow] = useState("")
 
   const handleBarClick = (params) => {
     const clickedCategory = params.name        
@@ -1075,17 +1077,76 @@ const ContentStunting = () => {
       acc[0].push(item.jumlah_lingkungan_tdksehat_jamban)
       acc[1].push(item.nama_daerah)      
       acc[2] += item.jumlah_lingkungan_tdksehat_jamban;
+      acc[3].push(item.kode_ddn)
       return acc
-    }, [[],[], 0]) : dataStunting.fasilitas_lingkungan_tidak_sehat_air.reduce((acc, item) => {
+    }, [[],[], 0, []]) : dataStunting.fasilitas_lingkungan_tidak_sehat_air.reduce((acc, item) => {
       acc[0].push(item.jumlah_lingkungan_tdksehat_air)
       acc[1].push(item.nama_daerah)
       acc[2] += item.jumlah_lingkungan_tdksehat_air;
+      acc[3].push(item.kode_ddn)
       return acc
-    }, [[],[], 0]))
+    }, [[],[], 0, []]))
     
     setCurrentCategoryClicked(clickedCategory)    
     setDataChartDetailFasilitasProvinsi(dataDetail)
     setShowDataChartFasilitasProvinsi(true)
+  };
+
+  const [dataJambanTidakLayakPemda, setDataJambanTidakLayakPemda] = useState([])
+  const getDataFasilitasKesehatanPerProv = ({kodeProvinsi = "", url=""}) => {
+    const fetchData = async () => {
+      try {
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            kode_provinsi: kodeProvinsi,
+          }),
+        };
+
+        const response = await fetch(
+          `${API_URI}${url}`,
+          requestOptions
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const dataStuntingFasilitasKesehatan = await response.json();
+
+        const dataDetail = (fasilitasShow == "Jamban Tidak Layak" ? dataStuntingFasilitasKesehatan.data.fasilitas_lingkungan_tidak_sehat_jamban_kabkota.reduce((acc, item) => {
+          acc[0].push(item.jumlah_jamban_tidak_layak)
+          acc[1].push(item.nama_daerah)      
+          acc[2] += item.jumlah_jamban_tidak_layak;
+          acc[3].push(item.kode_ddn)
+          return acc
+        }, [[],[], 0, []]) : dataStuntingFasilitasKesehatan.data.fasilitas_lingkungan_tidak_sehat_air_kabkota.reduce((acc, item) => {
+          acc[0].push(item.jumlah_jamban_tidak_layak)
+          acc[1].push(item.nama_daerah)
+          acc[2] += item.jumlah_jamban_tidak_layak;
+          acc[3].push(item.kode_ddn)
+          return acc
+        }, [[],[], 0, []]))            
+        
+        setDataJambanTidakLayakPemda(dataDetail)
+
+        setShowDataChartFasilitasPemda(true)
+      } catch (errorStunting) {
+        setErrorStunting(errorStunting);
+      } finally {
+        setLoadingStunting(false);
+      }
+    };
+    fetchData();
+  };
+
+  const handleBarClickProv = (data) => {
+    if (fasilitasShow == "Jamban Tidak Layak") {      
+      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_jamban_kabkota"})
+    } else {      
+      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_air_kabkota"})
+    }  
   };
 
   const handleBack = () => {
@@ -2797,7 +2858,64 @@ const ContentStunting = () => {
                       FASILITAS LINGKUNGAN TIDAK SEHAT
                     </h4>                    
                   </div>              
-                  {dataShowChartFasilitasProvinsi ? (<><button
+                  {dataShowChartFasilitasProvinsi ? dataShowChartFasilitasPemda ? (<>
+                    <button
+                        style={{
+                          backgroundColor: "#007bff",
+                          color: "white",
+                          padding: "10px 20px",
+                          border: "none",
+                          borderRadius: "5px",
+                          cursor: "pointer",
+                          fontSize: "16px",
+                          margin: "8px 0px",
+                        }}
+                        onClick={() => setShowDataChartFasilitasPemda(false)}
+                      >
+                        Kembali
+                      </button>
+                        <Row>
+                          <Col md={3}>
+                            <Card className="card-animate mt-4 mb-0">
+                              <CardBody>
+                                  <div className="d-flex flex-column title-custom-card">
+                                  <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                                    <span>
+                                      {currentCategoryClicked == "Jamban Tidak Layak" ? "Total Jamban Tidak Layak" : "Total Air Tidak Layak"}
+                                    </span>
+                                  </div>
+                                  <div className="d-flex">                            
+                                    <div className="d-flex justify-content-center align-items-center title-body">
+                                      <span>
+                                        <CountUp
+                                          start={0}
+                                          end={
+                                            dataJambanTidakLayakPemda[2]
+                                          }
+                                          separator="."
+                                          // prefix=""
+                                          suffix=""
+                                          duration={3}
+                                        />
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </CardBody>
+                            </Card>
+                          </Col>
+                          <Col md={9}>
+                            <HorizontalBarChart
+                              dataColors= {currentCategoryClicked == "Jamban Tidak Layak" ? '["#FCAD24"]' : '["#FCAD248B"]'}
+                              valueChart={dataJambanTidakLayakPemda[0]}
+                              categoryChart={dataJambanTidakLayakPemda[1]}
+                              idParam={dataJambanTidakLayakPemda[3]}
+                              dataZoom={true}
+                              breakWord={true}                          
+                            />
+                          </Col>
+                        </Row>           
+                  </>) : (<><button
                         style={{
                           backgroundColor: "#007bff",
                           color: "white",
@@ -2847,8 +2965,10 @@ const ContentStunting = () => {
                               dataColors= {currentCategoryClicked == "Jamban Tidak Layak" ? '["#FCAD24"]' : '["#FCAD248B"]'}
                               valueChart={dataChartDetailFasilitasProvinsi[0]}
                               categoryChart={dataChartDetailFasilitasProvinsi[1]}
+                              idParam={dataChartDetailFasilitasProvinsi[3]}
                               dataZoom={true}
                               breakWord={true}
+                              onBarClickProv={handleBarClickProv}
                             />
                           </Col>
                         </Row>              
