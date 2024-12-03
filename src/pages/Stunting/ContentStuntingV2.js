@@ -1072,7 +1072,7 @@ const ContentStunting = () => {
 
   const handleBarClick = (params) => {
     const clickedCategory = params.name        
-
+    setFasilitasShow(clickedCategory)        
     const dataDetail = (clickedCategory == "Jamban Tidak Layak" ? dataStunting.fasilitas_lingkungan_tidak_sehat_jamban.reduce((acc, item) => {
       acc[0].push(item.jumlah_lingkungan_tdksehat_jamban)
       acc[1].push(item.nama_daerah)      
