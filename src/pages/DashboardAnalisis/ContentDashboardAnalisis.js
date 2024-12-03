@@ -34,11 +34,9 @@ const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
 const ContentDashboardAnalisis = () => {
   const [dataDashboardAnalisis, setDataDashboardAnalisis] = useState([]);
-  const [errorDataDashboardAnalisis, setErrorDataDashboardAnalisis] = useState(
-    []
-  );
-  const [loadingDataDashboardAnalisis, setLoadingDataDashboardAnalisis] =
-    useState([]);
+  const [errorDataDashboardAnalisis, setErrorDataDashboardAnalisis] = useState([]);
+  const [loadingDataDashboardAnalisis, setLoadingDataDashboardAnalisis] = useState([]);
+  const [totalSumberDana, setTotalSumberDana] = useState(0)
 
   const getDataDashboardAnalisis = ({
     kodeDdn,
@@ -106,7 +104,9 @@ const ContentDashboardAnalisis = () => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
-        const dataDashboardAnalisis = await response.json();        
+        const dataDashboardAnalisis = await response.json();
+        const totalSum = dataDashboardAnalisis?.data?.data_dashboard?.by_nama_dana.reduce((sum, item) => sum + item.total_sumber_dana, 0);     
+        setTotalSumberDana(totalSum)
         setDataDashboardAnalisis(dataDashboardAnalisis?.data || []);
       } catch (errorDashboardAnalisis) {
         setErrorDataDashboardAnalisis(errorDashboardAnalisis);
@@ -164,6 +164,9 @@ const handleFilterUpdate = (filters) => {
         kodeSro: cleanedFilters.subRincianObjek
     });
 };
+
+const [showGrafikBelanjaKelompok, setShowGrafikBelanjaKelompok] = useState(false)
+const [showGrafikPendapatanKelompok, setShowGrafikPendapatanKelompok] = useState(false)
 
   return (
     <React.Fragment>
@@ -479,7 +482,7 @@ const handleFilterUpdate = (filters) => {
           <CardBody>
           <div className="d-flex flex-column title-custom-card">
                         <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                          <span>Total Pembiayaan Pendapatan</span>
+                          <span>Total Pembiayaan Penerimaan</span>
                         </div>
                         <div className="d-flex">
                           <div className="avatar-xs-half flex-shrink-0">
@@ -632,7 +635,7 @@ const handleFilterUpdate = (filters) => {
         </Card>
         </Col>
       </Row>
-      {/* <Row>
+      <Row>
         <Col>
           <Card className="card-height-100 card-animate">
             <CardHeader>
@@ -664,25 +667,25 @@ const handleFilterUpdate = (filters) => {
                   />
                 </Col>
                 <Col md={7}>
-                  <div className="d-flex" style={{ fontSize: "26px" }}>
-                    <span>Total Sumber Dana : Rp 13.099.467.360.171,09</span>
+                  <div className="d-flex mb-2" style={{ fontSize: "26px" }}>
+                    <span>Total Sumber Dana : {totalSumberDana ? `Rp ${totalSumberDana.toLocaleString('id-ID')}` : '-'}</span>
                   </div>
                   <div
                     className="d-flex flex-column"
-                    style={{ maxHeight: "350px", overflowY: "auto" }}
+                    style={{ maxHeight: "300px", overflowY: "auto" }}
                   >
-                    {Array.from({ length: 20 }, (_, index) => (
+                    {dataDashboardAnalisis?.data_dashboard?.by_nama_dana.map((item, index) => ( 
                       <div key={index}>
                         <ul>
                           <li>
                             <div className="d-flex flex-column">
                               <div style={{ fontSize: "16px" }}>
-                                {`Jenis Anggaran ${index}`}
+                                {item.nama_sumber_dana}
                               </div>
                               <div
                                 style={{ fontSize: "16px", fontWeight: 600 }}
                               >
-                                {Math.floor(Math.random() * 10000000000000)}
+                                {item.total_sumber_dana ? `Rp ${item.total_sumber_dana.toLocaleString('id-ID')}` : `-`}
                               </div>
                             </div>
                           </li>
@@ -698,7 +701,7 @@ const handleFilterUpdate = (filters) => {
       </Row>
       <Row>
         <Col md={6}>
-          <Card>
+          <Card className="card-height-100 card-animate">
             <CardHeader>
               <div
                 style={{
@@ -710,11 +713,105 @@ const handleFilterUpdate = (filters) => {
                 Total Anggaran Belanja Berdasarkan Kelompok
               </div>
             </CardHeader>
+            {showGrafikBelanjaKelompok ? (<>
             <CardBody>
+              <PieChartNew
+                dataChart={[dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_operasi,dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_modal,dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_transfer_belanja,dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_tidak_terduga]}
+                dataColors={'["#FFA0BE","#FCAD24","#F35F52","#57E7B4"]'}
+                categoryName={[
+                    "Belanja Operasi",
+                    "Belanja Modal",
+                    "Belanja Transfer",
+                    "Belanja Tidak Terduga",
+                ]}
+                pieChart={false}
+                showLegend={true}
+                percentOnly={true}
+                legendHorizontal={false}
+                heightChart="350px"
+              />
+              <div className="mt-4">
+                <span
+                  onClick={() => setShowGrafikBelanjaKelompok(false)}
+                  style={{ cursor: "pointer", color: "#2DAED4" }}
+                >
+                  Lihat Detail
+                </span>
+              </div>
+            </CardBody>
+            </>) : (<><CardBody>
               <table class="table table-nowrap">
                 <tbody>
-                  {Array.from({ length: 5 }, (_, index) => (
-                    <tr key={index}>
+                  <tr>
+                      <td>
+                        <div className="d-flex align-items-center mb-2">
+                          <div
+                            style={{
+                              height: "10px",
+                              width: "10px",
+                              backgroundColor: "#FFA0BE",
+                              marginRight: "8px",
+                            }}
+                          ></div>
+                          <span
+                            style={{ fontStyle: "poppins", color: "#929FB1" }}
+                          >
+                            Belanja Operasi
+                          </span>
+                        </div>
+                      </td>
+                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_operasi ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_operasi.toLocaleString('id-ID')}` : `-`}</td>
+                      <td>
+                        <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_percentage_anggaran_operasi.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
+                      </td>
+                  </tr>     
+                  <tr>
+                      <td>
+                        <div className="d-flex align-items-center mb-2">
+                          <div
+                            style={{
+                              height: "10px",
+                              width: "10px",
+                              backgroundColor: "#FCAD24",
+                              marginRight: "8px",
+                            }}
+                          ></div>
+                          <span
+                            style={{ fontStyle: "poppins", color: "#929FB1" }}
+                          >
+                            Belanja Modal
+                          </span>
+                        </div>
+                      </td>
+                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_modal ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_modal.toLocaleString('id-ID')}` : `-`}</td>
+                      <td>
+                        <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_percentage_anggaran_modal.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
+                      </td>
+                  </tr>     
+                  <tr>
+                      <td>
+                        <div className="d-flex align-items-center mb-2">
+                          <div
+                            style={{
+                              height: "10px",
+                              width: "10px",
+                              backgroundColor: "#F35F52",
+                              marginRight: "8px",
+                            }}
+                          ></div>
+                          <span
+                            style={{ fontStyle: "poppins", color: "#929FB1" }}
+                          >
+                            Belanja Transfer
+                          </span>
+                        </div>
+                      </td>
+                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_transfer_belanja ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_transfer_belanja.toLocaleString('id-ID')}` : `-`}</td>
+                      <td>
+                        <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_percentage_anggaran_transfer_belanja.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
+                      </td>
+                  </tr>     
+                  <tr>
                       <td>
                         <div className="d-flex align-items-center mb-2">
                           <div
@@ -728,31 +825,37 @@ const handleFilterUpdate = (filters) => {
                           <span
                             style={{ fontStyle: "poppins", color: "#929FB1" }}
                           >
-                            belanja
+                            Belanja Tidak Terduga
                           </span>
                         </div>
                       </td>
-                      <td>Rp {Math.floor(Math.random() * 10000000000)}</td>
+                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_tidak_terduga ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_tidak_terduga.toLocaleString('id-ID')}` : `-`}</td>
                       <td>
-                        <span style={{ float: "right" }}>{`${Math.floor(
-                          Math.random() * 100
-                        )}%`}</span>
+                        <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_percentage_anggaran_tidak_terduga.toFixed(2).toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
                       </td>
-                    </tr>
-                  ))}
-                  <tr>
-                    <td className="border-bottom-0">Total</td>
+                  </tr>     
+
+                  <tr>                    
+                    <td className="border-bottom-0">Total Belanja</td>
                     <td className="border-bottom-0" style={{ fontWeight: 600 }}>
-                      Rp {Math.floor(Math.random() * 10000000000000)}
+                      {dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_belanja ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_belanja.toLocaleString('id-ID')}` : `-`}
                     </td>
                   </tr>
                 </tbody>
               </table>
-            </CardBody>
+              <div className="mt-4">
+                <span
+                  onClick={() => setShowGrafikBelanjaKelompok(true)}
+                  style={{ cursor: "pointer", color: "#2DAED4" }}
+                >
+                  Lihat Grafik
+                </span>
+              </div>
+            </CardBody></>)}            
           </Card>
         </Col>
         <Col md={6}>
-          <Card>
+          <Card className="card-height-100 card-animate">
             <CardHeader>
               <div
                 style={{
@@ -764,11 +867,59 @@ const handleFilterUpdate = (filters) => {
                 Total Anggaran Pendapatan Berdasarkan Kelompok
               </div>
             </CardHeader>
+            {showGrafikPendapatanKelompok ? (<>
             <CardBody>
-              <table class="table table-nowrap">
+              <PieChartNew
+                dataChart={[dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_PAD,dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_transfer,dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_lainnya]}
+                dataColors={'["#2DAED4", "#57E7B4", "#FFB7F1"]'}
+                categoryName={[
+                    "Pendapatan Asli Daerah",
+                    "Pendapatan Transfer",
+                    "Lain-lain Pendapatan Daerah Yang Sah",
+                ]}
+                pieChart={false}
+                showLegend={true}
+                percentOnly={true}
+                legendHorizontal={false}
+                heightChart="350px"
+              />              
+              <div className="mt-4">
+                <span
+                  onClick={() => setShowGrafikPendapatanKelompok(false)}
+                  style={{ cursor: "pointer", color: "#2DAED4" }}
+                >
+                  Lihat Detail
+                </span>
+              </div>
+            </CardBody>
+            </>) : (<>
+            <CardBody>
+              <table class="table table-nowrap mb-4">
                 <tbody>
-                  {Array.from({ length: 5 }, (_, index) => (
-                    <tr key={index}>
+                    <tr>
+                      <td>
+                        <div className="d-flex align-items-center mb-2">
+                          <div
+                            style={{
+                              height: "10px",
+                              width: "10px",
+                              backgroundColor: "#2DAED4",
+                              marginRight: "8px",
+                            }}
+                          ></div>
+                          <span
+                            style={{ fontStyle: "poppins", color: "#929FB1" }}
+                          >
+                            Pendapatan Asli Daerah
+                          </span>
+                        </div>
+                      </td>
+                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_PAD ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_PAD.toLocaleString('id-ID')}` : `-`}</td>
+                      <td>
+                      <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_percentage_anggaran_PAD.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
+                      </td>
+                    </tr>
+                    <tr>
                       <td>
                         <div className="d-flex align-items-center mb-2">
                           <div
@@ -782,31 +933,60 @@ const handleFilterUpdate = (filters) => {
                           <span
                             style={{ fontStyle: "poppins", color: "#929FB1" }}
                           >
-                            belanja
+                            Pendapatan Transfer
                           </span>
                         </div>
                       </td>
-                      <td>Rp {Math.floor(Math.random() * 10000000000)}</td>
+                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_transfer ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_transfer.toLocaleString('id-ID')}` : `-`}</td>
                       <td>
-                        <span style={{ float: "right" }}>{`${Math.floor(
-                          Math.random() * 100
-                        )}%`}</span>
+                      <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_percentage_anggaran_transfer_pendapatan.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
                       </td>
                     </tr>
-                  ))}
+                    <tr>
+                      <td>
+                        <div className="d-flex align-items-center mb-2">
+                          <div
+                            style={{
+                              height: "10px",
+                              width: "10px",
+                              backgroundColor: "#FFB7F1",
+                              marginRight: "8px",
+                            }}
+                          ></div>
+                          <span
+                            style={{ fontStyle: "poppins", color: "#929FB1" }}
+                          >
+                            Lain-lain Pendapatan Daerah Yang Sah
+                          </span>
+                        </div>
+                      </td>
+                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_lainnya ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_lainnya.toLocaleString('id-ID')}` : `-`}</td>
+                      <td>
+                      <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_percentage_anggaran_lainnya.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
+                      </td>
+                    </tr>
                   <tr>
-                    <td className="border-bottom-0">Total</td>
+                    <td className="border-bottom-0">Total Pendapatan</td>
                     <td className="border-bottom-0" style={{ fontWeight: 600 }}>
-                      Rp {Math.floor(Math.random() * 10000000000000)}
+                    {dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_pendapatan ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_pendapatan.toLocaleString('id-ID')}` : `-`}
                     </td>
                   </tr>
                 </tbody>
               </table>
+              <div className="mt-4">
+                <span
+                  onClick={() => setShowGrafikPendapatanKelompok(true)}
+                  style={{ cursor: "pointer", color: "#2DAED4" }}
+                >
+                  Lihat Grafik
+                </span>
+              </div>
             </CardBody>
+            </>)}
           </Card>
         </Col>
       </Row>
-      <Row>
+      {/* <Row>
         <Col>
           <Card>
             <CardHeader>

@@ -18,6 +18,8 @@ const ContentPerencanaanDetailDaerah = () => {
     const namaDaerah = queryParams.get("namaDaerah");
     const namaProv = queryParams.get("namaProv");
     const idProv = queryParams.get('idProv')
+    const tahapan = queryParams.get('tahapan')
+    const tahun = queryParams.get('tahun')
   
     const [customActiveTab, setcustomActiveTab] = useState("6");
     const toggleCustom = (tab) => {
@@ -25,8 +27,8 @@ const ContentPerencanaanDetailDaerah = () => {
         setcustomActiveTab(tab);
       }
     };
-    const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
-    const [selectedSingleTahapan, setSelectedSingleTahapan] = useState('1'); // Set default value
+    const [selectedSingleTahun, setSelectedSingleTahun] = useState(tahun); // Set default value
+    const [selectedSingleTahapan, setSelectedSingleTahapan] = useState(tahapan); // Set default value
     const [selectedSingleSubTahapan, setSelectedSingleSubTahapan] = useState('6'); // Set default value
     const [dataPerencanaan, setDataPerencanaan] = useState([]);
     const [dataPerencanaanPersentase, setDataPerencanaanPersentase] = useState(
@@ -354,8 +356,8 @@ const ContentPerencanaanDetailDaerah = () => {
           <div className="d-sm-flex align-items-center justify-content-between">            
               <div className="page-title-right">
                   <ol className="breadcrumb mb-2 ms-2" style={{fontWeight:600}}>
-                      <li className="breadcrumb-item"><Link to="/Perencanaan">Perencanaan</Link></li>
-                      <li className="breadcrumb-item"><Link to={`/perencanaan/perencanaan-detail/${idProv}?namaDaerah=${namaProv}`}>Detail Se-{namaProv}</Link></li>
+                      <li className="breadcrumb-item"><Link to={`/perencanaan`}>Perencanaan</Link></li>
+                      <li className="breadcrumb-item"><Link to={`/perencanaan/perencanaan-detail/${idProv}?namaDaerah=${namaProv}&tahapan=${selectedSingleTahapan}&tahun=${selectedSingleTahun}`}>Detail Se-{namaProv}</Link></li>
                       <li className="breadcrumb-item active">Detail SKPD {namaDaerah}</li>
                   </ol>
               </div>

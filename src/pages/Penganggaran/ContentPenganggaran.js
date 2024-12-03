@@ -387,7 +387,7 @@ const ContentPenganggaran = () => {
   const navigate = useNavigate();
   const goToDetail = (_id, namaDaerah) => {
     const encodedNamaDaerah = encodeURIComponent(namaDaerah);
-    navigate(`/penganggaran/penganggaran-detail/${_id}?namaDaerah=${encodedNamaDaerah}`);
+    navigate(`/penganggaran/penganggaran-detail/${_id}?namaDaerah=${encodedNamaDaerah}&tahapan=${customActiveTab}&subTahapan=${selectedSingleTahapan}`);
   };
 
   const [modall, setModall] = useState(false);
@@ -686,8 +686,7 @@ const ContentPenganggaran = () => {
                         value={selectedSingleTahun}
                         onChange={handleSelectChange}
                       >                        
-                        <option value="2024">2024</option>
-                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>                      
                       </select>
                       <select
                       name="tahap"

@@ -341,7 +341,7 @@ const ContentPerencanaan = () => {
   const navigate = useNavigate();
   const goToDetail = (_id, namaDaerah) => {
     const encodedNamaDaerah = encodeURIComponent(namaDaerah);
-    navigate(`/perencanaan/perencanaan-detail/${_id}?namaDaerah=${encodedNamaDaerah}`);
+    navigate(`/perencanaan/perencanaan-detail/${_id}?namaDaerah=${encodedNamaDaerah}&tahapan=${selectedSingleTahapan}&tahun=${selectedSingleTahun}`);
   };
 
   const [modall, setModall] = useState(false);
@@ -383,7 +383,7 @@ const ContentPerencanaan = () => {
       3: item?.rancangan,
       4: item?.musrenbang,
       5: item?.rancangan_akhir,
-      6: item?.penetapan,      
+      6: item?.penetapan,
     };
     return tahapData[customActiveTab] == "SUDAH";
   });
@@ -395,7 +395,7 @@ const ContentPerencanaan = () => {
       3: item?.rancangan,
       4: item?.musrenbang,
       5: item?.rancangan_akhir,
-      6: item?.penetapan,      
+      6: item?.penetapan,
     };
     return tahapData[customActiveTab] == "BELUM";
   });
@@ -443,7 +443,7 @@ const ContentPerencanaan = () => {
                         })}
                         onClick={() => {
                           toggleCustom("1");
-                          setNamaTahapan("Persiapan")                          
+                          setNamaTahapan("Persiapan")                         
                         }}
                       >
                         Persiapan
@@ -527,7 +527,7 @@ const ContentPerencanaan = () => {
                         })}
                         onClick={() => {
                           toggleCustom("3");
-                          setNamaTahapan("Rancangan")                          
+                          setNamaTahapan("Rancangan")
                         }}
                       >
                         Rancangan
@@ -541,7 +541,7 @@ const ContentPerencanaan = () => {
                         })}
                         onClick={() => {
                           toggleCustom("5");
-                          setNamaTahapan("Rancangan Akhir")                          
+                          setNamaTahapan("Rancangan Akhir")         
                         }}
                       >
                         Rankhir
@@ -555,7 +555,7 @@ const ContentPerencanaan = () => {
                         })}
                         onClick={() => {
                           toggleCustom("6");
-                          setNamaTahapan("Penetapan")                          
+                          setNamaTahapan("Penetapan")                    
                         }}
                       >
                         Penetapan

@@ -22,17 +22,17 @@ const ContentPenganggaranDetailDaerah = () => {
     const namaDaerah = queryParams.get("namaDaerah");
     const namaProv = queryParams.get("namaProv");
     const idProv = queryParams.get('idProv')
+    const tahapan = queryParams.get('tahapan');
+    const subTahapan = queryParams.get('subTahapan')
   
-    const [customActiveTab, setcustomActiveTab] = useState("1");
+    const [customActiveTab, setcustomActiveTab] = useState(tahapan);
     const toggleCustom = (tab) => {
       if (customActiveTab !== tab) {
         setcustomActiveTab(tab);
       }
     };
     const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
-    const [selectedSingleTahapan, setSelectedSingleTahapan] = useState('28'); // Set default value
-    const [selectedSingleSubTahapan, setSelectedSingleSubTahapan] = useState('6'); // Set default value
-    const [dataPenganggaran, setDataPenganggaran] = useState([]);
+    const [selectedSingleTahapan, setSelectedSingleTahapan] = useState(subTahapan); // Set default value        
     const [dataPenganggaranPersentase, setDataPenganggaranPersentase] = useState(
       []
     );
@@ -82,7 +82,7 @@ const ContentPenganggaranDetailDaerah = () => {
   
     const getDataPenganggaranNasionalPersentase = ({
       tahun = "2024",      
-      tahapan = "28",
+      tahapan = subTahapan,
       kodeDdn = _id
     } = {}) => {
       const fetchData = async () => {
@@ -130,10 +130,9 @@ const ContentPenganggaranDetailDaerah = () => {
       }, [selectedSingleTahun, selectedSingleTahapan]); // Panggil API jika tahun atau dokumen berubah
     
   
-    useEffect(() => {
-      getDataPenganggaranNasional();
-      getDataPenganggaranNasionalPersentase();
-    }, []);
+    // useEffect(() => {
+    //   getDataPenganggaranNasional();      
+    // }, []);
 
     const [dataDetailUnitSkpd, setDataDetailUnitSkpd] = useState([]);    
     const [loadingDetailUnitSkpd, setLoadingDetailUnitSkpd] = useState([]);
@@ -382,8 +381,6 @@ const ContentPenganggaranDetailDaerah = () => {
           setSelectedSingleTahun(value); // Misalnya, untuk dropdown tahun
       } else if (name === 'tahap') {
           setSelectedSingleTahapan(value); // Misalnya, untuk dropdown jenis dokumen
-      }else{
-        setSelectedSingleSubTahapan(value);
       }
     };
       
@@ -526,8 +523,8 @@ const ContentPenganggaranDetailDaerah = () => {
           <div className="d-sm-flex align-items-center justify-content-between">            
               <div className="page-title-right">
                   <ol className="breadcrumb mb-2 ms-2" style={{fontWeight:600}}>
-                      <li className="breadcrumb-item"><Link to="/Penganggaran">Penganggaran</Link></li>
-                      <li className="breadcrumb-item"><Link to={`/Penganggaran/Penganggaran-detail/${idProv}?namaDaerah=${namaProv}`}>Detail Se-{namaProv}</Link></li>
+                      <li className="breadcrumb-item"><Link to="/penganggaran">Penganggaran</Link></li>
+                      <li className="breadcrumb-item"><Link to={`/penganggaran/Penganggaran-detail/${idProv}?namaDaerah=${namaProv}&tahapan=${customActiveTab}&subTahapan=${subTahapan}`}>Detail Se-{namaProv}</Link></li>
                       <li className="breadcrumb-item active">Detail SKPD {namaDaerah}</li>
                   </ol>
               </div>

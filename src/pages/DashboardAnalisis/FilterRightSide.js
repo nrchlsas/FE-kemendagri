@@ -15,8 +15,7 @@ import SimpleBar from "simplebar-react";
 
 // const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
-const FilterRightSide = ({ dataFilter=[], onSelectFilter }) => {    
-    console.log(dataFilter, 'ini filter side')
+const FilterRightSide = ({ dataFilter=[], onSelectFilter }) => {        
     // open offcanvas
     const [open, setOpen] = useState(false);
     const toggleLeftCanvas = () => {

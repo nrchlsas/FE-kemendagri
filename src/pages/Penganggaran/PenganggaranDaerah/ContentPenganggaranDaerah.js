@@ -15,6 +15,8 @@ const ContentPenganggaranDaerah = () => {
 
   const queryParams = new URLSearchParams(location.search);
   const namaDaerah = queryParams.get("namaDaerah");
+  const tahapan = queryParams.get("tahapan")
+  const subTahapan = queryParams.get("subTahapan")
 
   const [customActiveTab, setcustomActiveTab] = useState("6");
   const toggleCustom = (tab) => {
@@ -23,7 +25,7 @@ const ContentPenganggaranDaerah = () => {
     }
   };
   const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
-  const [selectedSingleTahapan, setSelectedSingleTahapan] = useState('1'); // Set default value
+  const [selectedSingleTahapan, setSelectedSingleTahapan] = useState(tahapan); // Set default value
   const [dataPenganggaran, setDataPenganggaran] = useState([]);
   const [dataPenganggaranPersentase, setDataPenganggaranPersentase] = useState(
     []
@@ -227,7 +229,7 @@ const ContentPenganggaranDaerah = () => {
   const goToDetail = (id, namaDaerah, namaProv) => {
     const encodedNamaDaerah = encodeURIComponent(namaDaerah); 
     const encodedNamaProv = encodeURIComponent(namaProv); 
-    navigate(`/penganggaran/penganggaran-detail/penganggaran-detail-skpd/${id}?namaDaerah=${encodedNamaDaerah}&namaProv=${encodedNamaProv}&idProv=${_id}`);
+    navigate(`/penganggaran/penganggaran-detail/penganggaran-detail-skpd/${id}?namaDaerah=${encodedNamaDaerah}&namaProv=${encodedNamaProv}&idProv=${_id}&tahapan=${tahapan}&subTahapan=${subTahapan}`);
   };
   
   const [modall, setModall] = useState(false);
