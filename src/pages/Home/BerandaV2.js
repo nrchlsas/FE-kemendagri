@@ -362,7 +362,7 @@ const BerandaV2 = () => {
     <React.Fragment>
       {showBerandaSipd ? (<><Row style={{ fontFamily: "poppins" }}>
         <Col md={4}>
-          <Card className="card-animate card-height-100">
+          <Card data-aos="fade-up-right" className="card-animate card-height-100">
             <CardHeader className="border-bottom-0">            
               <div className="d-flex">
               <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
@@ -574,7 +574,7 @@ const BerandaV2 = () => {
           </Card>
         </Col>
         <Col md={4}>
-          <Card className="card-animate card-height-100">
+          <Card data-aos="fade-down" className="card-animate card-height-100">
             <CardHeader className="border-bottom-0" >
             <div className="d-flex">
               <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
@@ -910,7 +910,7 @@ const BerandaV2 = () => {
         </Col>
 
         <Col md={4}>
-          <Card className="card-animate card-height-100 card-height-100">
+          <Card data-aos="fade-up-left" className="card-animate card-height-100 card-height-100">
             <CardHeader
               className="border-bottom-0"
               style={{ minHeight: "52px" }}
@@ -1120,7 +1120,8 @@ const BerandaV2 = () => {
             </CardFooter>              
           </Card>
         </Col>
-      </Row> </>) : (<>         
+      </Row> </>) : (<> 
+              
         <div
           style={{
             display: "flex",
@@ -1152,7 +1153,7 @@ const BerandaV2 = () => {
             fontFamily: "'Poppins', sans-serif",
           }}
         >
-          <h1
+          <h1 data-aos="fade-right"
             style={{
               fontSize: "3rem",
               marginBottom: "1rem",
@@ -1161,7 +1162,7 @@ const BerandaV2 = () => {
           >
             Selamat Datang di <span style={{ fontWeight: "bold" }}>Dashboard SIPD-HUB</span>
           </h1>
-          <p
+          <p data-aos="fade-left"
             style={{
               fontSize: "1.2rem",
               marginBottom: "2rem",
@@ -1177,7 +1178,7 @@ const BerandaV2 = () => {
           >
             Platform visualisasi data dari berbagai Kementerian/Lembaga untuk mendukung pengambilan kebijakan dalam penyusunan perencanaan pembangunan dan penganggaran keuangan daerah sehingga lebih tepat sasaran.
           </p>
-          <button
+          <button data-aos="fade-left" data-aos-delay="3000"
             onClick={() => setShowBerandaSipd(true)}
             style={{
               backgroundColor: "#ffffff",

@@ -1065,6 +1065,7 @@ const ContentStunting = () => {
   const [dataShowChartAnggaran, setDataShowChartAnggaran] = useState(false);
   const [dataShowChartFasilitasProvinsi, setShowDataChartFasilitasProvinsi] = useState(false)
   const [dataShowChartFasilitasPemda, setShowDataChartFasilitasPemda] = useState(false)
+  
   const [currentCategoryClicked, setCurrentCategoryClicked] = useState(null)
   const [dataChartDetailFasilitasProvinsi, setDataChartDetailFasilitasProvinsi] = useState([],[],0,[])    
   const [namaDaerahDetail, setNamaDaerahDetail] = useState([],[])

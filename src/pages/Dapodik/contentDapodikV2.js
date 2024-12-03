@@ -881,6 +881,92 @@ const ContentDapodikV2 = () => {
   const [dataWidth, setDataWidth] = useState(6)  
   const [roam, setRoam] = useState(false)
 
+  const [dataShowChartTidakLanjutProvinsi, setShowDataChartTidakLanjutProvinsi] = useState(false)
+  const [dataShowChartTidakLanjutPemda, setShowDataChartTidakLanjutPemda] = useState(false)
+  
+  const [currentCategoryClicked, setCurrentCategoryClicked] = useState(null)
+  const [dataChartDetailTidakLanjutProvinsi, setDataChartDetailTidakLanjutProvinsi] = useState([],[],0,[])    
+  const [tidakLanjutShow, setTidakLanjutShow] = useState("")
+
+  const handleBarClick = (params) => {
+    const clickedCategory = params.name        
+    console.log(clickedCategory, 'ini bos')
+    setTidakLanjutShow(clickedCategory)        
+    const dataDetail = (clickedCategory == "SMP" ? dataDapodik.dapodik_compare_ats_tidak_lanjut_ltm6_prov.reduce((acc, item) => {
+      acc[0].push(item.tkt_6_ltm)
+      acc[1].push(item.nama_prov)      
+      acc[2] += item.tkt_6_ltm;
+      acc[3].push(item.kode_prov)
+      return acc
+    }, [[],[], 0, []]) : dataDapodik.dapodik_compare_ats_tidak_lanjut_ltm9_prov.reduce((acc, item) => {
+      acc[0].push(item.tkt_9_ltm)
+      acc[1].push(item.nama_prov)
+      acc[2] += item.tkt_9_ltm;
+      acc[3].push(item.kode_prov)
+      return acc
+    }, [[],[], 0, []]))
+    
+    setCurrentCategoryClicked(clickedCategory)    
+    setDataChartDetailTidakLanjutProvinsi(dataDetail)
+    setShowDataChartTidakLanjutProvinsi(true)
+  };
+
+  const [dataDapodikTidakLanjutPemda, setDataDapodikTidakLanjutPemda] = useState([])
+  const getDataDapodikTidakLanjutPerProv = ({kodeDdn = "", url=""}) => {
+    const fetchData = async () => {
+      try {
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            kode_ddn: kodeDdn,
+          }),
+        };
+
+        const response = await fetch(
+          `${API_URI}${url}`,
+          requestOptions
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const dataDapodikTidakLanjut = await response.json();
+
+        const dataDetail = (tidakLanjutShow == "SMP" ? dataDapodikTidakLanjut.data.dapodik_compare_ats_tidak_lanjut_ltm6_kabkota.reduce((acc, item) => {
+          acc[0].push(item.tkt_6_ltm)
+          acc[1].push(item.nama_kabkota)      
+          acc[2] += item.tkt_6_ltm;
+          acc[3].push(item.kode_ddn)
+          return acc
+        }, [[],[], 0, []]) : dataDapodikTidakLanjut.data.dapodik_compare_ats_tidak_lanjut_ltm9_kabkota.reduce((acc, item) => {
+          acc[0].push(item.tkt_9_ltm)
+          acc[1].push(item.nama_kabkota)
+          acc[2] += item.tkt_9_ltm;
+          acc[3].push(item.kode_ddn)
+          return acc
+        }, [[],[], 0, []]))            
+        
+        setDataDapodikTidakLanjutPemda(dataDetail)
+
+        setShowDataChartTidakLanjutPemda(true)
+      } catch (errorDapodik) {
+        setErrorDapodik(errorDaposetErrorDapodik);
+      } finally {
+        setLoadingDapodik(false);
+      }
+    };
+    fetchData();
+  };
+
+  const handleBarClickProv = (data) => {
+    if (tidakLanjutShow == "SMP") {      
+      getDataDapodikTidakLanjutPerProv({kodeDdn: data.id, url: "/dashboard_dapodik_detail_ats_ltm6_kabkota"})
+    } else {      
+      getDataDapodikTidakLanjutPerProv({kodeDdn: data.id, url: "//dashboard_dapodik_detail_ats_ltm9_kabkota"})
+    }  
+  };
 
   return (
     <React.Fragment>
@@ -3828,11 +3914,123 @@ const ContentDapodikV2 = () => {
                     Anak Tidak Sekolah Karena Tidak Melanjutkan Ke Jenjang
                     Pendidikan
                   </h4>
-                  <HorizontalBarChart
+                  {dataShowChartTidakLanjutProvinsi ? dataShowChartTidakLanjutPemda ? (<><button
+                        style={{
+                          backgroundColor: "#007bff",
+                          color: "white",
+                          padding: "10px 20px",
+                          border: "none",
+                          borderRadius: "5px",
+                          cursor: "pointer",
+                          fontSize: "16px",
+                          margin: "8px 0px",
+                        }}
+                        onClick={() => setShowDataChartTidakLanjutPemda(false)}
+                      >
+                        Kembali
+                      </button>
+                        <Row>
+                          <Col md={3}>
+                            <Card className="card-animate mt-4 mb-0">
+                              <CardBody>
+                                  <div className="d-flex flex-column title-custom-card">
+                                  <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                                    <span>
+                                      {currentCategoryClicked == "SMP" ? "Total Tidak Lanjut SMP" : "Total Tidak Lanjut SMA"}
+                                    </span>
+                                  </div>
+                                  <div className="d-flex">                            
+                                    <div className="d-flex justify-content-center align-items-center title-body">
+                                      <span>
+                                        <CountUp
+                                          start={0}
+                                          end={
+                                            dataDapodikTidakLanjutPemda[2]
+                                          }
+                                          separator="."
+                                          // prefix=""
+                                          suffix=""
+                                          duration={3}
+                                        />
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </CardBody>
+                            </Card>
+                          </Col>
+                          <Col md={9}>
+                            <HorizontalBarChart
+                              dataColors= {currentCategoryClicked == "SMP" ? '["#7CCCE4"]' : '["#B0B0B0"]'}
+                              valueChart={dataDapodikTidakLanjutPemda[0]}
+                              categoryChart={dataDapodikTidakLanjutPemda[1]}
+                              idParam={dataDapodikTidakLanjutPemda[3]}
+                              dataZoom={true}
+                              breakWord={true}                          
+                            />
+                          </Col>
+                        </Row>  </>) : (<><button
+                        style={{
+                          backgroundColor: "#007bff",
+                          color: "white",
+                          padding: "10px 20px",
+                          border: "none",
+                          borderRadius: "5px",
+                          cursor: "pointer",
+                          fontSize: "16px",
+                          margin: "8px 0px",
+                        }}
+                        onClick={() => setShowDataChartTidakLanjutProvinsi(false)}
+                      >
+                        Kembali
+                      </button>
+                        <Row>
+                          <Col md={3}>
+                            <Card className="card-animate mt-4 mb-0">
+                              <CardBody>
+                                  <div className="d-flex flex-column title-custom-card">
+                                  <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                                    <span>
+                                      {currentCategoryClicked == "SMP" ? "Total Tidak Lanjut SMP" : "Total Tidak Lanjut SMA"}
+                                    </span>
+                                  </div>
+                                  <div className="d-flex">                            
+                                    <div className="d-flex justify-content-center align-items-center title-body">
+                                      <span>
+                                        <CountUp
+                                          start={0}
+                                          end={
+                                            dataChartDetailTidakLanjutProvinsi[2]
+                                          }
+                                          separator="."
+                                          // prefix=""
+                                          suffix=""
+                                          duration={3}
+                                        />
+                                      </span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </CardBody>
+                            </Card>
+                          </Col>
+                          <Col md={9}>
+                            <HorizontalBarChart
+                              dataColors= {currentCategoryClicked == "SMP" ? '["#7CCCE4"]' : '["#B0B0B0"]'}
+                              valueChart={dataChartDetailTidakLanjutProvinsi[0]}
+                              categoryChart={dataChartDetailTidakLanjutProvinsi[1]}
+                              idParam={dataChartDetailTidakLanjutProvinsi[3]}
+                              onBarClickProv={handleBarClickProv}
+                              dataZoom={true}
+                              breakWord={true}                          
+                            />
+                          </Col>
+                        </Row>  </>) : (<><HorizontalBarChart
                     valueChart={dataChartAts}
                     categoryChart={["SMP", "SMA"]}
                     dataColors='["#7CCCE4", "#B0B0B0"]'
-                  />
+                    onBarClick={handleBarClick}
+                  /></>)}
                 </TabPane>
 
                 <TabPane tabId="3" id="smp">

@@ -106,6 +106,7 @@ const ContentDashboardAnalisis = () => {
         }
         const dataDashboardAnalisis = await response.json();
         const totalSum = dataDashboardAnalisis?.data?.data_dashboard?.by_nama_dana.reduce((sum, item) => sum + item.total_sumber_dana, 0);     
+       console.log(((dataDashboardAnalisis?.data.data_dashboard?.rincian_belanja_total_belanja/dataDashboardAnalisis?.data.data_dashboard_nasional?.total_belanja)*100).toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits:2}))
         setTotalSumberDana(totalSum)
         setDataDashboardAnalisis(dataDashboardAnalisis?.data || []);
       } catch (errorDashboardAnalisis) {
@@ -123,6 +124,7 @@ const ContentDashboardAnalisis = () => {
   
   const [selectedFilters, setSelectedFilters] = useState({
     daerah: [],
+    namaDaerah: "",
     skpd:[],
     fungsi: [],
     spm: [],
@@ -138,19 +140,20 @@ const ContentDashboardAnalisis = () => {
 
 const cleanPayload = (payload) => {
     return Object.fromEntries(
-        Object.entries(payload).filter(([_, value]) => !(Array.isArray(value) && value.length === 0))
+        Object.entries(payload).filter(([_, value]) => !(value === "" || (Array.isArray(value) && value.length === 0) || value === null || value === undefined))
     );
 };
 
 const handleFilterUpdate = (filters) => {
     setSelectedFilters(filters);
-
     // Bersihkan payload
     const cleanedFilters = cleanPayload(filters);
+    
 
     // Kirimkan request berdasarkan filter yang dipilih
     getDataDashboardAnalisis({
         kodeDdn: cleanedFilters.daerah,
+        namaDaerah: cleanedFilters.namaDaerah,
         kodeSkpd: cleanedFilters.skpd,
         kodeFungsi: cleanedFilters.fungsi,
         idSpm: cleanedFilters.spm,
@@ -167,6 +170,8 @@ const handleFilterUpdate = (filters) => {
 
 const [showGrafikBelanjaKelompok, setShowGrafikBelanjaKelompok] = useState(false)
 const [showGrafikPendapatanKelompok, setShowGrafikPendapatanKelompok] = useState(false)
+
+
 
   return (
     <React.Fragment>
@@ -194,9 +199,346 @@ const [showGrafikPendapatanKelompok, setShowGrafikPendapatanKelompok] = useState
               </div>
             </div>
           </div>
-          <Row>
-            <Col md={4}>
-              <Card>
+           
+              <Row>
+                <Col md={4}>
+                
+                  <Card data-aos="fade-down-right" className="card-height-100 card-animate">
+                    <CardBody>
+                    <div className="d-flex flex-column title-custom-card">
+                        <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                          <span>
+                            Total Anggaran Standar Pelayanan Minimal (SPM)
+                          </span>
+                        </div>
+                        <div className="d-flex">
+                          <div className="avatar-xs-half flex-shrink-0">
+                            <span className="avatar-title bg-secondary-subtle rounded-4 fs-3">
+                              <i className="bx bx-donate-heart text-secondary"></i>
+                            </span>
+                          </div>
+                          <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                            <span>
+                              <CountUp
+                                start={0}
+                                end={dataDashboardAnalisis?.data_dashboard_nasional?.total_anggaran_spm}
+                                separator="."
+                                prefix="Rp "
+                                suffix=""
+                                duration={1}
+                              />
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </CardBody>
+                  </Card>
+                </Col>
+                <Col md={4}>
+                  <Card data-aos="fade-down" className="card-height-100 card-animate">
+                    <CardBody>
+                    <div className="d-flex flex-column title-custom-card">
+                        <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                          <span>Total Anggaran Stunting</span>
+                        </div>
+                        <div className="d-flex">
+                          <div className="avatar-xs-half flex-shrink-0">
+                            <span className="avatar-title bg-primary-subtle rounded-4 fs-3">
+                              <i className="bx bx-receipt text-primary"></i>
+                            </span>
+                          </div>
+                          <div className="d-flex justify-content-start align-items-start ms-2 title-body">
+                            <span>
+                              <CountUp
+                                start={0}
+                                end={dataDashboardAnalisis?.data_dashboard_nasional?.total_anggaran_stunting}
+                                separator="."
+                                prefix="Rp "
+                                suffix=""
+                                duration={1}
+                              />
+                            </span>
+                          </div>
+                        </div>
+                      </div>      
+                    </CardBody>
+                  </Card>
+                </Col>
+                <Col md={4}>
+                  <Card data-aos="fade-down-left" className="card-height-100 card-animate">
+                    <CardBody>
+                      <div className="d-flex flex-column title-custom-card">
+                        <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                          <span>Total Anggaran Miskin Ekstrem</span>
+                        </div>
+                        <div className="d-flex">
+                          <div className="avatar-xs-half flex-shrink-0">
+                            <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                              <i className="bx bx-body text-danger"></i>
+                            </span>
+                          </div>
+                          <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                            <span>
+                              <CountUp
+                                start={0}
+                                end={
+                                  dataDashboardAnalisis?.data_dashboard_nasional?.total_anggaran_miskin_ekstrem
+                                }
+                                separator="."
+                                prefix="Rp "
+                                suffix=""
+                                duration={1}
+                              />
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </CardBody>
+                  </Card>
+                </Col>
+              </Row>
+              <Row>
+        <Col md={4}>
+        <Card data-aos="fade-right">
+          <CardBody>
+          <div className="d-flex flex-column title-custom-card">
+                        <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                          <span>Total Belanja Bantuan Keuangan</span>
+                        </div>
+                        <div className="d-flex">
+                          <div className="avatar-xs-half flex-shrink-0">
+                            <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
+                              <i className="bx bx-calculator text-warning"></i>
+                            </span>
+                          </div>
+                          <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                            <span>
+                              <CountUp
+                                start={0}
+                                end={dataDashboardAnalisis?.data_dashboard_nasional?.belanja_bankeu}
+                                separator="."
+                                prefix="Rp "
+                                suffix=""
+                                duration={1}
+                              />
+                            </span>
+                          </div>
+                        </div>
+                      </div>  
+          </CardBody>
+        </Card>         
+        </Col>
+        <Col md={4}>
+        <Card data-aos="zoom-in">
+          <CardBody>
+          <div className="d-flex flex-column title-custom-card">
+                        <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                          <span>Total Belanja Bantuan Sosial</span>
+                        </div>
+                        <div className="d-flex">
+                          <div className="avatar-xs-half flex-shrink-0">
+                            <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
+                              <i className="bx bx-calculator text-warning"></i>
+                            </span>
+                          </div>
+                          <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                            <span>
+                              <CountUp
+                                start={0}
+                                end={dataDashboardAnalisis?.data_dashboard_nasional?.belanja_bansos}
+                                separator="."
+                                prefix="Rp "
+                                suffix=""
+                                duration={1}
+                              />
+                            </span>
+                          </div>
+                        </div>
+                      </div>   
+          </CardBody>
+        </Card>
+        
+        </Col>
+        <Col md={4}>
+        <Card data-aos="fade-left">
+          <CardBody>
+          <div className="d-flex flex-column title-custom-card">
+                        <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                          <span>Total Belanja Hibah</span>
+                        </div>
+                        <div className="d-flex">
+                          <div className="avatar-xs-half flex-shrink-0">
+                            <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
+                              <i className="bx bx-calculator text-warning"></i>
+                            </span>
+                          </div>
+                          <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                            <span>
+                              <CountUp
+                                start={0}
+                                end={dataDashboardAnalisis?.data_dashboard_nasional?.belanja_hibah}
+                                separator="."
+                                prefix="Rp "
+                                suffix=""
+                                duration={1}
+                              />
+                            </span>
+                          </div>
+                        </div>
+                      </div>   
+          </CardBody>
+        </Card>
+        </Col>
+              </Row>
+              <Row>
+                        <Col md={4}>
+                          <Card data-aos="fade-up-right" className="card-height-100 card-animate">
+                            <CardBody>
+                            <div className="d-flex flex-column title-custom-card">
+                                <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                                  <span>Total Belanja</span>
+                                </div>
+                                <div className="d-flex">
+                                  <div className="avatar-xs-half flex-shrink-0">
+                                    <span className="avatar-title bg-info-subtle rounded-4 fs-3">
+                                      <i className="bx bx-cart-alt text-info"></i>
+                                    </span>
+                                  </div>
+                                  <div className="d-flex justify-content-start align-items-start ms-2 title-body">
+                                    <span>
+                                      <CountUp
+                                        start={0}
+                                        end={dataDashboardAnalisis?.data_dashboard_nasional?.total_belanja}
+                                        separator="."
+                                        prefix="Rp "
+                                        suffix=""
+                                        duration={1}
+                                      />
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>  
+                                            
+                            </CardBody>
+                          </Card>
+                        </Col>
+                        <Col md={4}>
+                          <Card data-aos="fade-up" className="card-height-100 card-animate">
+                            <CardBody>
+                            <div className="d-flex flex-column justify-content-start align-items-start title-custom-card">
+                                <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                                  <span>Total Pendapatan</span>
+                                </div>
+                                <div className="d-flex">
+                                  <div className="avatar-xs-half flex-shrink-0">
+                                    <span className="avatar-title bg-success-subtle rounded-4 fs-3">
+                                      <i className="bx bx-wallet text-success"></i>
+                                    </span>
+                                  </div>
+                                  <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                                    <span>
+                                      <CountUp
+                                        start={0}
+                                        end={dataDashboardAnalisis?.data_dashboard_nasional?.total_pendapatan}
+                                        separator="."
+                                        prefix="Rp "
+                                        suffix=""
+                                        duration={1}
+                                      />
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>                           
+                            </CardBody>
+                          </Card>
+                        </Col>
+                        <Col md={4}>
+                          <Card data-aos="fade-up-left" className="card-height-100 card-animate">
+                            <CardBody>
+                            <div className="d-flex flex-column title-custom-card">
+                                <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                                  <span>Total Pembiayaan Penerimaan</span>
+                                </div>
+                                <div className="d-flex">
+                                  <div className="avatar-xs-half flex-shrink-0">
+                                    <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
+                                      <i className="bx bx-calculator text-warning"></i>
+                                    </span>
+                                  </div>
+                                  <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                                    <span>
+                                      <CountUp
+                                        start={0}
+                                        end={dataDashboardAnalisis?.data_dashboard_nasional?.total_pembiayaanpen}
+                                        separator="."
+                                        prefix="Rp "
+                                        suffix=""
+                                        duration={1}
+                                      />
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>  
+                            </CardBody>
+                          </Card>
+                        </Col>
+              </Row>
+              <Row>
+                <Col md={4}>
+                    <Card data-aos="fade-up-left" className="card-height-100 card-animate">
+                            <CardBody>
+                            <div className="d-flex flex-column title-custom-card">
+                                <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                                  <span>Total Anggaran</span>
+                                </div>
+                                <div className="d-flex">
+                                  <div className="avatar-xs-half flex-shrink-0">
+                                    <span className="avatar-title bg-info-subtle rounded-4 fs-3">
+                                      <i className="bx bx-cart-alt text-info"></i>
+                                    </span>
+                                  </div>
+                                  <div className="d-flex justify-content-between align-items-start ms-2 title-body">
+                                    <div>
+                                      <CountUp
+                                        start={0}
+                                        end={dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_belanja}
+                                        separator="."
+                                        prefix="Rp "
+                                        suffix=""
+                                        duration={1}
+                                      />
+                                      <span className="mx-3" style={{color: "green"}}>
+                                      (<CountUp
+                                      start={0}
+                                      end={
+                                        parseFloat(
+                                          (dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_belanja / 
+                                          dataDashboardAnalisis?.data_dashboard_nasional?.total_belanja) * 100
+                                        ).toFixed(5)
+                                      }
+                                      separator="."
+                                      prefix=""
+                                      decimal=","
+                                      suffix="%"
+                                      decimals={2} // Menentukan jumlah angka di belakang koma
+                                      duration={1}
+                                    />)
+                                      </span>
+                                      
+                                    </div>                
+                                  </div> 
+                                </div>
+                              </div>                                 
+                            </CardBody>
+                          </Card>
+                    </Col>
+              </Row>
+        </Col>
+      </Row>
+      
+      <Row>
+      <Col md={4}>
+              <Card data-aos="flip-right" className="card-height-100">
                 <CardHeader>
                   <div>
                   <div
@@ -281,363 +623,8 @@ const [showGrafikPendapatanKelompok, setShowGrafikPendapatanKelompok] = useState
                 </CardBody>
               </Card>
             </Col>
-            <Col md={8}>
-              <Row>
-                <Col md={6}>
-                  <Card className="card-height-100 card-animate">
-                    <CardBody>
-                    <div className="d-flex flex-column justify-content-start align-items-start title-custom-card">
-                        <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                          <span>Total Pendapatan</span>
-                        </div>
-                        <div className="d-flex">
-                          <div className="avatar-xs-half flex-shrink-0">
-                            <span className="avatar-title bg-success-subtle rounded-4 fs-3">
-                              <i className="bx bx-wallet text-success"></i>
-                            </span>
-                          </div>
-                          <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                            <span>
-                              <CountUp
-                                start={0}
-                                end={dataDashboardAnalisis?.data_dashboard_nasional?.total_pendapatan}
-                                separator="."
-                                prefix="Rp "
-                                suffix=""
-                                duration={3}
-                              />
-                            </span>
-                          </div>
-                        </div>
-                      </div>                      
-                    </CardBody>
-                  </Card>
-                </Col>
-                <Col md={6}>
-                  <Card className="card-height-100 card-animate">
-                    <CardBody>
-                      <div className="d-flex flex-column title-custom-card">
-                        <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                          <span>
-                            Total Anggaran Standar Pelayanan Minimal (SPM)
-                          </span>
-                        </div>
-                        <div className="d-flex">
-                          <div className="avatar-xs-half flex-shrink-0">
-                            <span className="avatar-title bg-secondary-subtle rounded-4 fs-3">
-                              <i className="bx bx-donate-heart text-secondary"></i>
-                            </span>
-                          </div>
-                          <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                            <span>
-                              <CountUp
-                                start={0}
-                                end={dataDashboardAnalisis?.data_dashboard_nasional?.total_anggaran_spm}
-                                separator="."
-                                prefix="Rp "
-                                suffix=""
-                                duration={3}
-                              />
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </CardBody>
-                  </Card>
-                </Col>
-              </Row>
-              <Row>
-                <Col md={6}>
-                  <Card className="card-height-100 card-animate">
-                    <CardBody>
-                    <div className="d-flex flex-column title-custom-card">
-                        <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                          <span>Total Pembiayaan</span>
-                        </div>
-                        <div className="d-flex">
-                          <div className="avatar-xs-half flex-shrink-0">
-                            <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
-                              <i className="bx bx-calculator text-warning"></i>
-                            </span>
-                          </div>
-                          <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                            <span>
-                              <CountUp
-                                start={0}
-                                end={dataDashboardAnalisis?.data_dashboard_nasional?.total_pembiayaan}
-                                separator="."
-                                prefix="Rp "
-                                suffix=""
-                                duration={3}
-                              />
-                            </span>
-                          </div>
-                        </div>
-                      </div>   
-                    </CardBody>
-                  </Card>
-                </Col>
-                <Col md={6}>
-                  <Card className="card-height-100 card-animate">
-                    <CardBody>
-                      <div className="d-flex flex-column title-custom-card">
-                        <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                          <span>Total Anggaran Miskin Ekstrem</span>
-                        </div>
-                        <div className="d-flex">
-                          <div className="avatar-xs-half flex-shrink-0">
-                            <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
-                              <i className="bx bx-body text-danger"></i>
-                            </span>
-                          </div>
-                          <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                            <span>
-                              <CountUp
-                                start={0}
-                                end={
-                                  dataDashboardAnalisis?.data_dashboard_nasional?.total_anggaran_miskin_ekstrem
-                                }
-                                separator="."
-                                prefix="Rp "
-                                suffix=""
-                                duration={3}
-                              />
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </CardBody>
-                  </Card>
-                </Col>
-              </Row>
-              <Row>
-                <Col md={6}>
-                <Card className="card-height-100 card-animate">
-                    <CardBody>
-                    <div className="d-flex flex-column title-custom-card">
-                        <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                          <span>Total Belanja</span>
-                        </div>
-                        <div className="d-flex">
-                          <div className="avatar-xs-half flex-shrink-0">
-                            <span className="avatar-title bg-info-subtle rounded-4 fs-3">
-                              <i className="bx bx-cart-alt text-info"></i>
-                            </span>
-                          </div>
-                          <div className="d-flex justify-content-start align-items-start ms-2 title-body">
-                            <span>
-                              <CountUp
-                                start={0}
-                                end={dataDashboardAnalisis?.data_dashboard_nasional?.total_belanja}
-                                separator="."
-                                prefix="Rp "
-                                suffix=""
-                                duration={3}
-                              />
-                            </span>
-                          </div>
-                        </div>
-                      </div>                 
-                    </CardBody>
-                  </Card>
-                </Col>
-                <Col md={6}>
-                  <Card className="card-height-100 card-animate">
-                    <CardBody>
-                    <div className="d-flex flex-column title-custom-card">
-                        <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                          <span>Total Anggaran Stunting</span>
-                        </div>
-                        <div className="d-flex">
-                          <div className="avatar-xs-half flex-shrink-0">
-                            <span className="avatar-title bg-primary-subtle rounded-4 fs-3">
-                              <i className="bx bx-receipt text-primary"></i>
-                            </span>
-                          </div>
-                          <div className="d-flex justify-content-start align-items-start ms-2 title-body">
-                            <span>
-                              <CountUp
-                                start={0}
-                                end={dataDashboardAnalisis?.data_dashboard_nasional?.total_anggaran_stunting}
-                                separator="."
-                                prefix="Rp "
-                                suffix=""
-                                duration={3}
-                              />
-                            </span>
-                          </div>
-                        </div>
-                      </div>             
-                    </CardBody>
-                  </Card>
-                </Col>
-              </Row>
-            </Col>
-          </Row>
-        </Col>
-      </Row>
-      <Row>
-        <Col md={4}>
-        <Card>
-          <CardBody>
-          <div className="d-flex flex-column title-custom-card">
-                        <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                          <span>Total Pembiayaan Penerimaan</span>
-                        </div>
-                        <div className="d-flex">
-                          <div className="avatar-xs-half flex-shrink-0">
-                            <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
-                              <i className="bx bx-calculator text-warning"></i>
-                            </span>
-                          </div>
-                          <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                            <span>
-                              <CountUp
-                                start={0}
-                                end={dataDashboardAnalisis?.data_dashboard_nasional?.total_pembiayaanpen}
-                                separator="."
-                                prefix="Rp "
-                                suffix=""
-                                duration={3}
-                              />
-                            </span>
-                          </div>
-                        </div>
-                      </div>  
-          </CardBody>
-        </Card>         
-        </Col>
-        <Col md={4}>
-        <Card>
-          <CardBody>
-          <div className="d-flex flex-column title-custom-card">
-                        <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                          <span>Total Pembiayaan Pengeluaran</span>
-                        </div>
-                        <div className="d-flex">
-                          <div className="avatar-xs-half flex-shrink-0">
-                            <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
-                              <i className="bx bx-calculator text-warning"></i>
-                            </span>
-                          </div>
-                          <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                            <span>
-                              <CountUp
-                                start={0}
-                                end={dataDashboardAnalisis?.data_dashboard_nasional?.total_pembiayaanpeng}
-                                separator="."
-                                prefix="Rp "
-                                suffix=""
-                                duration={3}
-                              />
-                            </span>
-                          </div>
-                        </div>
-                      </div>   
-          </CardBody>
-        </Card>
-        
-        </Col>
-        <Col md={4}>
-        
-        </Col>
-      </Row>
-      <Row>
-        <Col md={4}>
-        <Card>
-          <CardBody>
-          <div className="d-flex flex-column title-custom-card">
-                        <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                          <span>Total Belanja Bantuan Keuangan</span>
-                        </div>
-                        <div className="d-flex">
-                          <div className="avatar-xs-half flex-shrink-0">
-                            <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
-                              <i className="bx bx-calculator text-warning"></i>
-                            </span>
-                          </div>
-                          <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                            <span>
-                              <CountUp
-                                start={0}
-                                end={dataDashboardAnalisis?.data_dashboard_nasional?.belanja_bankeu}
-                                separator="."
-                                prefix="Rp "
-                                suffix=""
-                                duration={3}
-                              />
-                            </span>
-                          </div>
-                        </div>
-                      </div>  
-          </CardBody>
-        </Card>         
-        </Col>
-        <Col md={4}>
-        <Card>
-          <CardBody>
-          <div className="d-flex flex-column title-custom-card">
-                        <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                          <span>Total Belanja Bantuan Sosial</span>
-                        </div>
-                        <div className="d-flex">
-                          <div className="avatar-xs-half flex-shrink-0">
-                            <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
-                              <i className="bx bx-calculator text-warning"></i>
-                            </span>
-                          </div>
-                          <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                            <span>
-                              <CountUp
-                                start={0}
-                                end={dataDashboardAnalisis?.data_dashboard_nasional?.belanja_bansos}
-                                separator="."
-                                prefix="Rp "
-                                suffix=""
-                                duration={3}
-                              />
-                            </span>
-                          </div>
-                        </div>
-                      </div>   
-          </CardBody>
-        </Card>
-        
-        </Col>
-        <Col md={4}>
-        <Card>
-          <CardBody>
-          <div className="d-flex flex-column title-custom-card">
-                        <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                          <span>Total Belanja Hibah</span>
-                        </div>
-                        <div className="d-flex">
-                          <div className="avatar-xs-half flex-shrink-0">
-                            <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
-                              <i className="bx bx-calculator text-warning"></i>
-                            </span>
-                          </div>
-                          <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                            <span>
-                              <CountUp
-                                start={0}
-                                end={dataDashboardAnalisis?.data_dashboard_nasional?.belanja_hibah}
-                                separator="."
-                                prefix="Rp "
-                                suffix=""
-                                duration={3}
-                              />
-                            </span>
-                          </div>
-                        </div>
-                      </div>   
-          </CardBody>
-        </Card>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <Card className="card-height-100 card-animate">
+        <Col md={8}>
+          <Card data-aos="flip-left" className="card-height-100 card-animate">
             <CardHeader>
               <div
                 style={{
@@ -667,8 +654,8 @@ const [showGrafikPendapatanKelompok, setShowGrafikPendapatanKelompok] = useState
                   />
                 </Col>
                 <Col md={7}>
-                  <div className="d-flex mb-2" style={{ fontSize: "26px" }}>
-                    <span>Total Sumber Dana : {totalSumberDana ? `Rp ${totalSumberDana.toLocaleString('id-ID')}` : '-'}</span>
+                  <div className="d-flex mb-2" style={{ fontSize: "22px" }}>
+                    <span>Total Sumber Dana : <span style={{fontWeight:600}}>{totalSumberDana ? `Rp ${totalSumberDana.toLocaleString('id-ID')}` : '-'}</span></span>
                   </div>
                   <div
                     className="d-flex flex-column"
@@ -701,7 +688,7 @@ const [showGrafikPendapatanKelompok, setShowGrafikPendapatanKelompok] = useState
       </Row>
       <Row>
         <Col md={6}>
-          <Card className="card-height-100 card-animate">
+          <Card data-aos="fade-right" className="card-height-100 card-animate">
             <CardHeader>
               <div
                 style={{
@@ -851,11 +838,11 @@ const [showGrafikPendapatanKelompok, setShowGrafikPendapatanKelompok] = useState
                   Lihat Grafik
                 </span>
               </div>
-            </CardBody></>)}            
+            </CardBody></>)}
           </Card>
         </Col>
         <Col md={6}>
-          <Card className="card-height-100 card-animate">
+          <Card data-aos="fade-left" className="card-height-100 card-animate">
             <CardHeader>
               <div
                 style={{
