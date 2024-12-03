@@ -5,10 +5,10 @@ import { Col, Row } from 'reactstrap'
 const DashboardAnalisis = () => {
   return (
    <React.Fragment>
-            <div className='page-content'>
+        <div className='page-content'>
           <Row>
             <Col>
-            <ContentDashboardAnalisis />
+              <ContentDashboardAnalisis />
             </Col>
           </Row>          
         </div>

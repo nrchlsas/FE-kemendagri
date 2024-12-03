@@ -28,7 +28,10 @@ import logoKemenkoPmk from "../../assets/images/logo-kemendagri/logo-kemenko-pmk
 import "./../Dapodik/dapodik.scss";
 import { useNavigate } from "react-router-dom";
 import FilterRightSide from "./FilterRightSide";
+import SimpleBar from "simplebar-react";
 // import DashboardAnalisisRightSide from "./DashboardAnalisisRightSide";
+import AOS from 'aos';
+import 'aos/dist/aos.css'; // Pastikan sudah mengimpor CSS AOS
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
@@ -170,8 +173,13 @@ const handleFilterUpdate = (filters) => {
 
 const [showGrafikBelanjaKelompok, setShowGrafikBelanjaKelompok] = useState(false)
 const [showGrafikPendapatanKelompok, setShowGrafikPendapatanKelompok] = useState(false)
-
-
+const [showPembiayaan, setShowPembiayaan] = useState(false)
+const handleCardClick = () => {
+  setShowPembiayaan((prev) => !prev);
+  
+  // Memanggil AOS.refresh() untuk memulai ulang animasi saat card diklik
+  AOS.refresh();
+};
 
   return (
     <React.Fragment>
@@ -453,7 +461,34 @@ const [showGrafikPendapatanKelompok, setShowGrafikPendapatanKelompok] = useState
                           </Card>
                         </Col>
                         <Col md={4}>
-                          <Card data-aos="fade-up-left" className="card-height-100 card-animate">
+                        {showPembiayaan ? (<><Card style={{cursor:"pointer"}} onClick={handleCardClick} data-aos="flip-left" className="card-height-100 card-animate">
+                            <CardBody>
+                            <div className="d-flex flex-column title-custom-card">
+                                <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                                  <span>Total Pembiayaan Pengeluaran</span>
+                                </div>
+                                <div className="d-flex">
+                                  <div className="avatar-xs-half flex-shrink-0">
+                                    <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
+                                      <i className="bx bx-calculator text-warning"></i>
+                                    </span>
+                                  </div>
+                                  <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                                    <span>
+                                      <CountUp
+                                        start={0}
+                                        end={dataDashboardAnalisis?.data_dashboard_nasional?.total_pembiayaanpeng}
+                                        separator="."
+                                        prefix="Rp "
+                                        suffix=""
+                                        duration={1}
+                                      />
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>  
+                            </CardBody>
+                          </Card></>) : (<><Card style={{cursor:"pointer"}} onClick={handleCardClick} data-aos="fade-up-left" className="card-height-100 card-animate">
                             <CardBody>
                             <div className="d-flex flex-column title-custom-card">
                                 <div className="d-flex justify-content-start align-items-start mb-1 title-card">
@@ -480,7 +515,7 @@ const [showGrafikPendapatanKelompok, setShowGrafikPendapatanKelompok] = useState
                                 </div>
                               </div>  
                             </CardBody>
-                          </Card>
+                          </Card></>)}
                         </Col>
               </Row>
               <Row>
@@ -657,11 +692,8 @@ const [showGrafikPendapatanKelompok, setShowGrafikPendapatanKelompok] = useState
                   <div className="d-flex mb-2" style={{ fontSize: "22px" }}>
                     <span>Total Sumber Dana : <span style={{fontWeight:600}}>{totalSumberDana ? `Rp ${totalSumberDana.toLocaleString('id-ID')}` : '-'}</span></span>
                   </div>
-                  <div
-                    className="d-flex flex-column"
-                    style={{ maxHeight: "300px", overflowY: "auto" }}
-                  >
-                    {dataDashboardAnalisis?.data_dashboard?.by_nama_dana.map((item, index) => ( 
+                  <SimpleBar style={{ maxHeight: "300px", }} className="px-3">
+                  {dataDashboardAnalisis?.data_dashboard?.by_nama_dana.map((item, index) => ( 
                       <div key={index}>
                         <ul>
                           <li>
@@ -679,7 +711,13 @@ const [showGrafikPendapatanKelompok, setShowGrafikPendapatanKelompok] = useState
                         </ul>
                       </div>
                     ))}
-                  </div>
+                  </SimpleBar>
+                  {/* <div
+                    className="d-flex flex-column simpleBar"
+                    style={{  overflowY: "auto" }}
+                  >
+                    
+                  </div> */}
                 </Col>
               </Row>
             </CardBody>
@@ -688,7 +726,7 @@ const [showGrafikPendapatanKelompok, setShowGrafikPendapatanKelompok] = useState
       </Row>
       <Row>
         <Col md={6}>
-          <Card data-aos="fade-right" className="card-height-100 card-animate">
+          <Card data-aos="flip-right" className="card-height-100 card-animate">
             <CardHeader>
               <div
                 style={{
@@ -842,7 +880,7 @@ const [showGrafikPendapatanKelompok, setShowGrafikPendapatanKelompok] = useState
           </Card>
         </Col>
         <Col md={6}>
-          <Card data-aos="fade-left" className="card-height-100 card-animate">
+          <Card data-aos="flip-left" className="card-height-100 card-animate">
             <CardHeader>
               <div
                 style={{
