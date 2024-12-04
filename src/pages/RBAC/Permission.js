@@ -13,6 +13,11 @@ import {
 } from "reactstrap";
 import FormInput from "../../Components/FormFactory/FormInput";
 import { APIClient } from "../../helpers/api_helper";
+import { createSelector } from "reselect";
+import { useSelector } from "react-redux";
+import { get_permission_by_url } from "../../slices/thunks";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const API_9007_URI = `${process.env.REACT_APP_API_URL_9007}`;
 const api = new APIClient();
@@ -109,6 +114,8 @@ const dataRoles = [
 ]
 
 const Permission = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [val, setVal] = useState()
     const [formFilter, setFilter] = useState({
         idMenu: 0,
@@ -139,6 +146,21 @@ const Permission = () => {
         title: 'Title',
         message: 'Message'
     })
+
+    // permission
+    const permissionState = (state) => state.Profile;
+    const permissionProperties = createSelector(
+        permissionState, (d) => ({ list_menus: d.list_menus })
+    );
+    const { list_menus } = useSelector(permissionProperties);
+    useEffect(() => {
+        if (list_menus.length == 0) return;
+        console.log({ list_menus });
+        const permit = get_permission_by_url('/permission', true, () => {
+            navigate('/auth-404-basic', { replace: true });
+        });
+        dispatch(permit);
+    }, [list_menus]);
 
     // pagination
     const [paging, setPaging] = useState({

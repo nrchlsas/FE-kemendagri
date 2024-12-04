@@ -159,5 +159,12 @@ export const get_permission_by_url = (url, is_page, cb) => (dispatch, getState) 
             console.error('tidak memimilik hak akses untuk', url);
             cb();
         }
+    } else {
+        const list_page = list_menus.filter(d => !d.is_menu);
+        const found = list_page.find(d => d.is_menu && d.url == url);
+        if (!found && typeof cb === "function") {
+            console.error('tidak memimilik hak akses untuk', url);
+            cb();
+        }
     }
 }

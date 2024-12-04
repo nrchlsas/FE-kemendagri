@@ -14,6 +14,11 @@ import {
 //import FormInput from "../../Components/FormFactory/FormInput";
 import { useEffect } from "react";
 import { APIClient } from "../../helpers/api_helper";
+import { createSelector } from "reselect";
+import { useSelector } from "react-redux";
+import { get_permission_by_url } from "../../slices/thunks";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const API_9007_URI = `${process.env.REACT_APP_API_URL_9007}`;
 const menuForm = {
@@ -53,6 +58,8 @@ const api = new APIClient();
 
 
 const Menu = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [val, setVal] = useState()
     const [resultData, setResultData] = useState([])
     const [formData, setFormData] = useState({
@@ -67,6 +74,21 @@ const Menu = () => {
     const [modal_center, setmodal_center] = useState(false);
     const [delete_data, setDeleteData] = useState(null);
     const [is_edit, setIsEdit] = useState(false);
+
+    // permission
+    const permissionState = (state) => state.Profile;
+    const permissionProperties = createSelector(
+        permissionState, (d) => ({ list_menus: d.list_menus })
+    );
+    const { list_menus } = useSelector(permissionProperties);
+    useEffect(() => {
+        if (list_menus.length == 0) return;
+        console.log({ list_menus });
+        const permit = get_permission_by_url('/menu', true, () => {
+            navigate('/auth-404-basic', { replace: true });
+        });
+        dispatch(permit);
+    }, [list_menus]);
 
     // pagination
     const [paging, setPaging] = useState({

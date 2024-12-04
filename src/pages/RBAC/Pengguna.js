@@ -16,6 +16,11 @@ import { Status } from "../APIKey/APIKeyCol";
 import { APIClient } from "../../helpers/api_helper";
 import { type } from "@testing-library/user-event/dist/cjs/utility/type.js";
 import { size } from "lodash";
+import { createSelector } from "reselect";
+import { useSelector } from "react-redux";
+import { get_permission_by_url } from "../../slices/thunks";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -27,6 +32,8 @@ const isEmailValid = (email) => {
 };
 
 const Pengguna = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         id: 0,
         email: '',
@@ -67,6 +74,21 @@ const Pengguna = () => {
         setIsValid(is_valid);
         // console.log('formData', formData);
     }, [formData])
+
+    // permission
+    const permissionState = (state) => state.Profile;
+    const permissionProperties = createSelector(
+        permissionState, (d) => ({ list_menus: d.list_menus })
+    );
+    const { list_menus } = useSelector(permissionProperties);
+    useEffect(() => {
+        if (list_menus.length == 0) return;
+        console.log({ list_menus });
+        const permit = get_permission_by_url('/pengguna', true, () => {
+            navigate('/auth-404-basic', { replace: true });
+        });
+        dispatch(permit);
+    }, [list_menus]);
 
     async function populate_daerah() {
         // populate list role
