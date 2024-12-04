@@ -157,8 +157,12 @@ const handleFilterUpdate = (filters) => {
     setSelectedFilters(filters);
     // Bersihkan payload
     const cleanedFilters = cleanPayload(filters);
-    
-
+    console.log(cleanedFilters, 'ini cleaned filter', Object.keys(cleanedFilters || {}).length === 0, 'ini 2', cleanedFilters?.daerah?.length > 0, 'ini 1')
+    if(cleanedFilters?.daerah?.length > 0){
+      setTitleBerubah("Daerah")
+    }else if (Object.keys(cleanedFilters || {}).length === 0) {
+      setTitleBerubah("Nasional");
+    }
     // Kirimkan request berdasarkan filter yang dipilih
     getDataDashboardAnalisis({
         kodeDdn: cleanedFilters.daerah,
@@ -188,6 +192,7 @@ const handleCardClick = () => {
   AOS.refresh();
 };
 
+const [titleBerubah, setTitleBerubah] = useState("Nasional")
   return (
     <React.Fragment>
       <Row>
@@ -198,7 +203,7 @@ const handleCardClick = () => {
               style={{ padding: "0 0 13px 0" }}
             >
               <div className="d-flex justify-content-start ms-2 align-items-center">
-                <span>Dashboard Analisis</span>
+                <span>Dashboard Analisis {titleBerubah}</span>
               </div>
               <div
                 className="d-flex justify-content-start ms-2 align-items-center"
@@ -214,7 +219,6 @@ const handleCardClick = () => {
               </div>
             </div>
           </div>
-           
               <Row>
                 <Col md={4}>
                 
@@ -529,7 +533,7 @@ const handleCardClick = () => {
                           </Card>
                     </Col>
                     <Col md={6}>
-                    <Card data-aos="fade-up-left" className="card-height-100 card-animate">
+                    <Card data-aos="fade-up-right" className="card-height-100 card-animate">
                             <CardBody>
                             <div className="d-flex flex-column title-custom-card">
                                 <div className="d-flex justify-content-start align-items-start mb-1 title-card">
