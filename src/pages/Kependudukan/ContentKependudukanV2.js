@@ -22,6 +22,7 @@ import VerticalBarChart from "../../Components/Chart/VerticalBarChart";
 import PyramidChart from "../../Components/Chart/PyramidChart";
 import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 import Pagination from "../../Components/Pagination/Pagination";
+import "./../Dapodik/dapodik.scss"
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
@@ -286,6 +287,7 @@ const ContentKependudukanV2 = () => {
 
         const dataKependudukanTabel = await response.json();
         setDataKependudukanTabel(dataKependudukanTabel.data)
+        setShowNextData(false)
 
         const valueTotalPenduduk = dataKependudukanTabel.data.map(item => ({
           name: item.nama_daerah,
@@ -358,10 +360,45 @@ const ContentKependudukanV2 = () => {
               break;
           }
         };
-  
+        
         // Simpan `handleCardClick` di dalam state atau panggil langsung pada setiap card
         setHandleCardClick(() => handleCardClick);
+        setCurrentPage(1)
 
+      } catch (errorKependudukanTabel) {
+        setErrorKependudukanTabel(errorKependudukanTabel);
+      } finally {
+        setLoadingKependudukanTabel(false);
+      }
+    };
+    fetchData();
+  };
+
+  const [showNextData, setShowNextData] = useState(false);
+  const getDataTabelKependudukanKabKota = ({kodeProvinsi}) => {
+    const fetchData = async () => {
+      try {
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            kode_provinsi: kodeProvinsi
+          }),
+        };        
+        const response = await fetch(
+          `${API_URI}/tabel_dukcapil_kabkota`,
+          requestOptions
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const dataKependudukanTabel = await response.json();
+
+        setDataKependudukanTabel(dataKependudukanTabel.data) 
+        setCurrentPage(1)
+        setShowNextData(true);     
       } catch (errorKependudukanTabel) {
         setErrorKependudukanTabel(errorKependudukanTabel);
       } finally {
@@ -782,7 +819,16 @@ const ContentKependudukanV2 = () => {
         {/* <div className="separator">
             <h4 className="card-title mb-0">-</h4>
         </div> */}
-        
+        {showNextData ? (<><button style={{
+                        backgroundColor: "#007bff",
+                        color: "white",
+                        padding: "10px 20px",
+                        border: "none",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                        fontSize: "16px",
+                        marginBottom: "8px"
+                      }} onClick={()=>getDataTabelKependudukanProv()}>Kembali ke Provinsi</button></>) : (<></>)}  
     <div style={{ overflowX: "auto" }}>
       {/* Render Table */}
       <table
@@ -846,7 +892,7 @@ const ContentKependudukanV2 = () => {
           {currentItems.map((item, index) => (
             <tr key={index}>
               {/* <td>{item.kode_daerah}</td> */}
-              <td>{item.nama_daerah} </td>
+              <td className={showNextData ? "" : "click-data"} onClick={() =>{showNextData ? "" : getDataTabelKependudukanKabKota({kodeProvinsi: item.kode_daerah}) }}>{item.nama_daerah}</td>
               <td>{item.jumlahpenduduk.toLocaleString("id-ID")}</td>
               <td>{item.jmlkk.toLocaleString("id-ID")}</td>            
               <td>{item.luas_wilayah.toLocaleString("id-ID")}</td>

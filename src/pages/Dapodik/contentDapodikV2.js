@@ -380,7 +380,7 @@ const ContentDapodikV2 = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
-            nama_prov: searchTerm ? searchTerm : "",
+            nama_prov: searchTerm
           }),
         };
         // /table_dapodik_provinsi
@@ -395,6 +395,7 @@ const ContentDapodikV2 = () => {
           throw new Error("Network response was not ok");
         }
         const dataDapodikTabelProvinsi = await response.json();
+        setDataDapodikTabelProvinsi(dataDapodikTabelProvinsi?.data?.tabel_dapodik_provinsi);
         setShowNextData(false)
         const filterKabupaten = dataDapodikTabelProvinsi?.data?.tabel_dapodik_provinsi.filter((item)=>(
           item.jns_pemda=="kab" || item.jns_pemda=="kota"
@@ -402,7 +403,6 @@ const ContentDapodikV2 = () => {
         console.log(filterKabupaten, 'ini')
         setDataKolomNamaDaerah("Provinsi");
         setCurrentPageProvinsi(1)
-        setDataDapodikTabelProvinsi(dataDapodikTabelProvinsi?.data?.tabel_dapodik_provinsi);
 
       } catch (errorDapodikTabel) {
         setErrorDapodikTabel(errorDapodikTabel);
@@ -2169,7 +2169,7 @@ const ContentDapodikV2 = () => {
                       fontSize: "16px",
                       marginBottom: "8px",
                     }}
-                    onClick={() => getDataTabelDapodikProv()}
+                    onClick={() => getDataTabelDapodikProv(searchTerm)}
                   >
                     Kembali ke Provinsi
                   </button></>
@@ -2678,8 +2678,7 @@ const ContentDapodikV2 = () => {
                             </td></>)}
                             
                           </tr>
-                        ))}
-                        {placeholders}
+                        ))}                        
                       </tbody>
                     </table>
                   </div>
