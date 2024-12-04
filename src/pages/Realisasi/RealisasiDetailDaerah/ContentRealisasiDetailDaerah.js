@@ -475,7 +475,7 @@ const ContentRealisasiDetailDaerah = () => {
           </Col>
         </Row>           
         <Row>
-          <Col md={6}> 
+          <Col md={12}> 
             <Card>
               <CardBody>
                 <Row>
@@ -532,48 +532,12 @@ const ContentRealisasiDetailDaerah = () => {
                   </div>                    
                   </Col>
                 </Row>
-                {/* <div className='separator mb-3'>
-                </div> */}
-                {/* <Row>
-                  <Col>
-                  <div className='d-flex justify-content-between'>
-                    <div className='d-flex justify-content-start align-items-start mb-2' style={{fontSize: "20px", fontWeight:600}}>
-                        Sumber Usulan RKPD
-                    </div>
-                    <select
-                        name="subtahap"
-                          style={{
-                            padding: "10px 30px 10px 10px",
-                            fontSize: "16px",
-                            borderRadius: "5px",
-                            border: "1px solid #ccc",
-                            backgroundColor: "#ffffff",                          
-                            cursor: "pointer",                          
-                            marginLeft: "10px"
-                          }}
-                          value={selectedSingleSubTahapan}
-                          onChange={handleSelectChange}
-                        >                        
-                        <option value="1">Persiapan</option>
-                        <option value="2">Ranwal</option>
-                        <option value="3">Rancangan</option>
-                        <option value="4">Musrenbang</option>
-                        <option value="5">Rankhir</option>
-                        <option value="6">Penetapan</option>                                                                                                                  
-                        </select>
-                  </div>
-                  
-                  <PieChartNew 
-                  dataChart={dataRealisasi}
-                  categoryName={['Eksekutif', 'Legislatif', 'Masyarakat']}
-                  dataColors='["#57E7B4", "#FCAD24", "#2DAED4"]'
-                  />                  
-                  </Col>
-                </Row> */}
               </CardBody>
             </Card>
-          </Col>
-          <Col md={6}>
+          </Col>     
+        </Row>
+        <Row>
+        <Col md={12}>
           <Card className="card-height-100">
               <CardBody>
                 <div className="separator">
@@ -620,7 +584,7 @@ const ContentRealisasiDetailDaerah = () => {
                           <option value="3">RKPD Perubahan</option>
                         </select> */}
                     <div className="table-responsive table-card" style={{ overflowX: "auto" }}>                    
-                      <table className="table table-nowrap mb-2 " style={{width:"1000px"}} >
+                      <table className="table table-nowrap mb-2 " style={{width:"100%"}} >
                         <thead className="table-light">
                           <tr>
                       
@@ -787,9 +751,8 @@ const ContentRealisasiDetailDaerah = () => {
                 />
               </CardBody>
             </Card>
-          </Col>          
+          </Col> 
         </Row>
-
         <Modal
         size="xl"
         isOpen={modall}

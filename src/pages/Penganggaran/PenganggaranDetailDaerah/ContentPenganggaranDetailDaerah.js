@@ -571,7 +571,7 @@ const ContentPenganggaranDetailDaerah = () => {
           </Col>
         </Row>           
         <Row>
-          <Col md={6}> 
+          <Col md={12}> 
             <Card>
               <CardBody>
                 <Row>
@@ -630,8 +630,10 @@ const ContentPenganggaranDetailDaerah = () => {
                 </Row>
               </CardBody>
             </Card>
-          </Col>
-          <Col md={6}>
+          </Col>         
+        </Row>
+        <Row>
+        <Col md={12}>
           <Card className="card-height-100">
               <CardBody>
                 <div className="separator">
@@ -700,7 +702,7 @@ const ContentPenganggaranDetailDaerah = () => {
                         })()}
                       </select>
                     <div className="table-responsive table-card" style={{ overflowX: "auto" }}>                    
-                      <table className="table table-nowrap mb-2 " style={{width:"1000px"}} >
+                      <table className="table table-nowrap mb-2 " style={{width:"100%"}} >
                         <thead className="table-light">
                           <tr>
                       
@@ -859,7 +861,7 @@ const ContentPenganggaranDetailDaerah = () => {
                 />
               </CardBody>
             </Card>
-          </Col>          
+          </Col> 
         </Row>
         <Modal
         size="xl"
