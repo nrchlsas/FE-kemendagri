@@ -21,6 +21,7 @@ import HorizontalBarChart from "../../Components/Chart/HorizontalBarChart";
 import VerticalBarChart from "../../Components/Chart/VerticalBarChart";
 import PyramidChart from "../../Components/Chart/PyramidChart";
 import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
+import Pagination from "../../Components/Pagination/Pagination";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
@@ -781,19 +782,64 @@ const ContentKependudukanV2 = () => {
         {/* <div className="separator">
             <h4 className="card-title mb-0">-</h4>
         </div> */}
-    <div  style={{ overflowX: "auto" }}>
+        
+    <div style={{ overflowX: "auto" }}>
       {/* Render Table */}
-      <table className="table table-nowrap align-middle mb-0" style={{ width: "100%" }}>
+      <table
+        className="table table-bordered table-nowrap align-middle mb-0 custom-table"
+        style={{ width: "100%" }}
+      >
         <thead className="table-light">
           <tr>
             {/* <th>Kode Provinsi</th> */}
-            <th style={{cursor: "pointer"}} onClick={() => requestSort("nama_daerah")}>Nama Daerah {getSortIcon("nama_daerah")}</th>
-            <th style={{cursor: "pointer"}} onClick={() => requestSort("jumlahpenduduk")}>Total Penduduk (Jiwa) {getSortIcon("jumlahpenduduk")}</th>
-            <th style={{cursor: "pointer"}} onClick={() => requestSort("jmlkk")}>Jumlah KK (Jiwa) {getSortIcon("jmlkk")}</th>
-            <th style={{cursor: "pointer"}} onClick={() => requestSort("luas_wilayah")}>Luas Wilayah (Km²) {getSortIcon("luas_wilayah")}</th>
-            <th style={{cursor: "pointer"}} onClick={() => requestSort("kepadatan")}>Kepadatan (Jiwa/km²) {getSortIcon("kepadatan")}</th>
-            <th style={{cursor: "pointer"}} onClick={() => requestSort("jumlahlakilaki")}>Jumlah Penduduk Laki-laki (Jiwa) {getSortIcon("jumlahlakilaki")}</th>
-            <th style={{cursor: "pointer"}} onClick={() => requestSort("jumlahperempuan")}>Jumlah Penduduk Perempuan (Jiwa) {getSortIcon("jumlahperempuan")}</th>
+            <th style={{ whiteSpace: "normal",
+                              overflowWrap: "break-word",
+                              maxWidth: "150px",
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",}} onClick={() => requestSort("nama_daerah")}>Nama Daerah {getSortIcon("nama_daerah")}</th>
+            <th style={{ whiteSpace: "normal",
+                              overflowWrap: "break-word",
+                              maxWidth: "150px",
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",}} onClick={() => requestSort("jumlahpenduduk")}>Total Penduduk (Jiwa) {getSortIcon("jumlahpenduduk")}</th>
+            <th style={{ whiteSpace: "normal",
+                              overflowWrap: "break-word",
+                              maxWidth: "150px",
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",}} onClick={() => requestSort("jmlkk")}>Jumlah KK (Jiwa) {getSortIcon("jmlkk")}</th>
+            <th style={{ whiteSpace: "normal",
+                              overflowWrap: "break-word",
+                              maxWidth: "150px",
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",}} onClick={() => requestSort("luas_wilayah")}>Luas Wilayah (Km²) {getSortIcon("luas_wilayah")}</th>
+            <th style={{ whiteSpace: "normal",
+                              overflowWrap: "break-word",
+                              maxWidth: "150px",
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",}} onClick={() => requestSort("kepadatan")}>Kepadatan (Jiwa/km²) {getSortIcon("kepadatan")}</th>
+            <th style={{ whiteSpace: "normal",
+                              overflowWrap: "break-word",
+                              maxWidth: "150px",
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",}} onClick={() => requestSort("jumlahlakilaki")}>Jumlah Penduduk Laki-laki (Jiwa) {getSortIcon("jumlahlakilaki")}</th>
+            <th style={{ whiteSpace: "normal",
+                              overflowWrap: "break-word",
+                              maxWidth: "150px",
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",}} onClick={() => requestSort("jumlahperempuan")}>Jumlah Penduduk Perempuan (Jiwa) {getSortIcon("jumlahperempuan")}</th>
+            {/* <th style={{ whiteSpace: "normal",
+                              overflowWrap: "break-word",
+                              maxWidth: "150px",
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",}}>Action</th> */}
           </tr>
         </thead>
         <tbody style={{ minHeight: '500px' }}>
@@ -807,42 +853,25 @@ const ContentKependudukanV2 = () => {
               <td>{item.kepadatan.toLocaleString("id-ID")}</td>
               <td>{item.jumlahlakilaki.toLocaleString("id-ID")}</td>
               <td>{item.jumlahperempuan.toLocaleString("id-ID")}</td>
+              {/* <i
+                style={{
+                  padding: "5px 10px",
+                  cursor: "pointer",
+                  fontSize: "30px",
+                }}                                
+                className="bx bx-list-ul text-primary"
+              ></i> */}
             </tr>
           ))}
           {placeholders}
         </tbody>
       </table>
       </div>
-    
-
-      {/* Render Pagination */}
-      <nav className="mt-3">
-        <ul className="pagination justify-content-end">
-          {/* Previous Button */}
-          <li className={`page-item ${currentPage === 1 && 'disabled'}`}>
-            <button className="page-link" onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1}>
-              Previous
-            </button>
-          </li>
-
-          {/* Page Numbers */}
-          {[...Array(totalPages)].map((_, index) => (
-            <li key={index} className={`page-item ${currentPage === index + 1 ? 'active' : ''}`}>
-              <button className="page-link" onClick={() => paginate(index + 1)}>
-                {index + 1}
-              </button>
-            </li>
-          ))}
-
-          {/* Next Button */}
-          <li className={`page-item ${currentPage === totalPages && 'disabled'}`}>
-            <button className="page-link" onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages}>
-              Next
-            </button>
-          </li>
-        </ul>
-      </nav>
-           
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={paginate}
+          />                 
           </CardBody>
         </Card>
         </Col>

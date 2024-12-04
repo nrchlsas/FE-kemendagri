@@ -31,7 +31,13 @@ import FilterRightSide from "./FilterRightSide";
 import SimpleBar from "simplebar-react";
 // import DashboardAnalisisRightSide from "./DashboardAnalisisRightSide";
 import AOS from 'aos';
-import 'aos/dist/aos.css'; // Pastikan sudah mengimpor CSS AOS
+import 'aos/dist/aos.css';
+
+AOS.init({
+    easing: 'ease-out-back',
+    duration: 3000,
+    anchorPlacement: 'top-bottom', 
+});
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
@@ -174,6 +180,7 @@ const handleFilterUpdate = (filters) => {
 const [showGrafikBelanjaKelompok, setShowGrafikBelanjaKelompok] = useState(false)
 const [showGrafikPendapatanKelompok, setShowGrafikPendapatanKelompok] = useState(false)
 const [showPembiayaan, setShowPembiayaan] = useState(false)
+
 const handleCardClick = () => {
   setShowPembiayaan((prev) => !prev);
   
@@ -402,37 +409,6 @@ const handleCardClick = () => {
                         <Col md={4}>
                           <Card data-aos="fade-up-right" className="card-height-100 card-animate">
                             <CardBody>
-                            <div className="d-flex flex-column title-custom-card">
-                                <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                                  <span>Total Belanja</span>
-                                </div>
-                                <div className="d-flex">
-                                  <div className="avatar-xs-half flex-shrink-0">
-                                    <span className="avatar-title bg-info-subtle rounded-4 fs-3">
-                                      <i className="bx bx-cart-alt text-info"></i>
-                                    </span>
-                                  </div>
-                                  <div className="d-flex justify-content-start align-items-start ms-2 title-body">
-                                    <span>
-                                      <CountUp
-                                        start={0}
-                                        end={dataDashboardAnalisis?.data_dashboard_nasional?.total_belanja}
-                                        separator="."
-                                        prefix="Rp "
-                                        suffix=""
-                                        duration={1}
-                                      />
-                                    </span>
-                                  </div>
-                                </div>
-                              </div>  
-                                            
-                            </CardBody>
-                          </Card>
-                        </Col>
-                        <Col md={4}>
-                          <Card data-aos="fade-up" className="card-height-100 card-animate">
-                            <CardBody>
                             <div className="d-flex flex-column justify-content-start align-items-start title-custom-card">
                                 <div className="d-flex justify-content-start align-items-start mb-1 title-card">
                                   <span>Total Pendapatan</span>
@@ -456,12 +432,42 @@ const handleCardClick = () => {
                                     </span>
                                   </div>
                                 </div>
-                              </div>                           
+                              </div>       
                             </CardBody>
                           </Card>
                         </Col>
                         <Col md={4}>
-                        {showPembiayaan ? (<><Card style={{cursor:"pointer"}} onClick={handleCardClick} data-aos="flip-left" className="card-height-100 card-animate">
+                          <Card data-aos="fade-up" className="card-height-100 card-animate">
+                            <CardBody>
+                            <div className="d-flex flex-column title-custom-card">
+                                <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                                  <span>Total Pembiayaan Penerimaan</span>
+                                </div>
+                                <div className="d-flex">
+                                  <div className="avatar-xs-half flex-shrink-0">
+                                    <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
+                                      <i className="bx bx-calculator text-warning"></i>
+                                    </span>
+                                  </div>
+                                  <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                                    <span>
+                                      <CountUp
+                                        start={0}
+                                        end={dataDashboardAnalisis?.data_dashboard_nasional?.total_pembiayaanpen}
+                                        separator="."
+                                        prefix="Rp "
+                                        suffix=""
+                                        duration={1}
+                                      />
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </CardBody>
+                          </Card>
+                        </Col>
+                        <Col md={4}>
+                        <Card style={{cursor:"pointer"}} onClick={handleCardClick} data-aos="flip-left" className="card-height-100 card-animate">
                             <CardBody>
                             <div className="d-flex flex-column title-custom-card">
                                 <div className="d-flex justify-content-start align-items-start mb-1 title-card">
@@ -488,38 +494,41 @@ const handleCardClick = () => {
                                 </div>
                               </div>  
                             </CardBody>
-                          </Card></>) : (<><Card style={{cursor:"pointer"}} onClick={handleCardClick} data-aos="fade-up-left" className="card-height-100 card-animate">
+                          </Card>
+                        </Col>
+              </Row>
+              <Row>
+                <Col md={6}>
+                    <Card data-aos="fade-up-left" className="card-height-100 card-animate">
                             <CardBody>
                             <div className="d-flex flex-column title-custom-card">
                                 <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                                  <span>Total Pembiayaan Penerimaan</span>
+                                  <span>Total Belanja</span>
                                 </div>
                                 <div className="d-flex">
                                   <div className="avatar-xs-half flex-shrink-0">
-                                    <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
-                                      <i className="bx bx-calculator text-warning"></i>
+                                    <span className="avatar-title bg-info-subtle rounded-4 fs-3">
+                                      <i className="bx bx-cart-alt text-info"></i>
                                     </span>
                                   </div>
-                                  <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                                    <span>
+                                  <div className="d-flex justify-content-between align-items-start ms-2 title-body">
+                                    <div>
                                       <CountUp
                                         start={0}
-                                        end={dataDashboardAnalisis?.data_dashboard_nasional?.total_pembiayaanpen}
+                                        end={dataDashboardAnalisis?.data_dashboard_nasional?.total_belanja}
                                         separator="."
                                         prefix="Rp "
                                         suffix=""
                                         duration={1}
-                                      />
-                                    </span>
-                                  </div>
+                                      />                                      
+                                    </div>                
+                                  </div> 
                                 </div>
-                              </div>  
+                              </div>                                 
                             </CardBody>
-                          </Card></>)}
-                        </Col>
-              </Row>
-              <Row>
-                <Col md={4}>
+                          </Card>
+                    </Col>
+                    <Col md={6}>
                     <Card data-aos="fade-up-left" className="card-height-100 card-animate">
                             <CardBody>
                             <div className="d-flex flex-column title-custom-card">
@@ -542,7 +551,7 @@ const handleCardClick = () => {
                                         suffix=""
                                         duration={1}
                                       />
-                                      <span className="mx-3" style={{color: "green"}}>
+                                      <span className="mx-3" style={{color: "green", fontSize:"16px"}}>
                                       (<CountUp
                                       start={0}
                                       end={
@@ -559,7 +568,6 @@ const handleCardClick = () => {
                                       duration={1}
                                     />)
                                       </span>
-                                      
                                     </div>                
                                   </div> 
                                 </div>
