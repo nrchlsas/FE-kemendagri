@@ -156,7 +156,7 @@ const Permission = () => {
     useEffect(() => {
         if (list_menus.length == 0) return;
         const permit = get_permission_by_url('/permission', true, () => {
-            navigate('/auth-404-basic', { replace: true });
+            // navigate('/auth-404-basic', { replace: true });
         });
         dispatch(permit);
     }, [list_menus]);
