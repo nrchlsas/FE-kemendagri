@@ -1,19 +1,27 @@
 import React, { useEffect, useState } from 'react'
 import { Card, CardBody, Col, Label, Row } from 'reactstrap'
 import ContentUhcV2 from './ContentUhcV2';
-
-const SingleOptions = [
-    { value: 'Choices 1', label: 'Choices 1' },
-    { value: 'Choices 2', label: 'Choices 2' },
-    { value: 'Choices 3', label: 'Choices 3' },
-    { value: 'Choices 4', label: 'Choices 4' }
-];
+import { useSelector } from "react-redux";
+import { createSelector } from "reselect";
+import { get_permission_by_url } from "../../slices/thunks";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 const Uhc = () => {
-    const [selectedMulti2, setselectedMulti2] = useState(null);
-    function handleMulti2(selectedMulti2) {
-        setselectedMulti2(selectedMulti2);
-    }
+    const permissionState = (state) => state.Profile;
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const permissionProperties = createSelector(
+        permissionState, (d) => ({ list_menus: d.list_menus })
+    );
+    const { list_menus } = useSelector(permissionProperties);
+    useEffect(() => {
+        if (list_menus.length == 0) return;
+        const permit = get_permission_by_url('/bpjs-kesehatan', true, () => {
+            navigate('/auth-404-basic', { replace: true });
+        });
+        dispatch(permit);
+    }, [list_menus]); //page ini
     
   return (
     <React.Fragment>

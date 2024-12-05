@@ -55,7 +55,7 @@ export const resetProfileFlag = () => {
 };
 
 export const load_menu_by_profile = (user) => async (dispatch) => {
-    let response = api.get(`${API_9007_URI}/rbac/list-menu`);
+    let response = api.create(`${API_9007_URI}/rbac/list-menu`);
     let data = await response;
 
     let list_menu = [];
@@ -152,9 +152,12 @@ export const calculate_menu_by_login = (menus = [], login_menus = []) => {
 
 export const get_permission_by_url = (url, is_page, cb) => (dispatch, getState) => {
     const { list_menus } = getState().Profile;
+    console.log(list_menus, 'ini list menus')
     if (is_page) {
         const list_page = list_menus.filter(d => d.is_menu);
         const found = list_page.find(d => d.is_menu && d.url == url);
+        console.log(list_page, 'ini isi list_page')
+        console.log(found, 'ini isi found')
         if (!found && typeof cb === "function") {
             console.error('tidak memimilik hak akses untuk', url);
             cb();

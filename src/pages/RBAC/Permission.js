@@ -159,7 +159,7 @@ const Permission = () => {
             navigate('/auth-404-basic', { replace: true });
         });
         dispatch(permit);
-    }, [list_menus]);
+    }, [list_menus]); //page ini
 
     // pagination
     const [paging, setPaging] = useState({

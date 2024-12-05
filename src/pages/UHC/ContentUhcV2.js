@@ -901,7 +901,7 @@ const ContentUhcV2 = () => {
             <CardBody>
               <div className="separator mb-2">
                 <h4 className="card-title">
-                  Peserja BPJS Kesehatan Yang Ditanggung Pemda
+                  Peserta BPJS Kesehatan Yang Ditanggung Pemda
                 </h4>
               </div>
               {dataUhc?.uhc_total_ditanggung_pemda?.map((item, index) => (

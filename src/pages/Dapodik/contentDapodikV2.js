@@ -29,6 +29,7 @@ import logoKemendikbud from "../../assets/images/logo-kemendagri/logo-kemendikbu
 import "./dapodik.scss";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 
 const ContentDapodikV2 = () => {
   const [customActiveTab, setcustomActiveTab] = useState("2");
@@ -104,17 +105,18 @@ const ContentDapodikV2 = () => {
   const [dataSdMap, setDataSdMap] = useState([])
   const getDataDapodik = () => {
     const fetchData = async () => {
+      const token = JSON.parse(sessionStorage.getItem("authUser"))           
       try {
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           // body: JSON.stringify({
           //   query:
           //     "select sum(total_rincian)/1000000000000 TotalPembiayaanK from konsolidasi_apbd where kode_kelompok = '6.2'",
           // }),
         };
         const response = await fetch(
-          `${API_URI}/dashboard_dapodik`,
+          `${API_URI_RBAC}/v2/dapodik/dashboard_dapodik`,
           requestOptions
         );
 
@@ -226,6 +228,7 @@ const ContentDapodikV2 = () => {
   const getDataTabelDapodikSeProv = (searchTerm) => {
     const fetchData = async () => {
       try {
+        
         const requestOptions = {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -2014,8 +2017,8 @@ const ContentDapodikV2 = () => {
                             </>)}                                                        
                             <td>
                               <span style={{ float: "right" }}>
-                                {item.total_anggaran
-                                  ? parseInt(item.total_anggaran).toLocaleString(
+                                {item.totalanggaran
+                                  ? parseInt(item.totalanggaran).toLocaleString(
                                       "id-ID"
                                     )
                                   : "-"}
