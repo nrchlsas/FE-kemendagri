@@ -28,6 +28,7 @@ import "./../Dapodik/dapodik.scss"
 import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
 
 const ContentMiskinEkstremV2 = () => {
   const [dataGrafikLabel, setDataGrafikLabel] = useState([]);
@@ -259,15 +260,16 @@ const ContentMiskinEkstremV2 = () => {
   const getDataKemiskinanEkstrem = (tahun="") => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             tahun : tahun
           }),
         };
         const response = await fetch(
-          `${API_URI}/dashboard_kemiskinan_ekstrim`,
+          `${API_URI_RBAC}/dashboard_kemiskinan_ekstrim`,
           requestOptions
         );
 
@@ -723,9 +725,10 @@ const ContentMiskinEkstremV2 = () => {
   const getDataMiskinEkstremTabel = () => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           // body: JSON.stringify({
           //   query:
           //     "select sum(total_rincian)/1000000000000 TotalPembiayaanK from konsolidasi_apbd where kode_kelompok = '6.2'",
@@ -733,7 +736,7 @@ const ContentMiskinEkstremV2 = () => {
         };
 
         const response = await fetch(
-          `${API_URI}/tabel_ke_seprovinsi`,
+          `${API_URI_RBAC}/tabel_ke_seprovinsi`,
           requestOptions
         );
 
@@ -804,16 +807,17 @@ const ContentMiskinEkstremV2 = () => {
   const getDataMiskinEkstremTabelKab = (kodeDdn="", e) => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_ddn: kodeDdn
           }),
         };
 
         const response = await fetch(
-          `${API_URI}/tabel_ke_kabkota`,
+          `${API_URI_RBAC}/tabel_ke_kabkota`,
           requestOptions
         );
 
@@ -849,9 +853,10 @@ const ContentMiskinEkstremV2 = () => {
     const fetchData = async () => {
       setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_prov: kodeSeProvinsi,
             kode_ddn: kodeDdnKabupaten !=""? kodeDdnKabupaten : kodeDdnProvinsi,
@@ -860,7 +865,7 @@ const ContentMiskinEkstremV2 = () => {
         };
   
         const response = await fetch(
-          `${API_URI}/detail-tabel-ke`,
+          `${API_URI_RBAC}/detail-tabel-ke`,
           requestOptions
         );
   

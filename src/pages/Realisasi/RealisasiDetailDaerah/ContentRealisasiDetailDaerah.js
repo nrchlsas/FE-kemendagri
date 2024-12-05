@@ -13,7 +13,7 @@ import CountUp from 'react-countup';
 import "./../../Kependudukan/kependudukan.scss";
 import { Buffer } from "buffer";
 
-const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
 const ContentRealisasiDetailDaerah = () => {
@@ -56,10 +56,8 @@ const ContentRealisasiDetailDaerah = () => {
   
           const dataGetLogoDaerah = await response.json();
   
-          // Ambil buffer data logo
           const logoBuffer = dataGetLogoDaerah.data[0].logo.data;
 
-          // Konversi buffer ke Base64
           const base64Image = `data:image/png;base64,${Buffer.from(logoBuffer).toString('base64')}`;
 
           setLogoImage(base64Image)
@@ -71,9 +69,9 @@ const ContentRealisasiDetailDaerah = () => {
       };
       fetchData();
     };
-    const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
-    const [selectedSingleTahapan, setSelectedSingleTahapan] = useState('1'); // Set default value
-    const [selectedSingleSubTahapan, setSelectedSingleSubTahapan] = useState('6'); // Set default value
+    const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024');
+    const [selectedSingleTahapan, setSelectedSingleTahapan] = useState('1');
+    const [selectedSingleSubTahapan, setSelectedSingleSubTahapan] = useState('6');
     const [dataRealisasi, setDataRealisasi] = useState([]);
     const [loadingRealisasi, setLoadingRealisasi] = useState([]);
     const [errorRealisasi, setErrorRealisasi] = useState([]);
@@ -85,9 +83,10 @@ const ContentRealisasiDetailDaerah = () => {
     } = {}) => {
       const fetchData = async () => {
         try {
+          const token = JSON.parse(sessionStorage.getItem("authUser"))
           const requestOptions = {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
             body: JSON.stringify({
               id_tahap: tahapan,
               tahun: tahun,
@@ -95,7 +94,7 @@ const ContentRealisasiDetailDaerah = () => {
             }),
           };
           const response = await fetch(
-            `${API_URI}/realisasi_level_3`,
+            `${API_URI_RBAC}/realisasi_level_3`,
             requestOptions
           );
   
@@ -146,9 +145,10 @@ const ContentRealisasiDetailDaerah = () => {
       const fetchData = async () => {
         // setLoadingDetailUnitSkpd(true); // Set loading state to true when starting the fetch
         try {
+          const token = JSON.parse(sessionStorage.getItem("authUser"))
           const requestOptions = {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
             body: JSON.stringify({
               kode_ddn: kodeDdn,
               kode_unit_skpd: kodeUnitSkpd,
@@ -157,7 +157,7 @@ const ContentRealisasiDetailDaerah = () => {
           };
   
           const response = await fetch(
-            `${API_URI}/realisasi_level_3_subgiat`,
+            `${API_URI_RBAC}/realisasi_level_3_subgiat`,
             requestOptions
           );
   
@@ -196,9 +196,10 @@ const ContentRealisasiDetailDaerah = () => {
       const fetchData = async () => {
         // setLoadingDetailUnitSkpdSro(true); // Set loading state to true when starting the fetch
         try {
+          const token = JSON.parse(sessionStorage.getItem("authUser"))
           const requestOptions = {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
             body: JSON.stringify({
               kode_ddn: kodeDdn,
               kode_sub_giat: kodeSubGiat,
@@ -208,7 +209,7 @@ const ContentRealisasiDetailDaerah = () => {
           };
   
           const response = await fetch(
-            `${API_URI}/realisasi_level_3_sro`,
+            `${API_URI_RBAC}/realisasi_level_3_sro`,
             requestOptions
           );
   

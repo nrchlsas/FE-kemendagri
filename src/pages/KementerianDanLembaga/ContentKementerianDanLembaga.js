@@ -19,6 +19,7 @@ import CountUp from "react-countup";
 import KementerianDanLembaga from ".";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
 
 const ContentKementerianDanLembaga = () => {
   const [dataKementerianDanLembaga, setDataKementerianDanLembaga] = useState(
@@ -115,9 +116,10 @@ const ContentKementerianDanLembaga = () => {
   const getDataKementerianDanLembagaFull = () => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           // body: JSON.stringify({
           //   query:
           //     "select sum(total_rincian)/1000000000000 TotalPembiayaanK from konsolidasi_apbd where kode_kelompok = '6.2'",
@@ -125,7 +127,7 @@ const ContentKementerianDanLembaga = () => {
         };
 
         const response = await fetch(
-          `${API_URI}/dashboard_monitoring_integrasi_kl`,
+          `${API_URI_RBAC}/dashboard_monitoring_integrasi_kl`,
           requestOptions
         );
 
@@ -151,9 +153,10 @@ const ContentKementerianDanLembaga = () => {
   const getDataKementerianDanLembagaTabel = () => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           // body: JSON.stringify({
           //   query:
           //     "select sum(total_rincian)/1000000000000 TotalPembiayaanK from konsolidasi_apbd where kode_kelompok = '6.2'",
@@ -161,7 +164,7 @@ const ContentKementerianDanLembaga = () => {
         };
 
         const response = await fetch(
-          `${API_URI}/tabel-monitoring-kl`,
+          `${API_URI_RBAC}/tabel-monitoring-kl`,
           requestOptions
         );
 

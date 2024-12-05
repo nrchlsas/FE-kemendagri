@@ -30,6 +30,7 @@ import BreadCrumb from "../../Components/Common/BreadCrumb";
 import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
 
 const ContentPerencanaan = () => {
   const [titleMap, setTitleMap] = useState("Total Peserta Aktif")
@@ -67,16 +68,17 @@ const ContentPerencanaan = () => {
   } = {}) => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             id_tahap: tahapan,
             tahun: tahun,
           }),
         };
         const response = await fetch(
-          `${API_URI}/dashboard_perencanaan_1_rkpd_nasional`,
+          `${API_URI_RBAC}/dashboard_perencanaan_1_rkpd_nasional`,
           requestOptions
         );
 
@@ -124,16 +126,17 @@ const ContentPerencanaan = () => {
   } = {}) => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             id_tahap: tahapan,
             tahun: tahun,
           }),
         };
         const response = await fetch(
-          `${API_URI}/dashboard_perencanaan_1_list_persentase`,
+          `${API_URI_RBAC}/dashboard_perencanaan_1_list_persentase`,
           requestOptions
         );
 
@@ -196,9 +199,10 @@ const ContentPerencanaan = () => {
   } = {}) => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             id_tahap: tahapan,
             tahun: tahun,
@@ -206,7 +210,7 @@ const ContentPerencanaan = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI}/dashboard_perencanaan_2_list_persentase`,
+          `${API_URI_RBAC}/dashboard_perencanaan_2_list_persentase`,
           requestOptions
         );
 

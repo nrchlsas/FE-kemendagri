@@ -13,7 +13,7 @@ import CountUp from 'react-countup';
 import "./../../Kependudukan/kependudukan.scss";
 import { Buffer } from "buffer";
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
-const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
 
 const ContentPenganggaranDetailDaerah = () => {
     const { _id } = useParams();
@@ -90,9 +90,10 @@ const ContentPenganggaranDetailDaerah = () => {
     } = {}) => {
       const fetchData = async () => {
         try {
+          const token = JSON.parse(sessionStorage.getItem("authUser"))
           const requestOptions = {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
             body: JSON.stringify({
               // id_tahap: tahapan,
               // tahun: tahun,
@@ -100,7 +101,7 @@ const ContentPenganggaranDetailDaerah = () => {
             }),
           };
           const response = await fetch(
-            `${API_URI}/dashboard_Penganggaran_2_komposisi`,
+            `${API_URI_RBAC}/dashboard_Penganggaran_2_komposisi`,
             requestOptions
           );
   
@@ -129,9 +130,10 @@ const ContentPenganggaranDetailDaerah = () => {
     } = {}) => {
       const fetchData = async () => {
         try {
+          const token = JSON.parse(sessionStorage.getItem("authUser"))
           const requestOptions = {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
             body: JSON.stringify({
               id_tahap: tahapan,
               tahun: tahun,
@@ -139,7 +141,7 @@ const ContentPenganggaranDetailDaerah = () => {
             }),
           };
           const response = await fetch(
-            `${API_URI}/dashboard_Penganggaran_level_3`,
+            `${API_URI_RBAC}/dashboard_Penganggaran_level_3`,
             requestOptions
           );
   
@@ -188,9 +190,10 @@ const ContentPenganggaranDetailDaerah = () => {
       const fetchData = async () => {
         setLoadingDetailUnitSkpd(true); // Set loading state to true when starting the fetch
         try {
+          const token = JSON.parse(sessionStorage.getItem("authUser"))
           const requestOptions = {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
             body: JSON.stringify({
               kode_ddn: kodeDdn,
               kode_unit_skpd: kodeUnitSkpd,
@@ -200,7 +203,7 @@ const ContentPenganggaranDetailDaerah = () => {
           };
   
           const response = await fetch(
-            `${API_URI}/dashboard_penganggaran_level_3_subgiat`,
+            `${API_URI_RBAC}/dashboard_penganggaran_level_3_subgiat`,
             requestOptions
           );
   
@@ -240,9 +243,10 @@ const ContentPenganggaranDetailDaerah = () => {
       const fetchData = async () => {
         // setLoadingDetailUnitSkpdSro(true); // Set loading state to true when starting the fetch
         try {
+          const token = JSON.parse(sessionStorage.getItem("authUser"))
           const requestOptions = {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
             body: JSON.stringify({
               kode_ddn: kodeDdn,
               kode_sub_giat: kodeSubGiat,
@@ -253,7 +257,7 @@ const ContentPenganggaranDetailDaerah = () => {
           };
   
           const response = await fetch(
-            `${API_URI}/dashboard_penganggaran_level_3_sro`,
+            `${API_URI_RBAC}/dashboard_penganggaran_level_3_sro`,
             requestOptions
           );
   

@@ -25,6 +25,7 @@ import Pagination from "../../Components/Pagination/Pagination";
 import "./../Dapodik/dapodik.scss"
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
 
 const ContentKependudukanV2 = () => {
   const [customActiveTab, setcustomActiveTab] = useState("1");
@@ -80,11 +81,12 @@ const ContentKependudukanV2 = () => {
   const getDataKependudukan = () => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
         };
-        const response = await fetch(`${API_URI}/dashboard_dukcapil`, requestOptions);
+        const response = await fetch(`${API_URI_RBAC}/dashboard_dukcapil`, requestOptions);
   
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -265,9 +267,10 @@ const ContentKependudukanV2 = () => {
   const getDataTabelKependudukanProv = () => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           // body: JSON.stringify({
           //   query:
           //     "select sum(total_rincian)/1000000000000 TotalPembiayaanK from konsolidasi_apbd where kode_kelompok = '6.2'",
@@ -277,7 +280,7 @@ const ContentKependudukanV2 = () => {
         // /table_Kependudukan_kabupaten
         // /table_stunting_provinsi
         const response = await fetch(
-          `${API_URI}/tabel_dukcapil`,
+          `${API_URI_RBAC}/tabel_dukcapil`,
           requestOptions
         );
 
@@ -378,15 +381,16 @@ const ContentKependudukanV2 = () => {
   const getDataTabelKependudukanKabKota = ({kodeProvinsi}) => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_provinsi: kodeProvinsi
           }),
         };        
         const response = await fetch(
-          `${API_URI}/tabel_dukcapil_kabkota`,
+          `${API_URI_RBAC}/tabel_dukcapil_kabkota`,
           requestOptions
         );
 

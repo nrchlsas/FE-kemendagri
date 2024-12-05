@@ -11,6 +11,7 @@ import BreadCrumb from '../../../Components/Common/BreadCrumb';
 
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
 const SingleOptions = [
     { value: "2024", label: "2024" },
     { value: "2025", label: "2025" },
@@ -46,9 +47,10 @@ const ContentPerencanaanDaerah = () => {
   } = {}) => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             // id_tahap: tahapan,
             // tahun: tahun,
@@ -56,7 +58,7 @@ const ContentPerencanaanDaerah = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI}/dashboard_perencanaan_2_komposisi_rkpd`,
+          `${API_URI_RBAC}/dashboard_perencanaan_2_komposisi_rkpd`,
           requestOptions
         );
 
@@ -95,9 +97,10 @@ const ContentPerencanaanDaerah = () => {
   } = {}) => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             id_tahap: tahapan,
             tahun: tahun,
@@ -105,7 +108,7 @@ const ContentPerencanaanDaerah = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI}/dashboard_perencanaan_2_list_persentase`,
+          `${API_URI_RBAC}/dashboard_perencanaan_2_list_persentase`,
           requestOptions
         );
 

@@ -28,6 +28,7 @@ import VerticalBarChart from "../../Components/Chart/VerticalBarChart";
 import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
 
 const ContentStunting = () => {
   const [selectedDesil, setSelectedDesil] = useState("1"); // State untuk menyimpan pilihan dropdown
@@ -196,13 +197,14 @@ const ContentStunting = () => {
   const getDataStunting = () => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
         };
 
         const response = await fetch(
-          `${API_URI}/dashboard_stunting`,
+          `${API_URI_RBAC}/dashboard_stunting`,
           requestOptions
         );
 
@@ -559,9 +561,10 @@ const ContentStunting = () => {
   const getDataStuntingTabel = () => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           // body: JSON.stringify({
           //   query:
           //     "select sum(total_rincian)/1000000000000 TotalPembiayaanK from konsolidasi_apbd where kode_kelompok = '6.2'",
@@ -569,7 +572,7 @@ const ContentStunting = () => {
         };
 
         const response = await fetch(
-          `${API_URI}/tabel_stunting_seprovinsi`,
+          `${API_URI_RBAC}/tabel_stunting_seprovinsi`,
           requestOptions
         );
 
@@ -665,16 +668,17 @@ const ContentStunting = () => {
   const getDataStuntingTabelKabupaten = (kodeDdn = "", e) => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_ddn1: kodeDdn,
           }),
         };
 
         const response = await fetch(
-          `${API_URI}/tabel_stunting_kabupaten`,
+          `${API_URI_RBAC}/tabel_stunting_kabupaten`,
           requestOptions
         );
 
@@ -712,9 +716,10 @@ const ContentStunting = () => {
     const fetchData = async () => {
       setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_prov: kodeSeProvinsi,
             kode_ddn:
@@ -724,7 +729,7 @@ const ContentStunting = () => {
         };
 
         const response = await fetch(
-          `${API_URI}/detail-tabel-stunting`,
+          `${API_URI_RBAC}/detail-tabel-stunting`,
           requestOptions
         );
 
@@ -1070,16 +1075,17 @@ const ContentStunting = () => {
   const getDataFasilitasKesehatanPerProv = ({kodeProvinsi = "", url=""}) => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_provinsi: kodeProvinsi,
           }),
         };
 
         const response = await fetch(
-          `${API_URI}${url}`,
+          `${API_URI_RBAC}${url}`,
           requestOptions
         );
 
@@ -1120,16 +1126,17 @@ const ContentStunting = () => {
   const getDataStackPerProv = ({kodeProv = ""}) => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_prov: kodeProv,
           }),
         };
 
         const response = await fetch(
-          `${API_URI}/dashboard_stunting_compare_resiko_by_provinsi_onklik`,
+          `${API_URI_RBAC}/dashboard_stunting_compare_resiko_by_provinsi_onklik`,
           requestOptions
         );
 

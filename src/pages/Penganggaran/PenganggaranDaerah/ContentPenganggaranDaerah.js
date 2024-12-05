@@ -5,6 +5,7 @@ import Pagination from "../../../Components/Pagination/Pagination";
 import '../../../Components/ProgressArrowBar/ProgressArrowBar.scss'
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
 const SingleOptions = [
     { value: "2024", label: "2024" },
     { value: "2025", label: "2025" },
@@ -43,9 +44,10 @@ const ContentPenganggaranDaerah = () => {
   } = {}) => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             // id_tahap: tahapan,
             // tahun: tahun,
@@ -53,7 +55,7 @@ const ContentPenganggaranDaerah = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI}/dashboard_Penganggaran_2_komposisi`,
+          `${API_URI_RBAC}/dashboard_Penganggaran_2_komposisi`,
           requestOptions
         );
 
@@ -92,9 +94,10 @@ const ContentPenganggaranDaerah = () => {
   } = {}) => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             // id_tahap: tahapan,
             tahun: tahun,
@@ -102,7 +105,7 @@ const ContentPenganggaranDaerah = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI}/dashboard_penganggaran_level_2`,
+          `${API_URI_RBAC}/dashboard_penganggaran_level_2`,
           requestOptions
         );
 

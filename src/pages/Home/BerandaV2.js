@@ -19,6 +19,7 @@ import CountUp from "react-countup";
 import logoKemendagri from "../../assets/images/logo-kemendagri/Animasi.gif"
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
 
 const SingleOptions = [
   { value: "2024", label: "2024" },
@@ -73,21 +74,22 @@ const BerandaV2 = () => {
   const getDataBeranda = () => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           // body: JSON.stringify({
           //   query:
           //     "select sum(total_rincian)/1000000000000 TotalPembiayaanK from konsolidasi_apbd where kode_kelompok = '6.2'",
           // }),
         };
         const response = await fetch(
-          `${API_URI}/dashboard_beranda`,
+          `${API_URI_RBAC}/dashboard_beranda`,
           requestOptions
         );
 
         const responseAnggaran = await fetch(
-          `${API_URI}/dashboard_beranda_1`,
+          `${API_URI_RBAC}/dashboard_beranda_1`,
           requestOptions
         );
         
@@ -114,16 +116,17 @@ const BerandaV2 = () => {
   const getDataBerandaPerencanaan = ({idTahap="1"}) => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             id_tahap: idTahap            
           }),
         };
 
         const responsePerencanaan = await fetch(
-          `${API_URI}/dashboard_beranda_perencanaan`,
+          `${API_URI_RBAC}/dashboard_beranda_perencanaan`,
           requestOptions
         );
         
@@ -148,16 +151,17 @@ const BerandaV2 = () => {
   const getDataBerandaPenganggaran = ({idTahap=""}) => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             id_tahap: idTahap    
           }),
         };
 
         const responsePenganggaran = await fetch(
-          `${API_URI}/dashboard_beranda_penganggaran`,
+          `${API_URI_RBAC}/dashboard_beranda_penganggaran`,
           requestOptions
         );
         
@@ -190,16 +194,17 @@ const BerandaV2 = () => {
   const getDataBerandaRealisasi = () => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           // body: JSON.stringify({
           //   id_tahap: idTahap            
           // }),
         };
 
         const responseRealisasi = await fetch(
-          `${API_URI}/dashboard_beranda_realisasi`,
+          `${API_URI_RBAC}/dashboard_beranda_realisasi`,
           requestOptions
         );
         
@@ -223,16 +228,17 @@ const BerandaV2 = () => {
   const getDataBerandaSpm = () => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           // body: JSON.stringify({
           //   id_tahap: idTahap            
           // }),
         };
 
         const responseSpm = await fetch(
-          `${API_URI}/dashboard_beranda_spm`,
+          `${API_URI_RBAC}/dashboard_beranda_spm`,
           requestOptions
         );
         
@@ -290,7 +296,7 @@ const BerandaV2 = () => {
     getDataBerandaPerencanaan("1");
     getDataBerandaPenganggaran({idTahap:"99"});
     getDataBerandaRealisasi();
-    getDataBerandaSpm();
+    // getDataBerandaSpm();
     // getPiePerencanaan();
   }, []);
 
@@ -301,16 +307,17 @@ const BerandaV2 = () => {
 
   const getPiePerencanaan = async (filter) => {
     try {
+      const token = JSON.parse(sessionStorage.getItem("authUser"))
       const requestOptions = {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json", "x-sipdhub": `${token.token}`
         },
         body: JSON.stringify({ filter }),
       };
 
       const response = await fetch(
-        `${API_URI}/dashboard_beranda_pie_perencanaan`,
+        `${API_URI_RBAC}/dashboard_beranda_pie_perencanaan`,
         requestOptions
       );
 

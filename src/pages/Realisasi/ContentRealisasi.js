@@ -30,6 +30,7 @@ import BreadCrumb from "../../Components/Common/BreadCrumb";
 import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
 
 const ContentRealisasi = () => {
   const [titleMap, setTitleMap] = useState("Total Peserta Aktif")
@@ -60,16 +61,17 @@ const ContentRealisasi = () => {
   } = {}) => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             // id_tahap: tahapan,
             tahun: tahun,
           }),
         };
         const response = await fetch(
-          `${API_URI}/realisasi_level_1`,
+          `${API_URI_RBAC}/realisasi_level_1`,
           requestOptions
         );
 

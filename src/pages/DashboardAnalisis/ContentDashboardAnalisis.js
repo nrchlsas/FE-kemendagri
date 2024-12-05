@@ -40,6 +40,7 @@ AOS.init({
 });
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
 
 const ContentDashboardAnalisis = () => {
   const [dataDashboardAnalisis, setDataDashboardAnalisis] = useState([]);
@@ -75,9 +76,10 @@ const ContentDashboardAnalisis = () => {
   }) => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_ddn: kodeDdn,
             nama_daerah: namaDaerah,
@@ -106,7 +108,7 @@ const ContentDashboardAnalisis = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI}/dashboard_anggaran_analisis`,
+          `${API_URI_RBAC}/dashboard_anggaran_analisis`,
           requestOptions
         );
 

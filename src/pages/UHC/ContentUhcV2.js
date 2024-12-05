@@ -11,7 +11,7 @@ import classnames from "classnames";
 import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
-
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
 const ContentUhcV2 = () => {
 
   const [selectedDesil, setSelectedDesil] = useState("1"); // State untuk menyimpan pilihan dropdown
@@ -57,16 +57,17 @@ const ContentUhcV2 = () => {
   const getDataUhc = () => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           // body: JSON.stringify({
           //   query:
           //     "select sum(total_rincian)/1000000000000 TotalPembiayaanK from konsolidasi_apbd where kode_kelompok = '6.2'",
           // }),
         };
         const response = await fetch(
-          `${API_URI}/dashboard_uhc`,
+          `${API_URI_RBAC}/dashboard_uhc`,
           requestOptions
         );
         
@@ -105,9 +106,10 @@ const ContentUhcV2 = () => {
   const getDataTabelBpjsSeprov = () => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
           }),
@@ -116,7 +118,7 @@ const ContentUhcV2 = () => {
         // /table_Bpjs_kabupaten
         // /table_stunting_provinsi
         const response = await fetch(
-          `${API_URI}/tabel_bpjs_seprov`,
+          `${API_URI_RBAC}/tabel_bpjs_seprov`,
           requestOptions
         );
 
@@ -161,9 +163,10 @@ const ContentUhcV2 = () => {
   const getDataTabelBpjsKabupaten = ({kodeDdn = "", e}) => {
     const fetchData = async () => {
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_ddn: kodeDdn
             // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
@@ -173,7 +176,7 @@ const ContentUhcV2 = () => {
         // /table_Bpjs_kabupaten
         // /table_stunting_provinsi
         const response = await fetch(
-          `${API_URI}/tabel_bpjs_provkabkota`,
+          `${API_URI_RBAC}/tabel_bpjs_provkabkota`,
           requestOptions
         );
 
@@ -205,16 +208,17 @@ const ContentUhcV2 = () => {
     const fetchData = async () => {
       setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({            
             kode_ddn: kodeDdn,            
           }),
         };
   
         const response = await fetch(
-          `${API_URI}/dashboard_uhc_sub_giat`,
+          `${API_URI_RBAC}/dashboard_uhc_sub_giat`,
           requestOptions
         );
   
@@ -242,9 +246,10 @@ const ContentUhcV2 = () => {
     const fetchData = async () => {
       setLoadingDetailAnggaranSub(true); // Set loading state to true when starting the fetch
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({            
             kode_ddn: kodeDdn,
             kode_sub_giat: kodeSubGiat
@@ -252,7 +257,7 @@ const ContentUhcV2 = () => {
         };
   
         const response = await fetch(
-          `${API_URI}/dashboard_uhc_sro`,
+          `${API_URI_RBAC}/dashboard_uhc_sro`,
           requestOptions
         );
   
