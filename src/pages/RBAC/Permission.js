@@ -156,7 +156,7 @@ const Permission = () => {
     useEffect(() => {
         if (list_menus.length == 0) return;
         const permit = get_permission_by_url('/permission', true, () => {
-            // navigate('/auth-404-basic', { replace: true });
+            navigate('/auth-404-basic', { replace: true });
         });
         dispatch(permit);
     }, [list_menus]);
@@ -513,10 +513,11 @@ const Permission = () => {
                                             <th style={{ cursor: "pointer", verticalAlign: "middle" }}>
                                                 Sub Menu
                                             </th>
-                                            <th>Read</th>
-                                            <th>Create</th>
-                                            <th>Update</th>
-                                            <th>Delete</th>
+                                            <th>URL</th>
+                                            <th style={{ width: "65px" }}>Read</th>
+                                            <th style={{ width: "65px" }}>Create</th>
+                                            <th style={{ width: "65px" }}>Update</th>
+                                            <th style={{ width: "65px" }}>Delete</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
@@ -537,12 +538,13 @@ const Permission = () => {
                                                             <td>
                                                                 {item.nama_roles}
                                                             </td>
-                                                            <td style={{ maxWidth: "400px" }} className="text-wrap">
+                                                            <td style={{ maxWidth: "300px" }} className="text-wrap">
                                                                 {mItem.nama_menu}
                                                             </td>
-                                                            <td style={{ maxWidth: "400px" }} className="text-wrap">
+                                                            <td style={{ maxWidth: "300px" }} className="text-wrap">
                                                                 {sItem.nama_sub_menu}
                                                             </td>
+                                                            <td style={{ maxWidth: "200px" }} className="text-wrap">{sItem.url}</td>
                                                             <td>
                                                                 <input type="checkbox" checked={sItem.read_permission} readOnly />
                                                             </td>
