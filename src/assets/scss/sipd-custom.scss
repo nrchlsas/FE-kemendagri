@@ -1,0 +1,21 @@
+.paging-container {
+    margin-top: 5px;
+    margin-bottom: 5px;
+
+    .page-item {
+        width: 30px;
+        height: 30px;
+        border: .5px solid #E1E0FF;
+        margin-right: 5px;
+        cursor: pointer;
+
+        &.disabled {
+            color: #e1e0ff;
+            cursor: not-allowed;
+        }
+
+        &:hover {
+            background-color: #E1E0FF;
+        }
+    }
+}
