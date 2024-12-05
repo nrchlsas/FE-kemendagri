@@ -224,55 +224,28 @@ const ContentStunting = () => {
         // provinsi.data
         try {
           const categoryNamesProv =
-            dataStunting.data.compare_resiko_by_provinsi.data.map(
-              (item) => item.provinsi
-            );
-
-          const resultChartStackedProv =
-            dataStunting.data.compare_resiko_by_provinsi.data.reduce(
-              (acc, item) => {
-                acc[0].push(item.jumlah_keluarga_beresiko);
-                acc[1].push(item.jumlah_keluarga_tidak_beresiko);
+            dataStunting.data.compare_resiko_by_provinsi.reduce(
+              (acc, item) => {                
+                acc[0].push(item.nama_prov);
+                acc[1].push(item.kode_prov);
                 return acc;
               },
               [[], []]
             );
-            console.log(resultChartStackedProv, 'result')
 
+          const resultChartStackedProv =
+            dataStunting.data.compare_resiko_by_provinsi.reduce(
+              (acc, item) => {
+                acc[0].push(item.jumlah_keluarga_beresiko_stunting);
+                acc[1].push(item.jumlah_keluarga_tidak_beresiko_stunting);                
+                return acc;
+              },
+              [[] , []]
+            );
           setDataBeresikoProvinsi(resultChartStackedProv);
           setDataCategoryChartProvinsi(categoryNamesProv);
         } catch (error) {
           console.error("Error processing provinsi data", error);
-        }
-
-        // kabupaten
-        try {
-          const categoryNamesKab =
-          dataStunting.data.compare_resiko_by_kabupaten.reduce(
-            (acc, item) => {
-              acc[0].push(item.kabupaten);
-              acc[1].push(item.provinsi)
-              return acc;
-            },
-            [[], []]
-          );
-            
-          const resultChartStackedKab =
-            dataStunting.data.compare_resiko_by_kabupaten.reduce(
-              (acc, item) => {
-                acc[0].push(item.jumlah_keluarga_beresiko);
-                acc[1].push(item.jumlah_keluarga_tidak_beresiko);
-                return acc;
-              },
-              [[], []]
-            );
-
-            console.log(categoryNamesKab, 'ini')
-            console.log(resultChartStackedKab, 'ini')
-          setDataCategoryChartKabupaten(categoryNamesKab);
-          setDataBeresikoKabupaten(resultChartStackedKab);
-        } catch (error) {
-          console.error("Error processing kabupaten data", error);
         }
 
         // kecamatan
@@ -343,23 +316,23 @@ const ContentStunting = () => {
         // chart kesejahteraan
         try {
           const provinsiKesejahteraan =
-            dataStunting.data.stunting_peringkat_kesejahteraan.data.map(
-              (item) => item.provinsi
+            dataStunting.data.stunting_peringkat_kesejahteraan.map(
+              (item) => item.nama_provinsi
             );
           const peringkatKesejahteraan1 =
-            dataStunting.data.stunting_peringkat_kesejahteraan.data.map(
+            dataStunting.data.stunting_peringkat_kesejahteraan.map(
               (item) => item.peringkat_kesejahteraan_1
             );
           const peringkatKesejahteraan2 =
-            dataStunting.data.stunting_peringkat_kesejahteraan.data.map(
+            dataStunting.data.stunting_peringkat_kesejahteraan.map(
               (item) => item.peringkat_kesejahteraan_2
             );
           const peringkatKesejahteraan3 =
-            dataStunting.data.stunting_peringkat_kesejahteraan.data.map(
+            dataStunting.data.stunting_peringkat_kesejahteraan.map(
               (item) => item.peringkat_kesejahteraan_3
             );
           const peringkatKesejahteraan4 =
-            dataStunting.data.stunting_peringkat_kesejahteraan.data.map(
+            dataStunting.data.stunting_peringkat_kesejahteraan.map(
               (item) => item.peringkat_kesejahteraan_4
             );
           const isiChartKesejahteraan = [
@@ -1142,13 +1115,70 @@ const ContentStunting = () => {
     fetchData();
   };
 
-  const handleBarClickProv = (data) => {
-    if (fasilitasShow == "Jamban Tidak Layak") {      
-      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_jamban_kabkota"})
-    } else {      
-      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_air_kabkota"})
-    }  
+  const [dataStackedProv, setDataStackedProv] = useState([])
+  const [dataShowStackKab, setDataShowStackKab] = useState(false)
+  const getDataStackPerProv = ({kodeProv = ""}) => {
+    const fetchData = async () => {
+      try {
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            kode_prov: kodeProv,
+          }),
+        };
+
+        const response = await fetch(
+          `${API_URI}/dashboard_stunting_compare_resiko_by_provinsi_onklik`,
+          requestOptions
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const dataStuntingStackProv = await response.json();
+              
+        const categoryNamesKab = dataStuntingStackProv.data.compare_resiko_by_provinsi_onklik.reduce((acc, item) => {                
+            acc[0].push(item.nama_kabupaten);
+            acc[1].push(item.nama_provinsi);
+            return acc;
+          },
+          [[], []]
+        );
+            
+        const resultChartStackedKab = dataStuntingStackProv.data.compare_resiko_by_provinsi_onklik.reduce((acc, item) => {
+            acc[0].push(item.jumlah_keluarga_beresiko_stunting)
+            acc[1].push(item.jumlah_keluarga_tidak_beresiko_stunting)                  
+            return acc
+          }, [[],[]]
+        )            
+          setDataCategoryChartKabupaten(categoryNamesKab);
+          setDataBeresikoKabupaten(resultChartStackedKab);
+
+          setDataShowStackKab(true)
+      } catch (errorStunting) {
+        setErrorStunting(errorStunting);
+      } finally {
+        setLoadingStunting(false);
+      }
+    };
+    fetchData();
   };
+
+  const handleBarClickProv = (data) => {
+    if (fasilitasShow == "Jamban Tidak Layak") {
+      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_jamban_kabkota"})
+    } else {
+      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_air_kabkota"})
+    }
+  };
+
+  const [titleStack, setTitleStack] = useState("")
+  const handleBarClickStackProv = (data) => {     
+    setTitleStack(data.category)
+    getDataStackPerProv({kodeProv: data.id})    
+  }
 
   const handleBack = () => {
     setShowDataChartFasilitasProvinsi(false)
@@ -2652,11 +2682,11 @@ const ContentStunting = () => {
                   <div>
                     <h4 className="card-title">
                       Perbandingan Keluarga Sasaran yang Berisiko dan Tidak
-                      Berisiko Stunting
+                      Berisiko Stunting PROVINSI {titleStack}
                     </h4>
                   </div>
                   <div className="nav-beranda">
-                    <Nav
+                    {/* <Nav
                       tabs
                       className="nav nav-tabs-custom card-header-tabs border-bottom-0 ms-2 mb-3"
                     >
@@ -2670,40 +2700,31 @@ const ContentStunting = () => {
                             toggleCustom("1");
                           }}
                         >
-                          PROVINSI
                         </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink
-                          style={{ cursor: "pointer" }}
-                          className={classnames({
-                            active: customActiveTab === "2",
-                          })}
-                          onClick={() => {
-                            toggleCustom("2");
-                          }}
-                        >
-                          KABUPATEN
-                        </NavLink>
-                      </NavItem>
-                    </Nav>
+                      </NavItem>                      
+                    </Nav> */}
                   </div>
-                  <TabContent
+                  {/* <TabContent
                     activeTab={customActiveTab}
                     className="text-muted"
-                  >
-                    <TabPane tabId="1" id="provinsi">
-                      <StackedBarChart
-                        dataTotal={10}
-                        dataZoom={true}
-                        breakWord={true}
-                        dataColors='["#2DAED4", "#57E7B4"]'
-                        valueCharts={dataBeresikoProvinsi}
-                        categoryChart={dataCategoryChartProvinsi}
-                        legendNames={["Berisiko", "Tidak Berisiko"]}
-                      />
-                    </TabPane>
-                    <TabPane tabId="2" id="kabupaten">
+                  > */}
+                    {/* <TabPane tabId="1" id="provinsi"> */}
+                      {dataShowStackKab ? (<>
+                        <button
+                        style={{
+                          backgroundColor: "#007bff",
+                          color: "white",
+                          padding: "10px 20px",
+                          border: "none",
+                          borderRadius: "5px",
+                          cursor: "pointer",
+                          fontSize: "16px",
+                          margin: "8px 0px",
+                        }}
+                        onClick={() => {setDataShowStackKab(false); setTitleStack("")}}
+                      >
+                        Kembali
+                      </button>
                       <StackedBarChart
                         dataTotal={10}
                         dataZoom={true}
@@ -2714,8 +2735,18 @@ const ContentStunting = () => {
                         valueCharts={dataBeresikoKabupaten}
                         legendNames={["Berisiko", "Tidak Berisiko"]}
                         categoryChart={dataCategoryChartKabupaten[0]}
-                      />
-                    </TabPane>
+                      /></>) : (<><StackedBarChart
+                        dataTotal={10}
+                        dataZoom={true}
+                        breakWord={true}
+                        dataColors='["#2DAED4", "#57E7B4"]'
+                        valueCharts={dataBeresikoProvinsi}
+                        idParam={dataCategoryChartProvinsi[1]}
+                        categoryChart={dataCategoryChartProvinsi[0]}
+                        legendNames={["Berisiko", "Tidak Berisiko"]}
+                        onBarClickProv={handleBarClickStackProv}
+                      /></>)}
+                    {/* </TabPane>                     */}
                     {/* <TabPane tabId="3" id="kecamatan">
                   <StackedBarChart
                     dataColors='["#2DAED4", "#57E7B4"]'
@@ -2732,7 +2763,7 @@ const ContentStunting = () => {
                     categoryChart={dataCategoryChartKelurahan}
                   />
                 </TabPane> */}
-                  </TabContent>
+                  {/* </TabContent> */}
                 </TabPane>
                 <TabPane tabId="4">
                   <div className="separator">
@@ -2800,18 +2831,7 @@ const ContentStunting = () => {
                     <h4 className="card-title mb-0">
                       KELUARGA SASARAN MENURUT PERINGKAT KESEJAHTERAAN
                     </h4>
-                  </div>
-                  {/* <ColBarChart
-                valueChart={dataChartKesejahteraan[1]}
-                categoryChart={dataChartKesejahteraan[0]}
-                seriesName={[
-                  "Kesejahteraan 1",
-                  "Kesejahteraan 2",
-                  "Kesejahteraan 3",
-                  "Kesejahteraan 4",
-                ]}
-                dataColors='["#2DAED4","#2DAED4C4","#2DAED47B","#2DAED43B"]'
-              /> */}
+                  </div>                  
                   <StackedBarChart
                     dataTotal={10}
                     dataZoom={true}

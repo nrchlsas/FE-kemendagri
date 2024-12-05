@@ -15,6 +15,9 @@ const StackedBarChart = ({
   kecamatan = false,
   kelurahan = false,
   fasilitasLingkungan = false,
+  onBarClickProv,
+  onBarClick,
+  idParam = [],
   dataZoom=false,
   dataTotal = 10,
   breakWord = false
@@ -186,9 +189,30 @@ const StackedBarChart = ({
     series: seriesData, // Masukkan series yang telah dibuat secara dinamis
   };
 
+  const onEvents = {
+    click: (params) => {
+      if (onBarClick) {
+        onBarClick(params);
+      }else if (onBarClickProv) {      
+        const clickedIndex = params.dataIndex;
+        const clickedId = idParam[clickedIndex]; // Ambil ID berdasarkan indeks
+        const clickedCategory = categoryChart[clickedIndex]; // Ambil kategori berdasarkan indeks
+        const clickedValue = valueCharts[clickedIndex]; // Ambil nilai berdasarkan indeks
+  
+        // Kirim data lengkap ke handler
+        onBarClickProv({
+          id: clickedId,
+          category: clickedCategory,
+          value: clickedValue,
+          index: clickedIndex,
+        });
+      }      
+    },
+  };
+
   return (
     <React.Fragment>
-      <ReactEcharts style={{ height: "450px" }} option={option} />
+      <ReactEcharts style={{ height: "450px" }} option={option} onEvents={onEvents}/>
     </React.Fragment>
   );
 };
