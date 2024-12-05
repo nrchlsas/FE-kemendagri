@@ -11,7 +11,9 @@ import BreadCrumb from '../../../Components/Common/BreadCrumb';
 import logoKemendagri from "../../../assets/images/logo-kemendagri/logo-kemendagri-home.png"
 import CountUp from 'react-countup';
 import "./../../Kependudukan/kependudukan.scss";
+import { Buffer } from "buffer";
 
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
 const ContentRealisasiDetailDaerah = () => {
@@ -28,6 +30,46 @@ const ContentRealisasiDetailDaerah = () => {
       if (customActiveTab !== tab) {
         setcustomActiveTab(tab);
       }
+    };
+    const [logoImage, setLogoImage] = useState(null)
+    const getDataLogoDaerah = ({
+      kodeDdn=_id
+    } = {}) => {
+      const fetchData = async () => {
+        try {
+          const token = JSON.parse(sessionStorage.getItem("authUser"))
+          const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+            body: JSON.stringify({
+              kode_ddn: kodeDdn
+            }),
+          };
+          const response = await fetch(
+            `${API_URI_RBAC}/rbac/list-logo`,
+            requestOptions
+          );
+  
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+  
+          const dataGetLogoDaerah = await response.json();
+  
+          // Ambil buffer data logo
+          const logoBuffer = dataGetLogoDaerah.data[0].logo.data;
+
+          // Konversi buffer ke Base64
+          const base64Image = `data:image/png;base64,${Buffer.from(logoBuffer).toString('base64')}`;
+
+          setLogoImage(base64Image)
+        } catch (errorRealisasi) {
+          setErrorRealisasi(errorRealisasi);
+        } finally {
+          setLoadingRealisasi(false);
+        }
+      };
+      fetchData();
     };
     const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
     const [selectedSingleTahapan, setSelectedSingleTahapan] = useState('1'); // Set default value
@@ -87,7 +129,7 @@ const ContentRealisasiDetailDaerah = () => {
     
   
     useEffect(() => {
-      // getDataRealisasiNasional();
+      getDataLogoDaerah()
       getDataRealisasiNasional();
     }, []);
 
@@ -433,12 +475,12 @@ const ContentRealisasiDetailDaerah = () => {
           </Col>
         </Row>           
         <Row>
-          <Col md={6}> 
+          <Col md={12}> 
             <Card>
               <CardBody>
                 <Row>
                   <Col xs={12} md={12} xl={4}>
-                    <img src={logoKemendagri} alt="" width="200" height="210" />
+                    <img src={logoImage} alt="" width="200" height="210" />
                   </Col>
                   <Col xs={12} md={12} xl={8}>
                   <div className='ms-3'>
@@ -490,48 +532,12 @@ const ContentRealisasiDetailDaerah = () => {
                   </div>                    
                   </Col>
                 </Row>
-                {/* <div className='separator mb-3'>
-                </div> */}
-                {/* <Row>
-                  <Col>
-                  <div className='d-flex justify-content-between'>
-                    <div className='d-flex justify-content-start align-items-start mb-2' style={{fontSize: "20px", fontWeight:600}}>
-                        Sumber Usulan RKPD
-                    </div>
-                    <select
-                        name="subtahap"
-                          style={{
-                            padding: "10px 30px 10px 10px",
-                            fontSize: "16px",
-                            borderRadius: "5px",
-                            border: "1px solid #ccc",
-                            backgroundColor: "#ffffff",                          
-                            cursor: "pointer",                          
-                            marginLeft: "10px"
-                          }}
-                          value={selectedSingleSubTahapan}
-                          onChange={handleSelectChange}
-                        >                        
-                        <option value="1">Persiapan</option>
-                        <option value="2">Ranwal</option>
-                        <option value="3">Rancangan</option>
-                        <option value="4">Musrenbang</option>
-                        <option value="5">Rankhir</option>
-                        <option value="6">Penetapan</option>                                                                                                                  
-                        </select>
-                  </div>
-                  
-                  <PieChartNew 
-                  dataChart={dataRealisasi}
-                  categoryName={['Eksekutif', 'Legislatif', 'Masyarakat']}
-                  dataColors='["#57E7B4", "#FCAD24", "#2DAED4"]'
-                  />                  
-                  </Col>
-                </Row> */}
               </CardBody>
             </Card>
-          </Col>
-          <Col md={6}>
+          </Col>     
+        </Row>
+        <Row>
+        <Col md={12}>
           <Card className="card-height-100">
               <CardBody>
                 <div className="separator">
@@ -578,7 +584,7 @@ const ContentRealisasiDetailDaerah = () => {
                           <option value="3">RKPD Perubahan</option>
                         </select> */}
                     <div className="table-responsive table-card" style={{ overflowX: "auto" }}>                    
-                      <table className="table table-nowrap mb-2 " style={{width:"1000px"}} >
+                      <table className="table table-nowrap mb-2 " style={{width:"100%"}} >
                         <thead className="table-light">
                           <tr>
                       
@@ -745,9 +751,8 @@ const ContentRealisasiDetailDaerah = () => {
                 />
               </CardBody>
             </Card>
-          </Col>          
+          </Col> 
         </Row>
-
         <Modal
         size="xl"
         isOpen={modall}

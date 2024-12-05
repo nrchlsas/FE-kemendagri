@@ -29,19 +29,21 @@ axios.interceptors.response.use(
   function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     let message;
-    switch (error.status) {
-      case 500:
-        message = "Internal Server Error";
-        break;
-      case 401:
-        message = "Invalid credentials";
-        break;
-      case 404:
-        message = "Sorry! the data you are looking for could not be found";
-        break;
-      default:
-        message = error.message || error;
-    }
+    if (error.response.data && error.response.data.message) message = error.response.data.message;
+    else
+      switch (error.status) {
+        case 500:
+          message = "Internal Server Error";
+          break;
+        case 401:
+          message = "Invalid credentials";
+          break;
+        case 404:
+          message = "Sorry! the data you are looking for could not be found";
+          break;
+        default:
+          message = error.message || error;
+      }
     return Promise.reject(message);
   }
 );

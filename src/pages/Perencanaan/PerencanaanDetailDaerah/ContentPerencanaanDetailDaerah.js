@@ -7,7 +7,9 @@ import '../../../Components/ProgressArrowBar/ProgressArrowBar.scss'
 import logoKemendagri from "../../../assets/images/logo-kemendagri/logo-kemendagri-home.png"
 import CountUp from 'react-countup';
 import "./../../Kependudukan/kependudukan.scss";
+import { Buffer } from "buffer";
 
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
 const ContentPerencanaanDetailDaerah = () => {
@@ -26,6 +28,46 @@ const ContentPerencanaanDetailDaerah = () => {
       if (customActiveTab !== tab) {
         setcustomActiveTab(tab);
       }
+    };
+    const [logoImage, setLogoImage] = useState(null)
+    const getDataLogoDaerah = ({
+      kodeDdn=_id
+    } = {}) => {
+      const fetchData = async () => {
+        try {
+          const token = JSON.parse(sessionStorage.getItem("authUser"))
+          const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+            body: JSON.stringify({
+              kode_ddn: kodeDdn
+            }),
+          };
+          const response = await fetch(
+            `${API_URI_RBAC}/rbac/list-logo`,
+            requestOptions
+          );
+  
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+  
+          const dataGetLogoDaerah = await response.json();
+  
+          // Ambil buffer data logo
+          const logoBuffer = dataGetLogoDaerah.data[0].logo.data;
+
+          // Konversi buffer ke Base64
+          const base64Image = `data:image/png;base64,${Buffer.from(logoBuffer).toString('base64')}`;
+
+          setLogoImage(base64Image)
+        } catch (errorPerencanaan) {
+          setErrorPerencanaan(errorPerencanaan);
+        } finally {
+          setLoadingPerencanaan(false);
+        }
+      };
+      fetchData();
     };
     const [selectedSingleTahun, setSelectedSingleTahun] = useState(tahun); // Set default value
     const [selectedSingleTahapan, setSelectedSingleTahapan] = useState(tahapan); // Set default value
@@ -118,6 +160,8 @@ const ContentPerencanaanDetailDaerah = () => {
       };
       fetchData();
     };
+
+    
   
       // Memanggil fungsi API setiap kali dropdown berubah
       useEffect(() => {
@@ -129,6 +173,7 @@ const ContentPerencanaanDetailDaerah = () => {
     
   
     useEffect(() => {
+      getDataLogoDaerah();
       getDataPerencanaanRkpdNasional();
       getDataPerencanaanRkpdNasionalPersentase();
     }, []);
@@ -370,7 +415,7 @@ const ContentPerencanaanDetailDaerah = () => {
               <CardBody>
                 <Row>
                   <Col xs={12} md={12} xl={4}>
-                    <img src={logoKemendagri} alt="" width="200" height="210" />
+                    <img src={logoImage} alt="" width="200" height="210" />
                   </Col>
                   <Col xs={12} md={12} xl={8}>
                   <div className='ms-3'>

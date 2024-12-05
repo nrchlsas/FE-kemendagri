@@ -11,8 +11,9 @@ import BreadCrumb from '../../../Components/Common/BreadCrumb';
 import logoKemendagri from "../../../assets/images/logo-kemendagri/logo-kemendagri-home.png"
 import CountUp from 'react-countup';
 import "./../../Kependudukan/kependudukan.scss";
-
+import { Buffer } from "buffer";
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 
 const ContentPenganggaranDetailDaerah = () => {
     const { _id } = useParams();
@@ -39,6 +40,49 @@ const ContentPenganggaranDetailDaerah = () => {
     const [loadingPenganggaran, setLoadingPenganggaran] = useState([]);
     const [errorPenganggaran, setErrorPenganggaran] = useState([]);
   
+    const [logoImage, setLogoImage] = useState(null)
+    const getDataLogoDaerah = ({
+      kodeDdn=_id
+    } = {}) => {
+      const fetchData = async () => {
+        try {
+          const token = JSON.parse(sessionStorage.getItem("authUser"))
+          const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+            body: JSON.stringify({
+              kode_ddn: kodeDdn
+            }),
+          };
+          const response = await fetch(
+            `${API_URI_RBAC}/rbac/list-logo`,
+            requestOptions
+          );
+  
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+  
+          const dataGetLogoDaerah = await response.json();
+  
+                // Ambil buffer data logo
+          const logoBuffer = dataGetLogoDaerah.data[0].logo.data;
+          console.log(logoBuffer, 'ini')
+
+          // Konversi buffer ke Base64
+          const base64Image = `data:image/png;base64,${Buffer.from(logoBuffer).toString('base64')}`;
+
+          console.log(base64Image, 'ini outputnya'); // Output ini bisa digunakan sebagai src image
+          setLogoImage(base64Image)
+        } catch (errorPenganggaran) {
+          setErrorPenganggaran(errorPenganggaran);
+        } finally {
+          setLoadingPenganggaran(false);
+        }
+      };
+      fetchData();
+    };
+
     const getDataPenganggaranNasional = ({
       // tahun = "2024",
       // tahapan = "1",
@@ -67,8 +111,6 @@ const ContentPenganggaranDetailDaerah = () => {
           const dataPenganggaranNasional = await response.json();
   
           const dataResultChartTahapan = [dataPenganggaranNasional.data.eksekutif, dataPenganggaranNasional.data.legislatif, dataPenganggaranNasional.data.masyarakat]
-
-          console.log(dataResultChartTahapan, "ini");
   
           setDataPenganggaran(dataResultChartTahapan);
         } catch (errorPenganggaran) {
@@ -106,8 +148,6 @@ const ContentPenganggaranDetailDaerah = () => {
           }
   
           const dataPenganggaranNasionalPersentase = await response.json();
-
-          console.log(dataPenganggaranNasionalPersentase);
   
           setDataPenganggaranPersentase(
             dataPenganggaranNasionalPersentase.data.penganggaran_level_3
@@ -130,9 +170,9 @@ const ContentPenganggaranDetailDaerah = () => {
       }, [selectedSingleTahun, selectedSingleTahapan]); // Panggil API jika tahun atau dokumen berubah
     
   
-    // useEffect(() => {
-    //   getDataPenganggaranNasional();      
-    // }, []);
+    useEffect(() => {
+      getDataLogoDaerah()
+    }, []);
 
     const [dataDetailUnitSkpd, setDataDetailUnitSkpd] = useState([]);    
     const [loadingDetailUnitSkpd, setLoadingDetailUnitSkpd] = useState([]);
@@ -375,7 +415,6 @@ const ContentPenganggaranDetailDaerah = () => {
     const [namaTahapan, setNamaTahapan] = useState("Persiapan")  
     const handleSelectChange = (e) => {
       const { name, value } = e.target;
-      console.log(`${name}: ${value}`, 'ini isi selected value');
       
       if (name === 'tahun') {
           setSelectedSingleTahun(value); // Misalnya, untuk dropdown tahun
@@ -532,12 +571,12 @@ const ContentPenganggaranDetailDaerah = () => {
           </Col>
         </Row>           
         <Row>
-          <Col md={6}> 
+          <Col md={12}> 
             <Card>
               <CardBody>
                 <Row>
                   <Col xs={12} md={12} xl={4}>
-                    <img src={logoKemendagri} alt="" width="200" height="210" />
+                    <img src={logoImage} alt="" width="200" height="210" />
                   </Col>
                   <Col xs={12} md={12} xl={8}>
                   <div className='ms-3'>
@@ -591,8 +630,10 @@ const ContentPenganggaranDetailDaerah = () => {
                 </Row>
               </CardBody>
             </Card>
-          </Col>
-          <Col md={6}>
+          </Col>         
+        </Row>
+        <Row>
+        <Col md={12}>
           <Card className="card-height-100">
               <CardBody>
                 <div className="separator">
@@ -661,7 +702,7 @@ const ContentPenganggaranDetailDaerah = () => {
                         })()}
                       </select>
                     <div className="table-responsive table-card" style={{ overflowX: "auto" }}>                    
-                      <table className="table table-nowrap mb-2 " style={{width:"1000px"}} >
+                      <table className="table table-nowrap mb-2 " style={{width:"100%"}} >
                         <thead className="table-light">
                           <tr>
                       
@@ -820,7 +861,7 @@ const ContentPenganggaranDetailDaerah = () => {
                 />
               </CardBody>
             </Card>
-          </Col>          
+          </Col> 
         </Row>
         <Modal
         size="xl"
