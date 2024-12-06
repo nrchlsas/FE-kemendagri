@@ -162,8 +162,10 @@ export const get_user_detail = () => async (dispatch) => {
 
   // update session storage
   const user_login = getLoggedinUser();
-  user_login.data.first_name = data.first_name || 'SIPD-HUB';
+  user_login.data.first_name = data.data.first_name || 'SIPD-HUB';
   user_login.roles = data.roles;
 
   sessionStorage.setItem("authUser", JSON.stringify(user_login));
+
+  dispatch(loginSuccess(user_login));
 }
