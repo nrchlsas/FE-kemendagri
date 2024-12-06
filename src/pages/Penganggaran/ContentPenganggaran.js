@@ -618,32 +618,7 @@ const ContentPenganggaran = () => {
                   </button></>)}
               </div>                          
               </div>
-                  <MapIndoChart roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#FCAD24", "#57E7B4"]} />
-                  <div className="d-flex justify-content-between">
-                    <div className="d-flex flex-column justify-content-evenly">
-                    <div className="d-flex align-items-center mb-2">
-                        <div style={{ height: "10px", width: "10px", backgroundColor: "#57E7B4", marginRight: "8px" }}></div>
-                        <span style={{fontStyle:"poppins", color:"#929FB1"}}>Ketika 100% Pemda</span>
-                    </div>                
-                    <div className="d-flex align-items-center mb-2">
-                        <div style={{ height: "10px", width: "10px", backgroundColor: "#FCAD24", marginRight: "8px" }}></div>
-                        <span style={{fontStyle:"poppins", color:"#929FB1"}}>Ketika 1%-99% Pemda</span>
-                    </div>                    
-                    <div className="d-flex align-items-center">
-                        <div style={{ height: "10px", width: "10px", backgroundColor: "#EFF2F7", marginRight: "8px" }}></div>
-                        <span style={{fontStyle:"poppins", color:"#929FB1"}}>Ketika 0% Pemda</span>
-                    </div>
-                    </div>
-                    <div className="d-flex mt-4 align-items-end">
-                        <span
-                        onClick={() => handleShowDataSumberUsulan(true)}
-                        style={{ cursor: "pointer", color: "#2DAED4" }}
-                        >
-                        Lihat Sumber Usulan
-                        </span>
-                    </div>
-                  </div>
-                  
+                  <MapIndoChart roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#FCAD24", "#57E7B4"]} />                  
                 </>
               )}
             </CardBody>

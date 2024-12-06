@@ -14,6 +14,7 @@ import "./../../Kependudukan/kependudukan.scss";
 import { Buffer } from "buffer";
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
+const API_URI_RBAC_DATA = `${process.env.REACT_APP_API_URL_9007}`;
 
 const ContentPenganggaranDetailDaerah = () => {
     const { _id } = useParams();
@@ -55,7 +56,7 @@ const ContentPenganggaranDetailDaerah = () => {
             }),
           };
           const response = await fetch(
-            `${API_URI_RBAC}/rbac/list-logo`,
+            `${API_URI_RBAC_DATA}/rbac/list-logo`,
             requestOptions
           );
   
