@@ -98,6 +98,7 @@ class APIClient {
   };
 
   put = (url, data) => {
+    setTokenLogin();
     return axios.put(url, data);
   };
   /**
@@ -129,4 +130,8 @@ const setTokenLogin = () => {
   )
 }
 
-export { APIClient, setAuthorization, getLoggedinUser };
+const resetToken = () => {
+  token_login = null;
+}
+
+export { APIClient, setAuthorization, getLoggedinUser, resetToken };

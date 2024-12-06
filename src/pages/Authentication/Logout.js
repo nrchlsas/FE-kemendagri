@@ -9,6 +9,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 import withRouter from "../../Components/Common/withRouter";
 import { createSelector } from "reselect";
+import { resetToken } from "../../helpers/api_helper";
 
 const Logout = (props) => {
   const dispatch = useDispatch();
@@ -20,6 +21,7 @@ const Logout = (props) => {
   const isUserLogout = useSelector(isUserLogoutSelector);
 
   useEffect(() => {
+    resetToken();
     dispatch(logoutUser());
   }, [dispatch]);
 
