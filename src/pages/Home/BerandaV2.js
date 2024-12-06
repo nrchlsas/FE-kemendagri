@@ -59,7 +59,7 @@ const BerandaV2 = () => {
   const [dataChartSpmPendidikan, setDataChartSpmPendidikan] = useState([
     [],
     [],
-  ]);
+  ]); 
   const [dataChartSpmKesehatan, setDataChartSpmKesehatan] = useState([[], []]);
   const [dataChartSpmPekerjaanUmum, setDataChartSpmPekerjaanUmum] = useState([
     [],
@@ -136,7 +136,7 @@ const BerandaV2 = () => {
           
         const dataBerandaPerencanaan = await responsePerencanaan.json();  
 
-        setDataBerandaPerencanaan(dataBerandaPerencanaan.data.beranda_card_perencanaan[0])
+        setDataBerandaPerencanaan(dataBerandaPerencanaan.data[0])
         console.log(dataBerandaPerencanaan,'ini')
       } catch (errorBeranda) {
         setErrorBeranda(errorBeranda);
@@ -171,7 +171,7 @@ const BerandaV2 = () => {
           
         const dataBerandaPenganggaran = await responsePenganggaran.json();  
         
-        const date = new Date(dataBerandaPenganggaran.data.beranda_card_penganggaran[0].execute_time);        
+        const date = new Date(dataBerandaPenganggaran.data[0].execute_time);        
         // Format date as DD-MM-YYYY                
         const day = String(date.getDate()).padStart(2, '0');
         const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
@@ -180,7 +180,7 @@ const BerandaV2 = () => {
         const formattedDate = `${year}-${month}-${day}`; // Example output: "31-12-2022"
         
         setExcecuteDate(formattedDate)
-        setDataBerandaPenganggaran(dataBerandaPenganggaran.data.beranda_card_penganggaran[0])
+        setDataBerandaPenganggaran(dataBerandaPenganggaran.data[0])
         
       } catch (errorBeranda) {
         setErrorBeranda(errorBeranda);
@@ -214,7 +214,7 @@ const BerandaV2 = () => {
           
         const dataBerandaRealisasi = await responseRealisasi.json();  
 
-        setDataBerandaRealisasi(dataBerandaRealisasi.data.realisasi)
+        setDataBerandaRealisasi(dataBerandaRealisasi.data)
         
       } catch (errorBeranda) {
         setErrorBeranda(errorBeranda);

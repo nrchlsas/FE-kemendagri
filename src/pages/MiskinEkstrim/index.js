@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Col, Row } from 'reactstrap';
 import ContentMiskinEkstremV2 from './ContentMiskinEkstremV2';
 import { useSelector } from "react-redux";

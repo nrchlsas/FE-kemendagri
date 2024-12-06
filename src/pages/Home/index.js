@@ -31,21 +31,6 @@ const Home = () => {
     dispatch(permit);
   }, [list_menus]);
 
-  const handleClick = () => {
-    setCount(count - 1);
-  };
-
-  const handleClick1 = () => {
-    setCount(count + 1);
-  };
-
-  const [customActiveTab, setcustomActiveTab] = useState("1");
-  const toggleCustom = (tab) => {
-    if (customActiveTab !== tab) {
-      setcustomActiveTab(tab);
-    }
-  };
-
   return (
     <React.Fragment>
       <div className="page-content">
