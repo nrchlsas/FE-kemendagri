@@ -17,7 +17,7 @@ const Stunting = () => {
   const { list_menus } = useSelector(permissionProperties);
   useEffect(() => {
       if (list_menus.length == 0) return;
-      const permit = get_permission_by_url('/kependudukan', true, () => {
+      const permit = get_permission_by_url('/keluarga-beresiko-stunting', true, () => {
           navigate('/auth-404-basic', { replace: true });
       });
       dispatch(permit);

@@ -544,8 +544,8 @@ const ContentDapodikV2 = () => {
   };
 
   useEffect(() => {
-    getDataTabelDapodikSeProv();
     getDataDapodik();
+    getDataTabelDapodikSeProv();
     getDataTabelDapodikProv();
     getDataTabelDapodikKab();
   }, []);
