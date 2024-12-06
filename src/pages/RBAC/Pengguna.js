@@ -11,11 +11,7 @@ import {
     Label,
     FormGroup
 } from "reactstrap";
-import FormInput from "../../Components/FormFactory/FormInput";
-import { Status } from "../APIKey/APIKeyCol";
 import { APIClient } from "../../helpers/api_helper";
-import { type } from "@testing-library/user-event/dist/cjs/utility/type.js";
-import { size } from "lodash";
 import { createSelector } from "reselect";
 import { useSelector } from "react-redux";
 import { get_permission_by_url } from "../../slices/thunks";
@@ -43,6 +39,8 @@ const Pengguna = () => {
         first_name: "",
         last_name: "",
         id_daerah: 0,
+        password: "",
+        confirm_password: "",
     });
     const [show, setShow] = useState(false)
     const [modal_center, setmodal_center] = useState(false);
@@ -71,8 +69,10 @@ const Pengguna = () => {
         if (!formData.email) is_valid = false;
         if (!isEmailValid(formData.email)) is_valid = false;
         if (formData.roles == 0) is_valid = false;
+        if (!formData.password) is_valid = false;
+        if (formData.password !== formData.confirm_password) is_valid = false;
         setIsValid(is_valid);
-        // console.log('formData', formData);
+        console.log('formData', formData);
     }, [formData])
 
     // permission
@@ -102,7 +102,6 @@ const Pengguna = () => {
                     nama_daerah: d.nama_daerah
                 }
             });
-            console.log({ list_area });
             setListDaerah(list_area);
         }
     }
@@ -191,7 +190,9 @@ const Pengguna = () => {
             roles: data.id_roles,
             first_name: data.first_name || "",
             last_name: data.last_name || "",
-            id_daerah: data.id_daerah || 0
+            id_daerah: data.id_daerah || 0,
+            password: data.password || "",
+            confirm_password: data.confirm_password || "",
         }));
         window.scrollTo(0, 0)
     }
@@ -212,6 +213,8 @@ const Pengguna = () => {
             first_name: "",
             last_name: "",
             id_daerah: 0,
+            password: "",
+            confirm_password: "",
         })
     }
 
@@ -318,6 +321,23 @@ const Pengguna = () => {
                                                         </option>
                                                     ))}
                                                 </select>
+                                            </FormGroup>
+
+                                            <FormGroup className="mt-5">
+                                                <Label>Password</Label>
+                                                <input type="password" name="password"
+                                                    onChange={(e) => changeValue(e)}
+                                                    className="form-control"
+                                                    value={formData.password}
+                                                />
+                                            </FormGroup>
+                                            <FormGroup>
+                                                <Label>Confirm Password</Label>
+                                                <input type="password" name="confirm_password"
+                                                    onChange={(e) => changeValue(e)}
+                                                    className="form-control"
+                                                    value={formData.confirm_password}
+                                                />
                                             </FormGroup>
                                             {/* {
                                                 Object.keys(permissionForm).map((e) => (

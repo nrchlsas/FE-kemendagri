@@ -195,6 +195,7 @@ import Login from "../pages/Authentication/Login";
 import ForgetPasswordPage from "../pages/Authentication/ForgetPassword";
 import Logout from "../pages/Authentication/Logout";
 import Register from "../pages/Authentication/Register";
+import UserVerification from "../pages/Authentication/Verification";
 
 //Charts
 import LineCharts from "../pages/Charts/ApexCharts/LineCharts";
@@ -273,7 +274,6 @@ import PenganggaranDaerah from "../pages/Penganggaran/PenganggaranDaerah";
 import PenganggaranDetailDaerah from "../pages/Penganggaran/PenganggaranDetailDaerah";
 import Apbd from "../pages/APDB";
 import DashboardAnalisis from "../pages/DashboardAnalisis";
-
 //home
 
 
@@ -530,6 +530,7 @@ const publicRoutes = [
   { path: "/login", component: <Login /> },
   { path: "/forgot-password", component: <ForgetPasswordPage /> },
   { path: "/register", component: <Register /> },
+  { path: "/verification/:uuid", component: <UserVerification /> },
 
   //AuthenticationInner pages
   { path: "/auth-signin-basic", component: <BasicSignIn /> },
