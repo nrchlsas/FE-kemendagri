@@ -430,7 +430,7 @@ const ContentDapodikV2 = () => {
         // /table_dapodik_kabupaten
         // /table_stunting_provinsi
         const response = await fetch(
-          `${API_URI}/tabel_dapodik_provinsi_detail`,
+          `${API_URI_RBAC}/tabel_dapodik_provinsi_detail`,
           requestOptions
         );
 
