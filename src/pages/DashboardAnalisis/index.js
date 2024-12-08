@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import ContentDashboardAnalisis from './ContentDashboardAnalisis'
 import { Col, Row } from 'reactstrap'
 import { useSelector } from "react-redux";
