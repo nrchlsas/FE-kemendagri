@@ -154,7 +154,17 @@ const ContentPenganggaranDetailDaerah = () => {
           const dataPenganggaranNasionalPersentase = await response.json();
 
           const sumPaguValidasi = dataPenganggaranNasionalPersentase.data.penganggaran_level_3.reduce((sum, item) => {
-            const paguValidasi = Number(item.total_rincian_apbd) || 0; // Pastikan pagu_validasi adalah angka
+            const tahapData = {
+              5: item?.total_rincian_rapbd,
+              40: item?.total_rincian_kuappas,
+              30: item?.total_rincian_apbdgeser,
+              41: item?.total_rincian_kupa,
+              8: item?.total_rincian_rapbdubah,
+              29: item?.total_rincian_apbdubah,
+              28: item?.total_rincian_apbd,
+              32: item?.total_rincian_apbdgeserpasca,
+            };
+            const paguValidasi = Number(tahapData[selectedSingleTahapan]) || 0; // Pastikan pagu_validasi adalah angka
             return sum + paguValidasi;
           }, 0);
 
