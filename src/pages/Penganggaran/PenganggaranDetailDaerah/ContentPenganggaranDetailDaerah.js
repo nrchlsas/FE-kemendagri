@@ -42,6 +42,7 @@ const ContentPenganggaranDetailDaerah = () => {
     const [errorPenganggaran, setErrorPenganggaran] = useState([]);
   
     const [logoImage, setLogoImage] = useState(null)
+    const [dataProfilDaerah, setDataProfilDaerah] = useState([])
     const getDataLogoDaerah = ({
       kodeDdn=_id
     } = {}) => {
@@ -65,15 +66,15 @@ const ContentPenganggaranDetailDaerah = () => {
           }
   
           const dataGetLogoDaerah = await response.json();
+
+          setDataProfilDaerah(dataGetLogoDaerah.data[0])
   
                 // Ambil buffer data logo
           const logoBuffer = dataGetLogoDaerah.data[0].logo.data;
-          console.log(logoBuffer, 'ini')
 
           // Konversi buffer ke Base64
           const base64Image = `data:image/png;base64,${Buffer.from(logoBuffer).toString('base64')}`;
 
-          console.log(base64Image, 'ini outputnya'); // Output ini bisa digunakan sebagai src image
           setLogoImage(base64Image)
         } catch (errorPenganggaran) {
           setErrorPenganggaran(errorPenganggaran);
@@ -617,30 +618,30 @@ const ContentPenganggaranDetailDaerah = () => {
                       <div style={{ flexBasis: "180px", color:"#929FB1" }}>Kepala Daerah</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
-                        Data Belum Tersedia
+                        {dataProfilDaerah?.kepala_daerah}
                       </div>
                     </div>
                     <div className="d-flex mb-3">
                       <div style={{ flexBasis: "180px", color:"#929FB1" }}>Wakil Kepala Daerah</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
-                        Data Belum Tersedia
+                        {dataProfilDaerah?.wakil_kepala_daerah}
                       </div>
                     </div>
-                    <div className="d-flex mb-3">
+                    {/* <div className="d-flex mb-3">
                       <div style={{ flexBasis: "180px", color:"#929FB1" }}>Sekretaris Daerah</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
-                        Data Belum Tersedia
+                        {dataProfilDaerah?.kepala_daerah}
                       </div>
                     </div>
                     <div className="d-flex mb-3">
                       <div style={{ flexBasis: "180px", color:"#929FB1" }}>Jumlah SKPD & Unit SKPD</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
-                        Data Belum Tersedia
+                        {dataProfilDaerah?.kepala_daerah}
                       </div>
-                    </div>
+                    </div> */}
                     <div className="d-flex mb-3">
                       <div style={{ flexBasis: "180px", color:"#929FB1" }}>Total Pagu</div>
                       <div>:&nbsp;</div>

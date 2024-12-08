@@ -31,6 +31,7 @@ const ContentPerencanaanDetailDaerah = () => {
       }
     };
     const [logoImage, setLogoImage] = useState(null)
+    const [dataProfilDaerah, setDataProfilDaerah] = useState([])
     const getDataLogoDaerah = ({
       kodeDdn=_id
     } = {}) => {
@@ -54,6 +55,8 @@ const ContentPerencanaanDetailDaerah = () => {
           }
   
           const dataGetLogoDaerah = await response.json();
+          
+          setDataProfilDaerah(dataGetLogoDaerah.data[0])
   
           // Ambil buffer data logo
           const logoBuffer = dataGetLogoDaerah.data[0].logo.data;
@@ -443,38 +446,38 @@ const ContentPerencanaanDetailDaerah = () => {
                       <div style={{ flexBasis: "180px", color:"#929FB1" }}>Kepala Daerah</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
-                        Data Belum Tersedia
+                        {dataProfilDaerah?.kepala_daerah}
                       </div>
                     </div>
                     <div className="d-flex mb-3">
                       <div style={{ flexBasis: "180px", color:"#929FB1" }}>Wakil Kepala Daerah</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
-                        Data Belum Tersedia
+                        {dataProfilDaerah?.wakil_kepala_daerah}
                       </div>
                     </div>
-                    <div className="d-flex mb-3">
+                    {/* <div className="d-flex mb-3">
                       <div style={{ flexBasis: "180px", color:"#929FB1" }}>Sekretaris Daerah</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
-                        Data Belum Tersedia
+                        {dataProfilDaerah?.kepala_daerah}
                       </div>
                     </div>
                     <div className="d-flex mb-3">
                       <div style={{ flexBasis: "180px", color:"#929FB1" }}>Jumlah SKPD & Unit SKPD</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
-                        Data Belum Tersedia
+                        {dataProfilDaerah?.kepala_daerah}
                       </div>
-                    </div>
+                    </div> */}
                     <div className="d-flex mb-3">
                       <div style={{ flexBasis: "180px", color:"#929FB1" }}>Total Pagu</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
-                        {`Rp ${totalPagu?.toLocaleString("id-ID")}`}
+                      {`Rp ${totalPagu?.toLocaleString("id-ID")}`}
                       </div>
                     </div>
-                  </div>                    
+                  </div>                   
                   </Col>
                 </Row>
                 <div className='separator mb-3'>
