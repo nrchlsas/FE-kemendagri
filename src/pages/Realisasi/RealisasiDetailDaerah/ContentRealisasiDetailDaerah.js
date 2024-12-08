@@ -76,7 +76,7 @@ const ContentRealisasiDetailDaerah = () => {
     const [dataRealisasi, setDataRealisasi] = useState([]);
     const [loadingRealisasi, setLoadingRealisasi] = useState([]);
     const [errorRealisasi, setErrorRealisasi] = useState([]);
-  
+    const [totalPagu, setTotalPagu] = useState(0)
     const getDataRealisasiNasional = ({
       tahun = "2024",
       tahapan = "1",
@@ -104,7 +104,13 @@ const ContentRealisasiDetailDaerah = () => {
           }
   
           const dataRealisasiNasional = await response.json();
+         
+          const sumPaguValidasi = dataRealisasiNasional.data.realisasi_level_3.reduce((sum, item) => {
+            const paguValidasi = Number(item.anggarangeser) || 0;
+            return sum + paguValidasi;
+          }, 0);
 
+          setTotalPagu(sumPaguValidasi)
           console.log(dataRealisasiNasional);
   
           setDataRealisasi(
@@ -528,7 +534,7 @@ const ContentRealisasiDetailDaerah = () => {
                       <div style={{ flexBasis: "180px", color:"#929FB1" }}>Total Pagu</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
-                        Data Belum Tersedia
+                      {`Rp ${totalPagu?.toLocaleString("id-ID")}`}
                       </div>
                     </div>
                   </div>                    

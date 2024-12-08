@@ -122,6 +122,7 @@ const ContentPerencanaanDetailDaerah = () => {
       fetchData();
     };
   
+    const [totalPagu, setTotalPagu] = useState(0)
     const getDataPerencanaanRkpdNasionalPersentase = ({
       tahun = "2024",
       tahapan = "1",
@@ -149,8 +150,13 @@ const ContentPerencanaanDetailDaerah = () => {
           }
   
           const dataPerencanaanRkpdNasionalPersentase = await response.json();
+          
+          const sumPaguValidasi = dataPerencanaanRkpdNasionalPersentase.data.reduce((sum, item) => {
+            const paguValidasi = Number(item.pagu_validasi) || 0; // Pastikan pagu_validasi adalah angka
+            return sum + paguValidasi;
+          }, 0);
 
-          console.log(dataPerencanaanRkpdNasionalPersentase);
+          setTotalPagu(sumPaguValidasi)
   
           setDataPerencanaanPersentase(
             dataPerencanaanRkpdNasionalPersentase.data
@@ -465,7 +471,7 @@ const ContentPerencanaanDetailDaerah = () => {
                       <div style={{ flexBasis: "180px", color:"#929FB1" }}>Total Pagu</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
-                        Data Belum Tersedia
+                        {`Rp ${totalPagu?.toLocaleString("id-ID")}`}
                       </div>
                     </div>
                   </div>                    

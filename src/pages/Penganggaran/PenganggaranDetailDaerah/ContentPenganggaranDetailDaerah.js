@@ -123,7 +123,8 @@ const ContentPenganggaranDetailDaerah = () => {
       };
       fetchData();
     };
-  
+
+    const [totalPagu, setTotalPagu] = useState(0)
     const getDataPenganggaranNasionalPersentase = ({
       tahun = "2024",      
       tahapan = subTahapan,
@@ -151,6 +152,13 @@ const ContentPenganggaranDetailDaerah = () => {
           }
   
           const dataPenganggaranNasionalPersentase = await response.json();
+
+          const sumPaguValidasi = dataPenganggaranNasionalPersentase.data.penganggaran_level_3.reduce((sum, item) => {
+            const paguValidasi = Number(item.total_rincian_apbd) || 0; // Pastikan pagu_validasi adalah angka
+            return sum + paguValidasi;
+          }, 0);
+
+          setTotalPagu(sumPaguValidasi)
   
           setDataPenganggaranPersentase(
             dataPenganggaranNasionalPersentase.data.penganggaran_level_3
@@ -627,7 +635,7 @@ const ContentPenganggaranDetailDaerah = () => {
                       <div style={{ flexBasis: "180px", color:"#929FB1" }}>Total Pagu</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
-                        Data Belum Tersedia
+                      {`Rp ${totalPagu?.toLocaleString("id-ID")}`}
                       </div>
                     </div>
                   </div>                    
