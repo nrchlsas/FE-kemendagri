@@ -486,7 +486,7 @@ const ContentDapodikV2 = () => {
         };
 
         const response = await fetch(
-          `${API_URI}/detail-tabel-dapodik`,
+          `${API_URI_RBAC}/detail-tabel-dapodik`,
           requestOptions
         );
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Col, Container, Row } from "reactstrap";
 import ContentKementerianDanLembaga from "./ContentKementerianDanLembaga";
 import { useSelector } from "react-redux";
