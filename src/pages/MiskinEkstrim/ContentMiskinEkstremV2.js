@@ -2560,7 +2560,8 @@ const ContentMiskinEkstremV2 = () => {
                 </TabPane>
                 <TabPane tabId="3" id="kabupaten">
                   <h4 className="card-title d-flex justify-content-center">
-                    PERBANDINGAN SPM UNTUK PENANGANAN KEMISKINAN EKSTREM
+                    {dataShowIndividu ? "KELUARGA " : "INDIVIDU "}
+                    KEMISKINAN EKSTREM PER PROVINSI
                   </h4>
                   <Row>
                     <Col>
@@ -2569,9 +2570,6 @@ const ContentMiskinEkstremV2 = () => {
                           {dataShowIndividu ? (
                             <>
                               <div className="separator mb-4">
-                                <h4 className="card-title ">
-                                  KELUARGA KEMISKINAN EKSTREM PER PROVINSI
-                                </h4>
                                 <div className="mt-4">
                                   <span
                                     onClick={() =>
@@ -2769,9 +2767,6 @@ const ContentMiskinEkstremV2 = () => {
                           ) : (
                             <>
                               <div className="separator mb-4">
-                                <h4 className="card-title ">
-                                  Keluarga Kemiskinan Ekstrem Per Provinsi
-                                </h4>
                                 <div className="mt-4">
                                   <span
                                     onClick={() => handleShowDataIndividu(true)}
