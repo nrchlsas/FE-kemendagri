@@ -17,6 +17,7 @@ import classnames from "classnames";
 import PieChartNew from "../../Components/Chart/PieChart";
 import CountUp from "react-countup";
 import logoKemendagri from "../../assets/images/logo-kemendagri/Animasi.gif"
+import imageBeranda from "../../assets/images/logo-kemendagri/image-beranda.png"
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
@@ -1128,8 +1129,58 @@ const BerandaV2 = () => {
           </Card>
         </Col>
       </Row> </>) : (<> 
-              
-        <div
+        <Row>
+          <Col md={6}>
+          <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "start",
+            justifyContent: "start",
+            height: "90vh",
+            padding:"20px",
+            // background:`radial-gradient(rgb(174, 198, 207) 20%, rgb(243, 246, 249) 70%)`,            
+            backgroundRepeat: "no-repeat",            
+            textAlign: "start",
+            fontFamily: "'Poppins', sans-serif",
+          }}
+        >
+          <div>
+          <h1 data-aos="fade-right"
+            style={{
+              fontSize: "3rem",
+              marginBottom: "1rem",
+              animation: "fadeIn 1s ease-in-out",
+            }}
+          >
+            Selamat Datang di <span style={{ fontWeight: "bold" }}>Dashboard SIPD-HUB</span>
+          </h1>
+          <p data-aos="fade-left"
+            style={{
+              fontSize: "1.2rem",
+              marginBottom: "2rem",
+              // width: "900px",
+              animation: "fadeIn 2s ease-in-out",
+              color: "black", // Warna teks
+              backgroundColor: "rgba(255, 255, 255, 0.2)", // Transparan untuk mendukung blur
+              backdropFilter: "blur(1px)", // Efek blur
+              borderRadius: "10px", // Sudut melengkung untuk tampilan lebih menarik
+              padding: "5px", // Spasi di dalam elemen
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Bayangan untuk menonjolkan elemene
+            }}
+          >
+            Platform visualisasi data dari berbagai Kementerian/Lembaga untuk mendukung pengambilan kebijakan dalam penyusunan perencanaan pembangunan dan penganggaran keuangan daerah sehingga lebih tepat sasaran.
+          </p>
+          </div>
+        </div>
+          </Col>
+          <Col md={6}>
+          <div data-aos="fade-left" className="d-flex justify-content-center align-items-center" >
+            <img  src={imageBeranda} alt=""  style={{borderRadius: "15px", width: "85%"}}/>
+          </div>
+          </Col>
+        </Row>
+        {/* <div
           style={{
             display: "flex",
             flexDirection: "column",
@@ -1223,7 +1274,7 @@ const BerandaV2 = () => {
             </span>
           </button>
         </div>                  
-        </div>
+        </div> */}
         </>)}               
     </React.Fragment>
   );

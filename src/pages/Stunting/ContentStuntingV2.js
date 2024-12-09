@@ -2892,7 +2892,7 @@ const ContentStunting = () => {
                     valueChart={dataChartPus[1]}
                     categoryChart={dataChartPus[0]}
                     seriesName={["Baduta", "Balita", "Pus Hamil"]}
-                    dataColors='["#2DAED4","#2DAED4C4","#2DAED47B","#2DAED43B"]'
+                    dataColors='["#57E7B4","#2DAED4", "#FFB7F1"]'
                   />
                 </TabPane>
                 <TabPane tabId="9">
