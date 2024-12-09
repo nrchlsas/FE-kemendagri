@@ -79,7 +79,7 @@ const BarWithPercentageModifiedStunting = ({dataColors, valueChart=[], percentag
             top: 50,   // Memberikan lebih banyak ruang di bagian atas untuk label yang lebih besar
         },
         legend: {
-            data: seProv ? ['Anggaran Stunting se-Provinsi', 'Persentase Anggaran Stunting se-Provinsi', 'Persentase Stunting'] : kabupaten ? ['Anggaran Stunting Kabupaten/Kota', 'Persentase Anggaran Stunting Kabupaten/Kota', 'Persentase Stunting'] : ['Anggaran Stunting Provinsi', 'Persentase Anggaran Stunting Provinsi', 'Persentase Stunting'],
+            data: seProv ? ['Anggaran Stunting se-Provinsi', 'Persentase Anggaran Stunting se-Provinsi', 'Persentase Stunting'] : kabupaten ? ['Anggaran Stunting Kabupaten/Kota', 'Persentase Anggaran Stunting Kabupaten/Kota', 'Persentase Keluarga Berisiko Stunting'] : ['Anggaran Stunting Provinsi', 'Persentase Anggaran Stunting Provinsi', 'Persentase Keluarga Berisiko Stunting'],
             top: 0, // Mengatur jarak legend dari atas
             left: 'center' // Menempatkan legend di tengah
         },
@@ -180,7 +180,7 @@ const BarWithPercentageModifiedStunting = ({dataColors, valueChart=[], percentag
                 }
             },
             {
-                name: 'Persentase Stunting',
+                name: 'Persentase Keluarga Berisiko Stunting',
                 type: 'bar',
                 yAxisIndex: 1, // Menggunakan sumbu Y kedua                
                 data: percentageChart2,

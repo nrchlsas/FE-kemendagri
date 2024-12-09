@@ -274,6 +274,7 @@ import PenganggaranDaerah from "../pages/Penganggaran/PenganggaranDaerah";
 import PenganggaranDetailDaerah from "../pages/Penganggaran/PenganggaranDetailDaerah";
 import Apbd from "../pages/APDB";
 import DashboardAnalisis from "../pages/DashboardAnalisis";
+import LoginV2 from "../pages/Authentication/LoginV2";
 //home
 
 
@@ -527,7 +528,7 @@ const authProtectedRoutes = [
 const publicRoutes = [
   // Authentication Page
   { path: "/logout", component: <Logout /> },
-  { path: "/login", component: <Login /> },
+  { path: "/login", component: <LoginV2 /> },
   { path: "/forgot-password", component: <ForgetPasswordPage /> },
   { path: "/register", component: <Register /> },
   { path: "/verification/:uuid", component: <UserVerification /> },

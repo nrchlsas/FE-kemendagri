@@ -3522,6 +3522,43 @@ const ContentMiskinEkstremV2 = () => {
           </Card>
         </Col>
       </Row>
+      <Row>
+        <Col>
+          <div
+            style={{
+              backgroundColor: "#ffffff",
+              borderLeft: "5px solid #007bff",
+              padding: "15px",
+              margin: "0 0 20px 0",
+              borderRadius: "5px",
+            }}
+          >
+            <div
+              style={{
+                marginBottom: "8px",
+                fontSize: "12px" /* Ukuran font lebih kecil */,
+                color: "#555",
+                fontStyle: "italic",
+                /* Menambahkan gaya italic */
+              }}
+            >
+              Sumber Data:{" "}
+              <span style={{ fontWeight: "bold" }}>
+                Kementerian Koordinator Bidang Kemanusiaan dan Kebudayaan ( Kemenko PMK )                
+              </span>
+            </div>
+            <div
+              style={{
+                fontSize: "12px" /* Ukuran font lebih kecil */,
+                color: "#555",
+                fontStyle: "italic" /* Menambahkan gaya italic */,
+              }}
+            >
+              Update Data: 10 Juli 2024
+            </div>
+          </div>
+        </Col>
+      </Row>
 
       <Modal size="xl" isOpen={modall} toggle={handleOpen} centered={true} backdrop="static">
       <div className="modal-content border-0">

@@ -1778,6 +1778,21 @@ const ContentStunting = () => {
                             }}
                             onClick={() => requestSort("total_anggaran")}
                           >
+                            PERSENTASE KELUARGA BERISIKO STUNTING{" "}
+                            {getSortIcon("total_anggaran")}
+                          </th>
+                          <th
+                            rowSpan="4"
+                            style={{
+                              whiteSpace: "normal",
+                              overflowWrap: "break-word",
+                              maxWidth: "150px",
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => requestSort("total_anggaran")}
+                          >
                             TOTAL ANGGARAN (Rp){" "}
                             {getSortIcon("total_anggaran")}
                           </th>
@@ -2044,6 +2059,15 @@ const ContentStunting = () => {
                                     item.jumlah_keluarga_tidak_beresiko_stunting
                                   ).toLocaleString("id-ID")
                                 : "-"}
+                            </td>
+                            <td>
+                              <span style={{ float: "right" }}>
+                              {`${((item.total_kesejahteraan/item.jumlah_keluarga_sasaran)*100)?.toLocaleString("id-ID",
+                                  {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  })}%`}
+                              </span>
                             </td>
                             <td>
                               <span style={{ float: "right" }}>

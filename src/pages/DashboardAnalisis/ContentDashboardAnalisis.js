@@ -108,7 +108,7 @@ const ContentDashboardAnalisis = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_anggaran_analisis`,
+          `${API_URI}/dashboard_anggaran_analisis`,
           requestOptions
         );
 
