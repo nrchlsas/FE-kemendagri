@@ -16,7 +16,7 @@ import { createSelector } from "reselect";
 import { useSelector } from "react-redux";
 import { get_permission_by_url } from "../../slices/thunks";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 
 
@@ -30,6 +30,19 @@ const isEmailValid = (email) => {
 const Pengguna = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [disabledChangePassword, setDisabledChangePassword] = useState(true);
+    const [changePassword, setChangePassword] = useState({
+        password: "",
+        confirm_password: "",
+        uuid: '',
+    });
+    useEffect(() => {
+        let is_valid = true;
+        if (!changePassword.password) is_valid = false;
+        if (changePassword.password !== changePassword.confirm_password) is_valid = false;
+        if (changePassword.password && changePassword.password.length < 6) is_valid = false;
+        setDisabledChangePassword(!is_valid);
+    }, [changePassword])
     const [formData, setFormData] = useState({
         id: 0,
         email: '',
@@ -41,9 +54,11 @@ const Pengguna = () => {
         id_daerah: 0,
         password: "",
         confirm_password: "",
+        uuid: '',
     });
     const [show, setShow] = useState(false)
     const [modal_center, setmodal_center] = useState(false);
+    const [modal_update_password, setmodal_update_password] = useState(false);
     const [list_role, setListRole] = useState([]);
     const [list_daerah, setListDaerah] = useState([]);
     const [resultData, setResultData] = useState([]);
@@ -69,10 +84,7 @@ const Pengguna = () => {
         if (!formData.email) is_valid = false;
         if (!isEmailValid(formData.email)) is_valid = false;
         if (formData.roles == 0) is_valid = false;
-        if (!formData.password) is_valid = false;
-        if (formData.password !== formData.confirm_password) is_valid = false;
         setIsValid(is_valid);
-        console.log('formData', formData);
     }, [formData])
 
     // permission
@@ -193,6 +205,7 @@ const Pengguna = () => {
             id_daerah: data.id_daerah || 0,
             password: data.password || "",
             confirm_password: data.confirm_password || "",
+            uuid: data.uuid,
         }));
         window.scrollTo(0, 0)
     }
@@ -235,6 +248,46 @@ const Pengguna = () => {
         } finally {
         }
         tog_center();
+    }
+
+    function update_password(data) {
+        setChangePassword({
+            password: "",
+            confirm_password: "",
+            uuid: data.uuid,
+        });
+        setmodal_update_password(true);
+    }
+    async function do_update_password() {
+        try {
+            const json = {
+                uuid: changePassword.uuid,
+                password: changePassword.password
+            };
+            let response = api.create(`${API_9007_URI}/users/update-password/`, json);
+            let data = await response;
+            if (data.code === 200) {
+                setModalAlert(Object.assign({}, modal_alert, { type: 'success', title: "Update Password", message: "Proses update password berhasil", open: true }))
+            }
+        } catch (error) {
+            setModalAlert(Object.assign({}, modal_alert, { type: 'error', title: "Error Update Password", message: error, open: true }))
+        } finally {
+        }
+    }
+
+    async function onVerification(item) {
+        // const newWindow = window.open(`/verification/${item.uuid}`, '_blank');
+        // if (newWindow) newWindow.opener = null
+        try {
+            let response = api.get(`${API_9007_URI}/users/verifikasi/${item.uuid}`);
+            let data = await response;
+            if (data.code === 200) {
+                setModalAlert(Object.assign({}, modal_alert, { type: 'success', title: "Verifikasi Data", message: "Proses verifikasi data berhasil", open: true }))
+            }
+        } catch (error) {
+            setModalAlert(Object.assign({}, modal_alert, { type: 'error', title: "Error Verifikasi Data", message: error, open: true }))
+        } finally {
+        }
     }
 
     return (
@@ -323,7 +376,7 @@ const Pengguna = () => {
                                                 </select>
                                             </FormGroup>
 
-                                            <FormGroup className="mt-5">
+                                            {/* <FormGroup className="mt-5">
                                                 <Label>Password</Label>
                                                 <input type="password" name="password"
                                                     onChange={(e) => changeValue(e)}
@@ -338,7 +391,7 @@ const Pengguna = () => {
                                                     className="form-control"
                                                     value={formData.confirm_password}
                                                 />
-                                            </FormGroup>
+                                            </FormGroup> */}
                                             {/* {
                                                 Object.keys(permissionForm).map((e) => (
                                                     <FormInput key={e} dynamicForm={permissionForm[e]} changeValue={changeValue} dataRoles={dataRoles} />
@@ -412,11 +465,19 @@ const Pengguna = () => {
                                                 <td>
                                                     <input type="checkbox" key={index} checked={item.status} readOnly />
                                                 </td>
-                                                <td>
-                                                    <input type="checkbox" key={index} checked={item.is_verifikasi} readOnly />
+                                                <td style={{ width: "150px" }}>
+                                                    {
+                                                        item.is_verifikasi ? (
+                                                            <Button color="warning" onClick={() => onVerification(item)}>Verification</Button>
+                                                        ) : (
+                                                            <div><Link to={`/verification/${item.uuid}`} target="_blank">Terverifikasi</Link></div>
+                                                        )
+                                                    }
+                                                    {/* <input type="checkbox" key={index} checked={item.is_verifikasi} readOnly /> */}
                                                 </td>
-                                                <td>
-                                                    <input type="checkbox" key={index} checked={item.is_update_password} readOnly />
+                                                <td style={{ width: "155px" }}>
+                                                    {/* <input type="checkbox" key={index} checked={item.is_update_password} readOnly /> */}
+                                                    <Button color="danger" onClick={() => { update_password(item) }}>Ubah Password</Button>
                                                 </td>
                                                 <td>{item.nama_roles || '-'}</td>
                                                 <td style={{ width: "160px" }}>
@@ -488,6 +549,48 @@ const Pengguna = () => {
                         </button>
                     </div>
                 </div>
+            </Modal>
+
+            <Modal
+                isOpen={modal_update_password}
+                toggle={() => setmodal_update_password(false)}
+                centered
+            >
+                <ModalHeader className=" p-3 bg-info-subtle" toggle={() => setmodal_update_password(false)}>
+                    Form Ubah Password
+                </ModalHeader>
+                <ModalBody>
+                    <Row>
+                        <Col>
+                            <FormGroup>
+                                <Label>Password</Label>
+                                <input type="password" name="password"
+                                    onChange={(e) => setChangePassword(Object.assign({}, changePassword, { password: e.target.value }))}
+                                    className="form-control"
+                                    value={changePassword.password}
+                                />
+                            </FormGroup>
+                            <FormGroup>
+                                <Label>Confirm Password</Label>
+                                <input type="password" name="confirm_password"
+                                    onChange={(e) => setChangePassword(Object.assign({}, changePassword, { confirm_password: e.target.value }))}
+                                    className="form-control"
+                                    value={changePassword.confirm_password}
+                                />
+                            </FormGroup>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col className="d-flex justify-content-center align-items-center" >
+                            <Button color="primary" className="mt-3" style={{ marginRight: "6px" }} onClick={() => do_update_password()} disabled={disabledChangePassword}>
+                                Ubah Password
+                            </Button>
+                            <Button color="warning" className="mt-3" onClick={() => setmodal_update_password(false)}>
+                                Batal
+                            </Button>
+                        </Col>
+                    </Row>
+                </ModalBody>
             </Modal>
         </>
     );
