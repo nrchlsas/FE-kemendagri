@@ -989,12 +989,14 @@ const ContentStunting = () => {
     setDataRincianDetail(rincianDetail);
   };
 
+  const [namaSubGiat, setNamaSubGiat] = useState("")
   const handleOpenNextModal = (
     kodeDaerah = "",
     kodeSubGiat = "",
     kodeDdnProv = "",
     kodeDdnKab = "",
-    rincianDetail = ""
+    rincianDetail = "",
+    namaSubGiat =""
   ) => {
     if (kodeDaerah != "") {
       getDataDetailAnggaran(kodeDaerah, "", "", kodeSubGiat);
@@ -1005,6 +1007,7 @@ const ContentStunting = () => {
     }
 
     setDataRincianDetailSub(rincianDetail);
+    setNamaSubGiat(namaSubGiat)
     // setModal(true)
   };
   const handleCloseNextModal = () => {
@@ -3471,7 +3474,7 @@ const ContentStunting = () => {
       >
         <div className="modal-content border-0">
           <ModalHeader className=" p-3 bg-info-subtle" toggle={handleClose}>
-            Detail Anggaran{" "}
+            Detail Anggaran Stunting{" "}
             {/* {dataJenisPemda == "kab" ? "Kabupaten/Kota" : "Provinsi"} */}
             {dataDetailNamaDaerah == "Aceh"? "Provinsi Aceh" : dataDetailNamaDaerah}
           </ModalHeader>
@@ -3663,7 +3666,8 @@ const ContentStunting = () => {
                                   item.kode_sub_giat,
                                   item.kode_ddn,
                                   "",
-                                  item.total_rinciansub
+                                  item.total_rinciansub,
+                                  item.nama_sub_giat
                                 )
                               : dataJenisPemda == "kab" ||
                                 dataJenisPemda == "kota"
@@ -3672,14 +3676,16 @@ const ContentStunting = () => {
                                   item.kode_sub_giat,
                                   "",
                                   item.kode_ddn,
-                                  item.total_rinciansub
+                                  item.total_rinciansub,
+                                  item.nama_sub_giat
                                 )
                               : handleOpenNextModal(
                                   item.kode_prov,
                                   item.kode_sub_giat,
                                   "",
                                   "",
-                                  item.total_rinciansub
+                                  item.total_rinciansub,
+                                  item.nama_sub_giat
                                 )
                           }
                           className="bx bx-list-ul text-primary"
@@ -3712,7 +3718,7 @@ const ContentStunting = () => {
             className=" p-3 bg-info-subtle"
             toggle={handleCloseNextModal}
           >
-            Sub Rincian Objek
+            Sub Rincian Objek {namaSubGiat}
           </ModalHeader>
           <ModalBody>
             <Row>

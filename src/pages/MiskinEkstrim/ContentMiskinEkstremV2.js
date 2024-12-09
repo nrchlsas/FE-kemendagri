@@ -1127,9 +1127,10 @@ const ContentMiskinEkstremV2 = () => {
 
   const [cardhead, setCardHead] = useState()
   const [namaDaerahDetail, setNamaDaerahDetail] = useState("")
+  const [namaSubGiat, setNamaSubGiat] = useState("")
   
 
-  const handleOpenNextModal = (kodeDaerah="", kodeSubGiat="", kodeDdnProv="", kodeDdnKab="", rincianDetail= 0) => {
+  const handleOpenNextModal = (kodeDaerah="", kodeSubGiat="", kodeDdnProv="", kodeDdnKab="", rincianDetail= 0, namaSubGiat="") => {
 
     if(kodeDaerah != "") {
       getDataDetailAnggaran(kodeDaerah, "", "", kodeSubGiat)      
@@ -1141,6 +1142,7 @@ const ContentMiskinEkstremV2 = () => {
 
     // setModal(true)
     setDataRincianDetailSub(rincianDetail)
+    setNamaSubGiat(namaSubGiat)
     setCardHead(null)
   }
   const handleCloseNextModal = () => {
@@ -3523,7 +3525,7 @@ const ContentMiskinEkstremV2 = () => {
 
       <Modal size="xl" isOpen={modall} toggle={handleOpen} centered={true} backdrop="static">
       <div className="modal-content border-0">
-        <ModalHeader className=" p-3 bg-info-subtle" toggle={handleClose}>Detail Anggaran {dataDetailNamaDaerah=="Aceh" ? "Provinsi Aceh" : dataDetailNamaDaerah}
+        <ModalHeader className=" p-3 bg-info-subtle" toggle={handleClose}>Detail Anggaran Kemiskinan Ekstrem {dataDetailNamaDaerah=="Aceh" ? "Provinsi Aceh" : dataDetailNamaDaerah}
         </ModalHeader>
         <ModalBody>
         <Row>
@@ -3672,7 +3674,7 @@ const ContentMiskinEkstremV2 = () => {
                       padding: "5px 10px",                      
                       cursor: "pointer",
                       fontSize: "30px"
-                    }} onClick={()=>dataJenisPemda=="prov" ? handleOpenNextModal("", item.kode_sub_giat, item.kode_ddn, "", item.total_rinciansub) : (dataJenisPemda=="kab" || dataJenisPemda=="kota") ? handleOpenNextModal("", item.kode_sub_giat, "", item.kode_ddn, item.total_rinciansub) : handleOpenNextModal(item.kode_prov, item.kode_sub_giat, "", "", item.total_rinciansub)} className="bx bx-list-ul text-primary"></i>
+                    }} onClick={()=>dataJenisPemda=="prov" ? handleOpenNextModal("", item.kode_sub_giat, item.kode_ddn, "", item.total_rinciansub, item.nama_sub_giat) : (dataJenisPemda=="kab" || dataJenisPemda=="kota") ? handleOpenNextModal("", item.kode_sub_giat, "", item.kode_ddn, item.total_rinciansub, item.nama_sub_giat) : handleOpenNextModal(item.kode_prov, item.kode_sub_giat, "", "", item.total_rinciansub, item.nama_sub_giat)} className="bx bx-list-ul text-primary"></i>
                         </td>          
                       </tr>
                     ))}
@@ -3687,7 +3689,7 @@ const ContentMiskinEkstremV2 = () => {
 
       <Modal size="xl" isOpen={modal} toggle={handleOpenNextModal} centered={true} backdrop="static">
       <div className="modal-content border-0">
-        <ModalHeader className=" p-3 bg-info-subtle" toggle={handleCloseNextModal}>Sub Rincian Objek
+        <ModalHeader className=" p-3 bg-info-subtle" toggle={handleCloseNextModal}>Sub Rincian Objek {namaSubGiat}
         </ModalHeader>
         <ModalBody>
         <Row>

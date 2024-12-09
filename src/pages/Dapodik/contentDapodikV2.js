@@ -803,12 +803,14 @@ const ContentDapodikV2 = () => {
   };
 
   const [cardhead, setCardHead] = useState();
+  const [namaSubGiat, setNamaSubGiat] = useState("")
 
   const handleOpenNextModal = (
     kodeDaerah,
     kodeSubGiat,
     kodeDdn,
-    rincianDetail = ""
+    rincianDetail = "",
+    namaSubGiat = ""
   ) => {
     if (kodeDaerah != "") {
       getDataDetailAnggaran(kodeDaerah, "", "", kodeSubGiat);
@@ -817,6 +819,7 @@ const ContentDapodikV2 = () => {
     }
     // setModal(true);
     setDataRincianDetailSub(rincianDetail);
+    setNamaSubGiat(namaSubGiat)
     setCardHead(null);
   };
   const handleCloseNextModal = () => {
@@ -3578,7 +3581,7 @@ const ContentDapodikV2 = () => {
       >
         <div className="modal-content border-0">
           <ModalHeader className=" p-3 bg-info-subtle" toggle={handleClose}>
-            Detail Anggaran{" "}
+            Detail Anggaran Pendidikan{" "}
             {dataJenisPemda == "prov"
               ? "Provinsi"
               : dataJenisPemda == "kota" || dataJenisPemda == "kab"
@@ -3817,7 +3820,8 @@ const ContentDapodikV2 = () => {
                                   "",
                                   item.kode_sub_giat,
                                   item.kode_ddn,
-                                  item.total_rinciansub
+                                  item.total_rinciansub,
+                                  item.nama_sub_giat
                                 )
                               : dataJenisPemda == "kab" ||
                                 dataJenisPemda == "kota"
@@ -3825,13 +3829,15 @@ const ContentDapodikV2 = () => {
                                   "",
                                   item.kode_sub_giat,
                                   item.kode_ddn,
-                                  item.total_rinciansub
+                                  item.total_rinciansub,
+                                  item.nama_sub_giat
                                 )
                               : handleOpenNextModal(
                                   item.kode_prov,
                                   item.kode_sub_giat,
                                   "",
-                                  item.total_rinciansub
+                                  item.total_rinciansub,
+                                  item.nama_sub_giat
                                 )
                           }
                           className="bx bx-list-ul text-primary"
@@ -3870,7 +3876,7 @@ const ContentDapodikV2 = () => {
             className=" p-3 bg-info-subtle"
             toggle={handleCloseNextModal}
           >
-            Sub Rincian Objek
+            Sub Rincian Objek {namaSubGiat}
           </ModalHeader>
           <ModalBody>
             <Row>

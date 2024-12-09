@@ -427,12 +427,13 @@ const ContentUhcV2 = () => {
 
   const [cardhead, setCardHead] = useState()
   const [namaDaerahDetail, setNamaDaerahDetail] = useState("")
-  
+  const [namaSubGiat, setNamaSubGiat] = useState("")
 
-  const handleOpenNextModal = ({kodeDdn="", kodeSubGiat="", rincianDetail= 0}) => {    
+  const handleOpenNextModal = ({kodeDdn="", kodeSubGiat="", rincianDetail= 0, namaSubGiat=""}) => {    
     getDataDetailAnggaranSub({kodeDdn: kodeDdn, kodeSubGiat: kodeSubGiat})
     // setModal(true)
     setDataRincianDetailSub(rincianDetail)
+    setNamaSubGiat(namaSubGiat)
     setCardHead(null)
   }
   const handleCloseNextModal = () => {
@@ -1218,7 +1219,7 @@ const ContentUhcV2 = () => {
                               padding: "5px 10px",                      
                               cursor: "pointer",
                               fontSize: "25px"                      
-                            }} onClick={()=> handleOpen({kodeSubGiat: item.kode_sub_giat, kodeDdn: showNextData? item.kode_ddn :item.kode, rincianDetail: item.total_anggaran_bpjs, namaDaerah: item.nama})} className="bx bx-list-ul text-primary"></i>                                                                                
+                            }} onClick={()=> handleOpen({kodeSubGiat: item.kode_sub_giat, kodeDdn: showNextData? item.kode_ddn :item.kode, rincianDetail: item.total_anggaran_bpjs, namaDaerah: item.nama_daerah})} className="bx bx-list-ul text-primary"></i>                                                                                
                             </td>
                             </> : <></>}
                     </tr>
@@ -1235,7 +1236,7 @@ const ContentUhcV2 = () => {
       </Row>
       <Modal size="xl" isOpen={modall} toggle={handleOpen} centered={true} backdrop="static">
       <div className="modal-content border-0">
-        <ModalHeader className=" p-3 bg-info-subtle" toggle={handleClose}>Detail Anggaran {dataDetailNamaDaerah=="Aceh" ? "Provinsi Aceh" : dataDetailNamaDaerah}
+        <ModalHeader className=" p-3 bg-info-subtle" toggle={handleClose}>Detail Anggaran Iuran Jaminan Kesehatan {dataDetailNamaDaerah=="Aceh" ? "Provinsi Aceh" : dataDetailNamaDaerah}
         </ModalHeader>
         <ModalBody>
         <Row>
@@ -1384,7 +1385,7 @@ const ContentUhcV2 = () => {
                       padding: "5px 10px",                      
                       cursor: "pointer",
                       fontSize: "30px"
-                    }} onClick={()=>handleOpenNextModal({kodeDdn: item.kode_ddn, kodeSubGiat: item.kode_sub_giat, rincianDetail: item.total_rinciansub})} className="bx bx-list-ul text-primary"></i>
+                    }} onClick={()=>handleOpenNextModal({kodeDdn: item.kode_ddn, kodeSubGiat: item.kode_sub_giat, rincianDetail: item.total_rinciansub, namaSubGiat: item.nama_sub_giat})} className="bx bx-list-ul text-primary"></i>
                         </td>          
                       </tr>
                     ))}
@@ -1399,7 +1400,7 @@ const ContentUhcV2 = () => {
 
       <Modal size="xl" isOpen={modal} toggle={handleOpenNextModal} centered={true} backdrop="static">
       <div className="modal-content border-0">
-        <ModalHeader className=" p-3 bg-info-subtle" toggle={handleCloseNextModal}>Sub Rincian Objek
+        <ModalHeader className=" p-3 bg-info-subtle" toggle={handleCloseNextModal}>Sub Rincian Objek {namaSubGiat}
         </ModalHeader>
         <ModalBody>
         <Row>
