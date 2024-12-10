@@ -1171,12 +1171,49 @@ const BerandaV2 = () => {
           >
             Platform visualisasi data dari berbagai Kementerian/Lembaga untuk mendukung pengambilan kebijakan dalam penyusunan perencanaan pembangunan dan penganggaran keuangan daerah sehingga lebih tepat sasaran.
           </p>
+          <button data-aos="fade-left" data-aos-delay="3000"
+            onClick={() => setShowBerandaSipd(true)}
+            style={{
+              backgroundColor: "#ffffff",
+              color: "#007bff",
+              padding: "12px 20px",
+              border: "none",
+              borderRadius: "25px",
+              cursor: "pointer",
+              fontSize: "16px",
+              fontWeight: "bold",
+              boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+              transition: "transform 0.2s ease, box-shadow 0.2s ease",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.transform = "scale(1.05)";
+              e.target.style.boxShadow = "0px 6px 12px rgba(0, 0, 0, 0.3)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = "scale(1)";
+              e.target.style.boxShadow = "0px 4px 8px rgba(0, 0, 0, 0.2)";
+            }}
+          >
+            Lihat Dashboard
+            <span
+              style={{
+                display: "inline-block",
+                marginLeft: "8px",
+                transition: "transform 0.3s ease",
+              }}
+            >
+              →
+            </span>
+          </button>
           </div>
         </div>
           </Col>
           <Col md={6}>
           <div data-aos="fade-left" className="d-flex justify-content-center align-items-center" >
-            <img  src={imageBeranda} alt=""  style={{borderRadius: "15px", width: "85%"}}/>
+            <img  src={imageBeranda} alt=""  style={{borderRadius: "15px", width: "90%"}}/>
           </div>
           </Col>
         </Row>
