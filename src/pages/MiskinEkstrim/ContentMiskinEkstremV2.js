@@ -3653,7 +3653,8 @@ const ContentMiskinEkstremV2 = () => {
                         {/* <td>{item.kode_prop}</td> */}
                         <td style={{textAlign: "center",
                         verticalAlign: "middle"}}>
-                          { index + 1}
+                          {/* { index + 1} */}
+                          {indexOfFirstItemDetail + index + 1}
                         </td>
                         {/* {(dataJenisPemda =="prov" || dataJenisPemda =="kab" || dataJenisPemda =="kota") ? (<></>):(<><td style={{ maxWidth: "250px" }}>
                           {" "}
@@ -3802,7 +3803,8 @@ const ContentMiskinEkstremV2 = () => {
                       <tr key={index}>                        
                         <td style={{textAlign: "center",
                         verticalAlign: "middle"}}>
-                          { index + 1}
+                          {/* { index + 1} */}
+                          {indexOfFirstItemDetailSub + index + 1}
                         </td>
                         <td>
                           {item.kode_sro}

@@ -1183,7 +1183,7 @@ const ContentUhcV2 = () => {
                       <tbody style={{ minHeight: "500px" }}>
                   {currentItems.map((item, index) =>(
                     <tr key={index}>
-                        <td>{index+1}</td>                        
+                        <td>{indexOfFirstItem+index+1}</td>                        
                         <td className={showNextData ? "" : "click-data" } style={{ minWidth: "270px" }} onClick={(e)=> showNextData ? "" : getDataTabelBpjsKabupaten({kodeDdn: item.kode, e})}>{showNextData ? item.nama_daerah : item.nama}</td>
                         <td>{item.jumlah_bp_pn? parseInt(item.jumlah_bp_pn).toLocaleString("id-ID") : "-"}</td>
                         <td>{item.jumlah_bp_swasta? parseInt(item.jumlah_bp_swasta).toLocaleString("id-ID") : "-"}</td>
@@ -1327,7 +1327,8 @@ const ContentUhcV2 = () => {
                         {/* <td>{item.kode_prop}</td> */}
                         <td style={{textAlign: "center",
                         verticalAlign: "middle"}}>
-                          { index + 1}
+                          {/* { index + 1} */}
+                          {indexOfFirstItemDetail+index+1}
                         </td>
                         {/* {(dataJenisPemda =="prov" || dataJenisPemda =="kab" || dataJenisPemda =="kota") ? (<></>):(<><td style={{ maxWidth: "250px" }}>
                           {" "}
@@ -1476,7 +1477,8 @@ const ContentUhcV2 = () => {
                       <tr key={index}>                        
                         <td style={{textAlign: "center",
                         verticalAlign: "middle"}}>
-                          { index + 1}
+                          {/* { index + 1} */}
+                          {indexOfFirstItemDetailSub+index+1}
                         </td>
                         <td>
                           {item.kode_sro}

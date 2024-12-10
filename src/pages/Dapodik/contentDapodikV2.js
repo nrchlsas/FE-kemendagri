@@ -3706,7 +3706,8 @@ const ContentDapodikV2 = () => {
                       <td
                         style={{ textAlign: "center", verticalAlign: "middle" }}
                       >
-                        {index + 1}
+                        {indexOfFirstItemDetail + index + 1}
+                        {/* {index + 1} */}
                       </td>
                       {dataJenisPemda == "prov" ||
                       dataJenisPemda == "kab" ||
@@ -3968,7 +3969,8 @@ const ContentDapodikV2 = () => {
                       <td
                         style={{ textAlign: "center", verticalAlign: "middle" }}
                       >
-                        {index + 1}
+                        {/* {index + 1} */}
+                        {indexOfFirstItemDetailSub + index + 1}
                       </td>
                       <td>{item.kode_sro}</td>
                       <td
