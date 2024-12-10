@@ -1158,14 +1158,13 @@ const BerandaV2 = () => {
           <p data-aos="fade-left"
             style={{
               fontSize: "1.2rem",
-              marginBottom: "2rem",
-              // width: "900px",
+              marginBottom: "2rem",              
               animation: "fadeIn 2s ease-in-out",
               color: "black", // Warna teks
               backgroundColor: "rgba(255, 255, 255, 0.2)", // Transparan untuk mendukung blur
               backdropFilter: "blur(1px)", // Efek blur
               borderRadius: "10px", // Sudut melengkung untuk tampilan lebih menarik
-              padding: "5px", // Spasi di dalam elemen
+              padding: "15px", // Spasi di dalam elemen
               boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Bayangan untuk menonjolkan elemene
             }}
           >

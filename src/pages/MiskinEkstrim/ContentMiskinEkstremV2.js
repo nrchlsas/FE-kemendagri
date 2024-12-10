@@ -2562,7 +2562,7 @@ const ContentMiskinEkstremV2 = () => {
                 </TabPane>
                 <TabPane tabId="3" id="kabupaten">
                   <h4 className="card-title d-flex justify-content-center">
-                    {dataShowIndividu ? "KELUARGA " : "INDIVIDU "}
+                    {dataShowIndividu ? "INDIVIDU " : "KELUARGA "}
                     KEMISKINAN EKSTREM PER PROVINSI
                   </h4>
                   <Row>
@@ -2696,7 +2696,7 @@ const ContentMiskinEkstremV2 = () => {
                                   >
                                     <TabPane tabId="1" id="provinsi">
                                     {dataShowIndividuDesil1 ? (<><h4 className="card-title ">
-                                        Chart Individu (Desil 1-4)
+                                        Grafik Individu (Desil 1-4)
                                       </h4>
                                       <HorizontalBarChart
                                         valueChart={
@@ -2707,7 +2707,7 @@ const ContentMiskinEkstremV2 = () => {
                                         }
                                         dataColors='["#2DAED4"]'
                                       /></>) : (<><h4 className="card-title ">
-                                        Chart Individu (Desil 1)
+                                        Grafik Individu (Desil 1)
                                       </h4>
                                       <HorizontalBarChart
                                         valueChart={
