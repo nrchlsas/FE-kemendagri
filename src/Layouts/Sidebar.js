@@ -13,6 +13,7 @@ import { Container } from "reactstrap";
 import HorizontalLayout from "./HorizontalLayout";
 
 import logoKemendagri from "../assets/images/logo-kemendagri/logo-sipd-hub-kemendagri.png"
+import logoSdpdn from "../assets/images/logo-kemendagri/logo-sdpdn.png"
 
 const Sidebar = ({ layoutType }) => {
 
@@ -41,19 +42,23 @@ const Sidebar = ({ layoutType }) => {
         <div className="navbar-brand-box">
           <Link to="/" className="logo logo-dark">
             <span className="logo-sm">
-              <img src={logoKemendagri} alt="" width="40" height="45" />
+              <img src={logoSdpdn} alt="" width="20" height="22" />
+              <img src={logoKemendagri} alt="" width="20" height="22" />
             </span>
             <span className="logo-lg">
-              <img src={logoKemendagri} alt="" width="55" height="60" />
+              <img src={logoSdpdn} alt="" width="55" height="60" />
+              <img src={logoKemendagri} alt="" width="55" height="60" />              
               <span style={{ fontFamily: 'sans-serif', color: 'black', fontWeight: 600, margin: '0 0 0 10px' }}>SIPD-HUB</span>
             </span>
           </Link>
 
           <Link to="/" className="logo logo-light">
             <span className="logo-sm">
-              <img src={logoKemendagri} alt="" width="40" height="45" />
+              <img src={logoSdpdn} alt="" width="20" height="22" />
+              <img src={logoKemendagri} alt="" width="20" height="22" />
             </span>
             <span className="logo-lg">
+              <img src={logoSdpdn} alt="" width="55" height="60" />
               <img src={logoKemendagri} alt="" width="55" height="60" />
               <span style={{ fontFamily: 'sans-serif', color: 'black', fontWeight: 600, margin: '0 0 0 10px' }}>SIPD-HUB</span>
             </span>
