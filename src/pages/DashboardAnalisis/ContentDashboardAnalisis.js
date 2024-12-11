@@ -47,6 +47,8 @@ const ContentDashboardAnalisis = () => {
   const [errorDataDashboardAnalisis, setErrorDataDashboardAnalisis] = useState([]);
   const [loadingDataDashboardAnalisis, setLoadingDataDashboardAnalisis] = useState([]);
   const [totalSumberDana, setTotalSumberDana] = useState(0)
+  const [showGrafikSumberDana, setShowGrafikSumberDana] = useState(false)
+  const [dataChartSumberDana, setDataChartSumberDana] = useState([],[])
 
   const getDataDashboardAnalisis = ({
     kodeDdn,
@@ -116,10 +118,17 @@ const ContentDashboardAnalisis = () => {
           throw new Error("Network response was not ok");
         }
         const dataDashboardAnalisis = await response.json();
-        const totalSum = dataDashboardAnalisis?.data?.data_dashboard?.by_nama_dana.reduce((sum, item) => sum + item.total_sumber_dana, 0);     
-       console.log(((dataDashboardAnalisis?.data.data_dashboard?.rincian_belanja_total_belanja/dataDashboardAnalisis?.data.data_dashboard_nasional?.total_belanja)*100).toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits:2}))
-        setTotalSumberDana(totalSum)
         setDataDashboardAnalisis(dataDashboardAnalisis?.data || []);
+        const totalSum = dataDashboardAnalisis?.data?.data_dashboard?.by_nama_dana?.reduce((sum, item) => sum + item.total_sumber_dana, 0);     
+        setTotalSumberDana(totalSum)
+
+        const dataChart = dataDashboardAnalisis?.data?.data_dashboard?.by_nama_dana?.reduce((acc, item) => {
+          acc[0].push(item.nama_sumber_dana);
+          acc[1].push(item.total_sumber_dana);
+          return acc
+        }, [[],[]]);
+        
+        setDataChartSumberDana(dataChart)
       } catch (errorDashboardAnalisis) {
         setErrorDataDashboardAnalisis(errorDashboardAnalisis);
       } finally {
@@ -686,27 +695,33 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
               </div>
             </CardHeader>
             <CardBody>
-              <Row>
-                <Col md={5}>
-                  <PieChartNew
-                    dataChart={[12, 12]}
-                    dataColors={'["#2DAED4", "#FCAD24"]'}
-                    categoryName={[
-                      "Anggaran Di luar Pendidikan",
-                      "Anggaran Pendidikan",
-                    ]}
-                    pieChart={false}
-                    showLegend={false}
-                    percentOnly={true}
-                    legendHorizontal={false}
-                    heightChart="350px"
+            <Row>
+                {showGrafikSumberDana ? (<>
+                <Col md={12}>
+                  <VerticalBarChart
+                    valueChart={dataChartSumberDana[1]}
+                    categoryChart={dataChartSumberDana[0]}
+                    dataZoom={true}
+                    rotate={true}
+                    trillion={true}
+                    emphasis={true}
+                    // breakWord={true}
+                    dataColors='["#57E7B4"]'
                   />
-                </Col>
-                <Col md={7}>
-                  <div className="d-flex mb-2" style={{ fontSize: "22px" }}>
+                <div className="mt-4">
+                    <span
+                      onClick={() => setShowGrafikSumberDana(false)}
+                      style={{ cursor: "pointer", color: "#2DAED4" }}
+                    >
+                      Lihat Detail
+                    </span>
+                  </div>                
+                </Col></>) : (<>
+                <Col md={10}>
+                  <div className="d-flex mb-1 px-2" style={{ fontSize: "22px" }}>
                     <span>Total Sumber Dana : <span style={{fontWeight:600}}>{totalSumberDana ? `Rp ${totalSumberDana.toLocaleString('id-ID')}` : '-'}</span></span>
                   </div>
-                  <SimpleBar style={{ maxHeight: "300px", }} className="px-3">
+                  <SimpleBar style={{ maxHeight: "260px", }} className="d-flex p-2">
                   {dataDashboardAnalisis?.data_dashboard?.by_nama_dana.map((item, index) => ( 
                       <div key={index}>
                         <ul>
@@ -726,14 +741,19 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                       </div>
                     ))}
                   </SimpleBar>
-                  {/* <div
-                    className="d-flex flex-column simpleBar"
-                    style={{  overflowY: "auto" }}
-                  >
-                    
-                  </div> */}
                 </Col>
-              </Row>
+                <Col md={2} className="d-flex">
+                  <div className="mt-4 d-flex justify-content-end align-items-end">
+                    <span
+                      onClick={() => setShowGrafikSumberDana(true)}
+                      style={{ cursor: "pointer", color: "#2DAED4" }}
+                    >
+                      Lihat Grafik
+                    </span>
+                  </div>                
+                </Col>
+              </>)}      
+              </Row>  
             </CardBody>
           </Card>
         </Col>

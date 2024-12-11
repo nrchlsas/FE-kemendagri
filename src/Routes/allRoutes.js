@@ -289,7 +289,7 @@ const authProtectedRoutes = [
   { path: "/perencanaan/perencanaan-detail/:_id", component: <PerencanaanDaerah />},
   { path: "/perencanaan/perencanaan-detail/perencanaan-detail-skpd/:_id", component: <PerencanaanDetailDaerah />},  
   { path: "/kependudukan", component: <Kependudukan />},
-  { path: "realisasi", component: <Realisasi />},
+  { path: "/realisasi", component: <Realisasi />},
   { path: "/realisasi/realisasi-detail/:_id", component: <RealisasiDaerah />},
   { path: "/realisasi/realisasi-detail/realisasi-detail-skpd/:_id", component: <RealisasiDetailDaerah />},
   { path: "/dapodik", component: <Dapodik />},

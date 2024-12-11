@@ -3,8 +3,15 @@ import getChartColorsArray from "../../Components/Common/ChartsDynamicColor";
 import ReactEcharts from "echarts-for-react";
 import * as echarts from "echarts/core";
 
-const VerticalBarChart = ({ dataColors, valueChart, categoryChart, emphasis=false, trillion=false, rotate=false, background=false, breakWord=false }) => {
+const VerticalBarChart = ({ dataColors,dataTotal=10, valueChart, categoryChart, emphasis=false, trillion=false, rotate=false, background=false, breakWord=false, dataZoom=false }) => {
+  const limit = dataTotal // Misal kita ingin menampilkan hanya 10 data
 
+  // const totalData = categoryChart.length;
+
+  // Periksa apakah limit lebih besar dari total data
+// Tentukan `startIndex` dan `endIndex` berdasarkan limit
+  const startIndex = 0;  // Mulai dari indeks pertama
+  const endIndex = limit - 1
     var chartBarColors = getChartColorsArray(dataColors);
     var option = {
       color: chartBarColors,
@@ -44,7 +51,7 @@ const VerticalBarChart = ({ dataColors, valueChart, categoryChart, emphasis=fals
                 if (value.length > 10) {
                   const lines = [];
                   let currentLine = "";
-                  const maxLineLength = 10;
+                  const maxLineLength = 20;
                   value.split(" ").forEach((word) => {
                     if ((currentLine + word).length > maxLineLength) {
                       lines.push(currentLine);
@@ -60,7 +67,14 @@ const VerticalBarChart = ({ dataColors, valueChart, categoryChart, emphasis=fals
                 }
                 return value;
               }
-            : function (value) {
+            : emphasis ? function (value) {
+              if (value.length > 10) {
+                const words = value.split(" "); // Memecah teks menjadi array kata
+                const limitedWords = words.slice(0, 2).join(" "); // Mengambil 3 kata pertama
+                return `${limitedWords}....`; // Menambahkan titik-titik setelah potongan
+              }
+              return value; // Tidak ada perubahan jika teks pendek
+            } : function (value) {
                 return value;
               },
             
@@ -91,6 +105,17 @@ const VerticalBarChart = ({ dataColors, valueChart, categoryChart, emphasis=fals
           },
           max: background ? 546 : undefined,
         },        
+      ],
+      dataZoom: [
+        {
+          type: 'slider',  // Jenis slider untuk scroll
+          show: true,
+        //   start: 0,        // Posisi awal (0%)
+        //   end: dataTotal,         // Posisi akhir (50%)
+        startValue: startIndex,
+        endValue: endIndex
+        },
+        {type : 'inside'}
       ],
       series: [
         {
