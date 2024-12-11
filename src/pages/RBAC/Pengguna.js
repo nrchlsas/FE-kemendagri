@@ -121,7 +121,7 @@ const Pengguna = () => {
     async function populate_roles() {
         // populate list role
         const json = { page: 1, size: 100 }
-        let response = api.create(`${API_9007_URI}/rbac/list-roles-all`);
+        let response = api.create(`${API_9007_URI}/rbac/list-roles-all`, json);
         let data = await response;
         if (data.code === 200) {
             setListRole(data.data); // .filter(d => d.status)
@@ -468,9 +468,9 @@ const Pengguna = () => {
                                                 <td style={{ width: "150px" }}>
                                                     {
                                                         item.is_verifikasi ? (
-                                                            <Button color="warning" onClick={() => onVerification(item)}>Verification</Button>
-                                                        ) : (
                                                             <div><Link to={`/verification/${item.uuid}`} target="_blank">Terverifikasi</Link></div>
+                                                        ) : (
+                                                            <Button color="warning" onClick={() => onVerification(item)}>Verification</Button>
                                                         )
                                                     }
                                                     {/* <input type="checkbox" key={index} checked={item.is_verifikasi} readOnly /> */}
@@ -556,7 +556,7 @@ const Pengguna = () => {
                 toggle={() => setmodal_update_password(false)}
                 centered
             >
-                <ModalHeader className=" p-3 bg-info-subtle" toggle={() => setmodal_update_password(false)}>
+                <ModalHeader className="p-3 bg-info-subtle" toggle={() => setmodal_update_password(false)}>
                     Form Ubah Password
                 </ModalHeader>
                 <ModalBody>
