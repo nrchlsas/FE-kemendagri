@@ -24,7 +24,7 @@ const VerticalBarChart = ({ dataColors,dataTotal=10, valueChart, categoryChart, 
       grid: {
         left: "3%",
         right: "4%",
-        bottom: "3%",
+        bottom: "13%",
         containLabel: true,
       },
       xAxis: [
@@ -106,17 +106,16 @@ const VerticalBarChart = ({ dataColors,dataTotal=10, valueChart, categoryChart, 
           max: background ? 546 : undefined,
         },        
       ],
-      dataZoom: [
+      dataZoom: dataZoom ? [
         {
-          type: 'slider',  // Jenis slider untuk scroll
-          show: true,
-        //   start: 0,        // Posisi awal (0%)
-        //   end: dataTotal,         // Posisi akhir (50%)
+        type: 'slider',  // Jenis slider untuk scroll
+        show: true,
+        bottom: "3%", // Atur posisi slider lebih ke bawah
         startValue: startIndex,
         endValue: endIndex
         },
         {type : 'inside'}
-      ],
+      ] : [],
       series: [
         {
           name: "",

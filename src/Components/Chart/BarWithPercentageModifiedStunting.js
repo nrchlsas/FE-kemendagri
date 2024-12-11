@@ -202,7 +202,7 @@ const BarWithPercentageModifiedStunting = ({dataColors, valueChart=[], percentag
                 }
             }
         ],
-        dataZoom: [
+        dataZoom: [ 
             {
               type: 'slider',  // Jenis slider untuk scroll
               show: true,
