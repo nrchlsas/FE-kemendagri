@@ -2062,8 +2062,9 @@ const ContentStunting = () => {
                             </td>
                             <td>
                               <span style={{ float: "right" }}>
-                              {`${((item.total_kesejahteraan/item.jumlah_keluarga_sasaran)*100)?.toLocaleString("id-ID",
-                                  {
+                                  {isNaN(item.total_kesejahteraan / item.jumlah_keluarga_sasaran) 
+                                    ? "-" 
+                                    : `${((item.total_kesejahteraan / item.jumlah_keluarga_sasaran) * 100)?.toLocaleString("id-ID", {
                                     minimumFractionDigits: 2,
                                     maximumFractionDigits: 2,
                                   })}%`}

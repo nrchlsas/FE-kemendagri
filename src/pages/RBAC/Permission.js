@@ -373,7 +373,7 @@ const Permission = () => {
                                                     <option value={0}>-- Please Select Data --</option>
                                                     {list_menu.map(item => (
                                                         <option key={'option_menu_' + item.id} value={item.id}>
-                                                            {item.nama_menu} {item.nama_sub_menu ? '- ' + item.nama_sub_menu : ''}
+                                                            {item.is_menu ? `Menu - ` : `API - `}{item.nama_menu} {item.nama_sub_menu ? '- ' + item.nama_sub_menu : ''} {}
                                                         </option>
                                                     ))}
                                                 </select>
