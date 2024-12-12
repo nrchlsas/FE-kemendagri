@@ -1492,7 +1492,7 @@ const ContentUhcV2 = () => {
                           {item.nama_sro || "-"}
                         </td>                                                                        
                         <td>
-                        <span style={{float: "right"}}>{item.total_rinciansub ? parseInt(item.total_rinciansub).toLocaleString("id-ID")
+                        <span style={{float: "right"}}>{item.total_rinciansro ? parseInt(item.total_rinciansro).toLocaleString("id-ID")
                             : "-"}</span>
                         </td>                          
                         <td>
