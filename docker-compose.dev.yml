@@ -11,3 +11,9 @@ services:
       - ./src:/app/src
     ports:
       - "3000:3000"
+    networks:
+      - sipdhub
+
+networks:
+  sipdhub:
+    external: true
