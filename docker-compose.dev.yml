@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  app:
+  fe-sipdhub-dev:
     container_name: fe-sipdhub-dev
     image: fe-sipdhub-dev
     build:
@@ -21,6 +21,8 @@ services:
       - "80:80"  # Exposing NGINX to the host on port 80
     networks:
       - sipdhub
+    depends_on:
+      - fe-sipdhub-dev
 networks:
   sipdhub:
     external: true
