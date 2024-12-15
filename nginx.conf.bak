@@ -1,0 +1,27 @@
+events {
+  worker_connections 1024; # Specifies the maximum number of simultaneous connections per worker
+}
+
+http {
+  upstream fe {
+    server fe-sipdhub-dev:3000;
+  }
+
+  server {
+      listen 80 default_server;
+      listen [::]:80 default_server;
+      server_name sipd-hub.kemendagri.go.id;
+      index index.html;
+      access_log  /var/log/nginx/access.log;
+      error_log   /var/log/nginx/error.log;
+
+      location / {
+          proxy_set_header Accept-Encoding "x-sipdhub";
+          proxy_pass http://fe/;
+          proxy_redirect off;
+          proxy_set_header Host $host:$server_port;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      }
+  }
+}

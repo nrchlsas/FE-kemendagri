@@ -1,11 +1,30 @@
 version: "3.8"
 
 services:
-  app:
-    container_name: app-prod-c
-    image: app-prod-i
+  fe-sipdhub:
+    container_name: fe-sipdhub
+    image: fe-sipdhub
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile.prod
+    volumes:
+      - ./src:/app/src
     ports:
-        - "8080:80"
+      - "80:80"
+    networks:
+      - sipdhub
+#  nginx:
+#    image: nginx:latest
+#    restart: always
+#    volumes:
+#      - ./nginx.conf:/etc/nginx/nginx.conf
+#    ports:
+#      - "80:80"  # Exposing NGINX to the host on port 80
+#    networks:
+#      - sipdhub
+#    depends_on:
+#      - fe-sipdhub-dev
+networks:
+  sipdhub:
+    external: true

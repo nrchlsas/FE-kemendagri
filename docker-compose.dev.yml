@@ -4,6 +4,7 @@ services:
   fe-sipdhub-dev:
     container_name: fe-sipdhub-dev
     image: fe-sipdhub-dev
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile.dev
@@ -15,6 +16,7 @@ services:
       - sipdhub
   nginx:
     image: nginx:latest
+    restart: always
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     ports:
