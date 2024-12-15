@@ -18,6 +18,7 @@ import PieChartNew from "../../Components/Chart/PieChart";
 import CountUp from "react-countup";
 import logoKemendagri from "../../assets/images/logo-kemendagri/Animasi.gif"
 import imageBeranda from "../../assets/images/logo-kemendagri/image-beranda.png"
+import video from "../../assets/images/logo-kemendagri/bumper-2D.mp4"
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
@@ -1137,7 +1138,6 @@ const BerandaV2 = () => {
             flexDirection: "column",
             alignItems: "start",
             justifyContent: "start",
-            height: "90vh",
             padding:"20px",
             // background:`radial-gradient(rgb(174, 198, 207) 20%, rgb(243, 246, 249) 70%)`,            
             backgroundRepeat: "no-repeat",            
@@ -1211,11 +1211,27 @@ const BerandaV2 = () => {
         </div>
           </Col>
           <Col md={6}>
-          <div data-aos="fade-left" className="d-flex justify-content-center align-items-center" >
-            <img  src={imageBeranda} alt=""  style={{borderRadius: "15px", width: "90%"}}/>
+            <div data-aos="fade-left" className="d-flex justify-content-center align-items-center" >
+              <img  src={imageBeranda} alt=""  style={{borderRadius: "15px", width: "90%"}}/>
+            </div>
+          </Col>
+        </Row>
+        <Row>
+          <Col md={12}>
+          <div className="d-flex justify-content-center align-items-center">
+          <video controls style={{ width: '100%',
+            height: '620px',
+            objectFit: 'cover',
+            padding:"20px"}} >
+            <source src={video} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
           </div>
           </Col>
         </Row>
+        
+
+        
         {/* <div
           style={{
             display: "flex",
