@@ -45,11 +45,10 @@ const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
 const ContentDashboardAnalisis = () => {
   const [dataDashboardAnalisis, setDataDashboardAnalisis] = useState([]);
   const [errorDataDashboardAnalisis, setErrorDataDashboardAnalisis] = useState([]);
-  const [loadingDataDashboardAnalisis, setLoadingDataDashboardAnalisis] = useState([]);
+  const [loadingDataDashboardAnalisis, setLoadingDataDashboardAnalisis] = useState(false);
   const [totalSumberDana, setTotalSumberDana] = useState(0)
   const [showGrafikSumberDana, setShowGrafikSumberDana] = useState(false)
   const [dataChartSumberDana, setDataChartSumberDana] = useState([],[])
-
   const getDataDashboardAnalisis = ({
     kodeDdn,
     namaDaerah,
@@ -77,6 +76,7 @@ const ContentDashboardAnalisis = () => {
     namaSro
   }) => {
     const fetchData = async () => {
+      setLoadingDataDashboardAnalisis(true);
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
@@ -1359,7 +1359,7 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
           </Card>
         </Col>
       </Row> */}
-      <FilterRightSide dataFilter={dataDashboardAnalisis} onSelectFilter={handleFilterUpdate} />
+      <FilterRightSide dataFilter={dataDashboardAnalisis} onSelectFilter={handleFilterUpdate} isLoadingList={loadingDataDashboardAnalisis} />
     </React.Fragment>
   );
 };

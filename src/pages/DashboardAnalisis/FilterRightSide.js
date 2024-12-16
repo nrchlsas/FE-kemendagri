@@ -8,6 +8,7 @@ import {
   Col,
   Card,
   CardBody,
+  Spinner,
 } from "reactstrap";
 
 //SimpleBar
@@ -15,7 +16,7 @@ import SimpleBar from "simplebar-react";
 
 // const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
-const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
+const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => {
   // open offcanvas
   const [open, setOpen] = useState(false);
   const toggleLeftCanvas = () => {
@@ -61,6 +62,8 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
     rincianObjek: [],
     subRincianObjek: [],
   });
+
+  console.log(isLoadingList, 'ini isi loading nya')
 
   const cleanPayload = (payload) => {
     console.log(payload, 'ini isi payloadadd')
@@ -374,7 +377,9 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           </button>
                         )}
                       </div>
-                      <div
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div
                         style={{ overflowY: "auto", maxHeight: "300px" }}
                         onScroll={(e) =>
                           handleScroll(e, "filter_daerah", "daerah")
@@ -402,7 +407,8 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </label>
                           </div>
                         ))}
-                      </div>
+                      </div></>)}
+                      
                     </CardBody>
                   </Card>
                 </Col>
@@ -423,7 +429,9 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           SKPD
                         </span>
                       </div>
-                      <div
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div
                         style={{ overflowY: "auto", maxHeight: "300px" }}
                         onScroll={(e) => handleScroll(e, "filter_skpd", "skpd")}
                       >
@@ -447,7 +455,8 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </label>
                           </div>
                         ))}
-                      </div>
+                      </div></>)}
+                      
                     </CardBody>
                   </Card>
                 </Col>
@@ -471,7 +480,9 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           Fungsi
                         </span>
                       </div>
-                      <div style={{ overflowY: "auto", maxHeight: "300px" }}>
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
                         {dataFilter?.filter_fungsi?.map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
@@ -494,7 +505,8 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </label>
                           </div>
                         ))}
-                      </div>
+                      </div></>)}
+                      
                     </CardBody>
                   </Card>
                 </Col>
@@ -515,7 +527,9 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           SPM
                         </span>
                       </div>
-                      <div style={{ overflowY: "auto", maxHeight: "300px" }}>
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
                         {dataFilter?.filter_spm?.map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
@@ -536,7 +550,8 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </label>
                           </div>
                         ))}
-                      </div>
+                      </div></>)}
+                      
                     </CardBody>
                   </Card>
                 </Col>
@@ -560,7 +575,9 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           Urusan
                         </span>
                       </div>
-                      <div style={{ overflowY: "auto", maxHeight: "300px" }}>
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
                         {dataFilter?.filter_urusan?.map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
@@ -583,7 +600,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </label>
                           </div>
                         ))}
-                      </div>
+                      </div></>)}
                     </CardBody>
                   </Card>
                 </Col>
@@ -605,7 +622,9 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           Bidang Urusan
                         </span>
                       </div>
-                      <div style={{ overflowY: "auto", maxHeight: "300px" }}>
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
                         {dataFilter?.filter_bidang_urusan?.map(
                           (item, index) => (
                             <div key={index} class="form-check mb-2">
@@ -630,7 +649,8 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </div>
                           )
                         )}
-                      </div>
+                      </div></>)}
+                      
                     </CardBody>
                   </Card>
                 </Col>
@@ -654,7 +674,9 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           Program
                         </span>
                       </div>
-                      <div
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div
                         style={{ overflowY: "auto", maxHeight: "300px" }}
                         onScroll={(e) =>
                           handleScroll(e, "filter_program", "program")
@@ -682,7 +704,8 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </label>
                           </div>
                         ))}
-                      </div>
+                      </div></>)}
+                      
                     </CardBody>
                   </Card>
                 </Col>
@@ -709,7 +732,9 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           Kegiatan
                         </span>
                       </div>
-                      <div
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div
                         style={{ overflowY: "auto", maxHeight: "300px" }}
                         onScroll={(e) =>
                           handleScroll(e, "filter_giat", "kegiatan")
@@ -737,7 +762,8 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </label>
                           </div>
                         ))}
-                      </div>
+                      </div></>)}
+                      
                     </CardBody>
                   </Card>
                 </Col>
@@ -761,7 +787,9 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           Sub Kegiatan
                         </span>
                       </div>
-                      <div
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<> <div
                         style={{ overflowY: "auto", maxHeight: "300px" }}
                         onScroll={(e) =>
                           handleScroll(e, "filter_subgiat", "subKegiatan")
@@ -789,7 +817,8 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </label>
                           </div>
                         ))}
-                      </div>
+                      </div></>)}
+                     
                     </CardBody>
                   </Card>
                 </Col>
@@ -811,7 +840,9 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           Objek
                         </span>
                       </div>
-                      <div
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div
                         style={{ overflowY: "auto", maxHeight: "300px" }}
                         onScroll={(e) =>
                           handleScroll(e, "filter_objek", "objek")
@@ -837,7 +868,8 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </label>
                           </div>
                         ))}
-                      </div>
+                      </div></>)}
+                      
                     </CardBody>
                   </Card>
                 </Col>
@@ -861,7 +893,9 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           Rincian Objek
                         </span>
                       </div>
-                      <div
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div
                         style={{ overflowY: "auto", maxHeight: "300px" }}
                         onScroll={(e) =>
                           handleScroll(e, "filter_ro", "rincianObjek")
@@ -889,7 +923,8 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </label>
                           </div>
                         ))}                        
-                      </div>
+                      </div></>)}
+                      
                     </CardBody>
                   </Card>
                 </Col>
@@ -911,7 +946,9 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           Sub Rincian Objek
                         </span>
                       </div>
-                      <div
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div
                         style={{ overflowY: "auto", maxHeight: "300px" }}
                         onScroll={(e) =>
                           handleScroll(e, "filter_sro", "subRincianObjek")
@@ -939,7 +976,8 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </label>
                           </div>
                         ))}
-                      </div>
+                      </div></>)}
+                      
                     </CardBody>
                   </Card>
                 </Col>

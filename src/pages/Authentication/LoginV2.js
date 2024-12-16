@@ -249,7 +249,6 @@ const Login = (props) => {
             className="d-flex justify-content-center align-items-center"
             style={{ background: "linear-gradient(to bottom right,  #001f44, #003f88)"}} // Background color for right section
           >
-            
             <div className="d-flex flex-column text-white text-center">
                 <div className="d-flex justify-content-center mb-2">
                     <div>

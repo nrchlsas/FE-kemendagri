@@ -110,10 +110,29 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
       }
     ]});
 
+    const onEvents = {
+      click: (params) => {
+        if (params?.data?.name) {
+          // Mencari fitur berdasarkan nama wilayah yang diklik
+          const clickedFeature = geoJsonIndo.features.find(
+            (feature) => feature.properties.name === params.data.name
+          );
+  
+          // Mendapatkan nilai 'key' dari fitur yang ditemukan
+          if (clickedFeature) {
+            alert(`Kode DDN: ${clickedFeature.properties.key}`);
+          } else {
+            alert("Data wilayah tidak ditemukan!");
+          }
+        }
+      }
+    };
+
   return (
     isMapRegistered ? (
       <ReactEcharts        
         option={getOption()}
+        onEvents={onEvents}
         style={{ height: '600px', width: '100%' }}
       />
     ) : (
