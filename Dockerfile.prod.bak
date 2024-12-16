@@ -14,7 +14,6 @@ COPY /build /app/build
 # Copy app files
 #COPY . .
 
-EXPOSE 
 
 FROM nginx:latest
 EXPOSE 80
