@@ -1,9 +1,9 @@
 version: "3.8"
 
 services:
-  fe-sipdhub:
-    container_name: fe-sipdhub
-    image: fe-sipdhub
+  fe-sipdhub-prod:
+    container_name: fe-sipdhub-prod
+    image: fe-sipdhub-prod
     restart: always
     build:
       context: .
