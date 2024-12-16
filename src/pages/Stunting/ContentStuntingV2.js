@@ -28,7 +28,7 @@ import VerticalBarChart from "../../Components/Chart/VerticalBarChart";
 import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
-const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 
 const ContentStunting = () => {
   const [selectedDesil, setSelectedDesil] = useState("1"); // State untuk menyimpan pilihan dropdown
@@ -204,7 +204,7 @@ const ContentStunting = () => {
         };
 
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_stunting`,
+          `${API_URI_RBAC}/v2/dashboard_stunting`,
           requestOptions
         );
 
@@ -572,7 +572,7 @@ const ContentStunting = () => {
         };
 
         const response = await fetch(
-          `${API_URI_RBAC}/tabel_stunting_seprovinsi`,
+          `${API_URI_RBAC}/v2/tabel_stunting_seprovinsi`,
           requestOptions
         );
 
@@ -678,7 +678,7 @@ const ContentStunting = () => {
         };
 
         const response = await fetch(
-          `${API_URI_RBAC}/tabel_stunting_kabupaten`,
+          `${API_URI_RBAC}/v2/tabel_stunting_kabupaten`,
           requestOptions
         );
 
@@ -729,7 +729,7 @@ const ContentStunting = () => {
         };
 
         const response = await fetch(
-          `${API_URI_RBAC}/detail-tabel-stunting`,
+          `${API_URI_RBAC}/v2/detail-tabel-stunting`,
           requestOptions
         );
 
@@ -1088,7 +1088,7 @@ const ContentStunting = () => {
         };
 
         const response = await fetch(
-          `${API_URI_RBAC}${url}`,
+          `${API_URI_RBAC}/v2${url}`,
           requestOptions
         );
 
@@ -1139,7 +1139,7 @@ const ContentStunting = () => {
         };
 
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_stunting_compare_resiko_by_provinsi_onklik`,
+          `${API_URI_RBAC}/v2/dashboard_stunting_compare_resiko_by_provinsi_onklik`,
           requestOptions
         );
 

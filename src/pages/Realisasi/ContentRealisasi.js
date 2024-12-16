@@ -30,7 +30,7 @@ import BreadCrumb from "../../Components/Common/BreadCrumb";
 import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
-const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 
 const ContentRealisasi = () => {
   const [titleMap, setTitleMap] = useState("Total Peserta Aktif")
@@ -71,7 +71,7 @@ const ContentRealisasi = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/realisasi_level_1`,
+          `${API_URI_RBAC}/v2/realisasi_level_1`,
           requestOptions
         );
 

@@ -30,7 +30,7 @@ import BreadCrumb from "../../Components/Common/BreadCrumb";
 import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
-const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 
 const ContentPenganggaran = () => {
   const [customActiveTab, setcustomActiveTab] = useState("1");
@@ -76,7 +76,7 @@ const ContentPenganggaran = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_penganggaran_1_nasional`,
+          `${API_URI_RBAC}/v2/dashboard_penganggaran_1_nasional`,
           requestOptions
         );
 
@@ -124,7 +124,7 @@ const ContentPenganggaran = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_penganggaran_level_2`,
+          `${API_URI_RBAC}/v2/dashboard_penganggaran_level_2`,
           requestOptions
         );
 
@@ -197,7 +197,7 @@ const ContentPenganggaran = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_penganggaran_level_1`,
+          `${API_URI_RBAC}/v2/dashboard_penganggaran_level_1`,
           requestOptions
         );
 

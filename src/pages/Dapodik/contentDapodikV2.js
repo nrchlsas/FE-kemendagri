@@ -29,7 +29,7 @@ import logoKemendikbud from "../../assets/images/logo-kemendagri/logo-kemendikbu
 import "./dapodik.scss";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
-const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 
 const ContentDapodikV2 = () => {
   const [customActiveTab, setcustomActiveTab] = useState("2");
@@ -116,7 +116,7 @@ const ContentDapodikV2 = () => {
           // }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_dapodik`,
+          `${API_URI_RBAC}/v2/dashboard_dapodik`,
           requestOptions
         );
 
@@ -241,7 +241,7 @@ const ContentDapodikV2 = () => {
         // /table_dapodik_kabupaten
         // /table_stunting_provinsi
         const response = await fetch(
-          `${API_URI_RBAC}/tabel_dapodik_seprovinsi`,
+          `${API_URI_RBAC}/v2/tabel_dapodik_seprovinsi`,
           requestOptions
         );
 
@@ -354,7 +354,7 @@ const ContentDapodikV2 = () => {
         // /table_dapodik_kabupaten
         // /table_stunting_provinsi
         const response = await fetch(
-          `${API_URI_RBAC}/tabel_dapodik_kabupaten`,
+          `${API_URI_RBAC}/v2/tabel_dapodik_kabupaten`,
           requestOptions
         );
 
@@ -389,7 +389,7 @@ const ContentDapodikV2 = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/tabel_dapodik_provinsi`,
+          `${API_URI_RBAC}/v2/tabel_dapodik_provinsi`,
           requestOptions
         );
 
@@ -430,7 +430,7 @@ const ContentDapodikV2 = () => {
         // /table_dapodik_kabupaten
         // /table_stunting_provinsi
         const response = await fetch(
-          `${API_URI_RBAC}/tabel_dapodik_provinsi_detail`,
+          `${API_URI_RBAC}/v2/tabel_dapodik_provinsi_detail`,
           requestOptions
         );
 
@@ -486,7 +486,7 @@ const ContentDapodikV2 = () => {
         };
 
         const response = await fetch(
-          `${API_URI_RBAC}/detail-tabel-dapodik`,
+          `${API_URI_RBAC}/v2/detail-tabel-dapodik`,
           requestOptions
         );
 
@@ -930,7 +930,7 @@ const ContentDapodikV2 = () => {
         };
 
         const response = await fetch(
-          `${API_URI_RBAC}${url}`,
+          `${API_URI_RBAC}/v2/${url}`,
           requestOptions
         );
 

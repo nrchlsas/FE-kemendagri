@@ -28,7 +28,7 @@ import "./../Dapodik/dapodik.scss"
 import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
-const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 
 const ContentMiskinEkstremV2 = () => {
   const [dataGrafikLabel, setDataGrafikLabel] = useState([]);
@@ -269,7 +269,7 @@ const ContentMiskinEkstremV2 = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_kemiskinan_ekstrim`,
+          `${API_URI_RBAC}/v2/dashboard_kemiskinan_ekstrim`,
           requestOptions
         );
 
@@ -736,7 +736,7 @@ const ContentMiskinEkstremV2 = () => {
         };
 
         const response = await fetch(
-          `${API_URI_RBAC}/tabel_ke_seprovinsi`,
+          `${API_URI_RBAC}/v2/tabel_ke_seprovinsi`,
           requestOptions
         );
 
@@ -817,7 +817,7 @@ const ContentMiskinEkstremV2 = () => {
         };
 
         const response = await fetch(
-          `${API_URI_RBAC}/tabel_ke_kabkota`,
+          `${API_URI_RBAC}/v2/tabel_ke_kabkota`,
           requestOptions
         );
 
@@ -865,7 +865,7 @@ const ContentMiskinEkstremV2 = () => {
         };
   
         const response = await fetch(
-          `${API_URI_RBAC}/detail-tabel-ke`,
+          `${API_URI_RBAC}/v2/detail-tabel-ke`,
           requestOptions
         );
   

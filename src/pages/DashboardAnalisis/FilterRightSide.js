@@ -22,6 +22,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
     setOpen(!open);
   };
 
+  console.log(dataFilter, 'ini isi filter data')
   window.onscroll = function () {
     scrollFunction();
   };
@@ -76,6 +77,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
     // Salin state filter saat ini
     const updatedValues = { ...selectedValues };
 
+    console.log(filterType, 'ini filter typee')
     if (checked) {
       // Tambahkan nilai jika checkbox dicentang
       updatedValues[filterType].push(value);
@@ -519,12 +521,12 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             <input
                               onChange={(e) => handleCheckboxChange(e, "spm")}
                               checked={selectedValues.spm.includes(
-                                item.spm_teks
+                                item.id_spm
                               )}
                               class="form-check-input"
                               type="checkbox"
                               id={`check-spm-${index}`}
-                              value={item.spm_teks}
+                              value={item.id_spm}
                             />
                             <label
                               class="form-check-label"
@@ -886,7 +888,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                               {item.nama_ro}
                             </label>
                           </div>
-                        ))}
+                        ))}                        
                       </div>
                     </CardBody>
                   </Card>
@@ -914,7 +916,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                         onScroll={(e) =>
                           handleScroll(e, "filter_sro", "subRincianObjek")
                         }
-                      >
+                      >                        
                         {displayedData?.subRincianObjek?.map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input

@@ -11,7 +11,7 @@ import BreadCrumb from '../../../Components/Common/BreadCrumb';
 
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
-const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 const SingleOptions = [
     { value: "2024", label: "2024" },
     { value: "2025", label: "2025" },
@@ -58,7 +58,7 @@ const ContentPerencanaanDaerah = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_perencanaan_2_komposisi_rkpd`,
+          `${API_URI_RBAC}/v2/dashboard_perencanaan_2_komposisi_rkpd`,
           requestOptions
         );
 
@@ -108,7 +108,7 @@ const ContentPerencanaanDaerah = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_perencanaan_2_list_persentase`,
+          `${API_URI_RBAC}/v2/dashboard_perencanaan_2_list_persentase`,
           requestOptions
         );
 

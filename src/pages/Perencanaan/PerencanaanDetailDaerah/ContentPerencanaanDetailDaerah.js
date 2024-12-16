@@ -9,7 +9,7 @@ import CountUp from 'react-countup';
 import "./../../Kependudukan/kependudukan.scss";
 import { Buffer } from "buffer";
 
-const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 const API_URI_RBAC_DATA = `${process.env.REACT_APP_API_URL_9007}`;
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
@@ -101,7 +101,7 @@ const ContentPerencanaanDetailDaerah = () => {
             }),
           };
           const response = await fetch(
-            `${API_URI_RBAC}/dashboard_perencanaan_2_komposisi_rkpd`,
+            `${API_URI_RBAC}/v2/dashboard_perencanaan_2_komposisi_rkpd`,
             requestOptions
           );
   
@@ -144,7 +144,7 @@ const ContentPerencanaanDetailDaerah = () => {
             }),
           };
           const response = await fetch(
-            `${API_URI_RBAC}/dashboard_perencanaan_3_list_tabel`,
+            `${API_URI_RBAC}/v2/dashboard_perencanaan_3_list_tabel`,
             requestOptions
           );
   
@@ -218,7 +218,7 @@ const ContentPerencanaanDetailDaerah = () => {
           };
   
           const response = await fetch(
-            `${API_URI_RBAC}/dashboard_perencanaan_3_detail_sub_giat`,
+            `${API_URI_RBAC}/v2/dashboard_perencanaan_3_detail_sub_giat`,
             requestOptions
           );
   

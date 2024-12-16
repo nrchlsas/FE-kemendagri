@@ -9,7 +9,7 @@ import PieChartNew from '../../../Components/Chart/PieChart';
 import '../../../Components/ProgressArrowBar/ProgressArrowBar.scss'
 import BreadCrumb from '../../../Components/Common/BreadCrumb';
 
-const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 const SingleOptions = [
     { value: "2024", label: "2024" },
@@ -55,7 +55,7 @@ const ContentRealisasiDaerah = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_Realisasi_2_komposisi_rkpd`,
+          `${API_URI_RBAC}/v2/dashboard_Realisasi_2_komposisi_rkpd`,
           requestOptions
         );
 
@@ -105,7 +105,7 @@ const ContentRealisasiDaerah = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/realisasi_level_2`,
+          `${API_URI_RBAC}/v2/realisasi_level_2`,
           requestOptions
         );
 

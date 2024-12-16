@@ -5,7 +5,7 @@ import Pagination from "../../../Components/Pagination/Pagination";
 import '../../../Components/ProgressArrowBar/ProgressArrowBar.scss'
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
-const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 const SingleOptions = [
     { value: "2024", label: "2024" },
     { value: "2025", label: "2025" },
@@ -55,7 +55,7 @@ const ContentPenganggaranDaerah = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_Penganggaran_2_komposisi`,
+          `${API_URI_RBAC}/v2/dashboard_Penganggaran_2_komposisi`,
           requestOptions
         );
 
@@ -105,7 +105,7 @@ const ContentPenganggaranDaerah = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_penganggaran_level_2`,
+          `${API_URI_RBAC}/v2/dashboard_penganggaran_level_2`,
           requestOptions
         );
 

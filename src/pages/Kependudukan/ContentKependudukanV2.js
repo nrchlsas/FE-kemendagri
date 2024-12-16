@@ -25,7 +25,7 @@ import Pagination from "../../Components/Pagination/Pagination";
 import "./../Dapodik/dapodik.scss"
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
-const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 
 const ContentKependudukanV2 = () => {
   const [customActiveTab, setcustomActiveTab] = useState("1");
@@ -86,7 +86,7 @@ const ContentKependudukanV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
         };
-        const response = await fetch(`${API_URI_RBAC}/dashboard_dukcapil`, requestOptions);
+        const response = await fetch(`${API_URI_RBAC}/v2/dashboard_dukcapil`, requestOptions);
   
         if (!response.ok) {
           throw new Error("Network response was not ok");
@@ -280,7 +280,7 @@ const ContentKependudukanV2 = () => {
         // /table_Kependudukan_kabupaten
         // /table_stunting_provinsi
         const response = await fetch(
-          `${API_URI_RBAC}/tabel_dukcapil`,
+          `${API_URI_RBAC}/v2/tabel_dukcapil`,
           requestOptions
         );
 
@@ -390,7 +390,7 @@ const ContentKependudukanV2 = () => {
           }),
         };        
         const response = await fetch(
-          `${API_URI_RBAC}/tabel_dukcapil_kabkota`,
+          `${API_URI_RBAC}/v2/tabel_dukcapil_kabkota`,
           requestOptions
         );
 

@@ -13,7 +13,7 @@ import CountUp from 'react-countup';
 import "./../../Kependudukan/kependudukan.scss";
 import { Buffer } from "buffer";
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
-const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 const API_URI_RBAC_DATA = `${process.env.REACT_APP_API_URL_9007}`;
 
 const ContentPenganggaranDetailDaerah = () => {
@@ -103,7 +103,7 @@ const ContentPenganggaranDetailDaerah = () => {
             }),
           };
           const response = await fetch(
-            `${API_URI_RBAC}/dashboard_Penganggaran_2_komposisi`,
+            `${API_URI_RBAC}/v2/dashboard_Penganggaran_2_komposisi`,
             requestOptions
           );
   
@@ -144,7 +144,7 @@ const ContentPenganggaranDetailDaerah = () => {
             }),
           };
           const response = await fetch(
-            `${API_URI_RBAC}/dashboard_Penganggaran_level_3`,
+            `${API_URI_RBAC}/v2/dashboard_Penganggaran_level_3`,
             requestOptions
           );
   
@@ -223,7 +223,7 @@ const ContentPenganggaranDetailDaerah = () => {
           };
   
           const response = await fetch(
-            `${API_URI_RBAC}/dashboard_penganggaran_level_3_subgiat`,
+            `${API_URI_RBAC}/v2/dashboard_penganggaran_level_3_subgiat`,
             requestOptions
           );
   
@@ -277,7 +277,7 @@ const ContentPenganggaranDetailDaerah = () => {
           };
   
           const response = await fetch(
-            `${API_URI_RBAC}/dashboard_penganggaran_level_3_sro`,
+            `${API_URI_RBAC}/v2/dashboard_penganggaran_level_3_sro`,
             requestOptions
           );
   

@@ -719,10 +719,10 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                 </Col></>) : (<>
                 <Col md={10}>
                   <div className="d-flex mb-1 px-2" style={{ fontSize: "22px" }}>
-                    <span>Total Sumber Dana : <span style={{fontWeight:600}}>{totalSumberDana ? `Rp ${totalSumberDana.toLocaleString('id-ID')}` : '-'}</span></span>
+                    <span>Total Sumber Dana : <span style={{fontWeight:600}}>{totalSumberDana ? `Rp ${totalSumberDana?.toLocaleString('id-ID')}` : '-'}</span></span>
                   </div>
                   <SimpleBar style={{ maxHeight: "260px", }} className="d-flex p-2">
-                  {dataDashboardAnalisis?.data_dashboard?.by_nama_dana.map((item, index) => ( 
+                  {dataDashboardAnalisis?.data_dashboard?.by_nama_dana?.map((item, index) => ( 
                       <div key={index}>
                         <ul>
                           <li>
@@ -733,7 +733,7 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                               <div
                                 style={{ fontSize: "16px", fontWeight: 600 }}
                               >
-                                {item.total_sumber_dana ? `Rp ${item.total_sumber_dana.toLocaleString('id-ID')}` : `-`}
+                                {item.total_sumber_dana ? `Rp ${item.total_sumber_dana?.toLocaleString('id-ID')}` : `-`}
                               </div>
                             </div>
                           </li>
@@ -819,9 +819,9 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                           </span>
                         </div>
                       </td>
-                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_operasi ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_operasi.toLocaleString('id-ID')}` : `-`}</td>
+                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_operasi ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_operasi?.toLocaleString('id-ID')}` : `-`}</td>
                       <td>
-                        <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_percentage_anggaran_operasi.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
+                        <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_percentage_anggaran_operasi?.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
                       </td>
                   </tr>     
                   <tr>
@@ -842,9 +842,9 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                           </span>
                         </div>
                       </td>
-                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_modal ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_modal.toLocaleString('id-ID')}` : `-`}</td>
+                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_modal ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_modal?.toLocaleString('id-ID')}` : `-`}</td>
                       <td>
-                        <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_percentage_anggaran_modal.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
+                        <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_percentage_anggaran_modal?.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
                       </td>
                   </tr>     
                   <tr>
@@ -865,9 +865,9 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                           </span>
                         </div>
                       </td>
-                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_transfer_belanja ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_transfer_belanja.toLocaleString('id-ID')}` : `-`}</td>
+                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_transfer_belanja ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_transfer_belanja?.toLocaleString('id-ID')}` : `-`}</td>
                       <td>
-                        <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_percentage_anggaran_transfer_belanja.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
+                        <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_percentage_anggaran_transfer_belanja?.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
                       </td>
                   </tr>     
                   <tr>
@@ -888,16 +888,16 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                           </span>
                         </div>
                       </td>
-                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_tidak_terduga ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_tidak_terduga.toLocaleString('id-ID')}` : `-`}</td>
+                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_tidak_terduga ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_tidak_terduga?.toLocaleString('id-ID')}` : `-`}</td>
                       <td>
-                        <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_percentage_anggaran_tidak_terduga.toFixed(2).toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
+                        <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_percentage_anggaran_tidak_terduga?.toFixed(2).toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
                       </td>
                   </tr>     
 
                   <tr>                    
                     <td className="border-bottom-0">Total Belanja</td>
                     <td className="border-bottom-0" style={{ fontWeight: 600 }}>
-                      {dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_belanja ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_belanja.toLocaleString('id-ID')}` : `-`}
+                      {dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_belanja ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_belanja?.toLocaleString('id-ID')}` : `-`}
                     </td>
                   </tr>
                 </tbody>
@@ -973,9 +973,9 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                           </span>
                         </div>
                       </td>
-                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_PAD ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_PAD.toLocaleString('id-ID')}` : `-`}</td>
+                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_PAD ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_PAD?.toLocaleString('id-ID')}` : `-`}</td>
                       <td>
-                      <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_percentage_anggaran_PAD.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
+                      <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_percentage_anggaran_PAD?.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
                       </td>
                     </tr>
                     <tr>
@@ -996,9 +996,9 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                           </span>
                         </div>
                       </td>
-                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_transfer ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_transfer.toLocaleString('id-ID')}` : `-`}</td>
+                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_transfer ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_transfer?.toLocaleString('id-ID')}` : `-`}</td>
                       <td>
-                      <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_percentage_anggaran_transfer_pendapatan.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
+                      <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_percentage_anggaran_transfer_pendapatan?.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
                       </td>
                     </tr>
                     <tr>
@@ -1019,15 +1019,15 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                           </span>
                         </div>
                       </td>
-                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_lainnya ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_lainnya.toLocaleString('id-ID')}` : `-`}</td>
+                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_lainnya ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_lainnya?.toLocaleString('id-ID')}` : `-`}</td>
                       <td>
-                      <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_percentage_anggaran_lainnya.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
+                      <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_percentage_anggaran_lainnya?.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
                       </td>
                     </tr>
                   <tr>
                     <td className="border-bottom-0">Total Pendapatan</td>
                     <td className="border-bottom-0" style={{ fontWeight: 600 }}>
-                    {dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_pendapatan ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_pendapatan.toLocaleString('id-ID')}` : `-`}
+                    {dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_pendapatan ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_pendapatan?.toLocaleString('id-ID')}` : `-`}
                     </td>
                   </tr>
                 </tbody>
@@ -1344,7 +1344,7 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                           </div>
                           <div className="d-flex align-items-center">
                             <span
-                              style={{ fontStyle: "poppins", color: "#9f9FB1" }}
+                              style={{ fontStyle: "poppins", color: "#9f9FB1" }}x
                             >
                               10%
                             </span>

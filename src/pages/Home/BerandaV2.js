@@ -21,7 +21,7 @@ import imageBeranda from "../../assets/images/logo-kemendagri/image-beranda.png"
 import video from "../../assets/images/logo-kemendagri/bumper-2D.mp4"
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
-const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 
 const SingleOptions = [
   { value: "2024", label: "2024" },
@@ -86,12 +86,12 @@ const BerandaV2 = () => {
           // }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_beranda`,
+          `${API_URI_RBAC}/v2/dashboard_beranda`,
           requestOptions
         );
 
         const responseAnggaran = await fetch(
-          `${API_URI_RBAC}/dashboard_beranda_1`,
+          `${API_URI_RBAC}/v2/dashboard_beranda_1`,
           requestOptions
         );
         
@@ -128,7 +128,7 @@ const BerandaV2 = () => {
         };
 
         const responsePerencanaan = await fetch(
-          `${API_URI_RBAC}/dashboard_beranda_perencanaan`,
+          `${API_URI_RBAC}/v2/dashboard_beranda_perencanaan`,
           requestOptions
         );
         
@@ -163,7 +163,7 @@ const BerandaV2 = () => {
         };
 
         const responsePenganggaran = await fetch(
-          `${API_URI_RBAC}/dashboard_beranda_penganggaran`,
+          `${API_URI_RBAC}/v2/dashboard_beranda_penganggaran`,
           requestOptions
         );
         
@@ -206,7 +206,7 @@ const BerandaV2 = () => {
         };
 
         const responseRealisasi = await fetch(
-          `${API_URI_RBAC}/dashboard_beranda_realisasi`,
+          `${API_URI_RBAC}/v2/dashboard_beranda_realisasi`,
           requestOptions
         );
         
@@ -240,7 +240,7 @@ const BerandaV2 = () => {
         };
 
         const responseSpm = await fetch(
-          `${API_URI_RBAC}/dashboard_beranda_spm`,
+          `${API_URI_RBAC}/v2/dashboard_beranda_spm`,
           requestOptions
         );
         
@@ -319,7 +319,7 @@ const BerandaV2 = () => {
       };
 
       const response = await fetch(
-        `${API_URI_RBAC}/dashboard_beranda_pie_perencanaan`,
+        `${API_URI_RBAC}/v2/dashboard_beranda_pie_perencanaan`,
         requestOptions
       );
 
