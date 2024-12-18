@@ -290,7 +290,7 @@ const ContentRealisasi = () => {
         </Col>        
     </Row>    
       <Row>
-        <Col md={6} xl={6}>
+        <Col md={dataWidth} xl={dataWidth}>
           <Card className="card-height-100">
             <CardBody>
               {dataShowSumberUsulan ? (

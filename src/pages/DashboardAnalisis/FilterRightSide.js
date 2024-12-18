@@ -535,12 +535,12 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                             <input
                               onChange={(e) => handleCheckboxChange(e, "spm")}
                               checked={selectedValues.spm.includes(
-                                item.id_spm
+                                String(item.id_spm)
                               )}
                               class="form-check-input"
                               type="checkbox"
                               id={`check-spm-${index}`}
-                              value={item.id_spm}
+                              value={String(item.id_spm)}
                             />
                             <label
                               class="form-check-label"
