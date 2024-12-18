@@ -1,53 +1,34 @@
-#events {
-#  worker_connections 1024; # Specifies the maximum number of simultaneous connections per worker
-#}
+events { 
+  worker_connections 1024; # Specifies the maximum number of simultaneous connections per worker
+}
 
-#http {
+http {
   upstream api_gateway {
     server api-gateway:9007;
   }
 
   upstream rbac {
-    server rbac-sipdhub-prod:9005;
+    server rbac-pendapatan-service:9005;
   }
 
-  upstream users {
-    server users-sipdhub-prod:9011;
+  upstream user {
+    server users-pendapatan-service:9011;
   }
 
-  upstream be {
+  upstream be-sipdhub-prod {
     server be-sipdhub-prod:20000;
   }
 
-#  upstream fe {
-#    server fe-sipdhub-prod:3000;
-#  }
+  # upstream frontend {
+  #   server fe-sipdhub-dev:3000;
+  # }
 
   server {
     listen 80;
-    root /usr/share/nginx/html;
-    index index.html;
-    large_client_header_buffers 4 32k;
 
     location /api-gateway {
-      add_header 'Access-Control-Allow-Origin' '*';
-      add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-      add_header 'Access-Control-Allow-Headers' 'Authorization, DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, x-sipdhub';
-      add_header 'Access-Control-Allow-Credentials' 'true' always;
-      add_header 'Access-Control-Max-Age' 1728000 always;
-      if ($request_method = 'OPTIONS') {
-		add_header 'Access-Control-Allow-Origin' '*';
-		add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-		add_header 'Access-Control-Allow-Headers' 'Authorization, DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, x-sipdhub';
-		add_header 'Access-Control-Allow-Credentials' 'true';
-		add_header 'Access-Control-Max-Age' 1728000;
-		add_header 'Content-Type' 'text/plain charset=UTF-8';
-		add_header 'Content-Length' 0;
-		return 204;
-      }
       proxy_pass http://api_gateway;
-#      rewrite ^/api-gateway(/.*)$ $1 break;
-      proxy_set_header Origin $http_origin;
+      rewrite ^/api(/.*)$ $1 break;
       proxy_set_header Accept-Encoding "x-sipdhub";
       proxy_redirect off;
       proxy_set_header Host $host:$server_port;
@@ -56,24 +37,8 @@
     }
 
     location /rbac {
-      add_header 'Access-Control-Allow-Origin' '*';
-      add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-      add_header 'Access-Control-Allow-Headers' 'Authorization, DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, x-sipdhub';
-      add_header 'Access-Control-Allow-Credentials' 'true' always;
-      add_header 'Access-Control-Max-Age' 1728000 always;
-      if ($request_method = 'OPTIONS') {
-		add_header 'Access-Control-Allow-Origin' '*';
-		add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-		add_header 'Access-Control-Allow-Headers' 'Authorization, DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, x-sipdhub';
-		add_header 'Access-Control-Allow-Credentials' 'true';
-		add_header 'Access-Control-Max-Age' 1728000;
-		add_header 'Content-Type' 'text/plain charset=UTF-8';
-		add_header 'Content-Length' 0;
-		return 204;
-	  }
       proxy_pass http://rbac;
-#      rewrite ^/rbac(/.*)$ $1 break;
-      proxy_set_header Origin $http_origin;
+      rewrite ^/rbac(/.*)$ $1 break;
       proxy_set_header Accept-Encoding "x-sipdhub";
       proxy_redirect off;
       proxy_set_header Host $host:$server_port;
@@ -81,26 +46,9 @@
       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
 
-
-    location /users {
-      add_header 'Access-Control-Allow-Origin' '*';
-      add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-      add_header 'Access-Control-Allow-Headers' 'Authorization, DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, x-sipdhub';
-	  add_header 'Access-Control-Allow-Credentials' 'true' always;
-	  add_header 'Access-Control-Max-Age' 1728000 always;
-      if ($request_method = 'OPTIONS') {
-		add_header 'Access-Control-Allow-Origin' '*';
-		add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-		add_header 'Access-Control-Allow-Headers' 'Authorization, DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, x-sipdhub';
-		add_header 'Access-Control-Allow-Credentials' 'true';
-		add_header 'Access-Control-Max-Age' 1728000;
-		add_header 'Content-Type' 'text/plain charset=UTF-8';
-		add_header 'Content-Length' 0;
-		return 204;
-	  }
-      proxy_pass http://users;
-#      rewrite ^/users(/.*)$ $1 break;
-	  proxy_set_header Origin $http_origin;
+    location /user {
+      proxy_pass http://user;
+      rewrite ^/user(/.*)$ $1 break;
       proxy_set_header Accept-Encoding "x-sipdhub";
       proxy_redirect off;
       proxy_set_header Host $host:$server_port;
@@ -108,69 +56,45 @@
       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     }
 
-    location /be {
-      add_header 'Access-Control-Allow-Origin' '*';
-      add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-      add_header 'Access-Control-Allow-Headers' 'Authorization, DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, x-sipdhub';
-	  add_header 'Access-Control-Allow-Credentials' 'true' always;
-	  add_header 'Access-Control-Max-Age' 1728000 always;
-      if ($request_method = 'OPTIONS') {
-		add_header 'Access-Control-Allow-Origin' '*';
-		add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-		add_header 'Access-Control-Allow-Headers' 'Authorization, DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, x-sipdhub';
-		add_header 'Access-Control-Allow-Credentials' 'true';
-		add_header 'Access-Control-Max-Age' 1728000;
-		add_header 'Content-Type' 'text/plain charset=UTF-8';
-		add_header 'Content-Length' 0;
-		return 204;
-	  }
-      proxy_pass http://be;
-#      rewrite ^/be(/.*)$ $1 break;
-	  proxy_set_header Origin $http_origin;
+    location /be-sipdhub-prod {
+      proxy_pass http://be-sipdhub-prod;
+      rewrite ^/be-sipdhub-prod(/.*)$ $1 break;
       proxy_set_header Accept-Encoding "x-sipdhub";
       proxy_redirect off;
       proxy_set_header Host $host:$server_port;
       proxy_set_header X-Real-IP $remote_addr;
       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 
+      if ($request_method = 'OPTIONS') {
+        add_header 'Access-Control-Allow-Origin' '*';
+	      add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+        add_header 'Access-Control-Allow-Headers' 'Authorization, DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, x-sipdhub';
+        add_header 'Access-Control-Allow-Credentials' 'true';
+        add_header 'Access-Control-Max-Age' 1728000;
+        add_header 'Content-Type' 'text/plain charset=UTF-8';
+        add_header 'Content-Length' 0;
+        return 204;
+      }
     }
 
     location / {
-#      proxy_pass http://fe;
-#      proxy_set_header Accept-Encoding "x-sipdhub";
-#      proxy_redirect off;
-#      proxy_set_header Host $host:$server_port;
-#      proxy_set_header X-Real-IP $remote_addr;
-#      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-       try_files $uri $uri/ /index.html;
-      add_header 'Access-Control-Allow-Origin' '*';
-      add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-      add_header 'Access-Control-Allow-Headers' 'Authorization, DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, x-sipdhub';
-	  add_header 'Access-Control-Allow-Credentials' 'true' always;
-	  add_header 'Access-Control-Max-Age' 1728000 always;
-      if ($request_method = 'OPTIONS') {
-		add_header 'Access-Control-Allow-Origin' '*';
-		add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-		add_header 'Access-Control-Allow-Headers' 'Authorization, DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, x-sipdhub';
-		add_header 'Access-Control-Allow-Credentials' 'true';
-		add_header 'Access-Control-Max-Age' 1728000;
-		add_header 'Content-Type' 'text/plain charset=UTF-8';
-		add_header 'Content-Length' 0;
-		return 204;
-	  }
-	  proxy_set_header Origin $http_origin;
-	  proxy_set_header Accept-Encoding "x-sipdhub";
+      # proxy_pass http://frontend;
+      proxy_set_header Accept-Encoding "x-sipdhub";
       proxy_redirect off;
       proxy_set_header Host $host:$server_port;
       proxy_set_header X-Real-IP $remote_addr;
       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-#       if ($request_method = 'OPTIONS') {
-#          add_header 'Access-Control-Allow-Credentials' 'true';
-#          add_header 'Access-Control-Max-Age' 1728000;
-#          add_header 'Content-Type' 'text/plain charset=UTF-8';
-#          add_header 'Content-Length' 0;
-#          return 204;
-#       }
+
+      if ($request_method = 'OPTIONS') {
+        add_header 'Access-Control-Allow-Origin' '*';
+	      add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+        add_header 'Access-Control-Allow-Headers' 'Authorization, DNT, X-CustomHeader, Keep-Alive, User-Agent, X-Requested-With, If-Modified-Since, Cache-Control, Content-Type, x-sipdhub';
+        add_header 'Access-Control-Allow-Credentials' 'true';
+        add_header 'Access-Control-Max-Age' 1728000;
+        add_header 'Content-Type' 'text/plain charset=UTF-8';
+        add_header 'Content-Length' 0;
+        return 204;
+      }
     }
 
     # Optional: Handle static assets for frontend if needed
@@ -178,5 +102,5 @@
     #  root /app;
     #}
   }
-#}
+}
 
