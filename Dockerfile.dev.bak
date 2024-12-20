@@ -1,0 +1,24 @@
+FROM imbios/bun-node:latest-current-alpine AS development
+ENV NODE_ENV development
+
+WORKDIR /app
+
+# Cache and Install dependencies
+COPY /bin/ /app/bin
+COPY /config/ /app/config
+COPY /helpers/ /app/helpers
+COPY /middleware/ /app/middleware
+COPY /routes/ /app/routes
+COPY /service/ /app/service
+COPY /package.json /app
+COPY /.env /app
+RUN bun install
+RUN yarn install
+# Copy app files
+COPY . .
+
+# run the app
+#USER bun
+EXPOSE 9011/tcp
+# Start the app
+CMD [ "yarn", "run", "dev" ]
