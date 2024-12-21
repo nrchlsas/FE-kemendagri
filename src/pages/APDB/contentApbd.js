@@ -87,7 +87,6 @@ const ContentApbd = () => {
           headers: { "Content-Type": "application/json" },
         };
         const response = await fetch(
-          // "https://sipdhub.gbhaswaranirantaka.com/sipdhub/postur_apbd_nasional"
           `${API_URI}/postur_apbd_nasional`,
           requestOptions
         );
@@ -341,7 +340,6 @@ const ContentApbd = () => {
           headers: { "Content-Type": "application/json" },
         };
         const response = await fetch(
-          // "https://sipdhub.gbhaswaranirantaka.com/sipdhub/data_chart_postur",
           `${API_URI}/data_chart_postur`,
           requestOptions
         );
