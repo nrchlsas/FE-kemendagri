@@ -10,7 +10,7 @@ const api = new APIClient();
 
 import { loginSuccess, logoutUserSuccess, apiError, reset_login_flag, login_process } from './reducer';
 
-const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
+const API_9007_URI = `${process.env.REACT_APP_API_URL_9007}`;
 
 export const loginUser = (user, history) => async (dispatch) => {
 
@@ -29,12 +29,12 @@ export const loginUser = (user, history) => async (dispatch) => {
         email: user.email,
         password: user.password
       });
-    } else if (API_URI_RBAC) {
+    } else if (API_9007_URI) {
       const formData = new URLSearchParams();
       formData.append('email', user.email);
       formData.append('password', user.password);
 
-      response = fetch(`${API_URI_RBAC}/login`,
+      response = fetch(`${API_9007_URI}/login`,
         {
           method: "POST",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -53,7 +53,7 @@ export const loginUser = (user, history) => async (dispatch) => {
     var data = await response;
 
     if (data) {
-      if (API_URI_RBAC) {
+      if (API_9007_URI) {
         data = await data.json();
         if (data.status === true) {
 
@@ -156,7 +156,7 @@ export const resetLoginFlag = () => async (dispatch) => {
 };
 
 export const get_user_detail = () => async (dispatch) => {
-  let response = api.get(`${API_URI_RBAC}/users/detail-users`);
+  let response = api.get(`${API_9007_URI}/users/detail-users`);
 
   let data = await response;
 

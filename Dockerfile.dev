@@ -1,34 +1,21 @@
-FROM imbios/bun-node:latest-current-alpine AS development
+FROM node:20-alpine AS development
 ENV NODE_ENV development
-ENV NPM_CONFIG_LOGLEVEL warn
 
+# Add a work directory
 WORKDIR /app
 
-# Copy package.json and bun.lockb first, then install dependencies
-COPY package.json /app/
-COPY bun.lockb /app/
-
-# Install global dependencies
-RUN npm i -g pm2
-
-# Install Bun dependencies
-RUN bun install
-
 # Cache and Install dependencies
-COPY bin /app/bin
-COPY config /app/config
-COPY helpers /app/helpers
-COPY middleware /app/middleware
-COPY routes /app/routes
-COPY service /app/service
-COPY pm2.config.js /app/
-COPY .env /app/
+COPY /public/ /app/public
+COPY /src/ /app/src
+COPY /package.json /app
+COPY /.env /app
+RUN yarn install
 
 # Copy app files
 COPY . .
 
-# run the app
-#USER bun
-EXPOSE 9011
+# Expose port
+EXPOSE 3000
+
 # Start the app
-CMD [ "yarn", "run", "prod" ]
+CMD [ "yarn", "start" ]
