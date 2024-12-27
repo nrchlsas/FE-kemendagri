@@ -9,11 +9,11 @@ COPY package.json ./
 COPY yarn.lock ./
 #COPY /.env /app
 RUN yarn install
-COPY . .
-RUN yarn run build
-# COPY /build /app/build
+# COPY . .
+# RUN yarn run build
+COPY /build /app/build
 # Copy app files
-#COPY . .
+COPY . .
 
 FROM nginx:latest
 EXPOSE 80

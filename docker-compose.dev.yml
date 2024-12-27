@@ -1,9 +1,9 @@
 version: "3.8"
 
 services:
-  fe-sipdhub-dev:
-    container_name: fe-sipdhub-dev
-    image: fe-sipdhub-dev
+  fe-sipdhub-prod:
+    container_name: fe-sipdhub-prod
+    image: fe-sipdhub-prod
     restart: always
     build:
       context: .
@@ -12,19 +12,19 @@ services:
       - ./src:/app/src
     expose:
       - "3000"
-    networks:
-      - sipdhub
+    network_mode: bridge
+      # - sipdhub
   nginx:
     image: nginx:latest
     restart: always
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx-dev2.conf:/etc/nginx/nginx.conf
     ports:
       - "80:80"  # Exposing NGINX to the host on port 80
-    networks:
-      - sipdhub
+    network_mode: bridge
+      # - sipdhub
     depends_on:
-      - fe-sipdhub-dev
-networks:
-  sipdhub:
-    external: true
+      - fe-sipdhub-prod
+# networks:
+  # sipdhub:
+    # external: true

@@ -8,6 +8,6 @@ module.exports = {
     APP_ID: "",
   },
   api: {
-    API_URL: "https://sipdhub.kemendagri.go.id/",
+    API_URL: "https://sipd-hub.gbhaswaranirantaka.com",
   }
 };
