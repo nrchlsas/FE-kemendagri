@@ -488,7 +488,7 @@ const ContentPerencanaanDetailDaerah = () => {
                     <div className='d-flex justify-content-start align-items-start mb-2' style={{fontSize: "20px", fontWeight:600}}>
                         Sumber Usulan RKPD
                     </div>
-                    <select
+                    {/* <select
                         name="subtahap"
                           style={{
                             padding: "10px 30px 10px 10px",
@@ -508,7 +508,7 @@ const ContentPerencanaanDetailDaerah = () => {
                         <option value="4">Musrenbang</option>
                         <option value="5">Rankhir</option>
                         <option value="6">Penetapan</option>                                                                                                                  
-                        </select>
+                        </select> */}
                   </div>
                   
                   <PieChartNew 

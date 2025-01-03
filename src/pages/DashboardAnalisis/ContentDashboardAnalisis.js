@@ -49,6 +49,7 @@ const ContentDashboardAnalisis = () => {
   const [totalSumberDana, setTotalSumberDana] = useState(0)
   const [showGrafikSumberDana, setShowGrafikSumberDana] = useState(false)
   const [dataChartSumberDana, setDataChartSumberDana] = useState([],[])
+  const [dataTotalAnggaran, setDataTotalAnggaran] = useState(0)
   const getDataDashboardAnalisis = ({
     kodeDdn,
     namaDaerah,
@@ -119,6 +120,14 @@ const ContentDashboardAnalisis = () => {
         }
         const dataDashboardAnalisis = await response.json();
         setDataDashboardAnalisis(dataDashboardAnalisis?.data || []);
+
+        const totalAnggaran = parseFloat(
+          (dataDashboardAnalisis?.data?.data_dashboard?.rincian_belanja_total_belanja / 
+            dataDashboardAnalisis?.data?.data_dashboard_nasional?.total_belanja) * 100                       
+        ).toFixed(8)
+        console.log(totalAnggaran, "ini total anggaran")
+        setDataTotalAnggaran(totalAnggaran)
+        
         const totalSum = dataDashboardAnalisis?.data?.data_dashboard?.by_nama_dana?.reduce((sum, item) => sum + item.total_sumber_dana, 0);     
         setTotalSumberDana(totalSum)
 
@@ -570,16 +579,13 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                                       (<CountUp
                                       start={0}
                                       end={
-                                        parseFloat(
-                                          (dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_belanja / 
-                                          dataDashboardAnalisis?.data_dashboard_nasional?.total_belanja) * 100
-                                        ).toFixed(5)
+                                        dataTotalAnggaran
                                       }
                                       separator="."
                                       prefix=""
                                       decimal=","
                                       suffix="%"
-                                      decimals={2} // Menentukan jumlah angka di belakang koma
+                                      decimals={dataTotalAnggaran >= 1 ? 2 : dataTotalAnggaran >= 0.001 ? 2 : 7} // Menentukan jumlah angka di belakang koma
                                       duration={1}
                                     />)
                                       </span>
@@ -593,7 +599,6 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
               </Row>
         </Col>
       </Row>
-      
       <Row>
       <Col md={4}>
               <Card data-aos="flip-right" className="card-height-100">

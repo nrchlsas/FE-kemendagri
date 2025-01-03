@@ -993,7 +993,7 @@ const ContentPerencanaan = () => {
     >
       <tr>
         <th style={{ cursor: "pointer", textAlign: "center" }}>Kode</th>
-        <th style={{ cursor: "pointer", textAlign: "center" }}>{customActiveTab == "1" ? "Belum" : "Tidak Melakukan"}</th>
+        <th style={{ cursor: "pointer", textAlign: "center" }}>{customActiveTab == "1" ? "Belum" : "Belum Melakukan"}</th>
       </tr>
     </thead>
     <tbody style={{ minHeight: "500px" }}>

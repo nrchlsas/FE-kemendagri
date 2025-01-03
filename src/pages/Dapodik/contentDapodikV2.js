@@ -105,120 +105,102 @@ const ContentDapodikV2 = () => {
   const [dataSdMap, setDataSdMap] = useState([])
   const getDataDapodik = () => {
     const fetchData = async () => {
-      try {
-        const token = JSON.parse(sessionStorage.getItem("authUser"))           
-        const requestOptions = {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
-          // body: JSON.stringify({
-          //   query:
-          //     "select sum(total_rincian)/1000000000000 TotalPembiayaanK from konsolidasi_apbd where kode_kelompok = '6.2'",
-          // }),
-        };
-        const response = await fetch(
-          `${API_URI_RBAC}/v2/dashboard_dapodik`,
-          requestOptions
-        );
+        try {
+            const token = JSON.parse(sessionStorage.getItem("authUser"));
+            const requestOptions = {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+                body: JSON.stringify({
+                    // kode_ddn: "11",
+                    tahun: "2024"
+                }),
+            };
+            const response = await fetch(`${API_URI_RBAC}/v2/dashboard_dapodik`, requestOptions);
 
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const dataDapodik = await response.json();
+            setDataDapodik(dataDapodik?.data);
+
+            try {
+                const mappedDataSd = Object.values(dataDapodik.data.dapodik_do_sd).filter((value) => typeof value === "number");
+                const totalValueSd = [mappedDataSd, mappedDataSd.reduce((accumulator, value) => accumulator + value, 0)];
+                setDataDropOutSd(totalValueSd);
+            } catch (error) {
+                console.error("Error processing data for SD:", error);
+            }
+
+            try {
+                const mappedDataSmp = Object.values(dataDapodik.data.dapodik_do_smp).filter((value) => typeof value === "number");
+                const totalValueSmp = [mappedDataSmp, mappedDataSmp.reduce((accumulator, value) => accumulator + value, 0)];
+                setDataDropOutSmp(totalValueSmp);
+            } catch (error) {
+                console.error("Error processing data for SMP:", error);
+            }
+
+            try {
+                const mappedDataSma = Object.values(dataDapodik.data.dapodik_do_sma).filter((value) => typeof value === "number");
+                const totalValueSma = [mappedDataSma, mappedDataSma.reduce((accumulator, value) => accumulator + value, 0)];
+                setDataDropOutSma(totalValueSma);
+            } catch (error) {
+                console.error("Error processing data for SMA:", error);
+            }
+
+            try {
+                const mappedDataByUsia = Object.values(dataDapodik.data.dapodik_jumlah_belum_pernah_sekolah_by_usia).filter((value) => typeof value === "number");
+                setDataBelumPernahSekolahByUsia(mappedDataByUsia);
+            } catch (error) {
+                console.error("Error processing data by usia:", error);
+            }
+
+            try {
+                const mappedDataAts = Object.values(dataDapodik.data.dapodik_compare_ats_tidak_lanjut).filter((value) => typeof value === "number");
+                setDataChartAts(mappedDataAts);
+            } catch (error) {
+                console.error("Error processing ATS data:", error);
+            }
+
+            try {
+                const resultChartRincianDapodikProvinsi = dataDapodik.data.cross_analisis_ats_provinsi.reduce((acc, item) => {
+                    acc[0].push(item.nama_daerah);
+                    acc[1].push(item.persenats);
+                    acc[2].push(item.persenblj);
+                    acc[3].push(item.total_rincianall);
+                    acc[4].push(item.total_rincianursbid);
+                    return acc;
+                }, [[], [], [], [], []]);
+
+                setDataChartRincianDapodikProvinsi(resultChartRincianDapodikProvinsi);
+            } catch (error) {
+                console.error("Error processing chart data for provinsi:", error);
+            }
+
+            try {
+                const resultChartRincianDapodikKabupaten = dataDapodik.data.cross_analisis_ats_kabkota.reduce((acc, item) => {
+                    acc[0].push(item.nama_daerah);
+                    acc[1].push(item.persenats);
+                    acc[2].push(item.persenblj);
+                    acc[3].push(item.total_rincianall);
+                    acc[4].push(item.total_rincianursbid);
+                    return acc;
+                }, [[], [], [], [], []]);
+
+                setDataChartRincianDapodikKabupaten(resultChartRincianDapodikKabupaten);
+            } catch (error) {
+                console.error("Error processing chart data for kabupaten:", error);
+            }
+        } catch (errorDapodik) {
+            setErrorDapodik(errorDapodik);
+        } finally {
+            setLoadingDapodik(false);
         }
-
-        const dataDapodik = await response.json();
-
-        setDataDapodik(dataDapodik.data);
-        // const mappedDataPaud = Object.values(dataDapodik.data.dapodik_do_paud).filter(value => typeof value === 'number');
-
-        const mappedDataSd = Object.values(
-          dataDapodik.data.dapodik_do_sd
-        ).filter((value) => typeof value === "number");
-
-        const totalValueSd = [mappedDataSd, mappedDataSd.reduce((accumulator, value) => accumulator + value, 0)];
-        setDataDropOutSd(totalValueSd);
-
-        const mappedDataSmp = Object.values(
-          dataDapodik.data.dapodik_do_smp
-        ).filter((value) => typeof value === "number");
-        const totalValueSmp = [mappedDataSmp, mappedDataSmp.reduce((accumulator, value) => accumulator + value, 0)];
-        setDataDropOutSmp(totalValueSmp);
-
-
-        const mappedDataSma = Object.values(
-          dataDapodik.data.dapodik_do_sma
-        ).filter((value) => typeof value === "number");
-        const totalValueSma = [mappedDataSma, mappedDataSma.reduce((accumulator, value) => accumulator + value, 0)];
-        setDataDropOutSma(totalValueSma);
-
-
-        const mappedDataByUsia = Object.values(
-          dataDapodik.data.dapodik_jumlah_belum_pernah_sekolah_by_usia
-        ).filter((value) => typeof value === "number");
-        setDataBelumPernahSekolahByUsia(mappedDataByUsia);
-
-        const mappedDataAts = Object.values(
-          dataDapodik.data.dapodik_compare_ats_tidak_lanjut
-        ).filter((value) => typeof value === "number");
-        setDataChartAts(mappedDataAts);
-
-        const totalJumlahSiswa =
-          dataDapodik.data.dapodik_jumlah_anak_sekolah.reduce(
-            (acc, item) => acc + item.jumlah_siswa,
-            0
-          );        
-        setDataTotalTkSdSmpSma(totalJumlahSiswa);
-
-        // setDataDropOutPaud(mappedDataPaud);
-
-        const resultChartRincianDapodik =
-          dataDapodik.data.cross_analisis_ats_seprovinsi.reduce(
-            (acc, item) => {
-              acc[0].push(item.nama_daerah);
-              acc[1].push(item.persenats);
-              acc[2].push(item.persenblj);
-              acc[3].push(item.total_rincianall);
-              acc[4].push(item.total_rincianursbid);
-              return acc;
-            },
-            [[], [], [], [], []]
-          );
-
-        setDataChartRincianDapodik(resultChartRincianDapodik);
-
-        const resultChartRincianDapodikProvinsi =
-          dataDapodik.data.cross_analisis_ats_provinsi.reduce(
-            (acc, item) => {
-              acc[0].push(item.nama_daerah);
-              acc[1].push(item.persenats);
-              acc[2].push(item.persenblj);
-              acc[3].push(item.total_rincianall);
-              acc[4].push(item.total_rincianursbid);
-              return acc;
-            },
-            [[], [], [], [], []]
-          );
-        setDataChartRincianDapodikProvinsi(resultChartRincianDapodikProvinsi);
-
-        const resultChartRincianDapodikKabupaten =
-          dataDapodik.data.cross_analisis_ats_kabkota.reduce(
-            (acc, item) => {
-              acc[0].push(item.nama_daerah);
-              acc[1].push(item.persenats);
-              acc[2].push(item.persenblj);
-              acc[3].push(item.total_rincianall);
-              acc[4].push(item.total_rincianursbid);
-              return acc;
-            },
-            [[], [], [], [], []]
-          );
-        setDataChartRincianDapodikKabupaten(resultChartRincianDapodikKabupaten);
-      } catch (errorDapodik) {
-        setErrorDapodik(errorDapodik);
-      } finally {
-        setLoadingDapodik(false);
-      }
     };
+
     fetchData();
-  };
+};
+
 
   const [titleMap, setTitleMap] = useState("Total Anak Sekolah")
   const [valueMap, setValueMap] = useState([]);
@@ -365,6 +347,90 @@ const ContentDapodikV2 = () => {
         const dataDapodikTabelKabupaten = await response.json();
 
         setDataDapodikTabelKabupaten(dataDapodikTabelKabupaten?.data);
+      } catch (errorDapodikTabel) {
+        setErrorDapodikTabel(errorDapodikTabel);
+      } finally {
+        setLoadingDapodikTabel(false);
+      }
+    };
+    fetchData();
+  };
+  
+  const getDataCrossAnalisis = () => {
+    const fetchData = async () => {
+      try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+          // body: JSON.stringify({
+          //   // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
+          // }),
+        };
+        
+        const response = await fetch(
+          `${API_URI_RBAC}/v2/dashboard_dapodik_cross_analisis_ats_seprovinsi`,
+          requestOptions
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const dataDapodikCrossAnalisis = await response.json();
+
+        const resultChartRincianDapodik =
+        dataDapodikCrossAnalisis.data.reduce(
+            (acc, item) => {
+              acc[0].push(item.nama_daerah);
+              acc[1].push(item.persenats);
+              acc[2].push(item.persenblj);
+              acc[3].push(item.total_rincianall);
+              acc[4].push(item.total_rincianursbid);
+              return acc;
+            },
+            [[], [], [], [], []]
+          );
+
+        setDataChartRincianDapodik(resultChartRincianDapodik);
+
+      } catch (errorDapodikTabel) {
+        setErrorDapodikTabel(errorDapodikTabel);
+      } finally {
+        setLoadingDapodikTabel(false);
+      }
+    };
+    fetchData();
+  };
+
+  const [dataDapodikJumlahAnakSekolah, setDataDapodikJumlahAnakSekolah] = useState([])
+  const getDataAnakSekolah = () => {
+    const fetchData = async () => {
+      try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+          body: JSON.stringify({
+            // kode_ddn: "11",
+            // tahun: "2025"
+        }),
+        };
+        
+        const response = await fetch(
+          `${API_URI_RBAC}/v2/dashboard_dapodik_jumlah_anak_sekolah`,
+          requestOptions
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const dataDapodikJumlahAnakSekolah = await response.json();
+        setDataDapodikJumlahAnakSekolah(dataDapodikJumlahAnakSekolah?.data)
+        const totalJumlahSiswa = dataDapodikJumlahAnakSekolah.data.reduce((acc, item) => acc + item.jumlah_siswa, 0);
+        setDataTotalTkSdSmpSma(totalJumlahSiswa);
+
       } catch (errorDapodikTabel) {
         setErrorDapodikTabel(errorDapodikTabel);
       } finally {
@@ -548,6 +614,8 @@ const ContentDapodikV2 = () => {
     getDataTabelDapodikSeProv();
     getDataTabelDapodikProv();
     getDataTabelDapodikKab();
+    getDataAnakSekolah();
+    getDataCrossAnalisis();
   }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -1104,7 +1172,7 @@ const ContentDapodikV2 = () => {
                 {/* </Col> */}
               </Row>
               <Row>
-                {dataDapodik?.dapodik_jumlah_anak_sekolah
+                {dataDapodikJumlahAnakSekolah
                   ?.slice(0, 2)
                   .map((item, index) => (
                     <Col md={6} key={`first-${index}`}>
@@ -1149,7 +1217,7 @@ const ContentDapodikV2 = () => {
                   ))}
               </Row>
               <Row>
-                {dataDapodik?.dapodik_jumlah_anak_sekolah
+                {dataDapodikJumlahAnakSekolah
                   ?.slice(2, 4)
                   .reverse()
                   .map((item, index) => (

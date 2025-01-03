@@ -63,6 +63,22 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
     subRincianObjek: [],
   });
 
+  const [selectedNames, setSelectedNames] = useState({
+    fungsi: [],
+    skpd: [],
+    daerah: [],
+    namaDaerah: "",
+    spm: [],
+    urusan: [],
+    bidangUrusan: [],
+    program: [],
+    kegiatan: [],
+    subKegiatan: [],
+    objek: [],
+    rincianObjek: [],
+    subRincianObjek: [],
+  })
+
   console.log(isLoadingList, 'ini isi loading nya')
 
   const cleanPayload = (payload) => {
@@ -100,6 +116,43 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
     // Kirimkan payload ke parent
     onSelectFilter(cleanedFilters);
   };
+
+  // const handleCheckboxChange = (event, filterType, itemName) => {
+  //   const { value, checked } = event.target;
+  
+  //   // Salin state filter saat ini
+  //   const updatedValues = { ...selectedValues };
+  //   const updatedNames = { ...selectedNames }; // Tambahkan logika untuk selectedNames
+  
+  //   console.log(filterType, "ini filter typee");
+    
+  //   if (checked) {
+  //     // Tambahkan nilai ke filter dan nama ke array untuk filterType
+  //     updatedValues[filterType].push(value);
+  //     if (!updatedNames[filterType]) {
+  //       updatedNames[filterType] = []; // Pastikan array ada
+  //     }
+  //     updatedNames[filterType].push(itemName);
+  //   } else {
+  //     // Hapus nilai dari filter dan nama dari array untuk filterType
+  //     updatedValues[filterType] = updatedValues[filterType].filter(
+  //       (item) => item !== value
+  //     );
+  //     updatedNames[filterType] = updatedNames[filterType].filter(
+  //       (name) => name !== itemName
+  //     );
+  //   }
+  
+  //   // Perbarui state
+  //   setSelectedValues(updatedValues);
+  //   setSelectedNames(updatedNames); // Perbarui selectedNames
+  
+  //   // Bersihkan payload sebelum dikirim ke parent
+  //   const cleanedFilters = cleanPayload(updatedValues);
+  
+  //   // Kirimkan payload ke parent
+  //   onSelectFilter(cleanedFilters);
+  // };
 
   const [searchFilter, setSearchFilter] = useState(""); // State untuk menampung nilai input search
 
@@ -575,6 +628,25 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           Urusan
                         </span>
                       </div>
+                      {/* {Object.keys(selectedNames['urusan']).map((filterType) => (
+      <div key={filterType} style={{ marginBottom: "20px" }}>
+        <h6 style={{ fontWeight: "bold" }}>{filterType.toUpperCase()}</h6>
+        {selectedNames[filterType]?.length > 0 ? (
+          <ul>
+            {selectedNames[filterType].map((name, index) => (
+              <li key={index} style={{ fontSize: "14px", color: "green" }}>
+                {name}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p style={{ fontSize: "14px", color: "gray" }}>
+            Tidak ada filter yang dipilih.
+          </p>
+        )}
+      </div>
+    ))}
+    item.urusan */}
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
