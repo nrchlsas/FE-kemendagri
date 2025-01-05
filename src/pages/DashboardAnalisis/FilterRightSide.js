@@ -63,6 +63,45 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
     subRincianObjek: [],
   });
 
+  
+
+  console.log(isLoadingList, 'ini isi loading nya')
+
+  const cleanPayload = (payload) => {
+    console.log(payload, 'ini isi payloadadd')
+    return Object.fromEntries(
+      Object.entries(payload).filter(
+        ([_, value]) => !(value === "" || (Array.isArray(value) && value.length === 0) || value === null || value === undefined)
+      )
+    );
+  };
+
+  // const handleCheckboxChange = (event, filterType) => {
+  //   const { value, checked } = event.target;
+
+  //   // Salin state filter saat ini
+  //   const updatedValues = { ...selectedValues };
+
+  //   console.log(filterType, 'ini filter typee')
+  //   if (checked) {
+  //     // Tambahkan nilai jika checkbox dicentang
+  //     updatedValues[filterType].push(value);
+  //   } else {
+  //     // Hapus nilai jika checkbox tidak dicentang
+  //     updatedValues[filterType] = updatedValues[filterType].filter(
+  //       (item) => item !== value
+  //     );
+  //   }
+
+  //   // Perbarui state filter di child
+  //   setSelectedValues(updatedValues);
+
+  //   // Bersihkan payload sebelum dikirim ke parent
+  //   const cleanedFilters = cleanPayload(updatedValues);
+
+  //   // Kirimkan payload ke parent
+  //   onSelectFilter(cleanedFilters);
+  // };
   const [selectedNames, setSelectedNames] = useState({
     fungsi: [],
     skpd: [],
@@ -79,80 +118,42 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
     subRincianObjek: [],
   })
 
-  console.log(isLoadingList, 'ini isi loading nya')
-
-  const cleanPayload = (payload) => {
-    console.log(payload, 'ini isi payloadadd')
-    return Object.fromEntries(
-      Object.entries(payload).filter(
-        ([_, value]) => !(value === "" || (Array.isArray(value) && value.length === 0) || value === null || value === undefined)
-      )
-    );
-  };
-
-  const handleCheckboxChange = (event, filterType) => {
+  const handleCheckboxChange = (event, filterType, itemName) => {
     const { value, checked } = event.target;
-
+  
     // Salin state filter saat ini
     const updatedValues = { ...selectedValues };
-
-    console.log(filterType, 'ini filter typee')
+    const updatedNames = { ...selectedNames }; // Tambahkan logika untuk selectedNames
+  
+    console.log(filterType, "ini filter typee");
+    
     if (checked) {
-      // Tambahkan nilai jika checkbox dicentang
+      // Tambahkan nilai ke filter dan nama ke array untuk filterType
       updatedValues[filterType].push(value);
+      if (!updatedNames[filterType]) {
+        updatedNames[filterType] = []; // Pastikan array ada
+      }
+      updatedNames[filterType].push(itemName);
     } else {
-      // Hapus nilai jika checkbox tidak dicentang
+      // Hapus nilai dari filter dan nama dari array untuk filterType
       updatedValues[filterType] = updatedValues[filterType].filter(
         (item) => item !== value
       );
+      updatedNames[filterType] = updatedNames[filterType].filter(
+        (name) => name !== itemName
+      );
     }
-
-    // Perbarui state filter di child
+  
+    // Perbarui state
     setSelectedValues(updatedValues);
-
+    setSelectedNames(updatedNames); // Perbarui selectedNames
+  
     // Bersihkan payload sebelum dikirim ke parent
     const cleanedFilters = cleanPayload(updatedValues);
-
+  
     // Kirimkan payload ke parent
     onSelectFilter(cleanedFilters);
   };
-
-  // const handleCheckboxChange = (event, filterType, itemName) => {
-  //   const { value, checked } = event.target;
-  
-  //   // Salin state filter saat ini
-  //   const updatedValues = { ...selectedValues };
-  //   const updatedNames = { ...selectedNames }; // Tambahkan logika untuk selectedNames
-  
-  //   console.log(filterType, "ini filter typee");
-    
-  //   if (checked) {
-  //     // Tambahkan nilai ke filter dan nama ke array untuk filterType
-  //     updatedValues[filterType].push(value);
-  //     if (!updatedNames[filterType]) {
-  //       updatedNames[filterType] = []; // Pastikan array ada
-  //     }
-  //     updatedNames[filterType].push(itemName);
-  //   } else {
-  //     // Hapus nilai dari filter dan nama dari array untuk filterType
-  //     updatedValues[filterType] = updatedValues[filterType].filter(
-  //       (item) => item !== value
-  //     );
-  //     updatedNames[filterType] = updatedNames[filterType].filter(
-  //       (name) => name !== itemName
-  //     );
-  //   }
-  
-  //   // Perbarui state
-  //   setSelectedValues(updatedValues);
-  //   setSelectedNames(updatedNames); // Perbarui selectedNames
-  
-  //   // Bersihkan payload sebelum dikirim ke parent
-  //   const cleanedFilters = cleanPayload(updatedValues);
-  
-  //   // Kirimkan payload ke parent
-  //   onSelectFilter(cleanedFilters);
-  // };
 
   const [searchFilter, setSearchFilter] = useState(""); // State untuk menampung nilai input search
 
@@ -628,25 +629,28 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           Urusan
                         </span>
                       </div>
-                      {/* {Object.keys(selectedNames['urusan']).map((filterType) => (
-      <div key={filterType} style={{ marginBottom: "20px" }}>
-        <h6 style={{ fontWeight: "bold" }}>{filterType.toUpperCase()}</h6>
-        {selectedNames[filterType]?.length > 0 ? (
-          <ul>
-            {selectedNames[filterType].map((name, index) => (
-              <li key={index} style={{ fontSize: "14px", color: "green" }}>
-                {name}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p style={{ fontSize: "14px", color: "gray" }}>
-            Tidak ada filter yang dipilih.
-          </p>
-        )}
-      </div>
-    ))}
-    item.urusan */}
+                     {selectedNames["urusan"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          {selectedNames["urusan"].map((name, index) => (
+                            <li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            >
+                              {name}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
@@ -654,7 +658,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
-                                handleCheckboxChange(e, "urusan")
+                                handleCheckboxChange(e, "urusan", item.nama_urusan)
                               }
                               checked={selectedValues.urusan.includes(
                                 item.kode_urusan

@@ -103,7 +103,7 @@ const ContentDapodikV2 = () => {
   ] = useState([[], []]);
 
   const [dataSdMap, setDataSdMap] = useState([])
-  const getDataDapodik = () => {
+  const getDataDapodik = ({kodeDdn="", tahun="2024"}) => {
     const fetchData = async () => {
         try {
             const token = JSON.parse(sessionStorage.getItem("authUser"));
@@ -111,8 +111,8 @@ const ContentDapodikV2 = () => {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
                 body: JSON.stringify({
-                    // kode_ddn: "11",
-                    tahun: "2024"
+                    kode_ddn: kodeDdn,
+                    tahun: tahun
                 }),
             };
             const response = await fetch(`${API_URI_RBAC}/v2/dashboard_dapodik`, requestOptions);
@@ -413,7 +413,7 @@ const ContentDapodikV2 = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             // kode_ddn: "11",
-            // tahun: "2025"
+            // tahun: "2024"
         }),
         };
         
@@ -610,7 +610,7 @@ const ContentDapodikV2 = () => {
   };
 
   useEffect(() => {
-    getDataDapodik();
+    getDataDapodik({kodeDdn: "", tahun: "2024"});
     getDataTabelDapodikSeProv();
     getDataTabelDapodikProv();
     getDataTabelDapodikKab();
@@ -1042,6 +1042,12 @@ const ContentDapodikV2 = () => {
     }  
   };
 
+  
+  const handleRegionClick = (regionKey) => {
+    getDataDapodik({kodeDdn:regionKey})
+    // Tambahkan logika lain jika diperlukan
+  };
+
   return (
     <React.Fragment>
       <Row>
@@ -1091,7 +1097,7 @@ const ContentDapodikV2 = () => {
                   }}>
                     Minimize Map
                   </button></>)}        
-                  <MapIndoChart chartTitle={titleMap} roam={roam} maxValue={maxValueMap} colorData={['#B3E0E5', '#69D6E8', '#0092B3', '#1B8BA6']} valueSeries={valueMap}/>
+                  <MapIndoChart chartTitle={titleMap} roam={roam} maxValue={maxValueMap} colorData={['#B3E0E5', '#69D6E8', '#0092B3', '#1B8BA6']} onRegionClick={handleRegionClick} valueSeries={valueMap}/>
               {/* <PolygonMaps /> */}
             </CardBody>
           </Card>
