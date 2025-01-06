@@ -404,7 +404,7 @@ const ContentDapodikV2 = () => {
   };
 
   const [dataDapodikJumlahAnakSekolah, setDataDapodikJumlahAnakSekolah] = useState([])
-  const getDataAnakSekolah = () => {
+  const getDataAnakSekolah = ({kodeWilayah}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -412,7 +412,7 @@ const ContentDapodikV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
-            // kode_ddn: "11",
+            kode_wilayah: kodeWilayah,
             // tahun: "2024"
         }),
         };
@@ -614,7 +614,7 @@ const ContentDapodikV2 = () => {
     getDataTabelDapodikSeProv();
     getDataTabelDapodikProv();
     getDataTabelDapodikKab();
-    getDataAnakSekolah();
+    getDataAnakSekolah({kodeWilayah: ""});
     getDataCrossAnalisis();
   }, []);
 
@@ -1044,7 +1044,8 @@ const ContentDapodikV2 = () => {
 
   
   const handleRegionClick = (regionKey) => {
-    getDataDapodik({kodeDdn:regionKey})
+    getDataDapodik({kodeDdn: regionKey})
+    getDataAnakSekolah({kodeWilayah: regionKey})
     // Tambahkan logika lain jika diperlukan
   };
 
