@@ -89,8 +89,7 @@ const BarWithPercentageModified = ({dataColors, valueChart=[], percentageChart1=
             axisLabel: {
                 rotate: 30, // Memutar label untuk menghindari overlapping
                 interval: 0, // Menampilkan semua label
-                formatter: function (value) {            
-                    console.log(seProv, ' ini sprov')        
+                formatter: function (value) {                        
                     if(seProv){                        
                         return `se-${value}`;
                     }else{

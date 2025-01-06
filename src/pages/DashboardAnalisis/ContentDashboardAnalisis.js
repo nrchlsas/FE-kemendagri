@@ -16,17 +16,10 @@ import {
   ModalBody,
   CardHeader,
 } from "reactstrap";
-import classnames from "classnames";
-import PolygonMaps from "../../Components/MapIndo/PolygonMaps";
 import VerticalBarChart from "../../Components/Chart/VerticalBarChart";
-import Pagination from "../../Components/Pagination/Pagination";
-import HorizontalBarChart from "../../Components/Chart/HorizontalBarChart";
 import CountUp from "react-countup";
-import BarWithPercentage from "../../Components/Chart/BarWithPercentage";
 import PieChartNew from "../../Components/Chart/PieChart";
-import logoKemenkoPmk from "../../assets/images/logo-kemendagri/logo-kemenko-pmk.png";
 import "./../Dapodik/dapodik.scss";
-import { useNavigate } from "react-router-dom";
 import FilterRightSide from "./FilterRightSide";
 import SimpleBar from "simplebar-react";
 // import DashboardAnalisisRightSide from "./DashboardAnalisisRightSide";
@@ -50,6 +43,7 @@ const ContentDashboardAnalisis = () => {
   const [showGrafikSumberDana, setShowGrafikSumberDana] = useState(false)
   const [dataChartSumberDana, setDataChartSumberDana] = useState([],[])
   const [dataTotalAnggaran, setDataTotalAnggaran] = useState(0)
+  const [executeDate, setExcecuteDate] = useState('')
   const getDataDashboardAnalisis = ({
     kodeDdn,
     namaDaerah,
@@ -119,7 +113,15 @@ const ContentDashboardAnalisis = () => {
           throw new Error("Network response was not ok");
         }
         const dataDashboardAnalisis = await response.json();
-        setDataDashboardAnalisis(dataDashboardAnalisis?.data || []);
+        setDataDashboardAnalisis(dataDashboardAnalisis?.data || []);        
+
+        const date = new Date(dataDashboardAnalisis.data.data_dashboard.terakhir_update);        
+        const formatter = new Intl.DateTimeFormat('id-ID', { month: 'long' });
+        const month = formatter.format(date); // Mendapatkan nama bulan dalam bahasa Indonesia
+        const day = String(date.getDate()).padStart(2, '0');
+        const year = date.getFullYear();
+        const formattedDate = `${day} ${month} ${year}`;
+        setExcecuteDate(formattedDate)
 
         const totalAnggaran = parseFloat(
           (dataDashboardAnalisis?.data?.data_dashboard?.rincian_belanja_total_belanja / 
@@ -234,7 +236,7 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                 }}
               >
                 <span>
-                  Terakhir diperbarui: Sabtu, 14 September 2024, Pukul 12:30
+                  Terakhir diperbarui: {executeDate}
                 </span>
               </div>
             </div>

@@ -23,7 +23,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
     setOpen(!open);
   };
 
-  console.log(dataFilter, 'ini isi filter data')
   window.onscroll = function () {
     scrollFunction();
   };
@@ -63,9 +62,21 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
     subRincianObjek: [],
   });
 
-  
-
-  console.log(isLoadingList, 'ini isi loading nya')
+  const [selectedNames, setSelectedNames] = useState({
+    fungsi: [],
+    skpd: [],
+    daerah: [],
+    namaDaerah: "",
+    spm: [],
+    urusan: [],
+    bidangUrusan: [],
+    program: [],
+    kegiatan: [],
+    subKegiatan: [],
+    objek: [],
+    rincianObjek: [],
+    subRincianObjek: [],
+  })
 
   const cleanPayload = (payload) => {
     console.log(payload, 'ini isi payloadadd')
@@ -102,21 +113,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
   //   // Kirimkan payload ke parent
   //   onSelectFilter(cleanedFilters);
   // };
-  const [selectedNames, setSelectedNames] = useState({
-    fungsi: [],
-    skpd: [],
-    daerah: [],
-    namaDaerah: "",
-    spm: [],
-    urusan: [],
-    bidangUrusan: [],
-    program: [],
-    kegiatan: [],
-    subKegiatan: [],
-    objek: [],
-    rincianObjek: [],
-    subRincianObjek: [],
-  })
+  
 
   const handleCheckboxChange = (event, filterType, itemName) => {
     const { value, checked } = event.target;
@@ -124,8 +121,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
     // Salin state filter saat ini
     const updatedValues = { ...selectedValues };
     const updatedNames = { ...selectedNames }; // Tambahkan logika untuk selectedNames
-  
-    console.log(filterType, "ini filter typee");
     
     if (checked) {
       // Tambahkan nilai ke filter dan nama ke array untuk filterType
@@ -312,13 +307,28 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
       subRincianObjek: [],
     };
 
-    setSelectedValues(initialValues);
+    const initialNames = {
+      skpd: [],
+      daerah: [],
+      namaDaerah:"",
+      fungsi: [],
+      spm: [],
+      urusan: [],
+      bidangUrusan: [],
+      program: [],
+      kegiatan: [],
+      subKegiatan: [],
+      objek: [],
+      rincianObjek: [],
+      subRincianObjek: [],
+    };
 
+    setSelectedValues(initialValues);
+    setSelectedNames(initialNames);
+    
     // Kirimkan payload kosong ke parent
     onSelectFilter(cleanPayload(initialValues));
   };
-
- 
 
   return (
     <React.Fragment>
@@ -431,6 +441,31 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           </button>
                         )}
                       </div>
+                      {selectedNames["daerah"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["daerah"].map((name, index) => {
+                            console.log(selectedNames["daerah"], 'ini name')
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            >
+                              {name}
+                            </li>)
+                            
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div
@@ -443,7 +478,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
-                                handleCheckboxChange(e, "daerah")
+                                handleCheckboxChange(e, "daerah", item.nama_daerah)
                               }
                               checked={selectedValues.daerah.includes(
                                 item.kode_ddn
@@ -483,6 +518,31 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           SKPD
                         </span>
                       </div>
+                      {selectedNames["skpd"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["skpd"].map((name, index) => {
+                            console.log(selectedNames["skpd"], 'ini name')
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            >
+                              {name}
+                            </li>)
+                            
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div
@@ -492,7 +552,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         {displayedData?.skpd?.map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
-                              onChange={(e) => handleCheckboxChange(e, "skpd")}
+                              onChange={(e) => handleCheckboxChange(e, "skpd", item.nama_skpd)}
                               checked={selectedValues.skpd.includes(
                                 item.kode_skpd
                               )}
@@ -534,6 +594,31 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           Fungsi
                         </span>
                       </div>
+                      {selectedNames["fungsi"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["fungsi"].map((name, index) => {
+                            console.log(selectedNames["fungsi"], 'ini name')
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            >
+                              {name}
+                            </li>)
+                            
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
@@ -541,7 +626,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
-                                handleCheckboxChange(e, "fungsi")
+                                handleCheckboxChange(e, "fungsi", item.nama_fungsi)
                               }
                               checked={selectedValues.fungsi.includes(
                                 item.kode_fungsi
@@ -581,13 +666,38 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           SPM
                         </span>
                       </div>
+                      {selectedNames["spm"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["spm"].map((name, index) => {
+                            console.log(selectedNames["spm"], 'ini name')
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            >
+                              {name}
+                            </li>)
+                            
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
                         {dataFilter?.filter_spm?.map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
-                              onChange={(e) => handleCheckboxChange(e, "spm")}
+                              onChange={(e) => handleCheckboxChange(e, "spm", item.spm_teks)}
                               checked={selectedValues.spm.includes(
                                 String(item.id_spm)
                               )}
@@ -631,8 +741,9 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       </div>
                      {selectedNames["urusan"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
-                          {selectedNames["urusan"].map((name, index) => (
-                            <li key={index}  style={{
+                          {selectedNames["urusan"].map((name, index) => {
+                            console.log(selectedNames["urusan"], 'ini name')
+                            return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
                               whiteSpace: "nowrap", // Agar teks tidak membungkus
@@ -643,8 +754,9 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                             title={name} // Tambahkan title untuk tooltip pada hover
                             >
                               {name}
-                            </li>
-                          ))}
+                            </li>)
+                            
+                          })}
                         </ul>
                       ) : (
                         <p style={{ fontSize: "14px", color: "gray" }}>
@@ -698,6 +810,31 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           Bidang Urusan
                         </span>
                       </div>
+                      {selectedNames["bidangUrusan"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["bidangUrusan"].map((name, index) => {
+                            console.log(selectedNames["bidangUrusan"], 'ini name')
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            >
+                              {name}
+                            </li>)
+                            
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
@@ -706,7 +843,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                             <div key={index} class="form-check mb-2">
                               <input
                                 onChange={(e) =>
-                                  handleCheckboxChange(e, "bidangUrusan")
+                                  handleCheckboxChange(e, "bidangUrusan", item.nama_bidang_urusan)
                                 }
                                 checked={selectedValues.bidangUrusan.includes(
                                   item.kode_bidang_urusan
@@ -750,6 +887,31 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           Program
                         </span>
                       </div>
+                      {selectedNames["program"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["program"].map((name, index) => {
+                            console.log(selectedNames["program"], 'ini name')
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            >
+                              {name}
+                            </li>)
+                            
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div
@@ -762,7 +924,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
-                                handleCheckboxChange(e, "program")
+                                handleCheckboxChange(e, "program", item.nama_program)
                               }
                               checked={selectedValues.program.includes(
                                 item.kode_program
@@ -808,6 +970,31 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           Kegiatan
                         </span>
                       </div>
+                      {selectedNames["kegiatan"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["kegiatan"].map((name, index) => {
+                            console.log(selectedNames["kegiatan"], 'ini name')
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            >
+                              {name}
+                            </li>)
+                            
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div
@@ -820,7 +1007,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
-                                handleCheckboxChange(e, "kegiatan")
+                                handleCheckboxChange(e, "kegiatan", item.nama_giat)
                               }
                               checked={selectedValues.kegiatan.includes(
                                 item.kode_giat
@@ -863,6 +1050,31 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           Sub Kegiatan
                         </span>
                       </div>
+                      {selectedNames["subKegiatan"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["subKegiatan"].map((name, index) => {
+                            console.log(selectedNames["subKegiatan"], 'ini name')
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            >
+                              {name}
+                            </li>)
+                            
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<> <div
@@ -875,7 +1087,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
-                                handleCheckboxChange(e, "subKegiatan")
+                                handleCheckboxChange(e, "subKegiatan", item.nama_sub_giat)
                               }
                               checked={selectedValues.subKegiatan.includes(
                                 item.kode_sub_giat
@@ -916,6 +1128,31 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           Objek
                         </span>
                       </div>
+                      {selectedNames["objek"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["objek"].map((name, index) => {
+                            console.log(selectedNames["objek"], 'ini name')
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            >
+                              {name}
+                            </li>)
+                            
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div
@@ -927,7 +1164,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         {displayedData?.objek?.map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
-                              onChange={(e) => handleCheckboxChange(e, "objek")}
+                              onChange={(e) => handleCheckboxChange(e, "objek", item.nama_objek)}
                               checked={selectedValues.objek.includes(
                                 item.kode_objek
                               )}
@@ -969,6 +1206,31 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           Rincian Objek
                         </span>
                       </div>
+                      {selectedNames["rincianObjek"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["rincianObjek"].map((name, index) => {
+                            console.log(selectedNames["rincianObjek"], 'ini name')
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            >
+                              {name}
+                            </li>)
+                            
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div
@@ -981,7 +1243,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
-                                handleCheckboxChange(e, "rincianObjek")
+                                handleCheckboxChange(e, "rincianObjek", item.nama_ro)
                               }
                               checked={selectedValues.rincianObjek.includes(
                                 item.kode_ro
@@ -1022,6 +1284,31 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           Sub Rincian Objek
                         </span>
                       </div>
+                      {selectedNames["subRincianObjek"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["subRincianObjek"].map((name, index) => {
+                            console.log(selectedNames["subRincianObjek"], 'ini name')
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            >
+                              {name}
+                            </li>)
+                            
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div
@@ -1034,7 +1321,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
-                                handleCheckboxChange(e, "subRincianObjek")
+                                handleCheckboxChange(e, "subRincianObjek", item.nama_sro)
                               }
                               checked={selectedValues.subRincianObjek.includes(
                                 item.kode_sro
