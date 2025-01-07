@@ -50,6 +50,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
     fungsi: [],
     skpd: [],
     daerah: [],
+    provinsi:[],
     namaDaerah: "",
     spm: [],
     urusan: [],
@@ -65,6 +66,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
   const [selectedNames, setSelectedNames] = useState({
     fungsi: [],
     skpd: [],
+    provinsi:[],
     daerah: [],
     namaDaerah: "",
     spm: [],
@@ -206,6 +208,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
   const [displayedData, setDisplayedData] = useState({
     daerah: [],
     skpd: [],
+    provinsi:[],
     program: [],
     kegiatan: [],
     subKegiatan: [],
@@ -216,6 +219,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
   const [dataToShow, setDataToShow] = useState({
     daerah: 10,
     skpd: 10,
+    provinsi: 10,
     program: 10,
     kegiatan: 10,
     subKegiatan: 10,
@@ -289,11 +293,16 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
     loadMoreData("filter_daerah", "daerah");
   }, [dataFilter]);
 
+  useEffect(() => {
+    loadMoreData("filter_provinsi", "provinsi");
+  }, [dataFilter]);
+
   const resetFilters = () => {
     // Reset state selectedValues ke nilai awal
     const initialValues = {
       skpd: [],
       daerah: [],
+      provinsi: [],
       namaDaerah:"",
       fungsi: [],
       spm: [],
@@ -312,6 +321,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
       daerah: [],
       namaDaerah:"",
       fungsi: [],
+      provinsi: [],
       spm: [],
       urusan: [],
       bidangUrusan: [],
@@ -381,6 +391,124 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
           <OffcanvasBody className="p-0">
             <SimpleBar className="h-100 p-2">
               <Row>
+              <Col md={6}>
+                  <Card className="card-height-100 card-animate">
+                    <CardBody>
+                      <div className="mb-3">
+                        <span
+                          style={{
+                            backgroundColor: "#FFE038",
+                            color: "black",
+                            padding: "5px 10px",
+                            border: "none",
+                            borderRadius: "5px",
+                            width: "30%",
+                            fontSize: "12px",
+                          }}
+                        >
+                          Provinsi
+                        </span>
+                      </div>
+                      {/* <div
+                        style={{
+                          position: "relative",
+                          width: "100%",
+                          maxWidth: "300px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <input
+                          style={{
+                            padding: "5px 15px 5px 10px",
+                            width: "100%",
+                            border: "1px solid #ccc",
+                            borderRadius: "5px",
+                            fontSize: "16px",
+                          }}
+                          type="text"
+                          value={searchFilter}
+                          onChange={handleSearchInput}
+                          onKeyDown={(e) => handleKeyDown(e)}
+                          placeholder="Cari Daerah"
+                        />
+                        {searchFilter && (
+                          <button
+                            onClick={() => handleClearSearch()}
+                            style={{
+                              position: "absolute",
+                              right: "10px",
+                              top: "50%",
+                              transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                              background: "transparent",
+                              border: "none",
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              color: "#999",
+                            }}
+                          >
+                            &#10006;
+                          </button>
+                        )}
+                      </div> */}
+                      {selectedNames["provinsi"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["provinsi"].map((name, index) => {
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            >
+                              {name}
+                            </li>)
+                            
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div
+                        style={{ overflowY: "auto", maxHeight: "300px" }}
+                        onScroll={(e) =>
+                          handleScroll(e, "filter_provinsi", "provinsi")
+                        }
+                      >
+                        {displayedData?.provinsi?.map((item, index) => (
+                          <div key={index} class="form-check mb-2">
+                            <input
+                              onChange={(e) =>
+                                handleCheckboxChange(e, "provinsi", item.nama_prov)
+                              }
+                              checked={selectedValues.provinsi.includes(
+                                item.kode_prov
+                              )}
+                              class="form-check-input"
+                              type="checkbox"
+                              id={`check-provinsi-${index}`}
+                              value={item.kode_prov}
+                            />
+                            <label
+                              class="form-check-label"
+                              for={`check-provinsi-${index}`}
+                            >
+                              {item.nama_prov}
+                            </label>
+                          </div>
+                        ))}
+                      </div></>)}
+                      
+                    </CardBody>
+                  </Card>
+                </Col> 
                 <Col md={6}>
                   <Card className="card-height-100 card-animate">
                     <CardBody>
@@ -445,7 +573,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
                           {selectedNames["daerah"].map((name, index) => {
-                            console.log(selectedNames["daerah"], 'ini name')
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
@@ -500,8 +627,10 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       
                     </CardBody>
                   </Card>
-                </Col>
-                <Col md={6}>
+                </Col>           
+              </Row>
+              <Row>
+              <Col md={6}>
                   <Card className="card-height-100 card-animate">
                     <CardBody>
                       <div className="mb-3">
@@ -522,7 +651,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
                           {selectedNames["skpd"].map((name, index) => {
-                            console.log(selectedNames["skpd"], 'ini name')
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
@@ -574,8 +702,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                     </CardBody>
                   </Card>
                 </Col>
-              </Row>
-              <Row>
                 <Col md={6}>
                   <Card className="card-height-100 card-animate">
                     <CardBody>
@@ -598,7 +724,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
                           {selectedNames["fungsi"].map((name, index) => {
-                            console.log(selectedNames["fungsi"], 'ini name')
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
@@ -648,8 +773,10 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       
                     </CardBody>
                   </Card>
-                </Col>
-                <Col md={6}>
+                </Col>    
+              </Row>
+              <Row>
+              <Col md={6}>
                   <Card className="card-height-100 card-animate">
                     <CardBody>
                       <div className="mb-3">
@@ -670,7 +797,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
                           {selectedNames["spm"].map((name, index) => {
-                            console.log(selectedNames["spm"], 'ini name')
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
@@ -719,8 +845,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                     </CardBody>
                   </Card>
                 </Col>
-              </Row>
-              <Row>
                 <Col md={6}>
                   <Card className="card-height-100 card-animate">
                     <CardBody>
@@ -742,7 +866,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                      {selectedNames["urusan"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           {selectedNames["urusan"].map((name, index) => {
-                            console.log(selectedNames["urusan"], 'ini name')
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
@@ -792,7 +915,9 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                     </CardBody>
                   </Card>
                 </Col>
-                <Col md={6}>
+              </Row>
+              <Row>
+              <Col md={6}>
                   <Card className="card-height-100 card-animate">
                     <CardBody>
                       <div className="mb-3">
@@ -814,7 +939,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
                           {selectedNames["bidangUrusan"].map((name, index) => {
-                            console.log(selectedNames["bidangUrusan"], 'ini name')
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
@@ -867,8 +991,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                     </CardBody>
                   </Card>
                 </Col>
-              </Row>
-              <Row>
                 <Col md={6}>
                   <Card className="card-height-100 card-animate">
                     <CardBody>
@@ -891,7 +1013,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
                           {selectedNames["program"].map((name, index) => {
-                            console.log(selectedNames["program"], 'ini name')
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
@@ -946,8 +1067,10 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       
                     </CardBody>
                   </Card>
-                </Col>
-                <Col md={6}>
+                </Col>       
+              </Row>
+              <Row>
+              <Col md={6}>
                   <Card
                     className="card-height-100 card-animate"
                     onScroll={(e) =>
@@ -974,7 +1097,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
                           {selectedNames["kegiatan"].map((name, index) => {
-                            console.log(selectedNames["kegiatan"], 'ini name')
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
@@ -1030,8 +1152,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                     </CardBody>
                   </Card>
                 </Col>
-              </Row>
-              <Row>
                 <Col md={6}>
                   <Card className="card-height-100 card-animate">
                     <CardBody>
@@ -1054,7 +1174,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
                           {selectedNames["subKegiatan"].map((name, index) => {
-                            console.log(selectedNames["subKegiatan"], 'ini name')
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
@@ -1109,8 +1228,10 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                      
                     </CardBody>
                   </Card>
-                </Col>
-                <Col md={6}>
+                </Col>        
+              </Row>
+              <Row>
+              <Col md={6}>
                   <Card className="card-height-100 card-animate">
                     <CardBody>
                       <div className="mb-3">
@@ -1132,7 +1253,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
                           {selectedNames["objek"].map((name, index) => {
-                            console.log(selectedNames["objek"], 'ini name')
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
@@ -1186,8 +1306,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                     </CardBody>
                   </Card>
                 </Col>
-              </Row>
-              <Row>
                 <Col md={6}>
                   <Card className="card-height-100 card-animate">
                     <CardBody>
@@ -1210,7 +1328,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
                           {selectedNames["rincianObjek"].map((name, index) => {
-                            console.log(selectedNames["rincianObjek"], 'ini name')
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
@@ -1266,7 +1383,10 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                     </CardBody>
                   </Card>
                 </Col>
-                <Col md={6}>
+                
+              </Row>
+              <Row>
+              <Col md={6}>
                   <Card className="card-height-100 card-animate">
                     <CardBody>
                       <div className="mb-3">
@@ -1288,7 +1408,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
                           {selectedNames["subRincianObjek"].map((name, index) => {
-                            console.log(selectedNames["subRincianObjek"], 'ini name')
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",

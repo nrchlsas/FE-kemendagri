@@ -46,6 +46,7 @@ const ContentDashboardAnalisis = () => {
   const [executeDate, setExcecuteDate] = useState('')
   const getDataDashboardAnalisis = ({
     kodeDdn,
+    kodeProv,
     namaDaerah,
     kodeFungsi,
     namaFungsi,
@@ -80,6 +81,7 @@ const ContentDashboardAnalisis = () => {
           body: JSON.stringify({
             kode_ddn: kodeDdn,
             nama_daerah: namaDaerah,
+            kode_prov: kodeProv,
             kode_fungsi: kodeFungsi,
             nama_fungsi: namaFungsi,
             id_spm: idSpm,
@@ -115,6 +117,13 @@ const ContentDashboardAnalisis = () => {
         const dataDashboardAnalisis = await response.json();
         setDataDashboardAnalisis(dataDashboardAnalisis?.data || []);        
 
+
+        const totalAnggaran = parseFloat(
+          (dataDashboardAnalisis?.data?.data_dashboard?.rincian_belanja_total_belanja / 
+              dataDashboardAnalisis?.data?.data_dashboard_nasional?.total_belanja) * 100                       
+          ).toFixed(8) || 0
+          setDataTotalAnggaran(totalAnggaran)
+
         const date = new Date(dataDashboardAnalisis.data.data_dashboard.terakhir_update);        
         const formatter = new Intl.DateTimeFormat('id-ID', { month: 'long' });
         const month = formatter.format(date); // Mendapatkan nama bulan dalam bahasa Indonesia
@@ -123,13 +132,6 @@ const ContentDashboardAnalisis = () => {
         const formattedDate = `${day} ${month} ${year}`;
         setExcecuteDate(formattedDate)
 
-        const totalAnggaran = parseFloat(
-          (dataDashboardAnalisis?.data?.data_dashboard?.rincian_belanja_total_belanja / 
-            dataDashboardAnalisis?.data?.data_dashboard_nasional?.total_belanja) * 100                       
-        ).toFixed(8)
-        console.log(totalAnggaran, "ini total anggaran")
-        setDataTotalAnggaran(totalAnggaran)
-        
         const totalSum = dataDashboardAnalisis?.data?.data_dashboard?.by_nama_dana?.reduce((sum, item) => sum + item.total_sumber_dana, 0);     
         setTotalSumberDana(totalSum)
 
@@ -149,6 +151,12 @@ const ContentDashboardAnalisis = () => {
     fetchData();
   };
 
+  const getDecimals = (value) => {
+    if (value >= 1) return 2; // Nilai >= 1, gunakan 2 desimal
+    if (value >= 0.001) return 2; // Nilai >= 0.001, gunakan 2 desimal
+    return 7; // Nilai lainnya, gunakan 7 desimal
+  };
+
   useEffect(() => {
     getDataDashboardAnalisis({});
   }, []);
@@ -157,6 +165,7 @@ const ContentDashboardAnalisis = () => {
     daerah: [],
     namaDaerah: "",
     skpd:[],
+    provinsi: [],
     fungsi: [],
     spm: [],
     urusan: [],
@@ -167,7 +176,7 @@ const ContentDashboardAnalisis = () => {
     objek: [],
     rincianObjek: [],
     subRincianObjek: [],
-});
+  });
 
 const cleanPayload = (payload) => {
     return Object.fromEntries(
@@ -187,6 +196,7 @@ const handleFilterUpdate = (filters) => {
     }
     // Kirimkan request berdasarkan filter yang dipilih
     getDataDashboardAnalisis({
+        kodeDdn: cleanedFilters.provinsi,
         kodeDdn: cleanedFilters.daerah,
         namaDaerah: cleanedFilters.namaDaerah,
         kodeSkpd: cleanedFilters.skpd,
@@ -581,13 +591,13 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                                       (<CountUp
                                       start={0}
                                       end={
-                                        dataTotalAnggaran
+                                        dataTotalAnggaran || 0
                                       }
                                       separator="."
                                       prefix=""
                                       decimal=","
                                       suffix="%"
-                                      decimals={dataTotalAnggaran >= 1 ? 2 : dataTotalAnggaran >= 0.001 ? 2 : 7} // Menentukan jumlah angka di belakang koma
+                                      decimals={getDecimals(dataTotalAnggaran)} // Menentukan jumlah angka di belakang koma
                                       duration={1}
                                     />)
                                       </span>
