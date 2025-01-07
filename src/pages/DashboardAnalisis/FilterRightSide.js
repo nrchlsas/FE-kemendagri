@@ -397,7 +397,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       <div className="mb-3">
                         <span
                           style={{
-                            backgroundColor: "#FFE038",
+                            backgroundColor: "#2DAED4",
                             color: "black",
                             padding: "5px 10px",
                             border: "none",
