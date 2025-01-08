@@ -1216,7 +1216,7 @@ const BerandaV2 = () => {
             </div>
           </Col>
         </Row>
-        <Row>
+        {/* <Row>
           <Col md={12}>
           <div className="d-flex justify-content-center align-items-center">
           <video controls style={{ width: '100%',
@@ -1228,10 +1228,7 @@ const BerandaV2 = () => {
           </video>
           </div>
           </Col>
-        </Row>
-        
-
-        
+        </Row> */}
         {/* <div
           style={{
             display: "flex",
