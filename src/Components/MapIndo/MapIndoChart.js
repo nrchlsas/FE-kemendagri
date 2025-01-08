@@ -120,7 +120,7 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
   
           // Mendapatkan nilai 'key' dari fitur yang ditemukan
           if (clickedFeature) {
-            onRegionClick(clickedFeature.properties.key); // Kirim `key` ke parent
+            onRegionClick(clickedFeature.properties.key, clickedFeature.properties.name); // Kirim `key` ke parent
           } else {
             alert("Data wilayah tidak ditemukan!");
           }

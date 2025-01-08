@@ -611,10 +611,10 @@ const ContentDapodikV2 = () => {
 
   useEffect(() => {
     getDataDapodik({kodeDdn: "", tahun: "2024"});
+    getDataAnakSekolah({kodeWilayah: ""});
     getDataTabelDapodikSeProv();
     getDataTabelDapodikProv();
     getDataTabelDapodikKab();
-    getDataAnakSekolah({kodeWilayah: ""});
     getDataCrossAnalisis();
   }, []);
 
@@ -1043,11 +1043,20 @@ const ContentDapodikV2 = () => {
   };
 
   
-  const handleRegionClick = (regionKey) => {
-    getDataDapodik({kodeDdn: regionKey})
-    getDataAnakSekolah({kodeWilayah: regionKey})
-    // Tambahkan logika lain jika diperlukan
+  const [clickDaerah, setClickDaerah] = useState(false)
+  const [clickNamaDaerah, setClickNamaDaerah] = useState("")
+  const handleRegionClick = (kodeProv, namaProv) => {
+    getDataDapodik({kodeDdn: kodeProv})
+    getDataAnakSekolah({kodeWilayah: kodeProv})
+    setClickNamaDaerah(namaProv)
+    setClickDaerah(true)
   };
+
+  const resetRegionClick = () => {
+    getDataDapodik({kodeDdn: "", tahun: "2024"});
+    getDataAnakSekolah({kodeWilayah: ""});
+    setClickDaerah(false)
+  }
 
   return (
     <React.Fragment>
@@ -1071,7 +1080,10 @@ const ContentDapodikV2 = () => {
         <Col md={dataWidth}>        
           <Card className="card-height-100">
             <CardBody>
-              {dataWidth==6 ? (<><button onClick={()=>{
+            <div className="d-flex justify-content-between mb-2">
+            <div className="d-flex justify-content-center align-items-center">
+              {dataWidth==6 ? (<>
+                  <button onClick={()=>{
                   setDataWidth(12)
                   setRoam(true)
                   }} style={{
@@ -1084,20 +1096,42 @@ const ContentDapodikV2 = () => {
                     fontSize: "16px",
                   }}>
                     Maximize Map
-                  </button></>) : (<><button onClick={()=>{
-                    setDataWidth(6)
-                    setRoam(false)
-                  }} style={{
-                    backgroundColor: "#007bff",
-                    color: "white",
-                    padding: "5px 10px",
-                    border: "none",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                    fontSize: "16px",
-                  }}>
-                    Minimize Map
-                  </button></>)}        
+                  </button>
+                  </>) : (<>
+                    <button onClick={()=>{
+                      setDataWidth(6)
+                      setRoam(false)
+                    }} style={{
+                      backgroundColor: "#007bff",
+                      color: "white",
+                      padding: "5px 10px",
+                      border: "none",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                      fontSize: "16px",
+                    }}>
+                      Minimize Map
+                    </button>                    
+                  </>)}
+                  </div>
+                  {clickDaerah ? <><button onClick={()=>{
+                    resetRegionClick()
+                    }} style={{
+                      backgroundColor: "#007bff",
+                      color: "white",
+                      padding: "5px 10px",
+                      border: "none",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                      fontSize: "16px",
+                      marginBottom: "8px"
+                    }}>
+                      Nasional
+                    </button>
+                    </> : 
+                  <>
+                  </>}
+                  </div>
                   <MapIndoChart chartTitle={titleMap} roam={roam} maxValue={maxValueMap} colorData={['#B3E0E5', '#69D6E8', '#0092B3', '#1B8BA6']} onRegionClick={handleRegionClick} valueSeries={valueMap}/>
               {/* <PolygonMaps /> */}
             </CardBody>
@@ -1106,6 +1140,9 @@ const ContentDapodikV2 = () => {
         <Col md={dataWidth}>
           <Card className="card-height-100">
             <CardBody>
+                  <div className="d-flex justify-content-center align-items-center title-page">
+                    {clickDaerah ? clickNamaDaerah : "Nasional"}
+                  </div>
               <Row>
                 <Col>
                   <Card style={{cursor:"pointer"}} className="card-animate card-height-100" onClick={()=> {
