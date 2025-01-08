@@ -406,7 +406,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                             fontSize: "12px",
                           }}
                         >
-                          Provinsi
+                          Se-Provinsi
                         </span>
                       </div>
                       {/* <div
