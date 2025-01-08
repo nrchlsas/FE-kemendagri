@@ -116,10 +116,8 @@ const ContentDashboardAnalisis = () => {
           throw new Error("Network response was not ok");
         }
         const dataDashboardAnalisis = await response.json();
-        const totalAnggaran = parseFloat(
-          (dataDashboardAnalisis?.data?.data_dashboard?.rincian_belanja_total_belanja / dataDashboardAnalisis?.data?.data_dashboard_nasional?.total_belanja) * 100                       
-          )
-          console.log(dataDashboardAnalisis?.data?.data_dashboard?.rincian_belanja_total_belanja, dataDashboardAnalisis?.data?.data_dashboard_nasional?.total_belanja, 'ini dia')
+        const totalAnggaran = (dataDashboardAnalisis?.data?.data_dashboard?.rincian_belanja_total_belanja / dataDashboardAnalisis?.data?.data_dashboard_nasional?.total_belanja) * 100                       
+          
         setDataTotalAnggaran(totalAnggaran)
         setDataDashboardAnalisis(dataDashboardAnalisis?.data || []);
 

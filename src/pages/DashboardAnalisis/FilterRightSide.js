@@ -152,6 +152,31 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
     onSelectFilter(cleanedFilters);
   };
 
+  const handleRemoveName = (category, indexToRemove) => {
+    // Salin state untuk pembaruan
+    const updatedNames = { ...selectedNames };
+    const updatedValues = { ...selectedValues };
+  
+    // Hapus nama berdasarkan index
+    const removedName = updatedNames[category][indexToRemove];
+    updatedNames[category] = updatedNames[category].filter((_, index) => index !== indexToRemove);
+  
+    // Hapus nilai yang terkait dengan nama yang dihapus
+    updatedValues[category] = updatedValues[category].filter(
+      (_, index) => index !== indexToRemove
+    );
+  
+    // Perbarui state
+    setSelectedNames(updatedNames);
+    setSelectedValues(updatedValues);
+  
+    // Bersihkan payload sebelum dikirim ke parent
+    const cleanedFilters = cleanPayload(updatedValues);
+  
+    // Kirimkan payload ke parent
+    onSelectFilter(cleanedFilters);
+  };
+
   const [searchFilter, setSearchFilter] = useState(""); // State untuk menampung nilai input search
 
   // Fungsi untuk menangani perubahan pada input
@@ -453,21 +478,35 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {selectedNames["provinsi"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
-                          {selectedNames["provinsi"].map((name, index) => {
-                            return(<li key={index}  style={{
+                          {selectedNames["provinsi"].map((name, index) => 
+                            (
+                            <li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
                               whiteSpace: "nowrap", // Agar teks tidak membungkus
                               overflow: "hidden",   // Sembunyikan teks yang melebihi batas
                               textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
-                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
                             }}
                             title={name} // Tambahkan title untuk tooltip pada hover
-                            >
+                            > 
                               {name}
-                            </li>)
-                            
-                          })}
+                              <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('provinsi', index)} // Panggil fungsi untuk menghapus
+                            >
+                              &times;
+                            </button>
+                            </li>                            
+                          )
+                          )}
                         </ul>
                       ) : (
                         <p style={{ fontSize: "14px", color: "gray" }}>
