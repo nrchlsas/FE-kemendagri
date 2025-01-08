@@ -196,7 +196,7 @@ const handleFilterUpdate = (filters) => {
     }
     // Kirimkan request berdasarkan filter yang dipilih
     getDataDashboardAnalisis({
-        kodeDdn: cleanedFilters.provinsi,
+        kodeProv: cleanedFilters.provinsi,
         kodeDdn: cleanedFilters.daerah,
         namaDaerah: cleanedFilters.namaDaerah,
         kodeSkpd: cleanedFilters.skpd,
