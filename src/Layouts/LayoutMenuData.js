@@ -151,45 +151,45 @@ const Navdata = () => {
       },
     },
     //ini editan terbaru
-    {
-      id: "sipd",
-      label: "SIPD",
-      icon: "bx bx-sitemap",
-      link: "/#",
-      stateVariables: isDashboard,
-      click: function (e) {
-        e.preventDefault();
-        setIsDashboard(!isDashboard);
-        setIscurrentState("Dashboard");
-        updateIconSidebar(e);
-      },
-      subItems: [
-        {
-          id: "perencanaan",
-          label: "Perencanaan",
-          link: "/perencanaan",
-          parentId: "sipd",
-        },
-        {
-          id: "penganggaran",
-          label: "Penganggaran",
-          link: "/penganggaran",
-          parentId: "sipd",
-        },
-        {
-          id: "realisasi",
-          label: "Realisasi",
-          link: "/realisasi",
-          parentId: "sipd",
-        },
-        {
-          id: "dahboardAnalisis",
-          label: "Dashboard Analisis",
-          link: "/dashboard-analisis",
-          parentId: "sipd",
-        },
-      ],
-    },
+    // {
+    //   id: "sipd",
+    //   label: "SIPD",
+    //   icon: "bx bx-sitemap",
+    //   link: "/#",
+    //   stateVariables: isDashboard,
+    //   click: function (e) {
+    //     e.preventDefault();
+    //     setIsDashboard(!isDashboard);
+    //     setIscurrentState("Dashboard");
+    //     updateIconSidebar(e);
+    //   },
+    //   subItems: [
+    //     {
+    //       id: "perencanaan",
+    //       label: "Perencanaan",
+    //       link: "/perencanaan",
+    //       parentId: "sipd",
+    //     },
+    //     {
+    //       id: "penganggaran",
+    //       label: "Penganggaran",
+    //       link: "/penganggaran",
+    //       parentId: "sipd",
+    //     },
+    //     {
+    //       id: "realisasi",
+    //       label: "Realisasi",
+    //       link: "/realisasi",
+    //       parentId: "sipd",
+    //     },
+    //     {
+    //       id: "dahboardAnalisis",
+    //       label: "Dashboard Analisis",
+    //       link: "/dashboard-analisis",
+    //       parentId: "sipd",
+    //     },
+    //   ],
+    // },
     // {
     //   id: "sipd",
     //   label: "SIPD",
