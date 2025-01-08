@@ -490,7 +490,18 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                             }}
                             title={name} // Tambahkan title untuk tooltip pada hover
                             > 
-                              {name}
+                            <div className="d-flex justify-content-between align-items-center">
+                              <div style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}>
+                                {name}
+                              </div>                              
+                              
                               <button
                               style={{
                                 marginLeft: "10px",
@@ -504,6 +515,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                             >
                               &times;
                             </button>
+                            </div>                              
                             </li>                            
                           )
                           )}
@@ -618,11 +630,35 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                               whiteSpace: "nowrap", // Agar teks tidak membungkus
                               overflow: "hidden",   // Sembunyikan teks yang melebihi batas
                               textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
-                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
                             }}
                             title={name} // Tambahkan title untuk tooltip pada hover
+                            > 
+                            <div className="d-flex justify-content-between align-items-center">
+                              <div style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}>
+                                {name}
+                              </div>                              
+                              <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('daerah', index)} // Panggil fungsi untuk menghapus
                             >
-                              {name}
+                              &times;
+                            </button>
+                            </div>
                             </li>)
                             
                           })}
@@ -690,17 +726,42 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
                           {selectedNames["skpd"].map((name, index) => {
-                            return(<li key={index}  style={{
+                            return(
+                            <li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
                               whiteSpace: "nowrap", // Agar teks tidak membungkus
                               overflow: "hidden",   // Sembunyikan teks yang melebihi batas
                               textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
-                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
                             }}
                             title={name} // Tambahkan title untuk tooltip pada hover
                             >
-                              {name}
+                              <div className="d-flex justify-content-between align-items-center">
+                              <div style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}>
+                                {name}
+                              </div>
+                              <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('skpd', index)} // Panggil fungsi untuk menghapus
+                            >
+                              &times;
+                            </button>
+                              </div> 
                             </li>)
                             
                           })}
@@ -769,11 +830,35 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                               whiteSpace: "nowrap", // Agar teks tidak membungkus
                               overflow: "hidden",   // Sembunyikan teks yang melebihi batas
                               textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
-                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
                             }}
                             title={name} // Tambahkan title untuk tooltip pada hover
+                            > 
+                            <div className="d-flex justify-content-between align-items-center">
+                              <div style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}>
+                                {name}
+                              </div>
+                              <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('fungsi', index)} // Panggil fungsi untuk menghapus
                             >
-                              {name}
+                              &times;
+                            </button>
+                              </div> 
                             </li>)
                             
                           })}
@@ -842,13 +927,36 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                               whiteSpace: "nowrap", // Agar teks tidak membungkus
                               overflow: "hidden",   // Sembunyikan teks yang melebihi batas
                               textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
-                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
                             }}
                             title={name} // Tambahkan title untuk tooltip pada hover
+                            > 
+                            <div className="d-flex justify-content-between align-items-center">
+                              <div style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}>
+                                {name}
+                              </div>
+                              <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('spm', index)} // Panggil fungsi untuk menghapus
                             >
-                              {name}
+                              &times;
+                            </button>
+                              </div>
                             </li>)
-                            
                           })}
                         </ul>
                       ) : (
@@ -911,13 +1019,36 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                               whiteSpace: "nowrap", // Agar teks tidak membungkus
                               overflow: "hidden",   // Sembunyikan teks yang melebihi batas
                               textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
-                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
                             }}
                             title={name} // Tambahkan title untuk tooltip pada hover
+                            > 
+                            <div className="d-flex justify-content-between align-items-center">
+                              <div style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}>
+                                {name}
+                              </div>
+                              <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('urusan', index)} // Panggil fungsi untuk menghapus
                             >
-                              {name}
+                              &times;
+                            </button>
+                              </div>
                             </li>)
-                            
                           })}
                         </ul>
                       ) : (
@@ -984,13 +1115,35 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                               whiteSpace: "nowrap", // Agar teks tidak membungkus
                               overflow: "hidden",   // Sembunyikan teks yang melebihi batas
                               textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
-                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
                             }}
                             title={name} // Tambahkan title untuk tooltip pada hover
-                            >
+                            > <div className="d-flex justify-content-between align-items-center">
+                            <div style={{
+                            fontSize: "14px",
+                            color: "green",
+                            whiteSpace: "nowrap", // Agar teks tidak membungkus
+                            overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                            textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                            width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                          }}>
                               {name}
+                            </div>
+                            <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('bidangUrusan', index)} // Panggil fungsi untuk menghapus
+                            >
+                              &times;
+                            </button>
+                            </div>
                             </li>)
-                            
                           })}
                         </ul>
                       ) : (
@@ -1058,11 +1211,35 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                               whiteSpace: "nowrap", // Agar teks tidak membungkus
                               overflow: "hidden",   // Sembunyikan teks yang melebihi batas
                               textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
-                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
                             }}
                             title={name} // Tambahkan title untuk tooltip pada hover
-                            >
+                            > 
+                              <div className="d-flex justify-content-between align-items-center">
+                            <div style={{
+                            fontSize: "14px",
+                            color: "green",
+                            whiteSpace: "nowrap", // Agar teks tidak membungkus
+                            overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                            textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                            width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                          }}>
                               {name}
+                            </div>
+                            <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('program', index)} // Panggil fungsi untuk menghapus
+                            >
+                              &times;
+                            </button>
+                            </div>
                             </li>)
                             
                           })}
@@ -1142,13 +1319,36 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                               whiteSpace: "nowrap", // Agar teks tidak membungkus
                               overflow: "hidden",   // Sembunyikan teks yang melebihi batas
                               textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
-                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
                             }}
                             title={name} // Tambahkan title untuk tooltip pada hover
-                            >
+                            > 
+                            <div className="d-flex justify-content-between align-items-center">
+                            <div style={{
+                            fontSize: "14px",
+                            color: "green",
+                            whiteSpace: "nowrap", // Agar teks tidak membungkus
+                            overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                            textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                            width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                          }}>
                               {name}
+                            </div>
+                            <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('kegiatan', index)} // Panggil fungsi untuk menghapus
+                            >
+                              &times;
+                            </button>
+                            </div>
                             </li>)
-                            
                           })}
                         </ul>
                       ) : (
@@ -1219,13 +1419,36 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                               whiteSpace: "nowrap", // Agar teks tidak membungkus
                               overflow: "hidden",   // Sembunyikan teks yang melebihi batas
                               textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
-                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
                             }}
                             title={name} // Tambahkan title untuk tooltip pada hover
-                            >
+                            > 
+                              <div className="d-flex justify-content-between align-items-center">
+                            <div style={{
+                            fontSize: "14px",
+                            color: "green",
+                            whiteSpace: "nowrap", // Agar teks tidak membungkus
+                            overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                            textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                            width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                          }}>
                               {name}
+                            </div>
+                            <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('subKegiatan', index)} // Panggil fungsi untuk menghapus
+                            >
+                              &times;
+                            </button>
+                            </div>
                             </li>)
-                            
                           })}
                         </ul>
                       ) : (
@@ -1298,11 +1521,35 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                               whiteSpace: "nowrap", // Agar teks tidak membungkus
                               overflow: "hidden",   // Sembunyikan teks yang melebihi batas
                               textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
-                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
                             }}
                             title={name} // Tambahkan title untuk tooltip pada hover
-                            >
+                            > 
+                               <div className="d-flex justify-content-between align-items-center">
+                            <div style={{
+                            fontSize: "14px",
+                            color: "green",
+                            whiteSpace: "nowrap", // Agar teks tidak membungkus
+                            overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                            textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                            width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                          }}>
                               {name}
+                            </div>
+                            <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('objek', index)} // Panggil fungsi untuk menghapus
+                            >
+                              &times;
+                            </button>
+                            </div>
                             </li>)
                             
                           })}
@@ -1373,11 +1620,36 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                               whiteSpace: "nowrap", // Agar teks tidak membungkus
                               overflow: "hidden",   // Sembunyikan teks yang melebihi batas
                               textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
-                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
                             }}
                             title={name} // Tambahkan title untuk tooltip pada hover
-                            >
+                            > 
+                              <div className="d-flex justify-content-between align-items-center">
+                            <div style={{
+                            fontSize: "14px",
+                            color: "green",
+                            whiteSpace: "nowrap", // Agar teks tidak membungkus
+                            overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                            textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                            width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                          }}>
                               {name}
+                            </div>
+                            <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('rincianObjek', index)} // Panggil fungsi untuk menghapus
+                            >
+                              &times;
+                            </button>
+                            </div>
+                              
                             </li>)
                             
                           })}
@@ -1453,11 +1725,36 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                               whiteSpace: "nowrap", // Agar teks tidak membungkus
                               overflow: "hidden",   // Sembunyikan teks yang melebihi batas
                               textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
-                              width: "200px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
                             }}
                             title={name} // Tambahkan title untuk tooltip pada hover
-                            >
+                            > 
+                             <div className="d-flex justify-content-between align-items-center">
+                            <div style={{
+                            fontSize: "14px",
+                            color: "green",
+                            whiteSpace: "nowrap", // Agar teks tidak membungkus
+                            overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                            textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                            width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                          }}>
                               {name}
+                            </div>
+                            <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('subRincianObjek', index)} // Panggil fungsi untuk menghapus
+                            >
+                              &times;
+                            </button>
+                            </div>
+                              
                             </li>)
                             
                           })}
