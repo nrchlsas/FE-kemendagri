@@ -257,7 +257,7 @@ const ContentMiskinEkstremV2 = () => {
 
   const [dataPieChartSpm, setDataPieChartSpm] = useState([],[])
 
-  const getDataKemiskinanEkstrem = (tahun="") => {
+  const getDataKemiskinanEkstrem = (tahun="2024") => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))

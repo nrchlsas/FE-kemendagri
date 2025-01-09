@@ -413,7 +413,7 @@ const ContentDapodikV2 = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_wilayah: kodeWilayah,
-            // tahun: "2024"
+            tahun: "2024"
         }),
         };
         
