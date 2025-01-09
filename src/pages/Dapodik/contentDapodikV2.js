@@ -29,7 +29,7 @@ import logoKemendikbud from "../../assets/images/logo-kemendagri/logo-kemendikbu
 import "./dapodik.scss";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
-const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 
 const ContentDapodikV2 = () => {
   const [customActiveTab, setcustomActiveTab] = useState("2");
@@ -103,122 +103,104 @@ const ContentDapodikV2 = () => {
   ] = useState([[], []]);
 
   const [dataSdMap, setDataSdMap] = useState([])
-  const getDataDapodik = () => {
+  const getDataDapodik = ({kodeDdn="", tahun="2024"}) => {
     const fetchData = async () => {
-      try {
-        const token = JSON.parse(sessionStorage.getItem("authUser"))           
-        const requestOptions = {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
-          // body: JSON.stringify({
-          //   query:
-          //     "select sum(total_rincian)/1000000000000 TotalPembiayaanK from konsolidasi_apbd where kode_kelompok = '6.2'",
-          // }),
-        };
-        const response = await fetch(
-          `${API_URI_RBAC}/dashboard_dapodik`,
-          requestOptions
-        );
+        try {
+            const token = JSON.parse(sessionStorage.getItem("authUser"));
+            const requestOptions = {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+                body: JSON.stringify({
+                    kode_ddn: kodeDdn,
+                    tahun: tahun
+                }),
+            };
+            const response = await fetch(`${API_URI_RBAC}/v2/dashboard_dapodik`, requestOptions);
 
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+
+            const dataDapodik = await response.json();
+            setDataDapodik(dataDapodik?.data);
+
+            try {
+                const mappedDataSd = Object.values(dataDapodik.data.dapodik_do_sd).filter((value) => typeof value === "number");
+                const totalValueSd = [mappedDataSd, mappedDataSd.reduce((accumulator, value) => accumulator + value, 0)];
+                setDataDropOutSd(totalValueSd);
+            } catch (error) {
+                console.error("Error processing data for SD:", error);
+            }
+
+            try {
+                const mappedDataSmp = Object.values(dataDapodik.data.dapodik_do_smp).filter((value) => typeof value === "number");
+                const totalValueSmp = [mappedDataSmp, mappedDataSmp.reduce((accumulator, value) => accumulator + value, 0)];
+                setDataDropOutSmp(totalValueSmp);
+            } catch (error) {
+                console.error("Error processing data for SMP:", error);
+            }
+
+            try {
+                const mappedDataSma = Object.values(dataDapodik.data.dapodik_do_sma).filter((value) => typeof value === "number");
+                const totalValueSma = [mappedDataSma, mappedDataSma.reduce((accumulator, value) => accumulator + value, 0)];
+                setDataDropOutSma(totalValueSma);
+            } catch (error) {
+                console.error("Error processing data for SMA:", error);
+            }
+
+            try {
+                const mappedDataByUsia = Object.values(dataDapodik.data.dapodik_jumlah_belum_pernah_sekolah_by_usia).filter((value) => typeof value === "number");
+                setDataBelumPernahSekolahByUsia(mappedDataByUsia);
+            } catch (error) {
+                console.error("Error processing data by usia:", error);
+            }
+
+            try {
+                const mappedDataAts = Object.values(dataDapodik.data.dapodik_compare_ats_tidak_lanjut).filter((value) => typeof value === "number");
+                setDataChartAts(mappedDataAts);
+            } catch (error) {
+                console.error("Error processing ATS data:", error);
+            }
+
+            try {
+                const resultChartRincianDapodikProvinsi = dataDapodik.data.cross_analisis_ats_provinsi.reduce((acc, item) => {
+                    acc[0].push(item.nama_daerah);
+                    acc[1].push(item.persenats);
+                    acc[2].push(item.persenblj);
+                    acc[3].push(item.total_rincianall);
+                    acc[4].push(item.total_rincianursbid);
+                    return acc;
+                }, [[], [], [], [], []]);
+
+                setDataChartRincianDapodikProvinsi(resultChartRincianDapodikProvinsi);
+            } catch (error) {
+                console.error("Error processing chart data for provinsi:", error);
+            }
+
+            try {
+                const resultChartRincianDapodikKabupaten = dataDapodik.data.cross_analisis_ats_kabkota.reduce((acc, item) => {
+                    acc[0].push(item.nama_daerah);
+                    acc[1].push(item.persenats);
+                    acc[2].push(item.persenblj);
+                    acc[3].push(item.total_rincianall);
+                    acc[4].push(item.total_rincianursbid);
+                    return acc;
+                }, [[], [], [], [], []]);
+
+                setDataChartRincianDapodikKabupaten(resultChartRincianDapodikKabupaten);
+            } catch (error) {
+                console.error("Error processing chart data for kabupaten:", error);
+            }
+        } catch (errorDapodik) {
+            setErrorDapodik(errorDapodik);
+        } finally {
+            setLoadingDapodik(false);
         }
-
-        const dataDapodik = await response.json();
-
-        setDataDapodik(dataDapodik.data);
-        // const mappedDataPaud = Object.values(dataDapodik.data.dapodik_do_paud).filter(value => typeof value === 'number');
-
-        const mappedDataSd = Object.values(
-          dataDapodik.data.dapodik_do_sd
-        ).filter((value) => typeof value === "number");
-
-        const totalValueSd = [mappedDataSd, mappedDataSd.reduce((accumulator, value) => accumulator + value, 0)];
-        setDataDropOutSd(totalValueSd);
-
-        const mappedDataSmp = Object.values(
-          dataDapodik.data.dapodik_do_smp
-        ).filter((value) => typeof value === "number");
-        const totalValueSmp = [mappedDataSmp, mappedDataSmp.reduce((accumulator, value) => accumulator + value, 0)];
-        setDataDropOutSmp(totalValueSmp);
-
-
-        const mappedDataSma = Object.values(
-          dataDapodik.data.dapodik_do_sma
-        ).filter((value) => typeof value === "number");
-        const totalValueSma = [mappedDataSma, mappedDataSma.reduce((accumulator, value) => accumulator + value, 0)];
-        setDataDropOutSma(totalValueSma);
-
-
-        const mappedDataByUsia = Object.values(
-          dataDapodik.data.dapodik_jumlah_belum_pernah_sekolah_by_usia
-        ).filter((value) => typeof value === "number");
-        setDataBelumPernahSekolahByUsia(mappedDataByUsia);
-
-        const mappedDataAts = Object.values(
-          dataDapodik.data.dapodik_compare_ats_tidak_lanjut
-        ).filter((value) => typeof value === "number");
-        setDataChartAts(mappedDataAts);
-
-        const totalJumlahSiswa =
-          dataDapodik.data.dapodik_jumlah_anak_sekolah.reduce(
-            (acc, item) => acc + item.jumlah_siswa,
-            0
-          );        
-        setDataTotalTkSdSmpSma(totalJumlahSiswa);
-
-        // setDataDropOutPaud(mappedDataPaud);
-
-        const resultChartRincianDapodik =
-          dataDapodik.data.cross_analisis_ats_seprovinsi.reduce(
-            (acc, item) => {
-              acc[0].push(item.nama_daerah);
-              acc[1].push(item.persenats);
-              acc[2].push(item.persenblj);
-              acc[3].push(item.total_rincianall);
-              acc[4].push(item.total_rincianursbid);
-              return acc;
-            },
-            [[], [], [], [], []]
-          );
-
-        setDataChartRincianDapodik(resultChartRincianDapodik);
-
-        const resultChartRincianDapodikProvinsi =
-          dataDapodik.data.cross_analisis_ats_provinsi.reduce(
-            (acc, item) => {
-              acc[0].push(item.nama_daerah);
-              acc[1].push(item.persenats);
-              acc[2].push(item.persenblj);
-              acc[3].push(item.total_rincianall);
-              acc[4].push(item.total_rincianursbid);
-              return acc;
-            },
-            [[], [], [], [], []]
-          );
-        setDataChartRincianDapodikProvinsi(resultChartRincianDapodikProvinsi);
-
-        const resultChartRincianDapodikKabupaten =
-          dataDapodik.data.cross_analisis_ats_kabkota.reduce(
-            (acc, item) => {
-              acc[0].push(item.nama_daerah);
-              acc[1].push(item.persenats);
-              acc[2].push(item.persenblj);
-              acc[3].push(item.total_rincianall);
-              acc[4].push(item.total_rincianursbid);
-              return acc;
-            },
-            [[], [], [], [], []]
-          );
-        setDataChartRincianDapodikKabupaten(resultChartRincianDapodikKabupaten);
-      } catch (errorDapodik) {
-        setErrorDapodik(errorDapodik);
-      } finally {
-        setLoadingDapodik(false);
-      }
     };
+
     fetchData();
-  };
+};
+
 
   const [titleMap, setTitleMap] = useState("Total Anak Sekolah")
   const [valueMap, setValueMap] = useState([]);
@@ -241,7 +223,7 @@ const ContentDapodikV2 = () => {
         // /table_dapodik_kabupaten
         // /table_stunting_provinsi
         const response = await fetch(
-          `${API_URI_RBAC}/tabel_dapodik_seprovinsi`,
+          `${API_URI_RBAC}/v2/tabel_dapodik_seprovinsi`,
           requestOptions
         );
 
@@ -354,7 +336,7 @@ const ContentDapodikV2 = () => {
         // /table_dapodik_kabupaten
         // /table_stunting_provinsi
         const response = await fetch(
-          `${API_URI_RBAC}/tabel_dapodik_kabupaten`,
+          `${API_URI_RBAC}/v2/tabel_dapodik_kabupaten`,
           requestOptions
         );
 
@@ -365,6 +347,90 @@ const ContentDapodikV2 = () => {
         const dataDapodikTabelKabupaten = await response.json();
 
         setDataDapodikTabelKabupaten(dataDapodikTabelKabupaten?.data);
+      } catch (errorDapodikTabel) {
+        setErrorDapodikTabel(errorDapodikTabel);
+      } finally {
+        setLoadingDapodikTabel(false);
+      }
+    };
+    fetchData();
+  };
+  
+  const getDataCrossAnalisis = () => {
+    const fetchData = async () => {
+      try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+          // body: JSON.stringify({
+          //   // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
+          // }),
+        };
+        
+        const response = await fetch(
+          `${API_URI_RBAC}/v2/dashboard_dapodik_cross_analisis_ats_seprovinsi`,
+          requestOptions
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const dataDapodikCrossAnalisis = await response.json();
+
+        const resultChartRincianDapodik =
+        dataDapodikCrossAnalisis.data.reduce(
+            (acc, item) => {
+              acc[0].push(item.nama_daerah);
+              acc[1].push(item.persenats);
+              acc[2].push(item.persenblj);
+              acc[3].push(item.total_rincianall);
+              acc[4].push(item.total_rincianursbid);
+              return acc;
+            },
+            [[], [], [], [], []]
+          );
+
+        setDataChartRincianDapodik(resultChartRincianDapodik);
+
+      } catch (errorDapodikTabel) {
+        setErrorDapodikTabel(errorDapodikTabel);
+      } finally {
+        setLoadingDapodikTabel(false);
+      }
+    };
+    fetchData();
+  };
+
+  const [dataDapodikJumlahAnakSekolah, setDataDapodikJumlahAnakSekolah] = useState([])
+  const getDataAnakSekolah = ({kodeWilayah}) => {
+    const fetchData = async () => {
+      try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+          body: JSON.stringify({
+            kode_wilayah: kodeWilayah,
+            // tahun: "2024"
+        }),
+        };
+        
+        const response = await fetch(
+          `${API_URI_RBAC}/v2/dashboard_dapodik_jumlah_anak_sekolah`,
+          requestOptions
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const dataDapodikJumlahAnakSekolah = await response.json();
+        setDataDapodikJumlahAnakSekolah(dataDapodikJumlahAnakSekolah?.data)
+        const totalJumlahSiswa = dataDapodikJumlahAnakSekolah.data.reduce((acc, item) => acc + item.jumlah_siswa, 0);
+        setDataTotalTkSdSmpSma(totalJumlahSiswa);
+
       } catch (errorDapodikTabel) {
         setErrorDapodikTabel(errorDapodikTabel);
       } finally {
@@ -389,7 +455,7 @@ const ContentDapodikV2 = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/tabel_dapodik_provinsi`,
+          `${API_URI_RBAC}/v2/tabel_dapodik_provinsi`,
           requestOptions
         );
 
@@ -430,7 +496,7 @@ const ContentDapodikV2 = () => {
         // /table_dapodik_kabupaten
         // /table_stunting_provinsi
         const response = await fetch(
-          `${API_URI_RBAC}/tabel_dapodik_provinsi_detail`,
+          `${API_URI_RBAC}/v2/tabel_dapodik_provinsi_detail`,
           requestOptions
         );
 
@@ -486,7 +552,7 @@ const ContentDapodikV2 = () => {
         };
 
         const response = await fetch(
-          `${API_URI_RBAC}/detail-tabel-dapodik`,
+          `${API_URI_RBAC}/v2/detail-tabel-dapodik`,
           requestOptions
         );
 
@@ -544,10 +610,12 @@ const ContentDapodikV2 = () => {
   };
 
   useEffect(() => {
-    getDataDapodik();
+    getDataDapodik({kodeDdn: "", tahun: "2024"});
+    getDataAnakSekolah({kodeWilayah: ""});
     getDataTabelDapodikSeProv();
     getDataTabelDapodikProv();
     getDataTabelDapodikKab();
+    getDataCrossAnalisis();
   }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -930,7 +998,7 @@ const ContentDapodikV2 = () => {
         };
 
         const response = await fetch(
-          `${API_URI_RBAC}${url}`,
+          `${API_URI_RBAC}/v2/${url}`,
           requestOptions
         );
 
@@ -974,6 +1042,22 @@ const ContentDapodikV2 = () => {
     }  
   };
 
+  
+  const [clickDaerah, setClickDaerah] = useState(false)
+  const [clickNamaDaerah, setClickNamaDaerah] = useState("")
+  const handleRegionClick = (kodeProv, namaProv) => {
+    getDataDapodik({kodeDdn: kodeProv})
+    getDataAnakSekolah({kodeWilayah: kodeProv})
+    setClickNamaDaerah(namaProv)
+    setClickDaerah(true)
+  };
+
+  const resetRegionClick = () => {
+    getDataDapodik({kodeDdn: "", tahun: "2024"});
+    getDataAnakSekolah({kodeWilayah: ""});
+    setClickDaerah(false)
+  }
+
   return (
     <React.Fragment>
       <Row>
@@ -996,7 +1080,10 @@ const ContentDapodikV2 = () => {
         <Col md={dataWidth}>        
           <Card className="card-height-100">
             <CardBody>
-              {dataWidth==6 ? (<><button onClick={()=>{
+            <div className="d-flex justify-content-between mb-2">
+            <div className="d-flex justify-content-center align-items-center">
+              {dataWidth==6 ? (<>
+                  <button onClick={()=>{
                   setDataWidth(12)
                   setRoam(true)
                   }} style={{
@@ -1009,21 +1096,43 @@ const ContentDapodikV2 = () => {
                     fontSize: "16px",
                   }}>
                     Maximize Map
-                  </button></>) : (<><button onClick={()=>{
-                    setDataWidth(6)
-                    setRoam(false)
-                  }} style={{
-                    backgroundColor: "#007bff",
-                    color: "white",
-                    padding: "5px 10px",
-                    border: "none",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                    fontSize: "16px",
-                  }}>
-                    Minimize Map
-                  </button></>)}        
-                  <MapIndoChart chartTitle={titleMap} roam={roam} maxValue={maxValueMap} colorData={['#B3E0E5', '#69D6E8', '#0092B3', '#1B8BA6']} valueSeries={valueMap}/>
+                  </button>
+                  </>) : (<>
+                    <button onClick={()=>{
+                      setDataWidth(6)
+                      setRoam(false)
+                    }} style={{
+                      backgroundColor: "#007bff",
+                      color: "white",
+                      padding: "5px 10px",
+                      border: "none",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                      fontSize: "16px",
+                    }}>
+                      Minimize Map
+                    </button>                    
+                  </>)}
+                  </div>
+                  {clickDaerah ? <><button onClick={()=>{
+                    resetRegionClick()
+                    }} style={{
+                      backgroundColor: "#007bff",
+                      color: "white",
+                      padding: "5px 10px",
+                      border: "none",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                      fontSize: "16px",
+                      marginBottom: "8px"
+                    }}>
+                      Nasional
+                    </button>
+                    </> : 
+                  <>
+                  </>}
+                  </div>
+                  <MapIndoChart chartTitle={titleMap} roam={roam} maxValue={maxValueMap} colorData={['#B3E0E5', '#69D6E8', '#0092B3', '#1B8BA6']} onRegionClick={handleRegionClick} valueSeries={valueMap}/>
               {/* <PolygonMaps /> */}
             </CardBody>
           </Card>
@@ -1031,6 +1140,9 @@ const ContentDapodikV2 = () => {
         <Col md={dataWidth}>
           <Card className="card-height-100">
             <CardBody>
+                  <div className="d-flex justify-content-center align-items-center title-page">
+                    {clickDaerah ? clickNamaDaerah : "Nasional"}
+                  </div>
               <Row>
                 <Col>
                   <Card style={{cursor:"pointer"}} className="card-animate card-height-100" onClick={()=> {
@@ -1104,7 +1216,7 @@ const ContentDapodikV2 = () => {
                 {/* </Col> */}
               </Row>
               <Row>
-                {dataDapodik?.dapodik_jumlah_anak_sekolah
+                {dataDapodikJumlahAnakSekolah
                   ?.slice(0, 2)
                   .map((item, index) => (
                     <Col md={6} key={`first-${index}`}>
@@ -1149,7 +1261,7 @@ const ContentDapodikV2 = () => {
                   ))}
               </Row>
               <Row>
-                {dataDapodik?.dapodik_jumlah_anak_sekolah
+                {dataDapodikJumlahAnakSekolah
                   ?.slice(2, 4)
                   .reverse()
                   .map((item, index) => (

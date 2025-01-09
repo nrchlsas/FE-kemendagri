@@ -19,7 +19,7 @@ import CountUp from "react-countup";
 import KementerianDanLembaga from ".";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
-const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 
 const ContentKementerianDanLembaga = () => {
   const [dataKementerianDanLembaga, setDataKementerianDanLembaga] = useState(
@@ -127,7 +127,7 @@ const ContentKementerianDanLembaga = () => {
         };
 
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_monitoring_integrasi_kl`,
+          `${API_URI_RBAC}/v2/dashboard_monitoring_integrasi_kl`,
           requestOptions
         );
 
@@ -164,7 +164,7 @@ const ContentKementerianDanLembaga = () => {
         };
 
         const response = await fetch(
-          `${API_URI_RBAC}/tabel-monitoring-kl`,
+          `${API_URI_RBAC}/v2/tabel-monitoring-kl`,
           requestOptions
         );
 

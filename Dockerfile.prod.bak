@@ -5,19 +5,19 @@ WORKDIR /app
 
 # Cache and Install dependencies
 #COPY /public/ /app/public
-COPY package.json ./
-COPY yarn.lock ./
+COPY /package.json /app
+COPY /yarn.lock /app
 #COPY /.env /app
 RUN yarn install
-# COPY . .
-# RUN yarn run build
+COPY . /app
 COPY /build /app/build
 # Copy app files
-COPY . .
+#COPY . .
+
 
 FROM nginx:latest
 EXPOSE 80
-COPY /nginx-dev2.conf /etc/nginx/conf.d/default.conf
+COPY /nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/build /usr/share/nginx/html
 
 # Start the app

@@ -8,7 +8,7 @@ WORKDIR /app
 COPY /public/ /app/public
 COPY /src/ /app/src
 COPY /package.json /app
-COPY /.env /ap
+COPY /.env /app
 RUN yarn install
 
 # Copy app files

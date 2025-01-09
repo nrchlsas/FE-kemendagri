@@ -16,17 +16,10 @@ import {
   ModalBody,
   CardHeader,
 } from "reactstrap";
-import classnames from "classnames";
-import PolygonMaps from "../../Components/MapIndo/PolygonMaps";
 import VerticalBarChart from "../../Components/Chart/VerticalBarChart";
-import Pagination from "../../Components/Pagination/Pagination";
-import HorizontalBarChart from "../../Components/Chart/HorizontalBarChart";
 import CountUp from "react-countup";
-import BarWithPercentage from "../../Components/Chart/BarWithPercentage";
 import PieChartNew from "../../Components/Chart/PieChart";
-import logoKemenkoPmk from "../../assets/images/logo-kemendagri/logo-kemenko-pmk.png";
 import "./../Dapodik/dapodik.scss";
-import { useNavigate } from "react-router-dom";
 import FilterRightSide from "./FilterRightSide";
 import SimpleBar from "simplebar-react";
 // import DashboardAnalisisRightSide from "./DashboardAnalisisRightSide";
@@ -45,13 +38,16 @@ const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
 const ContentDashboardAnalisis = () => {
   const [dataDashboardAnalisis, setDataDashboardAnalisis] = useState([]);
   const [errorDataDashboardAnalisis, setErrorDataDashboardAnalisis] = useState([]);
-  const [loadingDataDashboardAnalisis, setLoadingDataDashboardAnalisis] = useState([]);
+  const [loadingDataDashboardAnalisis, setLoadingDataDashboardAnalisis] = useState(false);
   const [totalSumberDana, setTotalSumberDana] = useState(0)
   const [showGrafikSumberDana, setShowGrafikSumberDana] = useState(false)
   const [dataChartSumberDana, setDataChartSumberDana] = useState([],[])
-
+  const [dataTotalAnggaran, setDataTotalAnggaran] = useState(0)
+  const [executeDate, setExcecuteDate] = useState('')
+  const [persentase, setPersentase] = useState(0)
   const getDataDashboardAnalisis = ({
     kodeDdn,
+    kodeProv,
     namaDaerah,
     kodeFungsi,
     namaFungsi,
@@ -77,6 +73,7 @@ const ContentDashboardAnalisis = () => {
     namaSro
   }) => {
     const fetchData = async () => {
+      setLoadingDataDashboardAnalisis(true);
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
@@ -85,6 +82,7 @@ const ContentDashboardAnalisis = () => {
           body: JSON.stringify({
             kode_ddn: kodeDdn,
             nama_daerah: namaDaerah,
+            kode_prov: kodeProv,
             kode_fungsi: kodeFungsi,
             nama_fungsi: namaFungsi,
             id_spm: idSpm,
@@ -118,7 +116,19 @@ const ContentDashboardAnalisis = () => {
           throw new Error("Network response was not ok");
         }
         const dataDashboardAnalisis = await response.json();
+        const totalAnggaran = (dataDashboardAnalisis?.data?.data_dashboard?.rincian_belanja_total_belanja / dataDashboardAnalisis?.data?.data_dashboard_nasional?.total_belanja) * 100                       
+          
+        setDataTotalAnggaran(totalAnggaran)
         setDataDashboardAnalisis(dataDashboardAnalisis?.data || []);
+
+        const date = new Date(dataDashboardAnalisis?.data?.data_dashboard?.terakhir_update);        
+        const formatter = new Intl.DateTimeFormat('id-ID', { month: 'long' });
+        const month = formatter.format(date); // Mendapatkan nama bulan dalam bahasa Indonesia
+        const day = String(date.getDate()).padStart(2, '0');
+        const year = date.getFullYear();
+        const formattedDate = `${day} ${month} ${year}`;
+        setExcecuteDate(formattedDate)
+
         const totalSum = dataDashboardAnalisis?.data?.data_dashboard?.by_nama_dana?.reduce((sum, item) => sum + item.total_sumber_dana, 0);     
         setTotalSumberDana(totalSum)
 
@@ -138,6 +148,18 @@ const ContentDashboardAnalisis = () => {
     fetchData();
   };
 
+  const formatAnggaran = (value) => {
+    // Pastikan value dalam bentuk angka
+    const parsedValue = parseFloat(value);
+    
+    // Tentukan jumlah angka di belakang koma
+    if (parsedValue >= 0.01) {
+      return parsedValue.toFixed(2); // 2 angka di belakang koma
+    } else {
+      return parsedValue.toFixed(7); // 7 angka di belakang koma
+    }
+  };
+
   useEffect(() => {
     getDataDashboardAnalisis({});
   }, []);
@@ -146,6 +168,7 @@ const ContentDashboardAnalisis = () => {
     daerah: [],
     namaDaerah: "",
     skpd:[],
+    provinsi: [],
     fungsi: [],
     spm: [],
     urusan: [],
@@ -156,7 +179,7 @@ const ContentDashboardAnalisis = () => {
     objek: [],
     rincianObjek: [],
     subRincianObjek: [],
-});
+  });
 
 const cleanPayload = (payload) => {
     return Object.fromEntries(
@@ -176,6 +199,7 @@ const handleFilterUpdate = (filters) => {
     }
     // Kirimkan request berdasarkan filter yang dipilih
     getDataDashboardAnalisis({
+        kodeProv: cleanedFilters.provinsi,
         kodeDdn: cleanedFilters.daerah,
         namaDaerah: cleanedFilters.namaDaerah,
         kodeSkpd: cleanedFilters.skpd,
@@ -225,7 +249,7 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                 }}
               >
                 <span>
-                  Terakhir diperbarui: Sabtu, 14 September 2024, Pukul 12:30
+                  Terakhir diperbarui: {executeDate}
                 </span>
               </div>
             </div>
@@ -567,13 +591,11 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                                         duration={1}
                                       />
                                       <span className="mx-3" style={{color: "green", fontSize:"16px"}}>
-                                      (<CountUp
+                                      ({dataTotalAnggaran >= 1 ? <>
+                                        <CountUp
                                       start={0}
                                       end={
-                                        parseFloat(
-                                          (dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_belanja / 
-                                          dataDashboardAnalisis?.data_dashboard_nasional?.total_belanja) * 100
-                                        ).toFixed(5)
+                                        dataTotalAnggaran
                                       }
                                       separator="."
                                       prefix=""
@@ -581,7 +603,20 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                                       suffix="%"
                                       decimals={2} // Menentukan jumlah angka di belakang koma
                                       duration={1}
-                                    />)
+                                    />
+                                      </> : <> 
+                                      <CountUp
+                                      start={0}
+                                      end={
+                                        dataTotalAnggaran
+                                      }
+                                      separator="."
+                                      prefix=""
+                                      decimal=","
+                                      suffix="%"
+                                      decimals={7} // Menentukan jumlah angka di belakang koma
+                                      duration={1}
+                                    /></>})
                                       </span>
                                     </div>                
                                   </div> 
@@ -593,7 +628,6 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
               </Row>
         </Col>
       </Row>
-      
       <Row>
       <Col md={4}>
               <Card data-aos="flip-right" className="card-height-100">
@@ -719,10 +753,10 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                 </Col></>) : (<>
                 <Col md={10}>
                   <div className="d-flex mb-1 px-2" style={{ fontSize: "22px" }}>
-                    <span>Total Sumber Dana : <span style={{fontWeight:600}}>{totalSumberDana ? `Rp ${totalSumberDana.toLocaleString('id-ID')}` : '-'}</span></span>
+                    <span>Total Sumber Dana : <span style={{fontWeight:600}}>{totalSumberDana ? `Rp ${totalSumberDana?.toLocaleString('id-ID')}` : '-'}</span></span>
                   </div>
                   <SimpleBar style={{ maxHeight: "260px", }} className="d-flex p-2">
-                  {dataDashboardAnalisis?.data_dashboard?.by_nama_dana.map((item, index) => ( 
+                  {dataDashboardAnalisis?.data_dashboard?.by_nama_dana?.map((item, index) => ( 
                       <div key={index}>
                         <ul>
                           <li>
@@ -733,7 +767,7 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                               <div
                                 style={{ fontSize: "16px", fontWeight: 600 }}
                               >
-                                {item.total_sumber_dana ? `Rp ${item.total_sumber_dana.toLocaleString('id-ID')}` : `-`}
+                                {item.total_sumber_dana ? `Rp ${item.total_sumber_dana?.toLocaleString('id-ID')}` : `-`}
                               </div>
                             </div>
                           </li>
@@ -819,9 +853,9 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                           </span>
                         </div>
                       </td>
-                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_operasi ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_operasi.toLocaleString('id-ID')}` : `-`}</td>
+                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_operasi ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_operasi?.toLocaleString('id-ID')}` : `-`}</td>
                       <td>
-                        <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_percentage_anggaran_operasi.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
+                        <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_percentage_anggaran_operasi?.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
                       </td>
                   </tr>     
                   <tr>
@@ -842,9 +876,9 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                           </span>
                         </div>
                       </td>
-                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_modal ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_modal.toLocaleString('id-ID')}` : `-`}</td>
+                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_modal ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_modal?.toLocaleString('id-ID')}` : `-`}</td>
                       <td>
-                        <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_percentage_anggaran_modal.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
+                        <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_percentage_anggaran_modal?.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
                       </td>
                   </tr>     
                   <tr>
@@ -865,9 +899,9 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                           </span>
                         </div>
                       </td>
-                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_transfer_belanja ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_transfer_belanja.toLocaleString('id-ID')}` : `-`}</td>
+                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_transfer_belanja ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_transfer_belanja?.toLocaleString('id-ID')}` : `-`}</td>
                       <td>
-                        <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_percentage_anggaran_transfer_belanja.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
+                        <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_percentage_anggaran_transfer_belanja?.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
                       </td>
                   </tr>     
                   <tr>
@@ -888,16 +922,16 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                           </span>
                         </div>
                       </td>
-                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_tidak_terduga ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_tidak_terduga.toLocaleString('id-ID')}` : `-`}</td>
+                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_tidak_terduga ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_tidak_terduga?.toLocaleString('id-ID')}` : `-`}</td>
                       <td>
-                        <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_percentage_anggaran_tidak_terduga.toFixed(2).toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
+                        <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_percentage_anggaran_tidak_terduga?.toFixed(2).toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
                       </td>
                   </tr>     
 
                   <tr>                    
                     <td className="border-bottom-0">Total Belanja</td>
                     <td className="border-bottom-0" style={{ fontWeight: 600 }}>
-                      {dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_belanja ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_belanja.toLocaleString('id-ID')}` : `-`}
+                      {dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_belanja ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_belanja_total_belanja?.toLocaleString('id-ID')}` : `-`}
                     </td>
                   </tr>
                 </tbody>
@@ -973,9 +1007,9 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                           </span>
                         </div>
                       </td>
-                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_PAD ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_PAD.toLocaleString('id-ID')}` : `-`}</td>
+                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_PAD ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_PAD?.toLocaleString('id-ID')}` : `-`}</td>
                       <td>
-                      <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_percentage_anggaran_PAD.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
+                      <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_percentage_anggaran_PAD?.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
                       </td>
                     </tr>
                     <tr>
@@ -996,9 +1030,9 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                           </span>
                         </div>
                       </td>
-                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_transfer ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_transfer.toLocaleString('id-ID')}` : `-`}</td>
+                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_transfer ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_transfer?.toLocaleString('id-ID')}` : `-`}</td>
                       <td>
-                      <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_percentage_anggaran_transfer_pendapatan.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
+                      <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_percentage_anggaran_transfer_pendapatan?.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
                       </td>
                     </tr>
                     <tr>
@@ -1019,15 +1053,15 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                           </span>
                         </div>
                       </td>
-                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_lainnya ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_lainnya.toLocaleString('id-ID')}` : `-`}</td>
+                      <td>{dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_lainnya ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_lainnya?.toLocaleString('id-ID')}` : `-`}</td>
                       <td>
-                      <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_percentage_anggaran_lainnya.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
+                      <span style={{ float: "right" }}>{`${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_percentage_anggaran_lainnya?.toLocaleString('id-ID', {minimumFractionDigits: 2, maximumFractionDigits: 2,})}%`}</span>
                       </td>
                     </tr>
                   <tr>
                     <td className="border-bottom-0">Total Pendapatan</td>
                     <td className="border-bottom-0" style={{ fontWeight: 600 }}>
-                    {dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_pendapatan ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_pendapatan.toLocaleString('id-ID')}` : `-`}
+                    {dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_pendapatan ? `Rp ${dataDashboardAnalisis?.data_dashboard?.rincian_pendapatan_total_pendapatan?.toLocaleString('id-ID')}` : `-`}
                     </td>
                   </tr>
                 </tbody>
@@ -1344,7 +1378,7 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                           </div>
                           <div className="d-flex align-items-center">
                             <span
-                              style={{ fontStyle: "poppins", color: "#9f9FB1" }}
+                              style={{ fontStyle: "poppins", color: "#9f9FB1" }}x
                             >
                               10%
                             </span>
@@ -1359,7 +1393,7 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
           </Card>
         </Col>
       </Row> */}
-      <FilterRightSide dataFilter={dataDashboardAnalisis} onSelectFilter={handleFilterUpdate} />
+      <FilterRightSide dataFilter={dataDashboardAnalisis} onSelectFilter={handleFilterUpdate} isLoadingList={loadingDataDashboardAnalisis} />
     </React.Fragment>
   );
 };

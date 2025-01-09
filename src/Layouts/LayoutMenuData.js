@@ -182,6 +182,12 @@ const Navdata = () => {
           link: "/realisasi",
           parentId: "sipd",
         },
+        {
+          id: "dahboardAnalisis",
+          label: "Dashboard Analisis",
+          link: "/dashboard-analisis",
+          parentId: "sipd",
+        },
       ],
     },
     // {

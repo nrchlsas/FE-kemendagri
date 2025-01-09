@@ -8,6 +8,7 @@ import {
   Col,
   Card,
   CardBody,
+  Spinner,
 } from "reactstrap";
 
 //SimpleBar
@@ -15,7 +16,7 @@ import SimpleBar from "simplebar-react";
 
 // const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 
-const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
+const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => {
   // open offcanvas
   const [open, setOpen] = useState(false);
   const toggleLeftCanvas = () => {
@@ -49,6 +50,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
     fungsi: [],
     skpd: [],
     daerah: [],
+    provinsi:[],
     namaDaerah: "",
     spm: [],
     urusan: [],
@@ -61,6 +63,23 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
     subRincianObjek: [],
   });
 
+  const [selectedNames, setSelectedNames] = useState({
+    fungsi: [],
+    skpd: [],
+    provinsi:[],
+    daerah: [],
+    namaDaerah: "",
+    spm: [],
+    urusan: [],
+    bidangUrusan: [],
+    program: [],
+    kegiatan: [],
+    subKegiatan: [],
+    objek: [],
+    rincianObjek: [],
+    subRincianObjek: [],
+  })
+
   const cleanPayload = (payload) => {
     console.log(payload, 'ini isi payloadadd')
     return Object.fromEntries(
@@ -70,28 +89,90 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
     );
   };
 
-  const handleCheckboxChange = (event, filterType) => {
-    const { value, checked } = event.target;
+  // const handleCheckboxChange = (event, filterType) => {
+  //   const { value, checked } = event.target;
 
+  //   // Salin state filter saat ini
+  //   const updatedValues = { ...selectedValues };
+
+  //   console.log(filterType, 'ini filter typee')
+  //   if (checked) {
+  //     // Tambahkan nilai jika checkbox dicentang
+  //     updatedValues[filterType].push(value);
+  //   } else {
+  //     // Hapus nilai jika checkbox tidak dicentang
+  //     updatedValues[filterType] = updatedValues[filterType].filter(
+  //       (item) => item !== value
+  //     );
+  //   }
+
+  //   // Perbarui state filter di child
+  //   setSelectedValues(updatedValues);
+
+  //   // Bersihkan payload sebelum dikirim ke parent
+  //   const cleanedFilters = cleanPayload(updatedValues);
+
+  //   // Kirimkan payload ke parent
+  //   onSelectFilter(cleanedFilters);
+  // };
+  
+
+  const handleCheckboxChange = (event, filterType, itemName) => {
+    const { value, checked } = event.target;
+  
     // Salin state filter saat ini
     const updatedValues = { ...selectedValues };
-
+    const updatedNames = { ...selectedNames }; // Tambahkan logika untuk selectedNames
+    
     if (checked) {
-      // Tambahkan nilai jika checkbox dicentang
+      // Tambahkan nilai ke filter dan nama ke array untuk filterType
       updatedValues[filterType].push(value);
+      if (!updatedNames[filterType]) {
+        updatedNames[filterType] = []; // Pastikan array ada
+      }
+      updatedNames[filterType].push(itemName);
     } else {
-      // Hapus nilai jika checkbox tidak dicentang
+      // Hapus nilai dari filter dan nama dari array untuk filterType
       updatedValues[filterType] = updatedValues[filterType].filter(
         (item) => item !== value
       );
+      updatedNames[filterType] = updatedNames[filterType].filter(
+        (name) => name !== itemName
+      );
     }
-
-    // Perbarui state filter di child
+  
+    // Perbarui state
     setSelectedValues(updatedValues);
-
+    setSelectedNames(updatedNames); // Perbarui selectedNames
+  
     // Bersihkan payload sebelum dikirim ke parent
     const cleanedFilters = cleanPayload(updatedValues);
+  
+    // Kirimkan payload ke parent
+    onSelectFilter(cleanedFilters);
+  };
 
+  const handleRemoveName = (category, indexToRemove) => {
+    // Salin state untuk pembaruan
+    const updatedNames = { ...selectedNames };
+    const updatedValues = { ...selectedValues };
+  
+    // Hapus nama berdasarkan index
+    const removedName = updatedNames[category][indexToRemove];
+    updatedNames[category] = updatedNames[category].filter((_, index) => index !== indexToRemove);
+  
+    // Hapus nilai yang terkait dengan nama yang dihapus
+    updatedValues[category] = updatedValues[category].filter(
+      (_, index) => index !== indexToRemove
+    );
+  
+    // Perbarui state
+    setSelectedNames(updatedNames);
+    setSelectedValues(updatedValues);
+  
+    // Bersihkan payload sebelum dikirim ke parent
+    const cleanedFilters = cleanPayload(updatedValues);
+  
     // Kirimkan payload ke parent
     onSelectFilter(cleanedFilters);
   };
@@ -152,6 +233,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
   const [displayedData, setDisplayedData] = useState({
     daerah: [],
     skpd: [],
+    provinsi:[],
     program: [],
     kegiatan: [],
     subKegiatan: [],
@@ -162,6 +244,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
   const [dataToShow, setDataToShow] = useState({
     daerah: 10,
     skpd: 10,
+    provinsi: 10,
     program: 10,
     kegiatan: 10,
     subKegiatan: 10,
@@ -235,11 +318,16 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
     loadMoreData("filter_daerah", "daerah");
   }, [dataFilter]);
 
+  useEffect(() => {
+    loadMoreData("filter_provinsi", "provinsi");
+  }, [dataFilter]);
+
   const resetFilters = () => {
     // Reset state selectedValues ke nilai awal
     const initialValues = {
       skpd: [],
       daerah: [],
+      provinsi: [],
       namaDaerah:"",
       fungsi: [],
       spm: [],
@@ -253,13 +341,29 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
       subRincianObjek: [],
     };
 
-    setSelectedValues(initialValues);
+    const initialNames = {
+      skpd: [],
+      daerah: [],
+      namaDaerah:"",
+      fungsi: [],
+      provinsi: [],
+      spm: [],
+      urusan: [],
+      bidangUrusan: [],
+      program: [],
+      kegiatan: [],
+      subKegiatan: [],
+      objek: [],
+      rincianObjek: [],
+      subRincianObjek: [],
+    };
 
+    setSelectedValues(initialValues);
+    setSelectedNames(initialNames);
+    
     // Kirimkan payload kosong ke parent
     onSelectFilter(cleanPayload(initialValues));
   };
-
- 
 
   return (
     <React.Fragment>
@@ -312,6 +416,150 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
           <OffcanvasBody className="p-0">
             <SimpleBar className="h-100 p-2">
               <Row>
+              <Col md={6}>
+                  <Card className="card-height-100 card-animate">
+                    <CardBody>
+                      <div className="mb-3">
+                        <span
+                          style={{
+                            backgroundColor: "#2DAED4",
+                            color: "black",
+                            padding: "5px 10px",
+                            border: "none",
+                            borderRadius: "5px",
+                            width: "30%",
+                            fontSize: "12px",
+                          }}
+                        >
+                          Se-Provinsi
+                        </span>
+                      </div>
+                      {/* <div
+                        style={{
+                          position: "relative",
+                          width: "100%",
+                          maxWidth: "300px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <input
+                          style={{
+                            padding: "5px 15px 5px 10px",
+                            width: "100%",
+                            border: "1px solid #ccc",
+                            borderRadius: "5px",
+                            fontSize: "16px",
+                          }}
+                          type="text"
+                          value={searchFilter}
+                          onChange={handleSearchInput}
+                          onKeyDown={(e) => handleKeyDown(e)}
+                          placeholder="Cari Daerah"
+                        />
+                        {searchFilter && (
+                          <button
+                            onClick={() => handleClearSearch()}
+                            style={{
+                              position: "absolute",
+                              right: "10px",
+                              top: "50%",
+                              transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                              background: "transparent",
+                              border: "none",
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              color: "#999",
+                            }}
+                          >
+                            &#10006;
+                          </button>
+                        )}
+                      </div> */}
+                      {selectedNames["provinsi"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["provinsi"].map((name, index) => 
+                            (
+                            <li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            > 
+                            <div className="d-flex justify-content-between align-items-center">
+                              <div style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}>
+                                {name}
+                              </div>                              
+                              
+                              <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('provinsi', index)} // Panggil fungsi untuk menghapus
+                            >
+                              &times;
+                            </button>
+                            </div>                              
+                            </li>                            
+                          )
+                          )}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div
+                        style={{ overflowY: "auto", maxHeight: "300px" }}
+                        onScroll={(e) =>
+                          handleScroll(e, "filter_provinsi", "provinsi")
+                        }
+                      >
+                        {displayedData?.provinsi?.map((item, index) => (
+                          <div key={index} class="form-check mb-2">
+                            <input
+                              onChange={(e) =>
+                                handleCheckboxChange(e, "provinsi", item.nama_prov)
+                              }
+                              checked={selectedValues.provinsi.includes(
+                                item.kode_prov
+                              )}
+                              class="form-check-input"
+                              type="checkbox"
+                              id={`check-provinsi-${index}`}
+                              value={item.kode_prov}
+                            />
+                            <label
+                              class="form-check-label"
+                              for={`check-provinsi-${index}`}
+                            >
+                              {item.nama_prov}
+                            </label>
+                          </div>
+                        ))}
+                      </div></>)}
+                      
+                    </CardBody>
+                  </Card>
+                </Col> 
                 <Col md={6}>
                   <Card className="card-height-100 card-animate">
                     <CardBody>
@@ -372,7 +620,57 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           </button>
                         )}
                       </div>
-                      <div
+                      {selectedNames["daerah"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["daerah"].map((name, index) => {
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            > 
+                            <div className="d-flex justify-content-between align-items-center">
+                              <div style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}>
+                                {name}
+                              </div>                              
+                              <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('daerah', index)} // Panggil fungsi untuk menghapus
+                            >
+                              &times;
+                            </button>
+                            </div>
+                            </li>)
+                            
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div
                         style={{ overflowY: "auto", maxHeight: "300px" }}
                         onScroll={(e) =>
                           handleScroll(e, "filter_daerah", "daerah")
@@ -382,7 +680,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
-                                handleCheckboxChange(e, "daerah")
+                                handleCheckboxChange(e, "daerah", item.nama_daerah)
                               }
                               checked={selectedValues.daerah.includes(
                                 item.kode_ddn
@@ -400,11 +698,14 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </label>
                           </div>
                         ))}
-                      </div>
+                      </div></>)}
+                      
                     </CardBody>
                   </Card>
-                </Col>
-                <Col md={6}>
+                </Col>           
+              </Row>
+              <Row>
+              <Col md={6}>
                   <Card className="card-height-100 card-animate">
                     <CardBody>
                       <div className="mb-3">
@@ -421,14 +722,65 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           SKPD
                         </span>
                       </div>
-                      <div
+                      {selectedNames["skpd"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["skpd"].map((name, index) => {
+                            return(
+                            <li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            >
+                              <div className="d-flex justify-content-between align-items-center">
+                              <div style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}>
+                                {name}
+                              </div>
+                              <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('skpd', index)} // Panggil fungsi untuk menghapus
+                            >
+                              &times;
+                            </button>
+                              </div> 
+                            </li>)
+                            
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div
                         style={{ overflowY: "auto", maxHeight: "300px" }}
                         onScroll={(e) => handleScroll(e, "filter_skpd", "skpd")}
                       >
                         {displayedData?.skpd?.map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
-                              onChange={(e) => handleCheckboxChange(e, "skpd")}
+                              onChange={(e) => handleCheckboxChange(e, "skpd", item.nama_skpd)}
                               checked={selectedValues.skpd.includes(
                                 item.kode_skpd
                               )}
@@ -445,12 +797,11 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </label>
                           </div>
                         ))}
-                      </div>
+                      </div></>)}
+                      
                     </CardBody>
                   </Card>
                 </Col>
-              </Row>
-              <Row>
                 <Col md={6}>
                   <Card className="card-height-100 card-animate">
                     <CardBody>
@@ -469,12 +820,62 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           Fungsi
                         </span>
                       </div>
-                      <div style={{ overflowY: "auto", maxHeight: "300px" }}>
+                      {selectedNames["fungsi"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["fungsi"].map((name, index) => {
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            > 
+                            <div className="d-flex justify-content-between align-items-center">
+                              <div style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}>
+                                {name}
+                              </div>
+                              <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('fungsi', index)} // Panggil fungsi untuk menghapus
+                            >
+                              &times;
+                            </button>
+                              </div> 
+                            </li>)
+                            
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
                         {dataFilter?.filter_fungsi?.map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
-                                handleCheckboxChange(e, "fungsi")
+                                handleCheckboxChange(e, "fungsi", item.nama_fungsi)
                               }
                               checked={selectedValues.fungsi.includes(
                                 item.kode_fungsi
@@ -492,11 +893,14 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </label>
                           </div>
                         ))}
-                      </div>
+                      </div></>)}
+                      
                     </CardBody>
                   </Card>
-                </Col>
-                <Col md={6}>
+                </Col>    
+              </Row>
+              <Row>
+              <Col md={6}>
                   <Card className="card-height-100 card-animate">
                     <CardBody>
                       <div className="mb-3">
@@ -513,18 +917,67 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           SPM
                         </span>
                       </div>
-                      <div style={{ overflowY: "auto", maxHeight: "300px" }}>
+                      {selectedNames["spm"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["spm"].map((name, index) => {
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            > 
+                            <div className="d-flex justify-content-between align-items-center">
+                              <div style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}>
+                                {name}
+                              </div>
+                              <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('spm', index)} // Panggil fungsi untuk menghapus
+                            >
+                              &times;
+                            </button>
+                              </div>
+                            </li>)
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
                         {dataFilter?.filter_spm?.map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
-                              onChange={(e) => handleCheckboxChange(e, "spm")}
+                              onChange={(e) => handleCheckboxChange(e, "spm", item.spm_teks)}
                               checked={selectedValues.spm.includes(
-                                item.spm_teks
+                                String(item.id_spm)
                               )}
                               class="form-check-input"
                               type="checkbox"
                               id={`check-spm-${index}`}
-                              value={item.spm_teks}
+                              value={String(item.id_spm)}
                             />
                             <label
                               class="form-check-label"
@@ -534,12 +987,11 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </label>
                           </div>
                         ))}
-                      </div>
+                      </div></>)}
+                      
                     </CardBody>
                   </Card>
                 </Col>
-              </Row>
-              <Row>
                 <Col md={6}>
                   <Card className="card-height-100 card-animate">
                     <CardBody>
@@ -558,12 +1010,60 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           Urusan
                         </span>
                       </div>
-                      <div style={{ overflowY: "auto", maxHeight: "300px" }}>
+                     {selectedNames["urusan"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          {selectedNames["urusan"].map((name, index) => {
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            > 
+                            <div className="d-flex justify-content-between align-items-center">
+                              <div style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}>
+                                {name}
+                              </div>
+                              <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('urusan', index)} // Panggil fungsi untuk menghapus
+                            >
+                              &times;
+                            </button>
+                              </div>
+                            </li>)
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
                         {dataFilter?.filter_urusan?.map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
-                                handleCheckboxChange(e, "urusan")
+                                handleCheckboxChange(e, "urusan", item.nama_urusan)
                               }
                               checked={selectedValues.urusan.includes(
                                 item.kode_urusan
@@ -581,11 +1081,13 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </label>
                           </div>
                         ))}
-                      </div>
+                      </div></>)}
                     </CardBody>
                   </Card>
                 </Col>
-                <Col md={6}>
+              </Row>
+              <Row>
+              <Col md={6}>
                   <Card className="card-height-100 card-animate">
                     <CardBody>
                       <div className="mb-3">
@@ -603,13 +1105,61 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           Bidang Urusan
                         </span>
                       </div>
-                      <div style={{ overflowY: "auto", maxHeight: "300px" }}>
+                      {selectedNames["bidangUrusan"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["bidangUrusan"].map((name, index) => {
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            > <div className="d-flex justify-content-between align-items-center">
+                            <div style={{
+                            fontSize: "14px",
+                            color: "green",
+                            whiteSpace: "nowrap", // Agar teks tidak membungkus
+                            overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                            textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                            width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                          }}>
+                              {name}
+                            </div>
+                            <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('bidangUrusan', index)} // Panggil fungsi untuk menghapus
+                            >
+                              &times;
+                            </button>
+                            </div>
+                            </li>)
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
                         {dataFilter?.filter_bidang_urusan?.map(
                           (item, index) => (
                             <div key={index} class="form-check mb-2">
                               <input
                                 onChange={(e) =>
-                                  handleCheckboxChange(e, "bidangUrusan")
+                                  handleCheckboxChange(e, "bidangUrusan", item.nama_bidang_urusan)
                                 }
                                 checked={selectedValues.bidangUrusan.includes(
                                   item.kode_bidang_urusan
@@ -628,12 +1178,11 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </div>
                           )
                         )}
-                      </div>
+                      </div></>)}
+                      
                     </CardBody>
                   </Card>
                 </Col>
-              </Row>
-              <Row>
                 <Col md={6}>
                   <Card className="card-height-100 card-animate">
                     <CardBody>
@@ -652,7 +1201,57 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           Program
                         </span>
                       </div>
-                      <div
+                      {selectedNames["program"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["program"].map((name, index) => {
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            > 
+                              <div className="d-flex justify-content-between align-items-center">
+                            <div style={{
+                            fontSize: "14px",
+                            color: "green",
+                            whiteSpace: "nowrap", // Agar teks tidak membungkus
+                            overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                            textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                            width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                          }}>
+                              {name}
+                            </div>
+                            <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('program', index)} // Panggil fungsi untuk menghapus
+                            >
+                              &times;
+                            </button>
+                            </div>
+                            </li>)
+                            
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div
                         style={{ overflowY: "auto", maxHeight: "300px" }}
                         onScroll={(e) =>
                           handleScroll(e, "filter_program", "program")
@@ -662,7 +1261,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
-                                handleCheckboxChange(e, "program")
+                                handleCheckboxChange(e, "program", item.nama_program)
                               }
                               checked={selectedValues.program.includes(
                                 item.kode_program
@@ -680,11 +1279,14 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </label>
                           </div>
                         ))}
-                      </div>
+                      </div></>)}
+                      
                     </CardBody>
                   </Card>
-                </Col>
-                <Col md={6}>
+                </Col>       
+              </Row>
+              <Row>
+              <Col md={6}>
                   <Card
                     className="card-height-100 card-animate"
                     onScroll={(e) =>
@@ -707,7 +1309,56 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           Kegiatan
                         </span>
                       </div>
-                      <div
+                      {selectedNames["kegiatan"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["kegiatan"].map((name, index) => {
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            > 
+                            <div className="d-flex justify-content-between align-items-center">
+                            <div style={{
+                            fontSize: "14px",
+                            color: "green",
+                            whiteSpace: "nowrap", // Agar teks tidak membungkus
+                            overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                            textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                            width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                          }}>
+                              {name}
+                            </div>
+                            <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('kegiatan', index)} // Panggil fungsi untuk menghapus
+                            >
+                              &times;
+                            </button>
+                            </div>
+                            </li>)
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div
                         style={{ overflowY: "auto", maxHeight: "300px" }}
                         onScroll={(e) =>
                           handleScroll(e, "filter_giat", "kegiatan")
@@ -717,7 +1368,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
-                                handleCheckboxChange(e, "kegiatan")
+                                handleCheckboxChange(e, "kegiatan", item.nama_giat)
                               }
                               checked={selectedValues.kegiatan.includes(
                                 item.kode_giat
@@ -735,12 +1386,11 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </label>
                           </div>
                         ))}
-                      </div>
+                      </div></>)}
+                      
                     </CardBody>
                   </Card>
                 </Col>
-              </Row>
-              <Row>
                 <Col md={6}>
                   <Card className="card-height-100 card-animate">
                     <CardBody>
@@ -759,7 +1409,56 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           Sub Kegiatan
                         </span>
                       </div>
-                      <div
+                      {selectedNames["subKegiatan"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["subKegiatan"].map((name, index) => {
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            > 
+                              <div className="d-flex justify-content-between align-items-center">
+                            <div style={{
+                            fontSize: "14px",
+                            color: "green",
+                            whiteSpace: "nowrap", // Agar teks tidak membungkus
+                            overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                            textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                            width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                          }}>
+                              {name}
+                            </div>
+                            <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('subKegiatan', index)} // Panggil fungsi untuk menghapus
+                            >
+                              &times;
+                            </button>
+                            </div>
+                            </li>)
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<> <div
                         style={{ overflowY: "auto", maxHeight: "300px" }}
                         onScroll={(e) =>
                           handleScroll(e, "filter_subgiat", "subKegiatan")
@@ -769,7 +1468,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
-                                handleCheckboxChange(e, "subKegiatan")
+                                handleCheckboxChange(e, "subKegiatan", item.nama_sub_giat)
                               }
                               checked={selectedValues.subKegiatan.includes(
                                 item.kode_sub_giat
@@ -787,11 +1486,14 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </label>
                           </div>
                         ))}
-                      </div>
+                      </div></>)}
+                     
                     </CardBody>
                   </Card>
-                </Col>
-                <Col md={6}>
+                </Col>        
+              </Row>
+              <Row>
+              <Col md={6}>
                   <Card className="card-height-100 card-animate">
                     <CardBody>
                       <div className="mb-3">
@@ -809,7 +1511,57 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           Objek
                         </span>
                       </div>
-                      <div
+                      {selectedNames["objek"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["objek"].map((name, index) => {
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            > 
+                               <div className="d-flex justify-content-between align-items-center">
+                            <div style={{
+                            fontSize: "14px",
+                            color: "green",
+                            whiteSpace: "nowrap", // Agar teks tidak membungkus
+                            overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                            textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                            width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                          }}>
+                              {name}
+                            </div>
+                            <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('objek', index)} // Panggil fungsi untuk menghapus
+                            >
+                              &times;
+                            </button>
+                            </div>
+                            </li>)
+                            
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div
                         style={{ overflowY: "auto", maxHeight: "300px" }}
                         onScroll={(e) =>
                           handleScroll(e, "filter_objek", "objek")
@@ -818,7 +1570,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                         {displayedData?.objek?.map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
-                              onChange={(e) => handleCheckboxChange(e, "objek")}
+                              onChange={(e) => handleCheckboxChange(e, "objek", item.nama_objek)}
                               checked={selectedValues.objek.includes(
                                 item.kode_objek
                               )}
@@ -835,12 +1587,11 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </label>
                           </div>
                         ))}
-                      </div>
+                      </div></>)}
+                      
                     </CardBody>
                   </Card>
                 </Col>
-              </Row>
-              <Row>
                 <Col md={6}>
                   <Card className="card-height-100 card-animate">
                     <CardBody>
@@ -859,7 +1610,58 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           Rincian Objek
                         </span>
                       </div>
-                      <div
+                      {selectedNames["rincianObjek"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["rincianObjek"].map((name, index) => {
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            > 
+                              <div className="d-flex justify-content-between align-items-center">
+                            <div style={{
+                            fontSize: "14px",
+                            color: "green",
+                            whiteSpace: "nowrap", // Agar teks tidak membungkus
+                            overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                            textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                            width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                          }}>
+                              {name}
+                            </div>
+                            <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('rincianObjek', index)} // Panggil fungsi untuk menghapus
+                            >
+                              &times;
+                            </button>
+                            </div>
+                              
+                            </li>)
+                            
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div
                         style={{ overflowY: "auto", maxHeight: "300px" }}
                         onScroll={(e) =>
                           handleScroll(e, "filter_ro", "rincianObjek")
@@ -869,7 +1671,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
-                                handleCheckboxChange(e, "rincianObjek")
+                                handleCheckboxChange(e, "rincianObjek", item.nama_ro)
                               }
                               checked={selectedValues.rincianObjek.includes(
                                 item.kode_ro
@@ -886,12 +1688,16 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                               {item.nama_ro}
                             </label>
                           </div>
-                        ))}
-                      </div>
+                        ))}                        
+                      </div></>)}
+                      
                     </CardBody>
                   </Card>
                 </Col>
-                <Col md={6}>
+                
+              </Row>
+              <Row>
+              <Col md={6}>
                   <Card className="card-height-100 card-animate">
                     <CardBody>
                       <div className="mb-3">
@@ -909,17 +1715,68 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                           Sub Rincian Objek
                         </span>
                       </div>
-                      <div
+                      {selectedNames["subRincianObjek"]?.length > 0 ? (
+                        <ul style={{ padding: "0", marginBottom: "20px" }}>
+                          <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
+                          {selectedNames["subRincianObjek"].map((name, index) => {
+                            return(<li key={index}  style={{
+                              fontSize: "14px",
+                              color: "green",
+                              whiteSpace: "nowrap", // Agar teks tidak membungkus
+                              overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                              textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                              width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                            }}
+                            title={name} // Tambahkan title untuk tooltip pada hover
+                            > 
+                             <div className="d-flex justify-content-between align-items-center">
+                            <div style={{
+                            fontSize: "14px",
+                            color: "green",
+                            whiteSpace: "nowrap", // Agar teks tidak membungkus
+                            overflow: "hidden",   // Sembunyikan teks yang melebihi batas
+                            textOverflow: "ellipsis", // Tampilkan elipsis untuk teks yang panjang
+                            width: "250px",       // Atur lebar maksimal elemen (sesuai kebutuhan)
+                          }}>
+                              {name}
+                            </div>
+                            <button
+                              style={{
+                                marginLeft: "10px",
+                                background: "transparent",
+                                border: "none",
+                                color: "red",
+                                cursor: "pointer",
+                                fontSize: "16px",
+                              }}
+                              onClick={() => handleRemoveName('subRincianObjek', index)} // Panggil fungsi untuk menghapus
+                            >
+                              &times;
+                            </button>
+                            </div>
+                              
+                            </li>)
+                            
+                          })}
+                        </ul>
+                      ) : (
+                        <p style={{ fontSize: "14px", color: "gray" }}>
+                          Tidak ada filter yang dipilih.
+                        </p>
+                      )}
+                      {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
+                        Loading...
+                      </Spinner></>) : (<><div
                         style={{ overflowY: "auto", maxHeight: "300px" }}
                         onScroll={(e) =>
                           handleScroll(e, "filter_sro", "subRincianObjek")
                         }
-                      >
+                      >                        
                         {displayedData?.subRincianObjek?.map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
-                                handleCheckboxChange(e, "subRincianObjek")
+                                handleCheckboxChange(e, "subRincianObjek", item.nama_sro)
                               }
                               checked={selectedValues.subRincianObjek.includes(
                                 item.kode_sro
@@ -937,7 +1794,8 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter }) => {
                             </label>
                           </div>
                         ))}
-                      </div>
+                      </div></>)}
+                      
                     </CardBody>
                   </Card>
                 </Col>

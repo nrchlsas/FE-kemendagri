@@ -28,7 +28,7 @@ import "./../Dapodik/dapodik.scss"
 import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
-const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 
 const ContentMiskinEkstremV2 = () => {
   const [dataGrafikLabel, setDataGrafikLabel] = useState([]);
@@ -269,7 +269,7 @@ const ContentMiskinEkstremV2 = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_kemiskinan_ekstrim`,
+          `${API_URI_RBAC}/v2/dashboard_kemiskinan_ekstrim`,
           requestOptions
         );
 
@@ -553,7 +553,7 @@ const ContentMiskinEkstremV2 = () => {
         setDataChartJenisPekerjaanIndividu(resultChartJenisPekerjaanIndividu);
 
         const resultChartIndividuMiskinEkstremDesil1Provinsi =
-        dataKemiskinanEkstrem.data.jumlah_keluarga_miskin_desil1_per_prov.reduce(
+        dataKemiskinanEkstrem.data.jumlah_individu_miskin_desil1_per_prov.reduce(
           (acc, item) => {
             acc[0].push(item.jumlah_keluarga_desil_1);
             acc[1].push(item.nama_provinsi);
@@ -736,7 +736,7 @@ const ContentMiskinEkstremV2 = () => {
         };
 
         const response = await fetch(
-          `${API_URI_RBAC}/tabel_ke_seprovinsi`,
+          `${API_URI_RBAC}/v2/tabel_ke_seprovinsi`,
           requestOptions
         );
 
@@ -817,7 +817,7 @@ const ContentMiskinEkstremV2 = () => {
         };
 
         const response = await fetch(
-          `${API_URI_RBAC}/tabel_ke_kabkota`,
+          `${API_URI_RBAC}/v2/tabel_ke_kabkota`,
           requestOptions
         );
 
@@ -865,7 +865,7 @@ const ContentMiskinEkstremV2 = () => {
         };
   
         const response = await fetch(
-          `${API_URI_RBAC}/detail-tabel-ke`,
+          `${API_URI_RBAC}/v2/detail-tabel-ke`,
           requestOptions
         );
   
@@ -2706,6 +2706,8 @@ const ContentMiskinEkstremV2 = () => {
                                           dataChartIndividuMiskinEkstremProvinsi[1]
                                         }
                                         dataColors='["#2DAED4"]'
+                                        dataTotal={10}
+                                        dataZoom={true}
                                       /></>) : (<><h4 className="card-title ">
                                         Grafik Individu (Desil 1)
                                       </h4>
@@ -2717,6 +2719,8 @@ const ContentMiskinEkstremV2 = () => {
                                           dataChartIndividuMiskinEkstremDesil1Provinsi[1]
                                         }
                                         dataColors='["#2DAED4"]'
+                                        dataTotal={10}
+                                        dataZoom={true}
                                       /></>)}    
                                       {/* <HorizontalBarChart
                                         valueChart={
@@ -2740,6 +2744,8 @@ const ContentMiskinEkstremV2 = () => {
                                           dataChartIndividuMiskinEkstremKabupatenKota[1]
                                         }
                                         dataColors='["#2DAED4"]'
+                                        dataTotal={10}
+                                        dataZoom={true}
                                       /></>) : (<><h4 className="card-title ">
                                         Chart Individu (Desil 1)
                                       </h4>
@@ -2751,6 +2757,8 @@ const ContentMiskinEkstremV2 = () => {
                                           dataChartIndividuMiskinEkstremDesil1KabupatenKota[1]
                                         }
                                         dataColors='["#2DAED4"]'
+                                        dataTotal={10}
+                                        dataZoom={true}
                                       /></>)}
                                       {/* <HorizontalBarChart
                                         valueChart={
@@ -2901,6 +2909,8 @@ const ContentMiskinEkstremV2 = () => {
                                           dataChartKeluargaMiskinEkstremProvinsi[1]
                                         }
                                         dataColors='["#57E7B4"]'
+                                        dataTotal={10}
+                                        dataZoom={true}
                                       /></>) : (<><h4 className="card-title ">
                                         Chart Keluarga (Desil 1)
                                       </h4>
@@ -2912,6 +2922,8 @@ const ContentMiskinEkstremV2 = () => {
                                           dataChartKeluargaMiskinEkstremDesil1Provinsi[1]
                                         }
                                         dataColors='["#57E7B4"]'
+                                        dataTotal={10}
+                                        dataZoom={true}
                                       /></>)}      
                                       {/* <HorizontalBarChart
                                         valueChart={
@@ -2935,6 +2947,8 @@ const ContentMiskinEkstremV2 = () => {
                                           dataChartKeluargaMiskinEkstremKabupatenKota[1]
                                         }
                                         dataColors='["#57E7B4"]'
+                                        dataTotal={10}
+                                        dataZoom={true}
                                       /></>) : (<><h4 className="card-title ">
                                         Chart Keluarga (Desil 1)
                                       </h4>
@@ -2946,6 +2960,8 @@ const ContentMiskinEkstremV2 = () => {
                                           dataChartKeluargaMiskinEkstremDesil1KabupatenKota[1]
                                         }
                                         dataColors='["#57E7B4"]'
+                                        dataTotal={10}
+                                        dataZoom={true}
                                       /></>)}                     
                                       {/* <HorizontalBarChart
                                         valueChart={

@@ -11,7 +11,7 @@ import classnames from "classnames";
 import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
-const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 const ContentUhcV2 = () => {
 
   const [selectedDesil, setSelectedDesil] = useState("1"); // State untuk menyimpan pilihan dropdown
@@ -67,7 +67,7 @@ const ContentUhcV2 = () => {
           // }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_uhc`,
+          `${API_URI_RBAC}/v2/dashboard_uhc`,
           requestOptions
         );
         
@@ -118,7 +118,7 @@ const ContentUhcV2 = () => {
         // /table_Bpjs_kabupaten
         // /table_stunting_provinsi
         const response = await fetch(
-          `${API_URI_RBAC}/tabel_bpjs_seprov`,
+          `${API_URI_RBAC}/v2/tabel_bpjs_seprov`,
           requestOptions
         );
 
@@ -176,7 +176,7 @@ const ContentUhcV2 = () => {
         // /table_Bpjs_kabupaten
         // /table_stunting_provinsi
         const response = await fetch(
-          `${API_URI_RBAC}/tabel_bpjs_provkabkota`,
+          `${API_URI_RBAC}/v2/tabel_bpjs_provkabkota`,
           requestOptions
         );
 
@@ -218,7 +218,7 @@ const ContentUhcV2 = () => {
         };
   
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_uhc_sub_giat`,
+          `${API_URI_RBAC}/v2/dashboard_uhc_sub_giat`,
           requestOptions
         );
   
@@ -257,7 +257,7 @@ const ContentUhcV2 = () => {
         };
   
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_uhc_sro`,
+          `${API_URI_RBAC}/v2/dashboard_uhc_sro`,
           requestOptions
         );
   
@@ -1492,7 +1492,7 @@ const ContentUhcV2 = () => {
                           {item.nama_sro || "-"}
                         </td>                                                                        
                         <td>
-                        <span style={{float: "right"}}>{item.total_rinciansub ? parseInt(item.total_rinciansub).toLocaleString("id-ID")
+                        <span style={{float: "right"}}>{item.total_rinciansro ? parseInt(item.total_rinciansro).toLocaleString("id-ID")
                             : "-"}</span>
                         </td>                          
                         <td>

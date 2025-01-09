@@ -18,9 +18,10 @@ import PieChartNew from "../../Components/Chart/PieChart";
 import CountUp from "react-countup";
 import logoKemendagri from "../../assets/images/logo-kemendagri/Animasi.gif"
 import imageBeranda from "../../assets/images/logo-kemendagri/image-beranda.png"
+import video from "../../assets/images/logo-kemendagri/bumper-2D.mp4"
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
-const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 
 const SingleOptions = [
   { value: "2024", label: "2024" },
@@ -85,12 +86,12 @@ const BerandaV2 = () => {
           // }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_beranda`,
+          `${API_URI_RBAC}/v2/dashboard_beranda`,
           requestOptions
         );
 
         const responseAnggaran = await fetch(
-          `${API_URI_RBAC}/dashboard_beranda_1`,
+          `${API_URI_RBAC}/v2/dashboard_beranda_1`,
           requestOptions
         );
         
@@ -127,7 +128,7 @@ const BerandaV2 = () => {
         };
 
         const responsePerencanaan = await fetch(
-          `${API_URI_RBAC}/dashboard_beranda_perencanaan`,
+          `${API_URI_RBAC}/v2/dashboard_beranda_perencanaan`,
           requestOptions
         );
         
@@ -162,7 +163,7 @@ const BerandaV2 = () => {
         };
 
         const responsePenganggaran = await fetch(
-          `${API_URI_RBAC}/dashboard_beranda_penganggaran`,
+          `${API_URI_RBAC}/v2/dashboard_beranda_penganggaran`,
           requestOptions
         );
         
@@ -205,7 +206,7 @@ const BerandaV2 = () => {
         };
 
         const responseRealisasi = await fetch(
-          `${API_URI_RBAC}/dashboard_beranda_realisasi`,
+          `${API_URI_RBAC}/v2/dashboard_beranda_realisasi`,
           requestOptions
         );
         
@@ -239,7 +240,7 @@ const BerandaV2 = () => {
         };
 
         const responseSpm = await fetch(
-          `${API_URI_RBAC}/dashboard_beranda_spm`,
+          `${API_URI_RBAC}/v2/dashboard_beranda_spm`,
           requestOptions
         );
         
@@ -318,7 +319,7 @@ const BerandaV2 = () => {
       };
 
       const response = await fetch(
-        `${API_URI_RBAC}/dashboard_beranda_pie_perencanaan`,
+        `${API_URI_RBAC}/v2/dashboard_beranda_pie_perencanaan`,
         requestOptions
       );
 
@@ -1137,7 +1138,6 @@ const BerandaV2 = () => {
             flexDirection: "column",
             alignItems: "start",
             justifyContent: "start",
-            height: "90vh",
             padding:"20px",
             // background:`radial-gradient(rgb(174, 198, 207) 20%, rgb(243, 246, 249) 70%)`,            
             backgroundRepeat: "no-repeat",            
@@ -1211,11 +1211,24 @@ const BerandaV2 = () => {
         </div>
           </Col>
           <Col md={6}>
-          <div data-aos="fade-left" className="d-flex justify-content-center align-items-center" >
-            <img  src={imageBeranda} alt=""  style={{borderRadius: "15px", width: "90%"}}/>
-          </div>
+            <div data-aos="fade-left" className="d-flex justify-content-center align-items-center" >
+              <img  src={imageBeranda} alt=""  style={{borderRadius: "15px", width: "90%"}}/>
+            </div>
           </Col>
         </Row>
+        {/* <Row>
+          <Col md={12}>
+          <div className="d-flex justify-content-center align-items-center">
+          <video controls style={{ width: '100%',
+            height: '620px',
+            objectFit: 'cover',
+            padding:"20px"}} >
+            <source src={video} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          </div>
+          </Col>
+        </Row> */}
         {/* <div
           style={{
             display: "flex",

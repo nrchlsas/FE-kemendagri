@@ -30,7 +30,7 @@ import BreadCrumb from "../../Components/Common/BreadCrumb";
 import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
-const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007_V2}`;
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 
 const ContentPerencanaan = () => {
   const [titleMap, setTitleMap] = useState("Total Peserta Aktif")
@@ -78,7 +78,7 @@ const ContentPerencanaan = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_perencanaan_1_rkpd_nasional`,
+          `${API_URI_RBAC}/v2/dashboard_perencanaan_1_rkpd_nasional`,
           requestOptions
         );
 
@@ -136,7 +136,7 @@ const ContentPerencanaan = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_perencanaan_1_list_persentase`,
+          `${API_URI_RBAC}/v2/dashboard_perencanaan_1_list_persentase`,
           requestOptions
         );
 
@@ -210,7 +210,7 @@ const ContentPerencanaan = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/dashboard_perencanaan_2_list_persentase`,
+          `${API_URI_RBAC}/v2/dashboard_perencanaan_2_list_persentase`,
           requestOptions
         );
 
@@ -993,7 +993,7 @@ const ContentPerencanaan = () => {
     >
       <tr>
         <th style={{ cursor: "pointer", textAlign: "center" }}>Kode</th>
-        <th style={{ cursor: "pointer", textAlign: "center" }}>{customActiveTab == "1" ? "Belum" : "Tidak Melakukan"}</th>
+        <th style={{ cursor: "pointer", textAlign: "center" }}>{customActiveTab == "1" ? "Belum" : "Belum Melakukan"}</th>
       </tr>
     </thead>
     <tbody style={{ minHeight: "500px" }}>
