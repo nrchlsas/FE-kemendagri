@@ -44,6 +44,7 @@ const ContentDashboardAnalisis = () => {
   const [dataChartSumberDana, setDataChartSumberDana] = useState([],[])
   const [dataTotalAnggaran, setDataTotalAnggaran] = useState(0)
   const [executeDate, setExcecuteDate] = useState('')
+  const [persentase, setPersentase] = useState(0)
   const getDataDashboardAnalisis = ({
     kodeDdn,
     kodeProv,
@@ -115,16 +116,12 @@ const ContentDashboardAnalisis = () => {
           throw new Error("Network response was not ok");
         }
         const dataDashboardAnalisis = await response.json();
-        setDataDashboardAnalisis(dataDashboardAnalisis?.data || []);        
+        const totalAnggaran = (dataDashboardAnalisis?.data?.data_dashboard?.rincian_belanja_total_belanja / dataDashboardAnalisis?.data?.data_dashboard_nasional?.total_belanja) * 100                       
+          
+        setDataTotalAnggaran(totalAnggaran)
+        setDataDashboardAnalisis(dataDashboardAnalisis?.data || []);
 
-
-        const totalAnggaran = parseFloat(
-          (dataDashboardAnalisis?.data?.data_dashboard?.rincian_belanja_total_belanja / 
-              dataDashboardAnalisis?.data?.data_dashboard_nasional?.total_belanja) * 100                       
-          ).toFixed(8) || 0
-          setDataTotalAnggaran(totalAnggaran)
-
-        const date = new Date(dataDashboardAnalisis.data.data_dashboard.terakhir_update);        
+        const date = new Date(dataDashboardAnalisis?.data?.data_dashboard?.terakhir_update);        
         const formatter = new Intl.DateTimeFormat('id-ID', { month: 'long' });
         const month = formatter.format(date); // Mendapatkan nama bulan dalam bahasa Indonesia
         const day = String(date.getDate()).padStart(2, '0');
@@ -151,10 +148,16 @@ const ContentDashboardAnalisis = () => {
     fetchData();
   };
 
-  const getDecimals = (value) => {
-    if (value >= 1) return 2; // Nilai >= 1, gunakan 2 desimal
-    if (value >= 0.001) return 2; // Nilai >= 0.001, gunakan 2 desimal
-    return 7; // Nilai lainnya, gunakan 7 desimal
+  const formatAnggaran = (value) => {
+    // Pastikan value dalam bentuk angka
+    const parsedValue = parseFloat(value);
+    
+    // Tentukan jumlah angka di belakang koma
+    if (parsedValue >= 0.01) {
+      return parsedValue.toFixed(2); // 2 angka di belakang koma
+    } else {
+      return parsedValue.toFixed(7); // 7 angka di belakang koma
+    }
   };
 
   useEffect(() => {
@@ -196,7 +199,7 @@ const handleFilterUpdate = (filters) => {
     }
     // Kirimkan request berdasarkan filter yang dipilih
     getDataDashboardAnalisis({
-        kodeDdn: cleanedFilters.provinsi,
+        kodeProv: cleanedFilters.provinsi,
         kodeDdn: cleanedFilters.daerah,
         namaDaerah: cleanedFilters.namaDaerah,
         kodeSkpd: cleanedFilters.skpd,
@@ -588,18 +591,32 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                                         duration={1}
                                       />
                                       <span className="mx-3" style={{color: "green", fontSize:"16px"}}>
-                                      (<CountUp
+                                      ({dataTotalAnggaran >= 1 ? <>
+                                        <CountUp
                                       start={0}
                                       end={
-                                        dataTotalAnggaran || 0
+                                        dataTotalAnggaran
                                       }
                                       separator="."
                                       prefix=""
                                       decimal=","
                                       suffix="%"
-                                      decimals={getDecimals(dataTotalAnggaran)} // Menentukan jumlah angka di belakang koma
+                                      decimals={2} // Menentukan jumlah angka di belakang koma
                                       duration={1}
-                                    />)
+                                    />
+                                      </> : <> 
+                                      <CountUp
+                                      start={0}
+                                      end={
+                                        dataTotalAnggaran
+                                      }
+                                      separator="."
+                                      prefix=""
+                                      decimal=","
+                                      suffix="%"
+                                      decimals={7} // Menentukan jumlah angka di belakang koma
+                                      duration={1}
+                                    /></>})
                                       </span>
                                     </div>                
                                   </div> 
