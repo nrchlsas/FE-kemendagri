@@ -264,7 +264,7 @@ const Pengguna = () => {
                 uuid: changePassword.uuid,
                 password: changePassword.password
             };
-            let response = api.create(`${API_9007_URI}/users/update-password/`, json);
+            let response = api.create(`${API_9007_URI}/users/update-password`, json);
             let data = await response;
             if (data.code === 200) {
                 setModalAlert(Object.assign({}, modal_alert, { type: 'success', title: "Update Password", message: "Proses update password berhasil", open: true }))
