@@ -50,7 +50,7 @@ const Login = (props) => {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Random background color
-    ctx.fillStyle = `rgb(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255})`;
+    ctx.fillStyle = `rgb(${Math.random() * 20}, ${Math.random() * 20}, ${Math.random() * 20})`;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Draw CAPTCHA text
@@ -74,7 +74,7 @@ const Login = (props) => {
     }
 
     // Draw random lines
-    for (let i = 0; i < 35; i++) {
+    for (let i = 0; i < 10; i++) {
       ctx.strokeStyle = `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.8)`;
       ctx.beginPath();
       ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);

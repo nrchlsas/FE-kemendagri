@@ -61,10 +61,9 @@ const ContentUhcV2 = () => {
         const requestOptions = {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
-          // body: JSON.stringify({
-          //   query:
-          //     "select sum(total_rincian)/1000000000000 TotalPembiayaanK from konsolidasi_apbd where kode_kelompok = '6.2'",
-          // }),
+          body: JSON.stringify({
+            tahun :"2024"
+          }),
         };
         const response = await fetch(
           `${API_URI_RBAC}/v2/dashboard_uhc`,

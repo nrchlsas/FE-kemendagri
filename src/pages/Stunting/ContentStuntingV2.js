@@ -201,6 +201,10 @@ const ContentStunting = () => {
         const requestOptions = {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+          body: JSON.stringify({
+          //  kode_ddn: "11"
+            tahun: "2024"
+        }),
         };
 
         const response = await fetch(

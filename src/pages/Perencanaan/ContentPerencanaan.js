@@ -356,7 +356,7 @@ const ContentPerencanaan = () => {
   const [cardhead, setCardHead] = useState();
 
   const handleOpen = ({kodeDdn}) => {   
-    getDataPerencanaanNasionalProgress({kodeDdn: kodeDdn})   
+    getDataPerencanaanNasionalProgress({kodeDdn: kodeDdn, tahun: selectedSingleTahun})   
     setCardHead(null);
   };
 
