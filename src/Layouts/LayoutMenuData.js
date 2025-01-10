@@ -151,114 +151,114 @@ const Navdata = () => {
       },
     },
     //ini editan terbaru
-    // {
-    //   id: "sipd",
-    //   label: "SIPD",
-    //   icon: "bx bx-sitemap",
-    //   link: "/#",
-    //   stateVariables: isDashboard,
-    //   click: function (e) {
-    //     e.preventDefault();
-    //     setIsDashboard(!isDashboard);
-    //     setIscurrentState("Dashboard");
-    //     updateIconSidebar(e);
-    //   },
-    //   subItems: [
-    //     {
-    //       id: "perencanaan",
-    //       label: "Perencanaan",
-    //       link: "/perencanaan",
-    //       parentId: "sipd",
-    //     },
-    //     {
-    //       id: "penganggaran",
-    //       label: "Penganggaran",
-    //       link: "/penganggaran",
-    //       parentId: "sipd",
-    //     },
-    //     {
-    //       id: "realisasi",
-    //       label: "Realisasi",
-    //       link: "/realisasi",
-    //       parentId: "sipd",
-    //     },
-    //     {
-    //       id: "dahboardAnalisis",
-    //       label: "Dashboard Analisis",
-    //       link: "/dashboard-analisis",
-    //       parentId: "sipd",
-    //     },
-    //   ],
-    // },
-    // {
-    //   id: "sipd",
-    //   label: "SIPD",
-    //   icon: "bx bx-sitemap",
-    //   link: "/#",
-    //   click: function (e) {
-    //     e.preventDefault();
-    //     setIsMultiLevel(!isMultiLevel);
-    //     setIscurrentState("MuliLevel");
-    //     updateIconSidebar(e);
-    //   },
-    //   stateVariables: isMultiLevel,
-    //   subItems: [
-    //     // {
-    //     //   id: "level1.1",
-    //     //   label: "Level 1.1",
-    //     //   link: "/#",
-    //     //   parentId: "multilevel",
-    //     // },
-    //     {
-    //       id: "Perencanaan",
-    //       label: "Perencanaan",
-    //       link: "/#",
-    //       isChildItem: true,
-    //       click: function (e) {
-    //         e.preventDefault();
-    //         setIsLevel1(!isLevel1);
-    //       },
-    //       stateVariables: isLevel1,
-    //       childItems: [
-    //         // { id: 1, label: "Kemiskinan Ekstrem", link: "/#" },
-    //         // { id: 2, label: "Stunting", link: "/#" },
-    //         // { id: 3, label: "SPM", link: "/#" },
-    //       ],
-    //     },
-    //     {
-    //       id: "anggaran",
-    //       label: "Anggaran",
-    //       link: "/#",
-    //       isChildItem: true,
-    //       click: function (e) {
-    //         e.preventDefault();
-    //         setIsLevel1(!isLevel1);
-    //       },
-    //       stateVariables: isLevel1,
-    //       childItems: [
-    //         // { id: 1, label: "Kemiskinan Ekstrem", link: "/anggaran-miskin-ekstrim" },
-    //         // { id: 2, label: "Stunting", link: "/#" },
-    //         // { id: 3, label: "SPM", link: "/#" },
-    //       ],
-    //     },
-    //     {
-    //       id: "realisasi",
-    //       label: "Realisasi",
-    //       link: "/#",
-    //       isChildItem: true,
-    //       click: function (e) {
-    //         e.preventDefault();
-    //         setIsLevel1(!isLevel1);
-    //       },
-    //       stateVariables: isLevel1,
-    //       childItems: [
-    //         // { id: 1, label: "Kemiskinan Ekstrem", link: "/#" },
-    //         // { id: 2, label: "Stunting", link: "/#" },
-    //         // { id: 3, label: "SPM", link: "/#" },
-    //       ],
-    //     },
-    //   ],
-    // },
+    {
+      id: "sipd",
+      label: "SIPD",
+      icon: "bx bx-sitemap",
+      link: "/#",
+      stateVariables: isDashboard,
+      click: function (e) {
+        e.preventDefault();
+        setIsDashboard(!isDashboard);
+        setIscurrentState("Dashboard");
+        updateIconSidebar(e);
+      },
+      subItems: [
+        {
+          id: "perencanaan",
+          label: "Perencanaan",
+          link: "/perencanaan",
+          parentId: "sipd",
+        },
+        {
+          id: "penganggaran",
+          label: "Penganggaran",
+          link: "/penganggaran",
+          parentId: "sipd",
+        },
+        {
+          id: "realisasi",
+          label: "Realisasi",
+          link: "/realisasi",
+          parentId: "sipd",
+        },
+        {
+          id: "dahboardAnalisis",
+          label: "Dashboard Analisis",
+          link: "/dashboard-analisis",
+          parentId: "sipd",
+        },
+      ],
+    },
+    {
+      id: "sipd",
+      label: "SIPD",
+      icon: "bx bx-sitemap",
+      link: "/#",
+      click: function (e) {
+        e.preventDefault();
+        setIsMultiLevel(!isMultiLevel);
+        setIscurrentState("MuliLevel");
+        updateIconSidebar(e);
+      },
+      stateVariables: isMultiLevel,
+      subItems: [
+        // {
+        //   id: "level1.1",
+        //   label: "Level 1.1",
+        //   link: "/#",
+        //   parentId: "multilevel",
+        // },
+        {
+          id: "Perencanaan",
+          label: "Perencanaan",
+          link: "/#",
+          isChildItem: true,
+          click: function (e) {
+            e.preventDefault();
+            setIsLevel1(!isLevel1);
+          },
+          stateVariables: isLevel1,
+          childItems: [
+            // { id: 1, label: "Kemiskinan Ekstrem", link: "/#" },
+            // { id: 2, label: "Stunting", link: "/#" },
+            // { id: 3, label: "SPM", link: "/#" },
+          ],
+        },
+        {
+          id: "anggaran",
+          label: "Anggaran",
+          link: "/#",
+          isChildItem: true,
+          click: function (e) {
+            e.preventDefault();
+            setIsLevel1(!isLevel1);
+          },
+          stateVariables: isLevel1,
+          childItems: [
+            // { id: 1, label: "Kemiskinan Ekstrem", link: "/anggaran-miskin-ekstrim" },
+            // { id: 2, label: "Stunting", link: "/#" },
+            // { id: 3, label: "SPM", link: "/#" },
+          ],
+        },
+        {
+          id: "realisasi",
+          label: "Realisasi",
+          link: "/#",
+          isChildItem: true,
+          click: function (e) {
+            e.preventDefault();
+            setIsLevel1(!isLevel1);
+          },
+          stateVariables: isLevel1,
+          childItems: [
+            // { id: 1, label: "Kemiskinan Ekstrem", link: "/#" },
+            // { id: 2, label: "Stunting", link: "/#" },
+            // { id: 3, label: "SPM", link: "/#" },
+          ],
+        },
+      ],
+    },
     {
       id: "dataKependudukan",
       label: "Data Kependudukan",
