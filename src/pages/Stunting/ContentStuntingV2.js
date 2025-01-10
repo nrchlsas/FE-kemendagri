@@ -1470,9 +1470,8 @@ const ContentStunting = () => {
                     </>
                   )}
                 </Col>
-              </Row>
               <Row>
-            <Col md={4}>
+              <Col md={12}>
               <Card className="card-animate">
                 <CardBody>
                   <div className="d-flex flex-column title-custom-card">
@@ -1501,8 +1500,11 @@ const ContentStunting = () => {
                   </div>
                 </CardBody>
               </Card>
-            </Col>
-            <Col md={4}>
+            </Col>  
+              </Row>
+              </Row>
+              <Row>
+            <Col md={6}>
               <Card className="card-animate">
                 <CardBody>
                   <div className="d-flex flex-column title-custom-card">
@@ -1532,7 +1534,7 @@ const ContentStunting = () => {
                 </CardBody>
               </Card>
             </Col>
-            <Col md={4}>
+            <Col md={6}>
               <Card className="card-animate">
                 <CardBody>
                   <div className="d-flex flex-column title-custom-card">
