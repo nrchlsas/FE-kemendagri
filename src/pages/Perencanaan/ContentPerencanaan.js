@@ -147,39 +147,43 @@ const ContentPerencanaan = () => {
         const dataPerencanaanRkpdNasionalPersentase = await response.json();
 
         setDataPerencanaanPersentase(
-          dataPerencanaanRkpdNasionalPersentase.data
+          dataPerencanaanRkpdNasionalPersentase?.data
         );
 
-        const dataPersentasePerencanaan = {
-          tahap1: dataPerencanaanRkpdNasionalPersentase.data.map(item => ({
-          name: item.nama_daerah,
-          value: item.persiapan
+        const dataPersentasePerencanaan = dataPerencanaanRkpdNasionalPersentase?.data?.length < 0 ? [] : {
+          tahap1: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
+          name: item.nama_daerah||"",
+          value: item.persiapan || 0
         })),
-          tahap2: dataPerencanaanRkpdNasionalPersentase.data.map(item => ({
-          name:item.nama_daerah,
-          value: item.rancangan_awal
+          tahap2: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
+          name:item.nama_daerah||"",
+          value: item.rancangan_awal || 0
         })),
-          tahap3: dataPerencanaanRkpdNasionalPersentase.data.map(item => ({
-          name:item.nama_daerah,
-          value: item.rancangan
+          tahap3: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
+          name:item.nama_daerah||"",
+          value: item.rancangan || 0
         })),
-          tahap4: dataPerencanaanRkpdNasionalPersentase.data.map(item => ({
-          name:item.nama_daerah,
-          value: item.musrenbang
+          tahap4: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
+          name:item.nama_daerah||"",
+          value: item.musrenbang || 0
         })),
-          tahap5: dataPerencanaanRkpdNasionalPersentase.data.map(item => ({
-          name:item.nama_daerah,
-          value: item.rancangan_akhir
+          tahap5: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
+          name:item.nama_daerah||"",
+          value: item.rancangan_akhir || 0
         })),
-          tahap6: dataPerencanaanRkpdNasionalPersentase.data.map(item => ({
-          name:item.nama_daerah,
-          value: item.penetapan
+          tahap6: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
+          name:item.nama_daerah||"",
+          value: item.penetapan || 0
         })),
       }
-      setDataPersentaseMap(dataPersentasePerencanaan)
-      setValueMap(dataPersentasePerencanaan.tahap6);
+
+      console.log(dataPersentasePerencanaan, dataPersentasePerencanaan?.tahap6, 'ini bero')
+      setDataPersentaseMap(dataPersentasePerencanaan || [])
+      setValueMap(dataPersentasePerencanaan?.tahap6 || []);
+      console.log(valueMap, 'ini value map')
+      console.log(dataPersentaseMap, 'ini data persen map')
       const maxValue = Math.max(...dataPersentasePerencanaan.tahap6.map(item => item.value));
-      setmaxValueMap(maxValue);
+      setmaxValueMap(maxValue || []);
       
       } catch (errorPerencanaan) {
         setErrorPerencanaan(errorPerencanaan);
@@ -356,7 +360,7 @@ const ContentPerencanaan = () => {
   const [cardhead, setCardHead] = useState();
 
   const handleOpen = ({kodeDdn}) => {   
-    getDataPerencanaanNasionalProgress({kodeDdn: kodeDdn, tahun: selectedSingleTahun})   
+    getDataPerencanaanNasionalProgress({kodeDdn: kodeDdn, tahun: selectedSingleTahun})
     setCardHead(null);
   };
 
@@ -587,7 +591,7 @@ const ContentPerencanaan = () => {
                   <VerticalBarChart
                     valueChart={dataPerencanaan[0]}
                     categoryChart={dataPerencanaan[1]}
-                    dataColors='["#57E7B4"]'
+                    dataColors={["#57E7B4"]}
                     background={true}
                   />
                   <div className="mt-4">

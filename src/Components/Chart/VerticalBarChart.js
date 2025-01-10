@@ -3,7 +3,7 @@ import getChartColorsArray from "../../Components/Common/ChartsDynamicColor";
 import ReactEcharts from "echarts-for-react";
 import * as echarts from "echarts/core";
 
-const VerticalBarChart = ({ dataColors,dataTotal=10, valueChart, categoryChart, emphasis=false, trillion=false, rotate=false, background=false, breakWord=false, dataZoom=false }) => {
+const VerticalBarChart = ({ dataColors=[],dataTotal=10, valueChart, categoryChart, emphasis=false, trillion=false, rotate=false, background=false, breakWord=false, dataZoom=false }) => {
   const limit = dataTotal // Misal kita ingin menampilkan hanya 10 data
 
   // const totalData = categoryChart.length;

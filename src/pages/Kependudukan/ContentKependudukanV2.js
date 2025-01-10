@@ -1114,6 +1114,8 @@ const ContentKependudukanV2 = () => {
                     valueChart={dataChartTop10Provinsi[0]}
                     categoryChart={dataChartTop10Provinsi[1]}
                     dataColors='["#57E7B4"]'                    
+                    dataTotal={10}
+                    dataZoom={true}
                   />
                 </TabPane>
                 <TabPane tabId="2" id="kabupaten">
