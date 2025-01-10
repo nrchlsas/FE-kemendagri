@@ -998,7 +998,7 @@ const ContentDapodikV2 = () => {
         };
 
         const response = await fetch(
-          `${API_URI_RBAC}/v2/${url}`,
+          `${API_URI_RBAC}/v2${url}`,
           requestOptions
         );
 
