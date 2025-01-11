@@ -48,7 +48,7 @@ const BerandaV2 = () => {
       setActiveTabPenganggaran(tab);
     }
   };
-
+  const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
   const [dataBeranda, setDataBeranda] = useState([]);
   const [dataBeranda1, setDataBeranda1] = useState([]);
   const [dataBerandaRealisasi, setDataBerandaRealisasi] = useState([]);
@@ -123,7 +123,8 @@ const BerandaV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
-            id_tahap: idTahap            
+            id_tahap: idTahap,
+            tahun: selectedSingleTahun         
           }),
         };
 
@@ -158,7 +159,8 @@ const BerandaV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
-            id_tahap: idTahap    
+            id_tahap: idTahap,    
+            tahun: selectedSingleTahun     
           }),
         };
 
