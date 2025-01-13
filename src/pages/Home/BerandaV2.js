@@ -115,7 +115,7 @@ const BerandaV2 = () => {
     fetchData();
   };
 
-  const getDataBerandaPerencanaan = ({idTahap="1"}) => {
+  const getDataBerandaPerencanaan = ({idTahap="1", tahun}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -124,7 +124,7 @@ const BerandaV2 = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             id_tahap: idTahap,
-            tahun: selectedSingleTahun         
+            tahun: tahun         
           }),
         };
 
@@ -151,7 +151,7 @@ const BerandaV2 = () => {
   };
 
   const [executeDate, setExcecuteDate] = useState('')
-  const getDataBerandaPenganggaran = ({idTahap=""}) => {
+  const getDataBerandaPenganggaran = ({idTahap="", tahun}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -160,7 +160,7 @@ const BerandaV2 = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             id_tahap: idTahap,    
-            tahun: selectedSingleTahun     
+            tahun: tahun     
           }),
         };
 
@@ -195,16 +195,17 @@ const BerandaV2 = () => {
     fetchData();
   };
 
-  const getDataBerandaRealisasi = () => {
+  const getDataBerandaRealisasi = ({tahun}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
-          // body: JSON.stringify({
-          //   id_tahap: idTahap            
-          // }),
+          body: JSON.stringify({
+            // id_tahap: idTahap            
+            // tahun: tahun
+          }),
         };
 
         const responseRealisasi = await fetch(
@@ -297,9 +298,9 @@ const BerandaV2 = () => {
 
   useEffect(() => {
     // getDataBeranda();
-    getDataBerandaPerencanaan("1");
-    getDataBerandaPenganggaran({idTahap:"99"});
-    getDataBerandaRealisasi();
+    getDataBerandaPerencanaan({idTahap:"1", tahun: selectedSingleTahun});
+    getDataBerandaPenganggaran({idTahap:"99", tahun: selectedSingleTahun});
+    getDataBerandaRealisasi({tahun: ""});
     // getDataBerandaSpm();
     // getPiePerencanaan();
   }, []);
@@ -368,10 +369,36 @@ const BerandaV2 = () => {
   };  
 
   const [showBerandaSipd, setShowBerandaSipd] = useState(false)  
-
+  const handleSelectChangeTahun = (e) => {
+    const { name, value } = e.target;
+    setSelectedSingleTahun(value)
+    getDataBerandaPerencanaan({idTahap:selectedTahapPerencanaan, tahun: value});
+    getDataBerandaPenganggaran({idTahap:selectedTahapPenganggaran, tahun: value});
+    getDataBerandaRealisasi({tahun: ""});
+  };
   return (
     <React.Fragment>
-      {showBerandaSipd ? (<><Row style={{ fontFamily: "poppins" }}>
+      {showBerandaSipd ? (<>
+        <select
+          name="tahun"
+          style={{
+            padding: "10px 30px 10px 10px",
+            fontSize: "16px",
+            borderRadius: "5px",
+            border: "1px solid #ccc",
+            backgroundColor: "#ffffff",                          
+            cursor: "pointer",                          
+            marginLeft: "10px",
+            marginTop: "16px",
+            marginBottom: "30px",
+          }}
+          value={selectedSingleTahun}
+          onChange={handleSelectChangeTahun}
+        >                        
+          <option value="2024">2024</option>
+          <option value="2025">2025</option>
+        </select>
+      <Row style={{ fontFamily: "poppins" }}>
         <Col md={4}>
           <Card data-aos="fade-up-right" className="card-animate card-height-100">
             <CardHeader className="border-bottom-0">            
