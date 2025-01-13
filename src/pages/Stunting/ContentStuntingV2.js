@@ -541,7 +541,6 @@ const ContentStunting = () => {
           const values = Object.values(dataStunting.data.pus_4_terlalu);
 
           const resultChartPus4Terlalu = [values, keys]
-          // const resultChartPus4Terlalu = [dataStunting.data.pus_4_terlalu.jumlah_terlalu_banyak, dataStunting.data.pus_4_terlalu.jumlah_terlalu_dekat, dataStunting.data.pus_4_terlalu.jumlah_terlalu_muda, dataStunting.data.pus_4_terlalu.jumlah_terlalu_tua]
             setDataChartPus4Terlalu(resultChartPus4Terlalu)
         } catch (error) {
           console.error("Error processing top 5 akun belanja", error);
@@ -1079,7 +1078,7 @@ const ContentStunting = () => {
   };
 
   const [dataJambanTidakLayakPemda, setDataJambanTidakLayakPemda] = useState([])
-  const getDataFasilitasKesehatanPerProv = ({kodeProvinsi = "", url=""}) => {
+  const getDataFasilitasKesehatanPerProv = ({kodeProvinsi = "", url="", tahun}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -1088,6 +1087,7 @@ const ContentStunting = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_provinsi: kodeProvinsi,
+            tahun: tahun
           }),
         };
 
@@ -1182,16 +1182,16 @@ const ContentStunting = () => {
 
   const handleBarClickProv = (data) => {
     if (fasilitasShow == "Jamban Tidak Layak") {
-      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_jamban_kabkota"})
+      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_jamban_kabkota", tahun: selectedSingleTahun})
     } else {
-      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_air_kabkota"})
+      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_air_kabkota", tahun: selectedSingleTahun})
     }
   };
 
   const [titleStack, setTitleStack] = useState("")
   const handleBarClickStackProv = (data) => {     
     setTitleStack(data.category)
-    getDataStackPerProv({kodeProv: data.id})    
+    getDataStackPerProv({kodeProv: data.id})
   }
 
   const handleBack = () => {
