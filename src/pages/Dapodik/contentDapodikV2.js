@@ -413,7 +413,7 @@ const ContentDapodikV2 = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_wilayah: kodeWilayah,
-            tahun: "2024"
+            // tahun: "2024"
         }),
         };
         
@@ -998,7 +998,7 @@ const ContentDapodikV2 = () => {
         };
 
         const response = await fetch(
-          `${API_URI_RBAC}/v2/${url}`,
+          `${API_URI_RBAC}/v2${url}`,
           requestOptions
         );
 
@@ -1129,7 +1129,7 @@ const ContentDapodikV2 = () => {
                       Nasional
                     </button>
                     </> : 
-                  <>
+                    <>
                   </>}
                   </div>
                   <MapIndoChart chartTitle={titleMap} roam={roam} maxValue={maxValueMap} colorData={['#B3E0E5', '#69D6E8', '#0092B3', '#1B8BA6']} onRegionClick={handleRegionClick} valueSeries={valueMap}/>

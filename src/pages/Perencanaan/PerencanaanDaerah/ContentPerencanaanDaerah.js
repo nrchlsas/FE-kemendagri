@@ -141,7 +141,7 @@ const ContentPerencanaanDaerah = () => {
 
   useEffect(() => {
     getDataPerencanaanRkpdNasional();
-    getDataPerencanaanRkpdNasionalPersentase();
+    // getDataPerencanaanRkpdNasionalPersentase();
   }, []);
 
   

@@ -2495,6 +2495,7 @@ const ContentMiskinEkstremV2 = () => {
                       dataChartUrusanPemerintahKemeskinanEkstrem[1]
                     }
                     dataTotal={5}
+                    dataZoom={true}
                     breakWord={true}
                     trillion={true}
                     dataColors='["#57E7B4"]'

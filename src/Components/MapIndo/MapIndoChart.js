@@ -7,7 +7,7 @@ import geoJsonIndo from '../../data/geoJsonNasional.json';
 
 echarts.use([MapChart, GeoComponent]);
 
-const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, colorData=['#abd9e9','#74add1','#4575b4','#313695'], onRegionClick}) => {  
+const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, colorData=[], onRegionClick}) => {  
   const [isMapRegistered, setIsMapRegistered] = useState(false);
 
   const nameMap = {
@@ -51,10 +51,10 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
     "Provinsi Papua Barat Daya": "PAPUA BARAT DAYA",
 };
 
-  const adjustedSeries = valueSeries.map((item) => {
+  const adjustedSeries = (valueSeries || []).map((item) => {
       return {
           ...item,
-          name: nameMap[item.name] || item.name // Jika tidak ada di nameMap, tetap gunakan nama asli
+          name: nameMap[item.name] || item.name || "N/A" // Jika tidak ada di nameMap, tetap gunakan nama asli 
       };
   });
 
@@ -66,6 +66,7 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
       console.error("Invalid geoJSON format:", geoJsonIndo);
     }
   }, []);
+
   // const maxPopulation = Math.max(...valueSeries.map(item => item.value));
   const getOption = () => ({
       title: {
@@ -83,10 +84,10 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
       left: 'left',
       bottom: '20%',
       min: 0,
-      max: maxValue,
+      max: maxValue || 100,
       orient: 'horizontal',
       inRange: {
-        color: colorData ? colorData : ['#abd9e9','#74add1','#4575b4','#313695']
+        color: colorData || ["#FCAD24", "#57E7B4"], // Default jika tidak valid
       },
       text: ['Tinggi', 'Rendah'],
       calculable: true
