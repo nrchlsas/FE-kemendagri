@@ -175,6 +175,7 @@ const Menu = () => {
         const _new = JSON.parse(JSON.stringify(data));
         _new.is_menu = _new.is_menu === true ? true : false; // update data null to false
         setFormData(_new);
+        setMenuParentSelected(data.parent_menu_id ? { id: data.parent_menu_id, text: data.parent_menu_name } : null);
         window.scrollTo(0, 0)
     }
 
@@ -373,7 +374,7 @@ const Menu = () => {
                                                     {item.url}
                                                 </td>
                                                 <td style={{ maxWidth: "400px" }} className="text-wrap">
-                                                    {item.parent_menu_id || '-'}
+                                                    {item.parent_menu_name || '-'}
                                                 </td>
                                                 <td style={{ width: "60px" }}>{item.is_deleted ? 'Ya' : ''}</td>
                                                 <td style={{ width: "160px" }}>

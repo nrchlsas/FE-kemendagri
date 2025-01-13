@@ -39,14 +39,14 @@ const FormSelectFilter = ({ onSelect, selected, onSearch, dataList = [], placeho
                     <>
                         <div className='popup-menu'>
                             <div className='d-flex flex-row justify-content-between align-items-center'>
-                                <input type='text' placeholder='keyword...' onKeyDown={changeText}></input>
-                                {selected ? (<div style={{ width: '200px' }} onClick={clearSelected} className='cursor-lg-pointer'>Hapus Selected Data</div>) : null}
+                                <input type='text' placeholder='searching keyword' onKeyDown={changeText}></input>
+                                {selected ? (<div style={{ width: '200px', color: 'cornflowerblue' }} onClick={clearSelected} className='cursor-pointer'>Delete Selected Data</div>) : null}
                             </div>
                             {
                                 dataList.length ?
                                     <ul>
                                         {dataList.map(item => (
-                                            <li key={'select_option_filter_' + item.id} value={item.id} onClick={() => onSelectedItem(item)}>
+                                            <li key={'select_option_filter_' + item.id} value={item.id} onClick={() => onSelectedItem(item)} className='cursor-pointer'>
                                                 {item.text}
                                             </li>
                                         ))}

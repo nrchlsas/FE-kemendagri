@@ -33,6 +33,14 @@
         cursor: pointer;
     }
 
+    input {
+        margin: 5px 10px;
+        width: calc(100% - 19px);
+        outline: 0;
+        border: 0;
+        padding-left: 10px;
+    }
+
     .popup-menu {
         position: absolute;
         width: 100%;
@@ -41,11 +49,6 @@
         left: 0;
         z-index: 2;
         border: 1px solid #ced4da;
-
-        input {
-            margin: 5px 10px;
-            width: calc(100% - 19px)
-        }
 
         ul {
             list-style: none;
