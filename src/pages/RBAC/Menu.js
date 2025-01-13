@@ -11,7 +11,6 @@ import {
     Label,
     FormGroup
 } from "reactstrap";
-//import FormInput from "../../Components/FormFactory/FormInput";
 import { useEffect } from "react";
 import { APIClient } from "../../helpers/api_helper";
 import { createSelector } from "reselect";
@@ -19,61 +18,32 @@ import { useSelector } from "react-redux";
 import { get_permission_by_url } from "../../slices/thunks";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import FormSelectFilter from "../../Components/FormFactory/FormSelectFilter";
 
 const API_9007_URI = `${process.env.REACT_APP_API_URL_9007}`;
-const menuForm = {
-    namaMenu: {
-        id: "nama_menu",
-        label: "Nama Menu",
-        type: "text",
-        placeholder: "Input nama menu",
-        defaultValue: "",
-        rules: {
-            required: true,
-        },
-    },
-    url: {
-        id: "url",
-        label: "URL",
-        type: "text",
-        placeholder: "Input url",
-        defaultValue: "",
-        rules: {
-            required: true,
-        },
-    },
-    namaSubMenu: {
-        id: "nama_sub_menu",
-        label: "Nama Sub Menu",
-        type: "text",
-        placeholder: "Input nama sub menu",
-        defaultValue: "",
-        rules: {
-            required: false,
-        },
-    },
-
-};
 const api = new APIClient();
-
 
 const Menu = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [val, setVal] = useState()
     const [resultData, setResultData] = useState([])
     const [formData, setFormData] = useState({
         id: 0,
-        nama_menu: "",
+        uuid: '',
+        menu_name: "",
+        menu_description: "",
+        parent_menu_id: null,
         url: "",
-        nama_sub_menu: "",
         is_menu: false
     });
+    const [is_valid, setIsValid] = useState(false);
     const [show, setShow] = useState(false)
     const [submitProcess, setSubmitProcess] = useState(false)
     const [modal_center, setmodal_center] = useState(false);
     const [delete_data, setDeleteData] = useState(null);
     const [is_edit, setIsEdit] = useState(false);
+    const [list_menu_parent, setListMenuParent] = useState([]);
+    const [menu_parent_selected, setMenuParentSelected] = useState(null);
 
     // permission
     const permissionState = (state) => state.Profile;
@@ -98,11 +68,6 @@ const Menu = () => {
     function page_goto(page) {
         if (page == paging.page) return;
         setPaging(Object.assign({}, paging, { page }));
-    }
-    function page_prev() {
-        const { page } = paging;
-        if (page == 1) return;
-        setPaging(Object.assign({}, paging, { page: page - 1 }));
     }
     useEffect(() => {
         populate_data();
@@ -138,22 +103,11 @@ const Menu = () => {
         try {
             let response = null;
             if (is_edit) {
-                const edit_json = {
-                    "nama_menu": formData.nama_menu,
-                    "url": formData.nama_menu,
-                    "nama_sub_menu": formData.nama_menu,
-                    "is_menu": formData.is_menu,
-                    "id_menu": formData.id,
-                    "updated_by": ''
-                }
-                response = api.create(`${API_9007_URI}/rbac/update-menu`, edit_json);
+                const edit_json = JSON.parse(JSON.stringify(formData));
+                edit_json.is_deleted = false;
+                response = api.put(`${API_9007_URI}/rbac/update-menu`, edit_json);
             } else {
-                const json = {
-                    namaMenu: formData.nama_menu,
-                    namaSubMenu: formData.nama_sub_menu,
-                    url: formData.url,
-                    isMenu: formData.is_menu
-                }
+                const json = JSON.parse(JSON.stringify(formData));
                 response = api.create(`${API_9007_URI}/rbac/create-menu`, json);
             }
 
@@ -175,7 +129,6 @@ const Menu = () => {
     function changeValue(e) {
         const { name, value, checked, type } = e.target;
         setFormData({ ...formData, [name]: type == "checkbox" ? checked : type == "select-one" ? parseInt(value) : value })
-        setVal(e);
     }
 
     function tog_center() {
@@ -183,6 +136,11 @@ const Menu = () => {
     }
 
     useEffect(() => {
+        let is_valid = true;
+        if (!formData.menu_name) is_valid = false;
+        if (!formData.menu_description) is_valid = false;
+        if (!formData.url) is_valid = false;
+        setIsValid(is_valid);
     }, [formData])
 
     useEffect(() => {
@@ -214,7 +172,9 @@ const Menu = () => {
     function onEdit(data) {
         setIsEdit(true);
         setShow(true);
-        setFormData(JSON.parse(JSON.stringify(data)));
+        const _new = JSON.parse(JSON.stringify(data));
+        _new.is_menu = _new.is_menu === true ? true : false; // update data null to false
+        setFormData(_new);
         window.scrollTo(0, 0)
     }
 
@@ -227,20 +187,24 @@ const Menu = () => {
         setIsEdit(false);
         setFormData({
             id: 0,
-            nama_menu: "",
+            uuid: '',
+            menu_name: "",
+            menu_description: "",
+            parent_menu_id: null,
             url: "",
-            nama_sub_menu: "",
             is_menu: false
         })
+        setMenuParentSelected(null);
     }
 
     async function do_delete() {
         try {
             const json = {
                 "id_menu": delete_data.id,
+                uuid: delete_data.uuid,
                 "is_deleted": true
             }
-            let response = api.create(`${API_9007_URI}/rbac/delete-menu`, json);
+            let response = api.put(`${API_9007_URI}/rbac/delete-menu`, json);
             let data = await response;
             if (data.code === 200) {
                 populate_data();
@@ -251,6 +215,23 @@ const Menu = () => {
         } finally {
         }
         tog_center();
+    }
+
+    async function search_parent(keyword = '') {
+        const json = {
+            page: 1,
+            size: 10,
+            menu_name: keyword
+        }
+        let response = api.create(`${API_9007_URI}/rbac/list-menu-table`, json);
+
+        let data = await response;
+
+        if (data.code === 200) {
+            setListMenuParent(data.data.map(d => { return { id: d.id, text: d.menu_name } }));
+        } else {
+            setListMenuParent([]);
+        }
     }
 
     return (
@@ -265,10 +246,19 @@ const Menu = () => {
                                         <Col>
                                             <FormGroup key={'form_group_nama_menu'}>
                                                 <Label>Nama Menu</Label>
-                                                <input type="text" name="nama_menu"
+                                                <input type="text" name="menu_name"
                                                     onChange={(e) => changeValue(e)}
                                                     className="form-control"
-                                                    value={formData.nama_menu}
+                                                    value={formData.menu_name}
+                                                />
+                                            </FormGroup>
+
+                                            <FormGroup key={'form_group_nama_sub_menu'}>
+                                                <Label>Deskripsi</Label>
+                                                <input type="text" name="menu_description"
+                                                    onChange={(e) => changeValue(e)}
+                                                    className="form-control"
+                                                    value={formData.menu_description}
                                                 />
                                             </FormGroup>
 
@@ -281,12 +271,25 @@ const Menu = () => {
                                                 />
                                             </FormGroup>
 
-                                            <FormGroup key={'form_group_nama_sub_menu'}>
-                                                <Label>Nama Sub Menu</Label>
-                                                <input type="text" name="nama_sub_menu"
+                                            <FormGroup>
+                                                <Label>Menu Parent</Label>
+                                                {/* <select name="parent_menu_id"
                                                     onChange={(e) => changeValue(e)}
-                                                    className="form-control"
-                                                    value={formData.nama_sub_menu}
+                                                    className="form-select"
+                                                    value={formData.parent_menu_id}>
+                                                    <option value={null}>-- Pilih Data --</option>
+                                                    {list_menu_parent.map(item => (
+                                                        <option key={'option_menu_parent_' + item.menu_id} value={item.menu_id}>
+                                                            {item.menu_name}
+                                                        </option>
+                                                    ))}
+                                                </select> */}
+                                                <FormSelectFilter onSearch={search_parent} dataList={list_menu_parent}
+                                                    selected={menu_parent_selected}
+                                                    onSelect={val => {
+                                                        setFormData(Object.assign({}, formData, { parent_menu_id: val ? val.id : null }));
+                                                        setMenuParentSelected(val);
+                                                    }}
                                                 />
                                             </FormGroup>
 
@@ -301,17 +304,11 @@ const Menu = () => {
                                                 </Label>
                                             </FormGroup>
 
-                                            {/* {
-                                                Object.keys(menuForm).map((e) => (
-                                                    <FormInput key={e} dynamicForm={menuForm[e]} changeValue={changeValue} />
-                                                ))
-                                            } */}
-
                                         </Col>
                                     </Row>
                                     <Row>
                                         <Col>
-                                            <Button color="primary" className="mt-3" style={{ marginRight: "6px" }} disabled={submitProcess}>
+                                            <Button color="primary" className="mt-3" style={{ marginRight: "6px" }} disabled={submitProcess || !is_valid}>
                                                 {is_edit ? 'Ubah' : 'Simpan'}
                                             </Button>
                                             <Button color="warning" className="mt-3" onClick={() => cancel_form()}>
@@ -345,23 +342,13 @@ const Menu = () => {
                                 >
                                     <thead className="table-light">
                                         <tr>
-                                            <th>
-                                                NO
-                                            </th>
-                                            <th
-                                                style={{ cursor: "pointer", verticalAlign: "middle" }}
-                                            >
-                                                Nama Menu
-                                            </th>
-                                            <th>
-                                                Url
-                                            </th>
-                                            <th>
-                                                Nama Sub menu
-                                            </th>
-                                            <th>
-                                                Aksi
-                                            </th>
+                                            <th style={{ width: "20px" }}>NO</th>
+                                            <th style={{ cursor: "pointer", verticalAlign: "middle" }}>Nama Menu</th>
+                                            <th>Deskripsi</th>
+                                            <th>Url</th>
+                                            <th>Parent</th>
+                                            <th>Deleted</th>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody style={{ minHeight: "500px" }}>
@@ -371,19 +358,24 @@ const Menu = () => {
                                                     style={
                                                         {
                                                             textAlign: "center",
-                                                            verticalAlign: "middle"
+                                                            verticalAlign: "middle",
+                                                            maxWidth: "50px"
                                                         }}>
                                                     {(paging.page - 1) * paging.size + index + 1}
                                                 </td>
-                                                <td style={{ maxWidth: "10%" }}>
-                                                    {item.nama_menu}
+                                                <td style={{ maxWidth: "10%" }} className="text-wrap">
+                                                    {item.menu_name}
+                                                </td>
+                                                <td style={{ maxWidth: "400px" }} className="text-wrap">
+                                                    {item.menu_description}
                                                 </td>
                                                 <td style={{ maxWidth: "400px" }} className="text-wrap">
                                                     {item.url}
                                                 </td>
                                                 <td style={{ maxWidth: "400px" }} className="text-wrap">
-                                                    {item.nama_sub_menu}
+                                                    {item.parent_menu_id || '-'}
                                                 </td>
+                                                <td style={{ width: "60px" }}>{item.is_deleted ? 'Ya' : ''}</td>
                                                 <td style={{ width: "160px" }}>
                                                     <Button color="danger" style={{ marginRight: "3px" }} onClick={() => {
                                                         setDeleteData(item);
@@ -402,6 +394,7 @@ const Menu = () => {
                         </Card>
                     </Col>
                 </Row>
+
                 <Modal
                     isOpen={modal_center}
                     toggle={() => tog_center}
