@@ -194,7 +194,7 @@ const ContentStunting = () => {
   const [loadingStunting, setLoadingStunting] = useState([]);
   const [errorStunting, setErrorStunting] = useState([]);
 
-  const getDataStunting = () => {
+  const getDataStunting = ({tahun}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -203,7 +203,7 @@ const ContentStunting = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
           //  kode_ddn: "11"
-            tahun: "2024"
+            tahun: tahun
         }),
         };
 
@@ -783,7 +783,7 @@ const ContentStunting = () => {
   };
 
   useEffect(() => {
-    getDataStunting();
+    getDataStunting({tahun:selectedSingleTahun});
     getDataStuntingTabel();
     // getDataStuntingTabelKabupaten();
   }, []);
@@ -1200,11 +1200,20 @@ const ContentStunting = () => {
 
   const [showChartBerisiko, setShowChartBerisiko] = useState(false)
 
+  const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
+    
+    const handleSelectChangeTahun = (e) => {
+      const { name, value } = e.target;
+      setSelectedSingleTahun(value); // Misalnya, untuk dropdown tahun
+      getDataStunting({tahun:value});
+    };
+
   return (
     <React.Fragment>
       <Row>
         <Col>
           <Card className="card-custom">
+          <div className="d-flex justify-content-between">
             <div className="d-flex title-page">
               <div className="d-flex justify-content-center align-items-center avatar-sm">
                 <span className="logo-sm">
@@ -1214,6 +1223,48 @@ const ContentStunting = () => {
               <div className="d-flex justify-content-center align-items-center">
                 <span>Kementerian Kependudukan dan Pembangunan Keluarga</span>
               </div>
+            </div>
+            <div className="d-flex nav-beranda">
+                  <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                    Pilih Data Tahun:
+                  </div>
+                 <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                margin: "15px",
+              }}
+              value={selectedSingleTahun}
+              onChange={handleSelectChangeTahun}
+            >                        
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select>
+                </div>
+            {/* <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                marginLeft: "10px",
+                marginTop: "16px",
+                marginBottom: "30px",
+              }}
+              value={selectedSingleTahun}
+              onChange={handleSelectChange}
+            >                        
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select> */}
             </div>
           </Card>
         </Col>
@@ -1315,7 +1366,7 @@ const ContentStunting = () => {
                                     separator="."
                                     prefix="Rp "
                                     suffix=" T"
-                                    duration={3}
+                                    duration={1}
                                   />
                                 </span>
                               </div>
@@ -1360,7 +1411,7 @@ const ContentStunting = () => {
                                         separator="."
                                         prefix="Rp "
                                         suffix=" T"
-                                        duration={3}
+                                        duration={1}
                                       />
                                     </span>
                                   </div>
@@ -1393,7 +1444,7 @@ const ContentStunting = () => {
                                         separator="."
                                         prefix="Rp "
                                         suffix=" T"
-                                        duration={3}
+                                        duration={1}
                                       />
                                     </span>
                                   </div>
@@ -1516,7 +1567,7 @@ const ContentStunting = () => {
                               end={dataStunting.jumlah_keluarga}
                               separator="."
                               prefix=""
-                              duration={3}
+                              duration={1}
                             />
                             {/* {dataStunting?.jumlah_keluarga?.toLocaleString("id-ID")} */}
                           </span>
@@ -1548,7 +1599,7 @@ const ContentStunting = () => {
                               end={dataStunting.jumlah_keluarga_sasaran}
                               separator="."
                               prefix=""
-                              duration={3}
+                              duration={1}
                             />
                             {/* {dataStunting?.jumlah_keluarga_sasaran?.toLocaleString("id-ID")} */}
                           </span>
@@ -1578,7 +1629,7 @@ const ContentStunting = () => {
                               end={dataStunting.jumlah_keluarga_stunting}
                               separator="."
                               prefix=""
-                              duration={3}
+                              duration={1}
                             />
                             {/* {dataStunting?.jumlah_keluarga_stunting?.toLocaleString("id-ID")} */}
                           </span>
@@ -2875,7 +2926,7 @@ const ContentStunting = () => {
                                   separator="."
                                   prefix="Rp "
                                   suffix=" T"
-                                  duration={3}
+                                  duration={1}
                                 />
                               </span>
                             </div>
@@ -2997,7 +3048,7 @@ const ContentStunting = () => {
                                           separator="."
                                           // prefix=""
                                           suffix=""
-                                          duration={3}
+                                          duration={1}
                                         />
                                       </span>
                                     </div>
@@ -3053,7 +3104,7 @@ const ContentStunting = () => {
                                           separator="."
                                           // prefix=""
                                           suffix=""
-                                          duration={3}
+                                          duration={1}
                                         />
                                       </span>
                                     </div>
@@ -3575,7 +3626,7 @@ const ContentStunting = () => {
                               separator="."
                               prefix="Rp "
                               suffix=""
-                              duration={3}
+                              duration={1}
                             />
                           </span>
                         </div>
@@ -3818,7 +3869,7 @@ const ContentStunting = () => {
                               separator="."
                               prefix="Rp "
                               suffix=""
-                              duration={3}
+                              duration={1}
                             />
                           </span>
                         </div>

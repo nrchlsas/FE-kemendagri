@@ -54,7 +54,7 @@ const ContentUhcV2 = () => {
   const [loadingUhc, setLoadingUhc] = useState([]);
   const [errorUhc, setErrorUhc] = useState([]);
 
-  const getDataUhc = () => {
+  const getDataUhc = ({tahun}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -62,7 +62,7 @@ const ContentUhcV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
-            tahun :"2024"
+            tahun: tahun
           }),
         };
         const response = await fetch(
@@ -451,10 +451,16 @@ const ContentUhcV2 = () => {
     }
   };
 
-  
+    const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
+    
+    const handleSelectChangeTahun = (e) => {
+      const { name, value } = e.target;
+      setSelectedSingleTahun(value); // Misalnya, untuk dropdown tahun
+      getDataUhc({tahun: value})
+    };
 
   useEffect(() => {
-    getDataUhc();
+    getDataUhc({tahun: selectedSingleTahun});
     getDataTabelBpjsSeprov();
     // getDataTabelBpjsKabupaten()
   }, []);
@@ -464,6 +470,7 @@ const ContentUhcV2 = () => {
       <Row>
         <Col>
           <Card className="card-custom ">
+          <div className="d-flex justify-content-between">
             <div className="d-flex title-page">
               <div className="avatar-sm">
                 <i className="ri-account-circle-line text-dark fs-1"></i>
@@ -471,6 +478,29 @@ const ContentUhcV2 = () => {
               <div className="d-flex justify-content-center align-items-center">
                 <span>BPJS Kesehatan</span>
               </div>
+            </div>
+            <div className="d-flex nav-beranda">
+                  <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                    Pilih Data Tahun:
+                  </div>
+                 <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                margin: "15px",
+              }}
+              value={selectedSingleTahun}
+              onChange={handleSelectChangeTahun}
+            >                        
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select>
+                </div>
             </div>
           </Card>
         </Col>

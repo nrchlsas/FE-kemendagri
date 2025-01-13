@@ -257,7 +257,7 @@ const ContentMiskinEkstremV2 = () => {
 
   const [dataPieChartSpm, setDataPieChartSpm] = useState([],[])
 
-  const getDataKemiskinanEkstrem = (tahun="2024") => {
+  const getDataKemiskinanEkstrem = ({tahun}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -942,7 +942,7 @@ const ContentMiskinEkstremV2 = () => {
   // };
 
   useEffect(() => {
-    getDataKemiskinanEkstrem();
+    getDataKemiskinanEkstrem({tahun: selectedSingleTahun});
     // getDataKemiskinanEkstremTahun("2024");
     getDataMiskinEkstremTabel();
     // getDataMiskinEkstremTabelKab()
@@ -1153,11 +1153,20 @@ const ContentMiskinEkstremV2 = () => {
     setModall(false); // Close modal by setting modall to false
   };
 
+  const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
+  
+  const handleSelectChangeTahun = (e) => {
+    const { name, value } = e.target;
+    setSelectedSingleTahun(value); // Misalnya, untuk dropdown tahun
+    getDataKemiskinanEkstrem({tahun: value})
+  };
+
   return (
     <React.Fragment>
       <Row>
         <Col>
           <Card className="card-custom">
+          <div className="d-flex justify-content-between">
             <div className="d-flex title-page">
             <div className="d-flex justify-content-center align-items-center avatar-sm">
                 <span className="logo-sm">
@@ -1167,6 +1176,48 @@ const ContentMiskinEkstremV2 = () => {
               <div className="d-flex justify-content-center align-items-center">
                 <span>KEMISKINAN EKSTREM</span>
               </div>
+            </div>
+            <div className="d-flex nav-beranda">
+                  <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                    Pilih Data Tahun:
+                  </div>
+                 <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                margin: "15px",
+              }}
+              value={selectedSingleTahun}
+              onChange={handleSelectChangeTahun}
+            >                        
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select>
+                </div>
+            {/* <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                marginLeft: "10px",
+                marginTop: "16px",
+                marginBottom: "30px",
+              }}
+              value={selectedSingleTahun}
+              onChange={handleSelectChange}
+            >                        
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select> */}
             </div>
           </Card>
         </Col>
@@ -1207,9 +1258,9 @@ const ContentMiskinEkstremV2 = () => {
               </div>
               
               <div className="d-flex nav-beranda">
-              <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
-                Penanganan Miskin Ekstrem:
-              </div>
+                  <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                    Penanganan Miskin Ekstrem:
+                  </div>
                   <select
                     name="Desil"
                       style={{
@@ -1409,7 +1460,7 @@ const ContentMiskinEkstremV2 = () => {
                                             separator="."
                                             prefix="Rp "
                                             suffix=" T"
-                                            duration={3}
+                                            duration={1}
                                           />
                                         </span>
                                       </div>
@@ -1449,7 +1500,7 @@ const ContentMiskinEkstremV2 = () => {
                                             separator="."
                                             prefix="Rp "
                                             suffix=" T"
-                                            duration={3}
+                                            duration={1}
                                           />
                                         </span>
                                       </div>
@@ -1510,7 +1561,7 @@ const ContentMiskinEkstremV2 = () => {
                                             separator="."
                                             prefix="Rp "
                                             suffix=" T"
-                                            duration={3}
+                                            duration={1}
                                           />
                                         </span>
                                       </div>
@@ -1555,7 +1606,7 @@ const ContentMiskinEkstremV2 = () => {
                                             separator="."
                                             prefix="Rp "
                                             suffix=" T"
-                                            duration={3}
+                                            duration={1}
                                           />
                                         </span>
                                       </div>
@@ -1618,7 +1669,7 @@ const ContentMiskinEkstremV2 = () => {
                                             separator="."
                                             prefix="Rp "
                                             suffix=" T"
-                                            duration={3}
+                                            duration={1}
                                           />
                                         </span>
                                       </div>
@@ -1660,7 +1711,7 @@ const ContentMiskinEkstremV2 = () => {
                                             separator="."
                                             prefix="Rp "
                                             suffix=" T"
-                                            duration={3}
+                                            duration={1}
                                           />
                                         </span>
                                       </div>
@@ -1725,7 +1776,7 @@ const ContentMiskinEkstremV2 = () => {
                                             separator="."
                                             prefix="Rp "
                                             suffix=" T"
-                                            duration={3}
+                                            duration={1}
                                           />
                                         </span>
                                       </div>
@@ -1767,7 +1818,7 @@ const ContentMiskinEkstremV2 = () => {
                                             separator="."
                                             prefix="Rp "
                                             suffix=" T"
-                                            duration={3}
+                                            duration={1}
                                           />
                                         </span>
                                       </div>
@@ -2528,7 +2579,7 @@ const ContentMiskinEkstremV2 = () => {
                                   separator="."
                                   prefix="Rp "
                                   suffix=" T"
-                                  duration={3}
+                                  duration={1}
                                 />
                               </span>
                             </div>
@@ -2609,7 +2660,7 @@ const ContentMiskinEkstremV2 = () => {
                                                 separator="."
                                                 // prefix=""
                                                 suffix=""
-                                                duration={3}
+                                                duration={1}
                                               />
                                             </span>
                                           </div>
@@ -2644,7 +2695,7 @@ const ContentMiskinEkstremV2 = () => {
                                                 separator="."
                                                 // prefix=""
                                                 suffix=""
-                                                duration={3}
+                                                duration={1}
                                               />
                                             </span>
                                           </div>
@@ -2814,7 +2865,7 @@ const ContentMiskinEkstremV2 = () => {
                                                 separator="."
                                                 // prefix=""
                                                 suffix=""
-                                                duration={3}
+                                                duration={1}
                                               />
                                             </span>
                                           </div>
@@ -2847,7 +2898,7 @@ const ContentMiskinEkstremV2 = () => {
                                                 separator="."
                                                 // prefix=""
                                                 suffix=""
-                                                duration={3}
+                                                duration={1}
                                               />
                                             </span>
                                           </div>
@@ -3169,7 +3220,7 @@ const ContentMiskinEkstremV2 = () => {
                                     separator="."
                                     prefix=""
                                     suffix=""
-                                    duration={3}
+                                    duration={1}
                                   />
                                 </span>
                               </div>
@@ -3608,7 +3659,7 @@ const ContentMiskinEkstremV2 = () => {
                                     separator="."
                                     prefix="Rp "
                                     suffix=""
-                                    duration={3}
+                                    duration={1}
                                   />
                                 </span>
                               </div>
@@ -3773,7 +3824,7 @@ const ContentMiskinEkstremV2 = () => {
                                     separator="."
                                     prefix="Rp "
                                     suffix=""
-                                    duration={3}
+                                    duration={1}
                                   />
                                 </span>
                               </div>
