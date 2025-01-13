@@ -2532,7 +2532,7 @@ const ContentStunting = () => {
                       ANGGARAN SPM
                     </NavLink>
                   </NavItem>
-                  <NavItem>
+                  {/* <NavItem>
                     <NavLink
                       style={{ cursor: "pointer" }}
                       className={classnames("h-100", {
@@ -2545,7 +2545,7 @@ const ContentStunting = () => {
                       Perbandingan Total Keluarga Berisiko Stunting Berdasarkan
                       Total Keluarga Sasaran
                     </NavLink>
-                  </NavItem>
+                  </NavItem> */}
                   <NavItem>
                     <NavLink
                       style={{ cursor: "pointer" }}
