@@ -17,32 +17,10 @@ import { useSelector } from "react-redux";
 import { get_permission_by_url } from "../../slices/thunks";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import FormSelectFilter from "../../Components/FormFactory/FormSelectFilter";
 
 const API_9007_URI = `${process.env.REACT_APP_API_URL_9007}`;
 const api = new APIClient();
-const rolesForm = {
-    namaRoles: {
-        id: "txt_nama_roles",
-        label: "Nama Role",
-        type: "text",
-        placeholder: "Input nama role",
-        defaultValue: "",
-        rules: {
-            required: true,
-        },
-    },
-    status: {
-        id: "check_status",
-        label: "Status",
-        type: "checkbox",
-        placeholder: "",
-        defaultValue: true,
-        rules: {
-            required: true,
-        },
-    }
-
-};
 
 const Roles = () => {
     const dispatch = useDispatch();
@@ -50,8 +28,10 @@ const Roles = () => {
     const [formData, setFormData] = useState({
         id: 0,
         uuid: '',
-        nama_roles: '',
+        role_name: '',
+        role_description: '',
         status: false,
+        parent_role_id: null
     });
     const [show, setShow] = useState(false)
     const [modal_center, setmodal_center] = useState(false);
@@ -66,6 +46,25 @@ const Roles = () => {
         title: 'Title',
         message: 'Message'
     })
+
+    const [list_parent, setListParent] = useState([]);
+    const [parent_selected, setParentSelected] = useState(null);
+    async function search_parent(keyword) {
+        const json = {
+            page: 1,
+            size: 10,
+            role_name: keyword
+        }
+        let response = api.create(`${API_9007_URI}/rbac/list-roles-all`, json);
+
+        let data = await response;
+
+        if (data.code === 200) {
+            setListParent(data.data.map(d => { return { id: d.id, text: d.role_name } }));
+        } else {
+            setListParent([]);
+        }
+    }
 
     // permission
     const permissionState = (state) => state.Profile;
@@ -114,22 +113,24 @@ const Roles = () => {
 
     const onSubmit = async (e) => {
         e.preventDefault();
-        const json = {
-            id: formData.id,
-            uuid: formData.uuid,
-            namaRoles: formData.nama_roles,
-            status: formData.status
-        };
+        const json = JSON.parse(JSON.stringify(formData));
+        // {
+        //     id: formData.id,
+        //     uuid: formData.uuid,
+        //     role_name: formData.role_name,
+        //     status: formData.status,
+        //     role_description: formData.role_description
+        // };
         try {
             let response = null;
             if (is_edit) {
-                const json_edit = {
-                    id: formData.id,
-                    status: formData.status,
-                    uuid: formData.uuid,
-                    nama_roles: formData.nama_roles,
-                }
-                response = api.create(`${API_9007_URI}/rbac/update-roles`, json_edit);
+                // const json_edit = {
+                //     id: formData.id,
+                //     status: formData.status,
+                //     uuid: formData.uuid,
+                //     role_name: formData.role_name,
+                // }
+                response = api.put(`${API_9007_URI}/rbac/update-roles`, json);
             } else {
                 response = api.create(`${API_9007_URI}/rbac/create-roles`, json);
             }
@@ -168,7 +169,7 @@ const Roles = () => {
 
     useEffect(() => {
         let is_valid = true;
-        if (!formData.nama_roles) is_valid = false;
+        if (!formData.role_name) is_valid = false;
         setIsValid(is_valid);
     }, [formData])
 
@@ -195,9 +196,12 @@ const Roles = () => {
         setFormData(Object.assign({}, formData, {
             id: data.id,
             uuid: data.uuid,
-            nama_roles: data.nama_roles,
+            role_name: data.role_name,
+            role_description: data.role_description || '',
             status: data.status,
+            parent_role_id: data.parent_role_id
         }));
+        setParentSelected(data.parent_role_id ? { id: data.parent_role_id, text: data.parent_role_name || 'EMPTY' } : null);
         window.scrollTo(0, 0)
     }
 
@@ -211,7 +215,8 @@ const Roles = () => {
         setFormData({
             id: 0,
             uuid: '',
-            nama_roles: '',
+            role_name: '',
+            role_description: '',
             status: false,
         })
     }
@@ -261,12 +266,33 @@ const Roles = () => {
                                         <Col>
                                             <FormGroup>
                                                 <Label>Nama Role</Label>
-                                                <input type="text" name="nama_roles"
+                                                <input type="text" name="role_name"
                                                     onChange={(e) => changeValue(e)}
                                                     className="form-control"
-                                                    value={formData.nama_roles}
+                                                    value={formData.role_name}
                                                 />
                                             </FormGroup>
+
+                                            <FormGroup>
+                                                <Label>Deskripsi Role</Label>
+                                                <input type="text" name="role_description"
+                                                    onChange={(e) => changeValue(e)}
+                                                    className="form-control"
+                                                    value={formData.role_description}
+                                                />
+                                            </FormGroup>
+
+                                            <FormGroup>
+                                                <Label>Role Parent</Label>
+                                                <FormSelectFilter onSearch={search_parent} dataList={list_parent}
+                                                    selected={parent_selected}
+                                                    onSelect={val => {
+                                                        setFormData(Object.assign({}, formData, { parent_role_id: val ? val.id : null }));
+                                                        setParentSelected(val);
+                                                    }}
+                                                />
+                                            </FormGroup>
+
                                             <FormGroup check>
                                                 <Label>
                                                     <input type="checkbox" name="status"
@@ -319,36 +345,30 @@ const Roles = () => {
                                 >
                                     <thead className="table-light">
                                         <tr>
-                                            <th>
-                                                NO
-                                            </th>
-                                            <th
-                                                style={{ cursor: "pointer", verticalAlign: "middle" }}
-                                            >
+                                            <th style={{ width: "20px" }}>NO</th>
+                                            <th style={{ cursor: "pointer", verticalAlign: "middle" }}>
                                                 Nama Role
                                             </th>
-                                            <th>
-                                                Status
-                                            </th>
-                                            <th>
-                                                Aksi
-                                            </th>
+                                            <th>Deskripsi</th>
+                                            <th>Parent Role</th>
+                                            <th>Status</th>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody style={{ minHeight: "500px" }}>
                                         {resultData.map((item, index) => (
                                             <tr key={index}>
-                                                <td
-                                                    style={
-                                                        {
-                                                            textAlign: "center",
-                                                            verticalAlign: "middle"
-                                                        }}>
+                                                <td style={
+                                                    {
+                                                        textAlign: "center",
+                                                        verticalAlign: "middle",
+                                                        width: "20px"
+                                                    }}>
                                                     {(paging.page - 1) * paging.size + index + 1}
                                                 </td>
-                                                <td>
-                                                    {item.nama_roles}
-                                                </td>
+                                                <td>{item.role_name}</td>
+                                                <td>{item.role_description}</td>
+                                                <td>{item.parent_role_name || item.parent_role_id || '-'}</td>
                                                 <td>
                                                     <input type="checkbox" key={index} checked={item.status} readOnly />
                                                 </td>

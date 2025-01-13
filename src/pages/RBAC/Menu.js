@@ -274,17 +274,6 @@ const Menu = () => {
 
                                             <FormGroup>
                                                 <Label>Menu Parent</Label>
-                                                {/* <select name="parent_menu_id"
-                                                    onChange={(e) => changeValue(e)}
-                                                    className="form-select"
-                                                    value={formData.parent_menu_id}>
-                                                    <option value={null}>-- Pilih Data --</option>
-                                                    {list_menu_parent.map(item => (
-                                                        <option key={'option_menu_parent_' + item.menu_id} value={item.menu_id}>
-                                                            {item.menu_name}
-                                                        </option>
-                                                    ))}
-                                                </select> */}
                                                 <FormSelectFilter onSearch={search_parent} dataList={list_menu_parent}
                                                     selected={menu_parent_selected}
                                                     onSelect={val => {
