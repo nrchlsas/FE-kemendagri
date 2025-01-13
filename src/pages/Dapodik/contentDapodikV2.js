@@ -102,8 +102,17 @@ const ContentDapodikV2 = () => {
     setDataChartRincianDapodikKabupaten,
   ] = useState([[], []]);
 
+  const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
+
+  const handleSelectChange = (e) => {
+    const { name, value } = e.target;
+    setSelectedSingleTahun(value); // Misalnya, untuk dropdown tahun
+    getDataAnakSekolah({kodeWilayah: "", tahun: value});
+    getDataDapodik({kodeDdn: "", tahun: value});
+  };
+
   const [dataSdMap, setDataSdMap] = useState([])
-  const getDataDapodik = ({kodeDdn="", tahun="2024"}) => {
+  const getDataDapodik = ({kodeDdn="", tahun=""}) => {
     const fetchData = async () => {
         try {
             const token = JSON.parse(sessionStorage.getItem("authUser"));
@@ -404,7 +413,7 @@ const ContentDapodikV2 = () => {
   };
 
   const [dataDapodikJumlahAnakSekolah, setDataDapodikJumlahAnakSekolah] = useState([])
-  const getDataAnakSekolah = ({kodeWilayah}) => {
+  const getDataAnakSekolah = ({kodeWilayah, tahun}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -413,7 +422,7 @@ const ContentDapodikV2 = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_wilayah: kodeWilayah,
-            // tahun: "2024"
+            tahun: tahun
         }),
         };
         
@@ -610,8 +619,8 @@ const ContentDapodikV2 = () => {
   };
 
   useEffect(() => {
-    getDataDapodik({kodeDdn: "", tahun: "2024"});
-    getDataAnakSekolah({kodeWilayah: ""});
+    getDataDapodik({kodeDdn: "", tahun: selectedSingleTahun});
+    getDataAnakSekolah({kodeWilayah: "", tahun: selectedSingleTahun});
     getDataTabelDapodikSeProv();
     getDataTabelDapodikProv();
     getDataTabelDapodikKab();
@@ -1063,6 +1072,7 @@ const ContentDapodikV2 = () => {
       <Row>
         <Col>
           <Card className="card-custom">
+            <div className="d-flex justify-content-between">
             <div className="d-flex title-page">
               <div className="d-flex justify-content-center align-items-center avatar-sm">
                 <span className="logo-sm">
@@ -1072,6 +1082,48 @@ const ContentDapodikV2 = () => {
               <div className="d-flex justify-content-center align-items-center">
                 <span>Kementerian Pendidikan Dasar dan Menengah</span>
               </div>
+            </div>
+            <div className="d-flex nav-beranda">
+                  <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                    Pilih Data Tahun:
+                  </div>
+                 <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                margin: "15px",
+              }}
+              value={selectedSingleTahun}
+              onChange={handleSelectChange}
+            >                        
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select>
+                </div>
+            {/* <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                marginLeft: "10px",
+                marginTop: "16px",
+                marginBottom: "30px",
+              }}
+              value={selectedSingleTahun}
+              onChange={handleSelectChange}
+            >                        
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select> */}
             </div>
           </Card>
         </Col>
