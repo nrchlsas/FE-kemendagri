@@ -150,40 +150,98 @@ const ContentPerencanaan = () => {
           dataPerencanaanRkpdNasionalPersentase?.data
         );
 
-        const dataPersentasePerencanaan = dataPerencanaanRkpdNasionalPersentase?.data?.length < 0 ? [] : {
-          tahap1: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
-          name: item.nama_daerah||"",
-          value: item.persiapan || 0
-        })),
-          tahap2: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
-          name:item.nama_daerah||"",
-          value: item.rancangan_awal || 0
-        })),
-          tahap3: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
-          name:item.nama_daerah||"",
-          value: item.rancangan || 0
-        })),
-          tahap4: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
-          name:item.nama_daerah||"",
-          value: item.musrenbang || 0
-        })),
-          tahap5: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
-          name:item.nama_daerah||"",
-          value: item.rancangan_akhir || 0
-        })),
-          tahap6: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
-          name:item.nama_daerah||"",
-          value: item.penetapan || 0
-        })),
-      }
+      //   const dataPersentasePerencanaan = dataPerencanaanRkpdNasionalPersentase?.data?.length < 0 ? [] : {
+      //     tahap1: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
+      //     name: item.nama_daerah||"",
+      //     value: item.persiapan || 0
+      //   })),
+      //     tahap2: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
+      //     name:item.nama_daerah||"",
+      //     value: item.rancangan_awal || 0
+      //   })),
+      //     tahap3: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
+      //     name:item.nama_daerah||"",
+      //     value: item.rancangan || 0
+      //   })),
+      //     tahap4: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
+      //     name:item.nama_daerah||"",
+      //     value: item.musrenbang || 0
+      //   })),
+      //     tahap5: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
+      //     name:item.nama_daerah||"",
+      //     value: item.rancangan_akhir || 0
+      //   })),
+      //     tahap6: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
+      //     name:item.nama_daerah||"",
+      //     value: item.penetapan || 0
+      //   })),
+      // }
 
-      console.log(dataPersentasePerencanaan, dataPersentasePerencanaan?.tahap6, 'ini bero')
-      setDataPersentaseMap(dataPersentasePerencanaan || [])
+      const dataPersentasePerencanaan = {
+        tahap1: (Array.isArray(dataPerencanaanRkpdNasionalPersentase?.data) 
+          ? dataPerencanaanRkpdNasionalPersentase?.data.map(item => ({
+              name: item?.nama_daerah || "Unknown",
+              value: item?.persiapan || 0,
+            }))
+          : []
+        ),
+        tahap2: (Array.isArray(dataPerencanaanRkpdNasionalPersentase?.data) 
+          ? dataPerencanaanRkpdNasionalPersentase?.data.map(item => ({
+              name: item?.nama_daerah || "Unknown",
+              value: item?.rancangan_awal || 0,
+            }))
+          : []
+        ),
+        tahap3: (Array.isArray(dataPerencanaanRkpdNasionalPersentase?.data) 
+          ? dataPerencanaanRkpdNasionalPersentase?.data.map(item => ({
+            name:item.nama_daerah||"",
+            value: item.rancangan || 0
+            }))
+          : []
+        ),
+        tahap4: (Array.isArray(dataPerencanaanRkpdNasionalPersentase?.data) 
+          ? dataPerencanaanRkpdNasionalPersentase?.data.map(item => ({
+            name:item.nama_daerah||"",
+            value: item.musrenbang || 0
+            }))
+          : []
+        ),
+        tahap5: (Array.isArray(dataPerencanaanRkpdNasionalPersentase?.data) 
+          ? dataPerencanaanRkpdNasionalPersentase?.data.map(item => ({
+            name:item.nama_daerah||"",
+            value: item.rancangan_akhir || 0
+            }))
+          : []
+        ),
+        tahap6: (Array.isArray(dataPerencanaanRkpdNasionalPersentase?.data) 
+          ? dataPerencanaanRkpdNasionalPersentase?.data.map(item => ({
+            name:item.nama_daerah||"",
+            value: item.penetapan || 0
+            }))
+          : []
+        ),
+        
+        // Tambahkan tahap lainnya dengan format serupa
+      };
+
+      // Tetapkan data valid ke state
+      setDataPersentaseMap(dataPersentasePerencanaan);
+
+      // Tetapkan tahap6 atau array kosong
       setValueMap(dataPersentasePerencanaan?.tahap6 || []);
-      console.log(valueMap, 'ini value map')
-      console.log(dataPersentaseMap, 'ini data persen map')
-      const maxValue = Math.max(...dataPersentasePerencanaan.tahap6.map(item => item.value));
-      setmaxValueMap(maxValue || []);
+
+      // Cari nilai maksimum dari tahap6, atau fallback ke 0 jika data kosong
+      const maxValue = dataPersentasePerencanaan?.tahap6?.reduce((max, item) => {
+        return Math.max(max, item.value || 0);
+      }, 0);
+      setmaxValueMap(maxValue || 0);
+
+      // setDataPersentaseMap(dataPersentasePerencanaan || [])
+      // setValueMap(dataPersentasePerencanaan?.tahap6 || []);
+      // setmaxValueMap(maxValue || []);
+      // console.log(valueMap, 'ini value map')
+      // console.log(dataPersentaseMap, 'ini data persen map')
+      // const maxValue = Math.max(...dataPersentasePerencanaan?.tahap6?.map(item => item.value));
       
       } catch (errorPerencanaan) {
         setErrorPerencanaan(errorPerencanaan);
@@ -794,82 +852,86 @@ const ContentPerencanaan = () => {
                         </tr>
                       </thead>
                       <tbody>
-                        {currentItems.map((item, index) => {
-                          const tahapData = {
-                            1: item.persiapan,
-                            2: item.rancangan_awal,
-                            3: item.rancangan,
-                            4: item.musrenbang,
-                            5: item.rancangan_akhir,
-                            6: item.penetapan,
-                          };
+                      {Array.isArray(currentItems) &&
+                      currentItems.map((item, index) => {
+                        // Pastikan tahapData memiliki nilai valid atau fallback ke 0
+                        const tahapData = {
+                          1: item?.persiapan || 0,
+                          2: item?.rancangan_awal || 0,
+                          3: item?.rancangan || 0,
+                          4: item?.musrenbang || 0,
+                          5: item?.rancangan_akhir || 0,
+                          6: item?.penetapan || 0,
+                        };
 
-                          return (
-                            <tr key={index}>
-                              <td>{item.kode_ddn}</td>
-                              <td>{item.nama_daerah.replace("Provinsi ", "")}</td>
-                              <td>
-                                <div onClick={()=> (handleOpen({kodeDdn: item.kode_ddn}), setCurrentPageSudahDanBelum(1))}
-                                  className="progress"
-                                  style={{ height: "20px", cursor: "pointer" }}
-                                >
-                                  <div
-                                    className="progress-bar"
-                                    role="progressbar"
-                                    style={{
-                                      width: `${tahapData[customActiveTab]}%`,
-                                      backgroundColor: tahapData[customActiveTab] === 100
-                                      ? "#57E7B4" // Hijau jika 100%
-                                      : (tahapData[customActiveTab] > 5 && tahapData[customActiveTab] < 100)
-                                      ? "#FCAD24" // Kuning jika 1%-99%
-                                      : "#F35F52", // Merah jika 0%,
-                                      color: "black",
-                                    }}
-                                    aria-valuenow={tahapData[customActiveTab]}
-                                    aria-valuemin="0"
-                                    aria-valuemax="100"
-                                  >
-                                    {tahapData[customActiveTab] > 30 &&
-                                      `${tahapData[
-                                        customActiveTab
-                                      ].toLocaleString("id-ID", {
-                                        minimumFractionDigits: 2,
-                                        maximumFractionDigits: 2,
-                                      })}%`}
-                                  </div>
-                                  {tahapData[customActiveTab] <= 30 && (
-                                    <div className="d-flex justify-content-center ms-1 align-items-center">
-                                      {tahapData[
-                                        customActiveTab
-                                      ].toLocaleString("id-ID", {
-                                        minimumFractionDigits: 2,
-                                        maximumFractionDigits: 2,
-                                      })}
-                                      %
-                                    </div>
-                                  )}
-                                </div>
-                              </td>
-                              <td
-                                style={{
-                                  textAlign: "center",
-                                  verticalAlign: "middle",                                  
-                                  whiteSpace: "normal",
-                                  overflowWrap: "break-word",
-                                }}
+                        // Ambil nilai tahap berdasarkan customActiveTab dengan fallback ke 0
+                        const currentProgress = tahapData[customActiveTab] ?? 0;
+
+                        return (
+                          <tr key={index}>
+                            <td>{item?.kode_ddn || "Unknown"}</td>
+                            <td>{(item?.nama_daerah || "Unknown").replace("Provinsi ", "")}</td>
+                            <td>
+                              <div
+                                onClick={() => (handleOpen({ kodeDdn: item?.kode_ddn || "Unknown" }), setCurrentPageSudahDanBelum(1))}
+                                className="progress"
+                                style={{ height: "20px", cursor: "pointer" }}
                               >
-                                <i onClick={()=> goToDetail(item.kode_ddn, item.nama_daerah)}
+                                <div
+                                  className="progress-bar"
+                                  role="progressbar"
                                   style={{
-                                    padding: "5px 10px",
-                                    cursor: "pointer",
-                                    fontSize: "20px",
+                                    width: `${currentProgress}%`,
+                                    backgroundColor:
+                                      currentProgress === 100
+                                        ? "#57E7B4" // Hijau jika 100%
+                                        : currentProgress > 5
+                                        ? "#FCAD24" // Kuning jika 6%-99%
+                                        : "#F35F52", // Merah jika 0%-5%
+                                    color: "black",
                                   }}
-                                  className="bx bx-list-ul text-primary"
-                                ></i>
-                              </td>
-                            </tr>
-                          );
-                        })}
+                                  aria-valuenow={currentProgress}
+                                  aria-valuemin="0"
+                                  aria-valuemax="100"
+                                >
+                                  {currentProgress > 30 &&
+                                    `${currentProgress.toLocaleString("id-ID", {
+                                      minimumFractionDigits: 2,
+                                      maximumFractionDigits: 2,
+                                    })}%`}
+                                </div>
+                                {currentProgress <= 30 && (
+                                  <div className="d-flex justify-content-center ms-1 align-items-center">
+                                    {currentProgress.toLocaleString("id-ID", {
+                                      minimumFractionDigits: 2,
+                                      maximumFractionDigits: 2,
+                                    })}
+                                    %
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                            <td
+                              style={{
+                                textAlign: "center",
+                                verticalAlign: "middle",
+                                whiteSpace: "normal",
+                                overflowWrap: "break-word",
+                              }}
+                            >
+                              <i
+                                onClick={() => goToDetail(item?.kode_ddn || "Unknown", item?.nama_daerah || "Unknown")}
+                                style={{
+                                  padding: "5px 10px",
+                                  cursor: "pointer",
+                                  fontSize: "20px",
+                                }}
+                                className="bx bx-list-ul text-primary"
+                              ></i>
+                            </td>
+                          </tr>
+                        );
+                      })}
                       </tbody>
                     </table>
                   </div>

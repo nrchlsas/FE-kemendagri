@@ -1198,6 +1198,8 @@ const ContentStunting = () => {
     setShowDataChartFasilitasProvinsi(false)
   }
 
+  const [showChartBerisiko, setShowChartBerisiko] = useState(false)
+
   return (
     <React.Fragment>
       <Row>
@@ -1470,101 +1472,139 @@ const ContentStunting = () => {
                     </>
                   )}
                 </Col>
-              <Row>
-              <Col md={12}>
-              <Card className="card-animate">
-                <CardBody>
-                  <div className="d-flex flex-column title-custom-card">
-                    <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                      <span>JUMLAH KELUARGA</span>
-                    </div>
-                    <div className="d-flex">
-                      <div className="avatar-xs-half flex-shrink-0">
-                        <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
-                          <i className="mdi mdi-human-male-female-child text-warning"></i>
-                        </span>
-                      </div>
-                      <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                        <span>
-                          <CountUp
-                            start={0}
-                            end={dataStunting.jumlah_keluarga}
-                            separator="."
-                            prefix=""
-                            duration={3}
-                          />
-                          {/* {dataStunting?.jumlah_keluarga?.toLocaleString("id-ID")} */}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </CardBody>
-              </Card>
-            </Col>  
               </Row>
-              </Row>
-              <Row>
-            <Col md={6}>
-              <Card className="card-animate">
-                <CardBody>
-                  <div className="d-flex flex-column title-custom-card">
-                    <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                      <span>KELUARGA SASARAN</span>
-                    </div>
-                    <div className="d-flex">
-                      <div className="avatar-xs-half flex-shrink-0">
-                        <span className="avatar-title bg-info-subtle rounded-4 fs-3">
-                          <i className="mdi mdi-human-male-female-child text-info"></i>
-                        </span>
+              {
+                showChartBerisiko ? <><PieChartNew
+                dataChart={dataChartPerbandinganKeluargaStunting}
+                categoryName={[
+                  "Keluarga Tidak Berisiko Stunting",
+                  "Keluarga Berisiko Stunting",
+                ]}                    
+                dataColors={'["#57E7B4", "#2DAED4"]'}
+              />
+              <div className="separator mb-4">
+              <div >
+                <span
+                  onClick={() => setShowChartBerisiko(false)}
+                  style={{
+                    cursor: "pointer",
+                    color: "#2DAED4",
+                  }}
+                >
+                  Lihat Nilai
+                </span>
+              </div>
+            </div>
+              </> : <><Row>
+                <Col md={12}>
+                <Card className="card-animate">
+                  <CardBody>
+                    <div className="d-flex flex-column title-custom-card">
+                      <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                        <span>JUMLAH KELUARGA</span>
                       </div>
-                      <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                        <span>
-                          <CountUp
-                            start={0}
-                            end={dataStunting.jumlah_keluarga_sasaran}
-                            separator="."
-                            prefix=""
-                            duration={3}
-                          />
-                          {/* {dataStunting?.jumlah_keluarga_sasaran?.toLocaleString("id-ID")} */}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </CardBody>
-              </Card>
-            </Col>
-            <Col md={6}>
-              <Card className="card-animate">
-                <CardBody>
-                  <div className="d-flex flex-column title-custom-card">
-                    <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                      <span>KELUARGA BERISIKO STUNTING</span>
-                    </div>
-                    <div className="d-flex">
-                      <div className="avatar-xs-half flex-shrink-0">
-                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
-                          <i className="mdi mdi-human-male-female-child text-danger"></i>
-                        </span>
-                      </div>
-                      <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                        <span>
-                          <CountUp
-                            start={0}
-                            end={dataStunting.jumlah_keluarga_stunting}
-                            separator="."
-                            prefix=""
-                            duration={3}
-                          />
-                          {/* {dataStunting?.jumlah_keluarga_stunting?.toLocaleString("id-ID")} */}
-                        </span>
+                      <div className="d-flex">
+                        <div className="avatar-xs-half flex-shrink-0">
+                          <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
+                            <i className="mdi mdi-human-male-female-child text-warning"></i>
+                          </span>
+                        </div>
+                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                          <span>
+                            <CountUp
+                              start={0}
+                              end={dataStunting.jumlah_keluarga}
+                              separator="."
+                              prefix=""
+                              duration={3}
+                            />
+                            {/* {dataStunting?.jumlah_keluarga?.toLocaleString("id-ID")} */}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </CardBody>
-              </Card>
-            </Col>
-          </Row>
+                  </CardBody>
+                </Card>
+              </Col>  
+                </Row>
+                <Row>
+              <Col md={6}>
+                <Card className="card-animate">
+                  <CardBody>
+                    <div className="d-flex flex-column title-custom-card">
+                      <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                        <span>KELUARGA SASARAN</span>
+                      </div>
+                      <div className="d-flex">
+                        <div className="avatar-xs-half flex-shrink-0">
+                          <span className="avatar-title bg-info-subtle rounded-4 fs-3">
+                            <i className="mdi mdi-human-male-female-child text-info"></i>
+                          </span>
+                        </div>
+                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                          <span>
+                            <CountUp
+                              start={0}
+                              end={dataStunting.jumlah_keluarga_sasaran}
+                              separator="."
+                              prefix=""
+                              duration={3}
+                            />
+                            {/* {dataStunting?.jumlah_keluarga_sasaran?.toLocaleString("id-ID")} */}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+              <Col md={6}>
+                <Card className="card-animate">
+                  <CardBody>
+                    <div className="d-flex flex-column title-custom-card">
+                      <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                        <span>KELUARGA BERISIKO STUNTING</span>
+                      </div>
+                      <div className="d-flex">
+                        <div className="avatar-xs-half flex-shrink-0">
+                          <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                            <i className="mdi mdi-human-male-female-child text-danger"></i>
+                          </span>
+                        </div>
+                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                          <span>
+                            <CountUp
+                              start={0}
+                              end={dataStunting.jumlah_keluarga_stunting}
+                              separator="."
+                              prefix=""
+                              duration={3}
+                            />
+                            {/* {dataStunting?.jumlah_keluarga_stunting?.toLocaleString("id-ID")} */}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+            </Row>
+            <div className="separator mb-4">
+              <div >
+                <span
+                  onClick={() => setShowChartBerisiko(true)}
+                  style={{
+                    cursor: "pointer",
+                    color: "#2DAED4",
+                  }}
+                >
+                  Lihat Grafik Perbandingan
+                </span>
+              </div>
+            </div>
+            </>
+              }
+              
           <Row>
                 <Col md={6}>
                   <Card className="card-animate">

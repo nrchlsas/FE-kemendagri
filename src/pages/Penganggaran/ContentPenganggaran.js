@@ -107,7 +107,7 @@ const ContentPenganggaran = () => {
   };
 
   const getDataPenganggaranNasionalProgress = ({
-    tahun = "2024",
+    tahun = selectedSingleTahun,
     tahapan = selectedSingleTahapan,
     kodeDdn
   } = {}) => {
