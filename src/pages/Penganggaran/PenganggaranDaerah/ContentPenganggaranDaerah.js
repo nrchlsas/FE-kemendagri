@@ -132,12 +132,12 @@ const ContentPenganggaranDaerah = () => {
   };
 
     // Memanggil fungsi API setiap kali dropdown berubah
-    // useEffect(() => {
-    // getDataPenganggaranNasionalPersentase({
-    //     tahun: selectedSingleTahun,
-    //     tahapan: selectedSingleTahapan,
-    // });
-    // }, [selectedSingleTahun, selectedSingleTahapan]); // Panggil API jika tahun atau dokumen berubah
+    useEffect(() => {
+    getDataPenganggaranNasionalPersentase({
+        tahun: selectedSingleTahun,
+        tahapan: selectedSingleTahapan,
+    });
+    }, [selectedSingleTahun, selectedSingleTahapan]); // Panggil API jika tahun atau dokumen berubah
   
 
   useEffect(() => {
@@ -218,7 +218,6 @@ const ContentPenganggaranDaerah = () => {
   
   const handleSelectChange = (e) => {
     const { name, value } = e.target;
-    console.log(`${name}: ${value}`, 'ini isi selected value');
     
     if (name === 'tahun') {
         setSelectedSingleTahun(value); // Misalnya, untuk dropdown tahun
@@ -661,7 +660,7 @@ const ContentPenganggaranDaerah = () => {
                     // onKeyDown={(e) => handleKeyDown(e, "provinsi")}
                     placeholder="Cari Daerah"
                   /> */}
-                  {/* <select
+                  <select
                   name="tahun"
                         style={{
                           padding: "10px 30px 10px 10px",
@@ -679,7 +678,7 @@ const ContentPenganggaranDaerah = () => {
                       >                        
                         <option value="2024">2024</option>
                         <option value="2025">2025</option>
-                      </select> */}
+                      </select>
                       <select
                       name="tahap"
                         style={{
