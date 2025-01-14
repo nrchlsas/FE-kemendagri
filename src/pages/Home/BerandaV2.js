@@ -204,7 +204,7 @@ const BerandaV2 = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             // id_tahap: idTahap            
-            // tahun: tahun
+            tahun: tahun
           }),
         };
 
@@ -360,10 +360,10 @@ const BerandaV2 = () => {
     const { name, value } = e.target;
     const selectedValue = value;
     if (name == "perencanaan") {
-      getDataBerandaPerencanaan({idTahap : value});
+      getDataBerandaPerencanaan({idTahap : value, tahun:selectedSingleTahun});
       setSelectedTahapPerencanaan(selectedValue); // Update state dengan pilihan yang dipilih
     }else if (name == "penganggaran"){
-      getDataBerandaPenganggaran({idTahap : value});
+      getDataBerandaPenganggaran({idTahap : value, tahun:selectedSingleTahun});
       setSelectedTahapPenganggaran(selectedValue); // Update state dengan pilihan yang dipilih
     }
   };  
@@ -374,7 +374,7 @@ const BerandaV2 = () => {
     setSelectedSingleTahun(value)
     getDataBerandaPerencanaan({idTahap:selectedTahapPerencanaan, tahun: value});
     getDataBerandaPenganggaran({idTahap:selectedTahapPenganggaran, tahun: value});
-    getDataBerandaRealisasi({tahun: ""});
+    getDataBerandaRealisasi({tahun: ""})
   };
   return (
     <React.Fragment>

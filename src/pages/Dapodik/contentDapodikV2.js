@@ -107,8 +107,8 @@ const ContentDapodikV2 = () => {
   const handleSelectChange = (e) => {
     const { name, value } = e.target;
     setSelectedSingleTahun(value); // Misalnya, untuk dropdown tahun
-    getDataAnakSekolah({kodeWilayah: "", tahun: value});
-    getDataDapodik({kodeDdn: "", tahun: value});
+    // getDataAnakSekolah({kodeWilayah: "", tahun: value});
+    // getDataDapodik({kodeDdn: "", tahun: value});
   };
 
   const [dataSdMap, setDataSdMap] = useState([])
@@ -216,7 +216,7 @@ const ContentDapodikV2 = () => {
   const [maxValueMap, setmaxValueMap] = useState(0)
   const [handleCardClick, setHandleCardClick] = useState(() => () => {});
 
-  const getDataTabelDapodikSeProv = (searchTerm) => {
+  const getDataTabelDapodikSeProv = ({searchTerm, tahun}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -226,6 +226,7 @@ const ContentDapodikV2 = () => {
           body: JSON.stringify({
             // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
             nama_prov: searchTerm ? searchTerm : "",
+            tahun: tahun
           }),
         };
         // /table_dapodik_provinsi
@@ -329,7 +330,7 @@ const ContentDapodikV2 = () => {
     fetchData();
   };
 
-  const getDataTabelDapodikKab = (searchTerm) => {
+  const getDataTabelDapodikKab = ({searchTerm, tahun}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -339,6 +340,7 @@ const ContentDapodikV2 = () => {
           body: JSON.stringify({
             // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
             nama_kabkota: searchTerm ? searchTerm : "",
+            tahun: tahun
           }),
         };
         // /table_dapodik_provinsi
@@ -365,16 +367,17 @@ const ContentDapodikV2 = () => {
     fetchData();
   };
   
-  const getDataCrossAnalisis = () => {
+  const getDataCrossAnalisis = ({tahun}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
-          // body: JSON.stringify({
-          //   // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
-          // }),
+          body: JSON.stringify({
+            // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
+            tahun: tahun
+          }),
         };
         
         const response = await fetch(
@@ -451,7 +454,7 @@ const ContentDapodikV2 = () => {
 
 
 
-  const getDataTabelDapodikProv = (searchTerm) => {
+  const getDataTabelDapodikProv = ({searchTerm, tahun}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -460,7 +463,8 @@ const ContentDapodikV2 = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
-            nama_prov: searchTerm
+            nama_prov: searchTerm,
+            tahun: tahun
           }),
         };
         const response = await fetch(
@@ -621,11 +625,11 @@ const ContentDapodikV2 = () => {
   useEffect(() => {
     getDataDapodik({kodeDdn: "", tahun: selectedSingleTahun});
     getDataAnakSekolah({kodeWilayah: "", tahun: selectedSingleTahun});
-    getDataTabelDapodikSeProv();
-    getDataTabelDapodikProv();
-    getDataTabelDapodikKab();
-    getDataCrossAnalisis();
-  }, []);
+    getDataTabelDapodikSeProv({tahun: selectedSingleTahun});
+    getDataTabelDapodikProv({tahun: selectedSingleTahun});
+    getDataTabelDapodikKab({tahun: selectedSingleTahun});
+    getDataCrossAnalisis({tahun: selectedSingleTahun});
+  }, [selectedSingleTahun]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [currentPageProvinsi, setCurrentPageProvinsi] = useState(1);
