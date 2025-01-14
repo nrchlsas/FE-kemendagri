@@ -46,6 +46,7 @@ const ContentDashboardAnalisis = () => {
   const [executeDate, setExcecuteDate] = useState('')
   const [persentase, setPersentase] = useState(0)
   const getDataDashboardAnalisis = ({
+    tahun,
     kodeDdn,
     kodeProv,
     namaDaerah,
@@ -80,6 +81,7 @@ const ContentDashboardAnalisis = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
+            tahun: tahun,
             kode_ddn: kodeDdn,
             nama_daerah: namaDaerah,
             kode_prov: kodeProv,
@@ -161,7 +163,7 @@ const ContentDashboardAnalisis = () => {
   };
 
   useEffect(() => {
-    getDataDashboardAnalisis({});
+    getDataDashboardAnalisis({tahun:"2025"});
   }, []);
   
   const [selectedFilters, setSelectedFilters] = useState({
@@ -199,20 +201,21 @@ const handleFilterUpdate = (filters) => {
     }
     // Kirimkan request berdasarkan filter yang dipilih
     getDataDashboardAnalisis({
-        kodeProv: cleanedFilters.provinsi,
-        kodeDdn: cleanedFilters.daerah,
-        namaDaerah: cleanedFilters.namaDaerah,
-        kodeSkpd: cleanedFilters.skpd,
-        kodeFungsi: cleanedFilters.fungsi,
-        idSpm: cleanedFilters.spm,
-        kodeUrusan: cleanedFilters.urusan,
-        kodeBidangUrusan: cleanedFilters.bidangUrusan,
-        kodeProgram: cleanedFilters.program,
-        kodeGiat: cleanedFilters.kegiatan,
-        kodeSubGiat: cleanedFilters.subKegiatan,
-        kodeObjek: cleanedFilters.objek,
-        kodeRo: cleanedFilters.rincianObjek,
-        kodeSro: cleanedFilters.subRincianObjek
+      tahun: cleanedFilters.tahun,
+      kodeProv: cleanedFilters.provinsi,
+      kodeDdn: cleanedFilters.daerah,
+      namaDaerah: cleanedFilters.namaDaerah,
+      kodeSkpd: cleanedFilters.skpd,
+      kodeFungsi: cleanedFilters.fungsi,
+      idSpm: cleanedFilters.spm,
+      kodeUrusan: cleanedFilters.urusan,
+      kodeBidangUrusan: cleanedFilters.bidangUrusan,
+      kodeProgram: cleanedFilters.program,
+      kodeGiat: cleanedFilters.kegiatan,
+      kodeSubGiat: cleanedFilters.subKegiatan,
+      kodeObjek: cleanedFilters.objek,
+      kodeRo: cleanedFilters.rincianObjek,
+      kodeSro: cleanedFilters.subRincianObjek
     });
 };
 
