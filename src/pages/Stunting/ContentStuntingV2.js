@@ -707,6 +707,7 @@ const ContentStunting = () => {
 
   const [dataDetailAnggaran, setDataDetailAnggaran] = useState([]);
   const [dataDetailAnggaranSub, setDataDetailAnggaranSub] = useState([]);
+  const [dataDetailHighlight, setDataDetailHighlight] = useState([])
   const [loadingDetailAnggaran, setLoadingDetailAnggaran] = useState([]);
   const [errorDetailAnggaran, setErrorDetailAnggaran] = useState([]);
 
@@ -768,6 +769,7 @@ const ContentStunting = () => {
 
         setCurrentPageDetail(1);
         setCurrentPageDetailSub(1);
+        setDataDetailHighlight(dataDetailAnggaran.data.stunting_highlight)
 
         
         // Open the modal only after data is successfully fetched
@@ -3634,6 +3636,27 @@ const ContentStunting = () => {
                     </div>
                   </CardBody>
                 </Card>
+              </Col>
+              <Col md={8}>
+              {dataDetailHighlight.map((item, index)=>(
+                <div className="d-flex mb-3" key={index}>
+                  <div style={{ flexBasis: "350px", color:"#929FB1" }}>{item.nama_rekening}</div>
+                  <div>:&nbsp;</div>
+                  <div style={{ fontWeight: 650 }}>
+                  <CountUp
+                      start={0}
+                      end={item.anggaran}
+                      // decimal=","
+                      // decimals={2}
+                      separator="."
+                      prefix="Rp "
+                      // suffix=" T"
+                      duration={1}
+                    />
+                    
+                  </div>
+                </div>
+              ))}                
               </Col>
             </Row>
             <div style={{ overflowY: "scroll", maxHeight: "500px" }}>

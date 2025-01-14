@@ -48,7 +48,6 @@ const BerandaV2 = () => {
       setActiveTabPenganggaran(tab);
     }
   };
-  const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
   const [dataBeranda, setDataBeranda] = useState([]);
   const [dataBeranda1, setDataBeranda1] = useState([]);
   const [dataBerandaRealisasi, setDataBerandaRealisasi] = useState([]);
@@ -174,6 +173,7 @@ const BerandaV2 = () => {
           }
           
         const dataBerandaPenganggaran = await responsePenganggaran.json();  
+        setDataBerandaPenganggaran(dataBerandaPenganggaran.data[0])
         
         const date = new Date(dataBerandaPenganggaran.data[0].execute_time);        
         // Format date as DD-MM-YYYY                
@@ -184,7 +184,6 @@ const BerandaV2 = () => {
         const formattedDate = `${year}-${month}-${day}`; // Example output: "31-12-2022"
         
         setExcecuteDate(formattedDate)
-        setDataBerandaPenganggaran(dataBerandaPenganggaran.data[0])
         
       } catch (errorBeranda) {
         setErrorBeranda(errorBeranda);
@@ -298,8 +297,8 @@ const BerandaV2 = () => {
 
   useEffect(() => {
     // getDataBeranda();
-    getDataBerandaPerencanaan({idTahap:"1", tahun: selectedSingleTahun});
-    getDataBerandaPenganggaran({idTahap:"99", tahun: selectedSingleTahun});
+    getDataBerandaPerencanaan({idTahap:"1", tahun: selectedTahun.tahunPerencanaan});
+    getDataBerandaPenganggaran({idTahap:"99", tahun: selectedTahun.tahunPenganggaran});
     getDataBerandaRealisasi({tahun: ""});
     // getDataBerandaSpm();
     // getPiePerencanaan();
@@ -360,26 +359,39 @@ const BerandaV2 = () => {
     const { name, value } = e.target;
     const selectedValue = value;
     if (name == "perencanaan") {
-      getDataBerandaPerencanaan({idTahap : value, tahun:selectedSingleTahun});
       setSelectedTahapPerencanaan(selectedValue); // Update state dengan pilihan yang dipilih
+      getDataBerandaPerencanaan({idTahap : value, tahun:selectedTahun.tahunPerencanaan});
     }else if (name == "penganggaran"){
-      getDataBerandaPenganggaran({idTahap : value, tahun:selectedSingleTahun});
       setSelectedTahapPenganggaran(selectedValue); // Update state dengan pilihan yang dipilih
+      getDataBerandaPenganggaran({idTahap : value, tahun:selectedTahun.tahunPenganggaran});
     }
   };  
 
   const [showBerandaSipd, setShowBerandaSipd] = useState(false)  
+  const [selectedTahun, setSelectedTahun] = useState({
+    tahunPerencanaan: '2024',
+    tahunPenganggaran: '2024',
+    tahunRealisasi: '2024',
+  });
   const handleSelectChangeTahun = (e) => {
     const { name, value } = e.target;
-    setSelectedSingleTahun(value)
-    getDataBerandaPerencanaan({idTahap:selectedTahapPerencanaan, tahun: value});
-    getDataBerandaPenganggaran({idTahap:selectedTahapPenganggaran, tahun: value});
-    getDataBerandaRealisasi({tahun: ""})
+    setSelectedTahun((prevYears) => ({
+      ...prevYears,
+      [name]: value,
+    }));
+  
+    if(name == "tahunPerencanaan") {
+      getDataBerandaPerencanaan({idTahap:selectedTahapPerencanaan, tahun: value});
+    }else if( name =="tahunPenganggaran"){ 
+      getDataBerandaPenganggaran({idTahap:selectedTahapPenganggaran, tahun: value});
+    }else{
+      getDataBerandaRealisasi({tahun: value})
+    }
   };
   return (
     <React.Fragment>
       {showBerandaSipd ? (<>
-        <select
+        {/* <select
           name="tahun"
           style={{
             padding: "10px 30px 10px 10px",
@@ -397,16 +409,15 @@ const BerandaV2 = () => {
         >                        
           <option value="2024">2024</option>
           <option value="2025">2025</option>
-        </select>
+        </select> */}
       <Row style={{ fontFamily: "poppins" }}>
         <Col md={4}>
           <Card data-aos="fade-up-right" className="card-animate card-height-100">
             <CardHeader className="border-bottom-0">            
-              <div className="d-flex">
+              <div className="d-flex justify-content-between">
               <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
-                Pilih Tahap:
-              </div>
-              <select
+                Tahap:
+                    <select
                     name="perencanaan"
                       style={{
                         padding: "2px 7px 2px 7px",
@@ -420,10 +431,31 @@ const BerandaV2 = () => {
                       value={selectedTahapPerencanaan}
                       onChange={handleSelectChange}
                     >
-                    <option value="1">Murni</option>
-                    <option value="3">Perubahan</option>                    
+                      <option value="1">Murni</option>
+                      <option value="3">Perubahan</option>                    
                     </select>
-                </div>
+              </div>
+              <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                Tahun:
+                    <select
+                    name="tahunPerencanaan"
+                      style={{
+                        padding: "2px 7px 2px 7px",
+                        fontSize: "16px",
+                        borderRadius: "5px",
+                        border: "1px solid #ccc",
+                        backgroundColor: "#ffffff",
+                        cursor: "pointer",
+                        marginLeft: "10px"
+                      }}
+                      value={selectedTahun.tahunPerencanaan}
+                      onChange={handleSelectChangeTahun}
+                    >
+                      <option value="2024">2024</option>
+                      <option value="2025">2025</option>                    
+                    </select>
+              </div>
+              </div>
             </CardHeader>
             <CardBody>
               <div className="d-flex flex-column align-items-center">
@@ -614,10 +646,9 @@ const BerandaV2 = () => {
         <Col md={4}>
           <Card data-aos="fade-down" className="card-animate card-height-100">
             <CardHeader className="border-bottom-0" >
-            <div className="d-flex">
+            <div className="d-flex justify-content-between">
               <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
-                Pilih Tahap:
-              </div>
+                Tahap:
               <select
                     name="penganggaran"
                       style={{
@@ -638,6 +669,27 @@ const BerandaV2 = () => {
                     <option value="32">Pergeseran Setelah</option>
                     <option value="99">APBD Akhir</option>
                     </select>
+              </div>
+              <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                Tahun:
+              <select
+                    name="tahunPenganggaran"
+                      style={{
+                        padding: "2px 7px 2px 7px",
+                        fontSize: "16px",
+                        borderRadius: "5px",
+                        border: "1px solid #ccc",
+                        backgroundColor: "#ffffff",
+                        cursor: "pointer",
+                        marginLeft: "10px"
+                      }}
+                      value={selectedTahun.tahunPenganggaran}
+                      onChange={handleSelectChangeTahun}
+                    >
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                    </select>
+              </div>
                 </div>
               {/* <Nav
                 className="nav-tabs-custom card-header-tabs border-bottom-0"
@@ -952,7 +1004,30 @@ const BerandaV2 = () => {
             <CardHeader
               className="border-bottom-0"
               style={{ minHeight: "52px" }}
-            ></CardHeader>
+            >
+              <div className="d-flex justify-content-between">
+              <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                Tahun:
+                    <select
+                    name="tahunRealisasi"
+                      style={{
+                        padding: "2px 7px 2px 7px",
+                        fontSize: "16px",
+                        borderRadius: "5px",
+                        border: "1px solid #ccc",
+                        backgroundColor: "#ffffff",
+                        cursor: "pointer",
+                        marginLeft: "10px"
+                      }}
+                      value={selectedTahun.tahunRealisasi}
+                      onChange={handleSelectChangeTahun}
+                    >
+                      <option value="2024">2024</option>
+                      <option value="2025">2025</option>                    
+                    </select>
+              </div>
+              </div>
+            </CardHeader>
             <CardBody>
               <div className="d-flex flex-column justify-content-center align-items-center">
                 <div

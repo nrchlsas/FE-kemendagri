@@ -846,6 +846,7 @@ const ContentMiskinEkstremV2 = () => {
 
   const [dataDetailAnggaran, setDataDetailAnggaran] = useState([])
   const [dataDetailAnggaranSub, setDataDetailAnggaranSub] = useState([]);
+  const [dataDetailHighlight, setDataDetailHighlight] = useState([])
   const [loadingDetailAnggaran, setLoadingDetailAnggaran] = useState([]);
   const [errorDetailAnggaran, setErrorDetailAnggaran] = useState([]);
 
@@ -893,6 +894,7 @@ const ContentMiskinEkstremV2 = () => {
         
         setCurrentPageDetail(1)
         setCurrentPageDetailSub(1)
+        setDataDetailHighlight(dataDetailAnggaran.data.ke_highlight)
         // Open the modal only after data is successfully fetched
         
       } catch (errorDetailAnggaran) {
@@ -3634,39 +3636,62 @@ const ContentMiskinEkstremV2 = () => {
         </ModalHeader>
         <ModalBody>
         <Row>
-              <Col md={4}><Card className="card-animate card-height-100">
-                        <CardBody>
-                          <div
-                            className="d-flex flex-column title-custom-card"                            
-                          >
-                            <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                              <span>Total Anggaran</span>
-                            </div>
-                            <div className="d-flex">
-                              {/* <div className="avatar-xs-half flex-shrink-0">
-                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
-                          <i className=" ri-women-line text-danger"></i>
+          <Col md={4}>
+            <Card className="card-animate">
+                <CardBody>
+                  <div
+                    className="d-flex flex-column title-custom-card"                            
+                  >
+                    <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                      <span>Total Anggaran</span>
+                    </div>
+                    <div className="d-flex">
+                      {/* <div className="avatar-xs-half flex-shrink-0">
+                <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                  <i className=" ri-women-line text-danger"></i>
+                </span>
+              </div> */}
+                      <div className="d-flex justify-content-center align-items-center title-body">
+                        <span>
+                          <CountUp
+                            start={0}
+                            end={
+                              // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                              dataRincianDetail
+                            }
+                            separator="."
+                            prefix="Rp "
+                            suffix=""
+                            duration={1}
+                          />
                         </span>
-                      </div> */}
-                              <div className="d-flex justify-content-center align-items-center title-body">
-                                <span>
-                                  <CountUp
-                                    start={0}
-                                    end={
-                                      // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
-                                      dataRincianDetail
-                                    }
-                                    separator="."
-                                    prefix="Rp "
-                                    suffix=""
-                                    duration={1}
-                                  />
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </CardBody>
-                      </Card></Col>
+                      </div>
+                    </div>
+                  </div>
+                </CardBody>
+              </Card>
+              </Col>
+              <Col md={8}>
+              {dataDetailHighlight.map((item, index)=>(
+                <div className="d-flex mb-3" key={index}>
+                  <div style={{ flexBasis: "350px", color:"#929FB1" }}>{item.nama_rekening}</div>
+                  <div>:&nbsp;</div>
+                  <div style={{ fontWeight: 650 }}>
+                  <CountUp
+                      start={0}
+                      end={item.anggaran3}
+                      // decimal=","
+                      // decimals={2}
+                      separator="."
+                      prefix="Rp "
+                      // suffix=" T"
+                      duration={1}
+                    />
+                    
+                  </div>
+                </div>
+              ))}                
+              </Col>
             </Row>
           <div style={{ overflowY: "scroll", maxHeight:"500px"}}>
           <table
