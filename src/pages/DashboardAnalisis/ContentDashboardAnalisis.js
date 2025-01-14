@@ -163,7 +163,7 @@ const ContentDashboardAnalisis = () => {
   };
 
   useEffect(() => {
-    getDataDashboardAnalisis({tahun:"2025"});
+    getDataDashboardAnalisis({});
   }, []);
   
   const [selectedFilters, setSelectedFilters] = useState({
