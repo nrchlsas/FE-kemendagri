@@ -1161,6 +1161,7 @@ const ContentMiskinEkstremV2 = () => {
     const { name, value } = e.target;
     setSelectedSingleTahun(value); // Misalnya, untuk dropdown tahun
     getDataKemiskinanEkstrem({tahun: value})
+    getDataMiskinEkstremTabel({tahun: value});
   };
 
   return (
