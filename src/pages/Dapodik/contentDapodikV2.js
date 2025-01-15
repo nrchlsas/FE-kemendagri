@@ -573,7 +573,8 @@ const ContentDapodikV2 = () => {
     kodeSeProvinsi = "",
     kodeDdnKabupaten = "",
     kodeDdnProvinsi = "",
-    kodeSubGiat = ""
+    kodeSubGiat = "",
+    jenisPemda
   ) => {
     const fetchData = async () => {
       setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
@@ -637,7 +638,13 @@ const ContentDapodikV2 = () => {
 
         setCurrentPageDetail(1);
         setCurrentPageDetailSub(1);
-        // setDataDetailHighlight()
+
+        if(jenisPemda == "se-prov"){
+          setDataDetailHighlight(dataDetailAnggaran?.data?.dapodik_highlight_nasional)
+        }else{
+          setDataDetailHighlight(dataDetailAnggaran?.data?.dapodik_highlight_daerah)
+        }
+        
         // Open the modal only after data is successfully fetched
       } catch (errorDetailAnggaran) {
         setErrorDetailAnggaran(errorDetailAnggaran);
@@ -894,7 +901,7 @@ const ContentDapodikV2 = () => {
     jenisPemda = "",
     rincianDetail = 0
   ) => {
-    getDataDetailAnggaran(kodeProv, kodeDdnKab, kodeDdnProv);
+    getDataDetailAnggaran(kodeProv, kodeDdnKab, kodeDdnProv, "", jenisPemda);
 
     if (jenisPemda == "prov") {
       setDataJenisPemda("prov");
@@ -1996,7 +2003,7 @@ const ContentDapodikV2 = () => {
                                     item.nama_prov,
                                     "",
                                     "",
-                                    "",
+                                    "se-prov",
                                     item.total_pendidikan
                                   )
                                 }
@@ -3823,14 +3830,14 @@ const ContentDapodikV2 = () => {
                 </Card>
               </Col>
               <Col md={8}>
-              {/* {dataDetailHighlight.map((item, index)=>(
+              {dataDetailHighlight.map((item, index)=>(
                 <div className="d-flex mb-3" key={index}>
                   <div style={{ flexBasis: "350px", color:"#929FB1" }}>{item.nama_rekening}</div>
                   <div>:&nbsp;</div>
                   <div style={{ fontWeight: 650 }}>
                   <CountUp
                       start={0}
-                      end={item.anggaran3}
+                      end={item.anggaran}
                       // decimal=","
                       // decimals={2}
                       separator="."
@@ -3841,7 +3848,7 @@ const ContentDapodikV2 = () => {
                     
                   </div>
                 </div>
-              ))}                 */}
+              ))}
               </Col>
             </Row>
 
