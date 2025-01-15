@@ -746,49 +746,70 @@ const ContentMiskinEkstremV2 = () => {
         const dataMiskinEkstremTabel = await response.json();
 
         setShowNextData(true)        
-        setDataMiskinEkstremTabel(dataMiskinEkstremTabel.data);
+        setDataMiskinEkstremTabel(dataMiskinEkstremTabel?.data);
         setCurrentPage(1)
         setDataKolomNamaDaerah("Se-Provinsi")
         
-        const desilData = {
-          desil1: dataMiskinEkstremTabel.data.map(item => ({
-            name: item.nama_prov,
-            value: parseInt(item. jumlah_keluarga_desil_1)
-          })),
-          desil2: dataMiskinEkstremTabel.data.map(item => ({
-            name: item.nama_prov,
-            value: parseInt(item.jumlah_keluarga_desil_2)
-          })),
-          desil3: dataMiskinEkstremTabel.data.map(item => ({
-            name: item.nama_prov,
-            value: parseInt(item.jumlah_keluarga_desil_3)
-          })),
-          desil4: dataMiskinEkstremTabel.data.map(item => ({
-            name: item.nama_prov,
-            value: parseInt(item.jumlah_keluarga_desil_4)
-          })),
-          desil5: dataMiskinEkstremTabel.data.map(item => ({
-            name: item.nama_prov,
-            value: parseInt(item.jumlah_individu_desil_1)
-          })),
-          desil6: dataMiskinEkstremTabel.data.map(item => ({
-            name: item.nama_prov,
-            value: parseInt(item.jumlah_individu_desil_2)
-          })),
-          desil7: dataMiskinEkstremTabel.data.map(item => ({
-            name: item.nama_prov,
-            value: parseInt(item.jumlah_individu_desil_3)
-          })),
-          desil8: dataMiskinEkstremTabel.data.map(item => ({
-            name: item.nama_prov,
-            value: parseInt(item.jumlah_individu_desil_4)
-          })),
+        const dataDesil = {
+          desil1: Array.isArray(dataMiskinEkstremTabel?.data)
+            ? dataMiskinEkstremTabel.data.map(item => ({
+                name: item.nama_prov || "Unknown",
+                value: parseInt(item.jumlah_keluarga_desil_1) || 0,
+              }))
+            : [],
+          desil2: Array.isArray(dataMiskinEkstremTabel?.data)
+            ? dataMiskinEkstremTabel.data.map(item => ({
+                name: item.nama_prov || "Unknown",
+                value: parseInt(item.jumlah_keluarga_desil_2) || 0,
+              }))
+            : [],
+          desil3: Array.isArray(dataMiskinEkstremTabel?.data)
+            ? dataMiskinEkstremTabel.data.map(item => ({
+                name: item.nama_prov || "Unknown",
+                value: parseInt(item.jumlah_keluarga_desil_3) || 0,
+              }))
+            : [],
+          desil4: Array.isArray(dataMiskinEkstremTabel?.data)
+            ? dataMiskinEkstremTabel.data.map(item => ({
+                name: item.nama_prov || "Unknown",
+                value: parseInt(item.jumlah_keluarga_desil_4) || 0,
+              }))
+            : [],
+          desil5: Array.isArray(dataMiskinEkstremTabel?.data)
+            ? dataMiskinEkstremTabel.data.map(item => ({
+                name: item.nama_prov || "Unknown",
+                value: parseInt(item.jumlah_individu_desil_1) || 0,
+              }))
+            : [],
+          desil6: Array.isArray(dataMiskinEkstremTabel?.data)
+            ? dataMiskinEkstremTabel.data.map(item => ({
+                name: item.nama_prov || "Unknown",
+                value: parseInt(item.jumlah_individu_desil_2) || 0,
+              }))
+            : [],
+          desil7: Array.isArray(dataMiskinEkstremTabel?.data)
+            ? dataMiskinEkstremTabel.data.map(item => ({
+                name: item.nama_prov || "Unknown",
+                value: parseInt(item.jumlah_individu_desil_3) || 0,
+              }))
+            : [],
+          desil8: Array.isArray(dataMiskinEkstremTabel?.data)
+            ? dataMiskinEkstremTabel.data.map(item => ({
+                name: item.nama_prov || "Unknown",
+                value: parseInt(item.jumlah_individu_desil_4) || 0,
+              }))
+            : [],
         };
-  
-        setDataDesil(desilData); // Simpan semua desil ke dalam state
-        setValueMap(desilData.desil1);
-        const maxDesil1 = Math.max(...desilData.desil1.map(item => item.value));
-        setmaxValueMap(maxDesil1);
+        
+        // Simpan data ke state
+        setDataDesil(dataDesil);
+        
+        // Setel data awal untuk peta berdasarkan desil pertama
+        setValueMap(dataDesil?.desil1);
+        
+        // Cari nilai maksimum pada desil pertama
+        const maxValueDesil1 = dataDesil?.desil1.reduce((max, item) => Math.max(max, item.value || 0), 0);
+        setmaxValueMap(maxValueDesil1 || 0);
         
       } catch (errorKemiskinanEkstrem) {
         setErrorKemiskinanEkstrem(errorKemiskinanEkstrem);
