@@ -203,7 +203,8 @@ const ContentStunting = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
           //  kode_ddn: "11"
-            tahun: tahun
+            tahun: tahun,
+            tahun_a: "2025"
         }),
         };
 
@@ -561,17 +562,16 @@ const ContentStunting = () => {
   const [roam, setRoam] = useState(false);
   const [dataDesil, setDataDesil] = useState({}); 
 
-  const getDataStuntingTabel = () => {
+  const getDataStuntingTabel = ({tahun}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
-          // body: JSON.stringify({
-          //   query:
-          //     "select sum(total_rincian)/1000000000000 TotalPembiayaanK from konsolidasi_apbd where kode_kelompok = '6.2'",
-          // }),
+          body: JSON.stringify({
+            tahun: tahun
+          }),
         };
 
         const response = await fetch(
@@ -668,7 +668,7 @@ const ContentStunting = () => {
   const [dataKolomNamaDaerah, setDataKolomNamaDaerah] = useState("Se-Provinsi");
   const [showNextData, setShowNextData] = useState(true);
 
-  const getDataStuntingTabelKabupaten = (kodeDdn = "", e) => {
+  const getDataStuntingTabelKabupaten = (kodeDdn = "", e, tahun) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -677,6 +677,7 @@ const ContentStunting = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_ddn1: kodeDdn,
+            tahun: tahun
           }),
         };
 
@@ -785,7 +786,7 @@ const ContentStunting = () => {
 
   useEffect(() => {
     getDataStunting({tahun:selectedSingleTahun});
-    getDataStuntingTabel();
+    getDataStuntingTabel({tahun:selectedSingleTahun});
     // getDataStuntingTabelKabupaten();
   }, []);
 
@@ -1208,6 +1209,7 @@ const ContentStunting = () => {
       const { name, value } = e.target;
       setSelectedSingleTahun(value); // Misalnya, untuk dropdown tahun
       getDataStunting({tahun:value});
+      getDataStuntingTabel({tahun:value});
     };
 
   return (
@@ -1773,7 +1775,7 @@ const ContentStunting = () => {
                           fontSize: "16px",
                           marginBottom: "8px",
                         }}
-                        onClick={() => getDataStuntingTabel()}
+                        onClick={() => getDataStuntingTabel({tahun:selectedSingleTahun})}
                       >
                         Kembali ke Provinsi
                       </button>
@@ -2089,7 +2091,8 @@ const ContentStunting = () => {
                                 ? ""
                                 : getDataStuntingTabelKabupaten(
                                     item.kode_prov,
-                                    e
+                                    e,
+                                    selectedSingleTahun
                                   ), dataKolomNamaDaerah == "Se-Provinsi" ? setNamaDaerahDetail(item.nama_prov) : ""}                                
                               }
                             >
