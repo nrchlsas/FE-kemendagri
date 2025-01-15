@@ -6,13 +6,13 @@ const API_9007_URI = `${process.env.REACT_APP_API_URL_9007}`;
 const api = new APIClient();
 const EMPTY_FORM = {
     id: 0,
-    grp_menu_id: 0,
+    grp_role_id: 0,
     uuid: '',
-    grp_menu_name: '',
-    grp_menu_description: ''
+    grp_role_name: '',
+    grp_role_description: ''
 }
 
-const GroupMenu = () => {
+const GroupRole = () => {
 
     const [resultData, setResultData] = useState([])
     const [formData, setFormData] = useState(JSON.parse(JSON.stringify(EMPTY_FORM)));
@@ -34,8 +34,8 @@ const GroupMenu = () => {
     // data form
     useEffect(() => {
         let is_valid = true;
-        if (!formData.grp_menu_name) is_valid = false;
-        if (!formData.grp_menu_description) is_valid = false;
+        if (!formData.grp_role_name) is_valid = false;
+        if (!formData.grp_role_description) is_valid = false;
         setIsValid(is_valid);
     }, [formData])
 
@@ -75,7 +75,7 @@ const GroupMenu = () => {
             page: paging.page,
             size: paging.size
         }
-        let response = api.create(`${API_9007_URI}/rbac/list-group-menu-table`, json);
+        let response = api.create(`${API_9007_URI}/rbac/list-group-roles-all`, json);
 
         let data = await response;
 
@@ -92,11 +92,13 @@ const GroupMenu = () => {
             let response = null;
             if (is_edit) {
                 const edit_json = JSON.parse(JSON.stringify(formData));
+                edit_json.is_active = true;
                 edit_json.is_deleted = false;
-                response = api.put(`${API_9007_URI}/rbac/update-group-menu`, edit_json);
+                response = api.put(`${API_9007_URI}/rbac/update-group-roles`, edit_json);
             } else {
                 const json = JSON.parse(JSON.stringify(formData));
-                response = api.create(`${API_9007_URI}/rbac/create-group-menu`, json);
+                json.is_active = true;
+                response = api.create(`${API_9007_URI}/rbac/create-group-roles`, json);
             }
 
             setSubmitProcess(true);
@@ -162,9 +164,9 @@ const GroupMenu = () => {
         try {
             const json = {
                 uuid: delete_data.uuid,
-                is_deleted: true
+                is_deleted: !delete_data.is_deleted
             }
-            let response = api.put(`${API_9007_URI}/rbac/delete-group-menu`, json);
+            let response = api.put(`${API_9007_URI}/rbac/delete-group-roles`, json);
             let data = await response;
             if (data.code === 200) {
                 populate_data();
@@ -198,18 +200,18 @@ const GroupMenu = () => {
                                     <Col>
                                         <FormGroup>
                                             <Label>Nama Group</Label>
-                                            <input type="text" name="grp_menu_name"
+                                            <input type="text" name="grp_role_name"
                                                 onChange={(e) => changeValue(e)}
                                                 className="form-control"
-                                                value={formData.grp_menu_name}
+                                                value={formData.grp_role_name}
                                             />
                                         </FormGroup>
                                         <FormGroup>
                                             <Label>Deskripsi</Label>
-                                            <input type="text" name="grp_menu_description"
+                                            <input type="text" name="grp_role_description"
                                                 onChange={(e) => changeValue(e)}
                                                 className="form-control"
-                                                value={formData.grp_menu_description}
+                                                value={formData.grp_role_description}
                                             />
                                         </FormGroup>
                                     </Col>
@@ -267,14 +269,17 @@ const GroupMenu = () => {
                                                 {(paging.page - 1) * paging.size + index + 1}
                                             </td>
                                             <td style={{ maxWidth: "10%" }} className="text-wrap">
-                                                {item.grp_menu_name}
+                                                {item.grp_role_name}
                                             </td>
                                             <td style={{ maxWidth: "400px" }} className="text-wrap">
-                                                {item.grp_menu_description}
+                                                {item.grp_role_description}
                                             </td>
                                             <td style={{ width: "60px" }}>{item.is_deleted ? 'Ya' : ''}</td>
                                             <td style={{ width: "160px" }}>
-                                                <Button color="danger" style={{ marginRight: "3px" }} onClick={() => { onDelete(item); }}>Hapus</Button>
+                                                <Button color="danger" style={{ marginRight: "3px" }} onClick={() => { onDelete(item); }}>
+                                                    {/* {item.is_deleted ? 'Aktif' : 'Hapus'} */}
+                                                    Hapus
+                                                </Button>
                                                 <Button color="primary" onClick={() => onEdit(item)}>Ubah</Button>
                                             </td>
                                         </tr>
@@ -341,4 +346,4 @@ const GroupMenu = () => {
     )
 }
 
-export default GroupMenu;
+export default GroupRole;

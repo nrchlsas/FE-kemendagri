@@ -30,7 +30,7 @@ const Roles = () => {
         uuid: '',
         role_name: '',
         role_description: '',
-        status: false,
+        is_active: false,
         parent_role_id: null
     });
     const [show, setShow] = useState(false)
@@ -114,22 +114,9 @@ const Roles = () => {
     const onSubmit = async (e) => {
         e.preventDefault();
         const json = JSON.parse(JSON.stringify(formData));
-        // {
-        //     id: formData.id,
-        //     uuid: formData.uuid,
-        //     role_name: formData.role_name,
-        //     status: formData.status,
-        //     role_description: formData.role_description
-        // };
         try {
             let response = null;
             if (is_edit) {
-                // const json_edit = {
-                //     id: formData.id,
-                //     status: formData.status,
-                //     uuid: formData.uuid,
-                //     role_name: formData.role_name,
-                // }
                 response = api.put(`${API_9007_URI}/rbac/update-roles`, json);
             } else {
                 response = api.create(`${API_9007_URI}/rbac/create-roles`, json);
@@ -171,6 +158,7 @@ const Roles = () => {
         let is_valid = true;
         if (!formData.role_name) is_valid = false;
         setIsValid(is_valid);
+        console.log(formData);
     }, [formData])
 
     useEffect(() => {
@@ -198,7 +186,7 @@ const Roles = () => {
             uuid: data.uuid,
             role_name: data.role_name,
             role_description: data.role_description || '',
-            status: data.status,
+            is_active: data.is_active,
             parent_role_id: data.parent_role_id
         }));
         setParentSelected(data.parent_role_id ? { id: data.parent_role_id, text: data.parent_role_name || 'EMPTY' } : null);
@@ -217,7 +205,7 @@ const Roles = () => {
             uuid: '',
             role_name: '',
             role_description: '',
-            status: false,
+            is_active: false,
         })
     }
 
@@ -295,12 +283,12 @@ const Roles = () => {
 
                                             <FormGroup check>
                                                 <Label>
-                                                    <input type="checkbox" name="status"
+                                                    <input type="checkbox" name="is_active"
                                                         onChange={(e) => changeValue(e)}
                                                         className="form-check-input"
-                                                        checked={formData.status}
+                                                        checked={formData.is_active}
                                                     />
-                                                    <span>Status</span>
+                                                    <span>Aktif</span>
                                                 </Label>
                                             </FormGroup>
                                             {/* {
@@ -351,7 +339,7 @@ const Roles = () => {
                                             </th>
                                             <th>Deskripsi</th>
                                             <th>Parent Role</th>
-                                            <th>Status</th>
+                                            <th>Aktif</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
@@ -370,7 +358,7 @@ const Roles = () => {
                                                 <td>{item.role_description}</td>
                                                 <td>{item.parent_role_name || item.parent_role_id || '-'}</td>
                                                 <td>
-                                                    <input type="checkbox" key={index} checked={item.status} readOnly />
+                                                    <input type="checkbox" key={index} checked={item.is_active} readOnly />
                                                 </td>
                                                 <td style={{ width: "160px" }}>
                                                     <Button color="danger" style={{ marginRight: "3px" }} onClick={() => {
