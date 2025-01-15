@@ -722,17 +722,16 @@ const ContentMiskinEkstremV2 = () => {
   };
   const [dataMiskinEkstremTabel, setDataMiskinEkstremTabel] = useState([],[]);
   
-  const getDataMiskinEkstremTabel = () => {
+  const getDataMiskinEkstremTabel = ({tahun}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
-          // body: JSON.stringify({
-          //   query:
-          //     "select sum(total_rincian)/1000000000000 TotalPembiayaanK from konsolidasi_apbd where kode_kelompok = '6.2'",
-          // }),
+          body: JSON.stringify({
+            tahun: tahun
+          }),
         };
 
         const response = await fetch(
@@ -804,7 +803,7 @@ const ContentMiskinEkstremV2 = () => {
   const [dataKolomNamaDaerah, setDataKolomNamaDaerah] = useState("Se-Provinsi");
   const [showNextData, setShowNextData] = useState(true);
   
-  const getDataMiskinEkstremTabelKab = (kodeDdn="", e) => {
+  const getDataMiskinEkstremTabelKab = (kodeDdn="", e, tahun) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -812,7 +811,8 @@ const ContentMiskinEkstremV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
-            kode_ddn: kodeDdn
+            kode_ddn: kodeDdn,
+            tahun: tahun
           }),
         };
 
@@ -946,7 +946,7 @@ const ContentMiskinEkstremV2 = () => {
   useEffect(() => {
     getDataKemiskinanEkstrem({tahun: selectedSingleTahun});
     // getDataKemiskinanEkstremTahun("2024");
-    getDataMiskinEkstremTabel();
+    getDataMiskinEkstremTabel({tahun: selectedSingleTahun});
     // getDataMiskinEkstremTabelKab()
   }, []);
 
@@ -1916,7 +1916,7 @@ const ContentMiskinEkstremV2 = () => {
                         cursor: "pointer",
                         fontSize: "16px",
                         marginBottom: "8px"
-                      }} onClick={()=>getDataMiskinEkstremTabel()}>Kembali ke Provinsi</button></>)}         
+                      }} onClick={()=>getDataMiskinEkstremTabel({tahun: selectedSingleTahun})}>Kembali ke Provinsi</button></>)}         
                     <div style={{ overflowX: "auto" }}>
                     <table
                       className="table table-bordered table-nowrap align-middle mb-0 custom-table"
@@ -2083,7 +2083,7 @@ const ContentMiskinEkstremV2 = () => {
                         verticalAlign: "middle"}}>
                       {indexOfFirstItem + index + 1}
                     </td>
-                    <td className={showNextData ? "click-data" : ""} style={{ minWidth: "270px" }} onClick={(e)=> {showNextData ?  getDataMiskinEkstremTabelKab(item.kode_prov, e) : "", showNextData ? setNamaDaerahDetail(item.nama_prov) : ""}}>
+                    <td className={showNextData ? "click-data" : ""} style={{ minWidth: "270px" }} onClick={(e)=> {showNextData ?  getDataMiskinEkstremTabelKab(item.kode_prov, e, selectedSingleTahun) : "", showNextData ? setNamaDaerahDetail(item.nama_prov) : ""}}>
                       {item.nama_prov ? item.nama_prov.replace("Provinsi ", "") : item.nama_daerah.replace("Provinsi ", "")}
                     </td>
                     <td>
