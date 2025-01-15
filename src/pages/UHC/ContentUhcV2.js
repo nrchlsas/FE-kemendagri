@@ -459,6 +459,7 @@ const ContentUhcV2 = () => {
       const { name, value } = e.target;
       setSelectedSingleTahun(value); // Misalnya, untuk dropdown tahun
       getDataUhc({tahun: value})
+      getDataTabelBpjsSeprov({tahun: value})
     };
 
   useEffect(() => {
