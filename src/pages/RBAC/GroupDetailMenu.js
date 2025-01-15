@@ -221,7 +221,7 @@ const GroupDetailMenu = () => {
         try {
             const json = {
                 uuid: delete_data.uuid,
-                is_deleted: true
+                is_deleted: !delete_data.is_deleted
             }
             let response = api.put(`${API_9007_URI}/rbac/delete-group-menu-dtl`, json);
             let data = await response;

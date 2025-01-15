@@ -1,25 +1,38 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card, CardBody, Col, FormGroup, Label, Modal, ModalBody, ModalHeader, Row } from "reactstrap";
 import { APIClient } from "../../helpers/api_helper";
+import FormSelectFilter from "../../Components/FormFactory/FormSelectFilter";
 
 const API_9007_URI = `${process.env.REACT_APP_API_URL_9007}`;
 const api = new APIClient();
 const EMPTY_FORM = {
     id: 0,
-    grp_menu_id: 0,
     uuid: '',
-    grp_menu_name: '',
-    grp_menu_description: ''
+    id_roles: 0,
+    roles_name: '',
+    id_grp_roles: 0,
+    grp_roles_name: ''
 }
 
-const GroupMenu = () => {
+const GroupDetailRoles = () => {
 
     const [resultData, setResultData] = useState([])
     const [formData, setFormData] = useState(JSON.parse(JSON.stringify(EMPTY_FORM)));
     const [is_edit, setIsEdit] = useState(false);
     const [is_valid, setIsValid] = useState(false);
     const [show, setShow] = useState(false);
-    const [submitProcess, setSubmitProcess] = useState(false)
+    const [submitProcess, setSubmitProcess] = useState(false);
+
+    const [formFilter, setFormFilter] = useState({
+        group_roles_id: 0
+    })
+    const [listGroup, setListGroup] = useState([]);
+
+    const [list_roles, setListRoles] = useState([]);
+    const [role_selected, setRoleSelected] = useState(null);
+
+    const [delete_data, setDeleteData] = useState(null);
+    const [modal_center, setmodal_center] = useState(false);
 
     const [modal_alert, setModalAlert] = useState({
         open: false,
@@ -28,16 +41,22 @@ const GroupMenu = () => {
         message: 'Message'
     })
 
-    const [delete_data, setDeleteData] = useState(null);
-    const [modal_center, setmodal_center] = useState(false);
-
     // data form
     useEffect(() => {
         let is_valid = true;
-        if (!formData.grp_menu_name) is_valid = false;
-        if (!formData.grp_menu_description) is_valid = false;
+        if (!formData.id_grp_roles) is_valid = false;
+        if (!formData.id_roles) is_valid = false;
         setIsValid(is_valid);
     }, [formData])
+
+    useEffect(() => {
+        populate_data();
+    }, [formFilter])
+
+    // debug
+    // useEffect(() => {
+    // }, [formFilter])
+
 
     // pagination
     const [paging, setPaging] = useState({
@@ -70,12 +89,33 @@ const GroupMenu = () => {
         paging.size = pageSize;
     }
 
+    // on create
+    useEffect(() => {
+        populate_group();
+    }, [])
+
+    async function populate_group() {
+        setListGroup([]);
+        const json = {
+            page: 1,
+            size: 100
+        }
+        let response = api.create(`${API_9007_URI}/rbac/list-group-roles-all`, json);
+
+        let data = await response;
+
+        if (data.code === 200) {
+            setListGroup(data.data);
+        }
+    }
+
     async function populate_data() {
         const json = {
             page: paging.page,
-            size: paging.size
+            size: paging.size,
         }
-        let response = api.create(`${API_9007_URI}/rbac/list-group-menu-table`, json);
+        if (formFilter.group_roles_id) json.id_grp_roles = formFilter.group_roles_id;
+        let response = api.create(`${API_9007_URI}/rbac/list-group-roles-dtl-all`, json);
 
         let data = await response;
 
@@ -93,10 +133,10 @@ const GroupMenu = () => {
             if (is_edit) {
                 const edit_json = JSON.parse(JSON.stringify(formData));
                 edit_json.is_deleted = false;
-                response = api.put(`${API_9007_URI}/rbac/update-group-menu`, edit_json);
+                response = api.put(`${API_9007_URI}/rbac/update-group-roles-dtl`, edit_json);
             } else {
                 const json = JSON.parse(JSON.stringify(formData));
-                response = api.create(`${API_9007_URI}/rbac/create-group-menu`, json);
+                response = api.create(`${API_9007_URI}/rbac/create-group-roles-dtl`, json);
             }
 
             setSubmitProcess(true);
@@ -138,6 +178,7 @@ const GroupMenu = () => {
     function reset_form() {
         setIsEdit(false);
         setFormData(JSON.parse(JSON.stringify(EMPTY_FORM)));
+        setRoleSelected(null);
     }
 
     function onEdit(data) {
@@ -145,7 +186,25 @@ const GroupMenu = () => {
         setShow(true);
         const _new = JSON.parse(JSON.stringify(data));
         setFormData(_new);
+        setRoleSelected({ id: data.id_roles, text: data.role_name });
         window.scrollTo(0, 0)
+    }
+
+    async function search_roles(keyword = '') {
+        const json = {
+            page: 1,
+            size: 10,
+            role_name: keyword
+        }
+        let response = api.create(`${API_9007_URI}/rbac/list-roles-all`, json);
+
+        let data = await response;
+
+        if (data.code === 200) {
+            setListRoles(data.data.map(d => { return { id: d.role_id, text: d.role_name } }));
+        } else {
+            setListRoles([]);
+        }
     }
 
     function onDelete(item) {
@@ -164,7 +223,7 @@ const GroupMenu = () => {
                 uuid: delete_data.uuid,
                 is_deleted: !delete_data.is_deleted
             }
-            let response = api.put(`${API_9007_URI}/rbac/delete-group-menu`, json);
+            let response = api.put(`${API_9007_URI}/rbac/delete-group-roles-dtl`, json);
             let data = await response;
             if (data.code === 200) {
                 populate_data();
@@ -197,19 +256,27 @@ const GroupMenu = () => {
                                 <Row>
                                     <Col>
                                         <FormGroup>
-                                            <Label>Nama Group</Label>
-                                            <input type="text" name="grp_menu_name"
-                                                onChange={(e) => changeValue(e)}
-                                                className="form-control"
-                                                value={formData.grp_menu_name}
-                                            />
+                                            <Label>Group Roles</Label>
+                                            <select name="id_grp_roles"
+                                                onChange={e => changeValue(e)}
+                                                className="form-select"
+                                                value={formData.id_grp_roles}>
+                                                <option value={0}>-- Pilih Group Roles --</option>
+                                                {listGroup.map(item => (
+                                                    <option key={'option_group_' + item.id} value={item.grp_role_id}>
+                                                        {item.grp_role_name}
+                                                    </option>
+                                                ))}
+                                            </select>
                                         </FormGroup>
                                         <FormGroup>
-                                            <Label>Deskripsi</Label>
-                                            <input type="text" name="grp_menu_description"
-                                                onChange={(e) => changeValue(e)}
-                                                className="form-control"
-                                                value={formData.grp_menu_description}
+                                            <Label>Roles</Label>
+                                            <FormSelectFilter onSearch={search_roles} dataList={list_roles}
+                                                selected={role_selected}
+                                                onSelect={val => {
+                                                    setFormData(Object.assign({}, formData, { id_roles: val ? val.id : 0 }));
+                                                    setRoleSelected(val);
+                                                }}
                                             />
                                         </FormGroup>
                                     </Col>
@@ -233,24 +300,40 @@ const GroupMenu = () => {
                 <Col>
                     <Card>
                         <CardBody>
-                            <button style={{
-                                backgroundColor: "#007bff",
-                                color: "white",
-                                padding: "10px 20px",
-                                border: "none",
-                                borderRadius: "5px",
-                                cursor: "pointer",
-                                fontSize: "12px",
-                                marginBottom: "6px"
-                            }} onClick={() => { reset_form(); setShow(true); }}>Tambah</button>
+                            <div className="d-flex justify-content-between">
+                                <button style={{
+                                    backgroundColor: "#007bff",
+                                    color: "white",
+                                    padding: "10px 20px",
+                                    border: "none",
+                                    borderRadius: "5px",
+                                    cursor: "pointer",
+                                    fontSize: "12px",
+                                    marginBottom: "6px"
+                                }} onClick={() => { reset_form(); setShow(true); }}>Tambah</button>
+
+                                <div style={{ width: '400px' }}>
+                                    <select name="roles"
+                                        onChange={e => setFormFilter(Object.assign({}, formFilter, { group_roles_id: parseInt(e.target.value) }))}
+                                        className="form-select"
+                                        value={formFilter.group_roles_id}>
+                                        <option value={0}>-- Filter Group Roles --</option>
+                                        {listGroup.map(item => (
+                                            <option key={'option_group_' + item.id} value={item.grp_role_id}>
+                                                {item.grp_role_name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
 
 
                             <table className="table table-bordered table-nowrap align-middle mb-0" style={{ width: "100%" }}>
                                 <thead className="table-light">
                                     <tr>
                                         <th style={{ width: "20px" }}>NO</th>
-                                        <th style={{ cursor: "pointer", verticalAlign: "middle" }}>Nama Group Menu</th>
-                                        <th>Deskripsi</th>
+                                        <th style={{ cursor: "pointer", verticalAlign: "middle" }}>Nama Group Role</th>
+                                        <th>Nama Role</th>
                                         <th style={{ width: "60px" }}>Deleted</th>
                                         <th>Aksi</th>
                                     </tr>
@@ -267,10 +350,10 @@ const GroupMenu = () => {
                                                 {(paging.page - 1) * paging.size + index + 1}
                                             </td>
                                             <td style={{ maxWidth: "10%" }} className="text-wrap">
-                                                {item.grp_menu_name}
+                                                {item.grp_role_name}
                                             </td>
                                             <td style={{ maxWidth: "400px" }} className="text-wrap">
-                                                {item.grp_menu_description}
+                                                {item.role_name}
                                             </td>
                                             <td style={{ width: "60px" }}>{item.is_deleted ? 'Ya' : ''}</td>
                                             <td style={{ width: "160px" }}>
@@ -293,12 +376,12 @@ const GroupMenu = () => {
                 centered
             >
                 <ModalHeader className="p-3 bg-info-subtle" toggle={tog_center}>
-                    Hapus Data Group Menu
+                    Hapus Data Group Detail Roles
                 </ModalHeader>
                 <ModalBody>
                     <Row>
                         <Col>
-                            <Label>Anda yakin hapus group menu ?</Label>
+                            <Label>Anda yakin hapus group detail roles ?</Label>
                         </Col>
                     </Row>
                     <Row>
@@ -341,4 +424,4 @@ const GroupMenu = () => {
     )
 }
 
-export default GroupMenu;
+export default GroupDetailRoles;

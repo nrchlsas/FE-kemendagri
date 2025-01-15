@@ -123,6 +123,7 @@ import GroupMenu from "../pages/RBAC/GroupMenu";
 import GroupDetailMenu from "../pages/RBAC/GroupDetailMenu";
 import Roles from "../pages/RBAC/Roles";
 import RolesGroup from "../pages/RBAC/RolesGroup";
+import RolesGroupDetail from "../pages/RBAC/RolesGroupDetail";
 import Permission from "../pages/RBAC/Permission";
 import Pengguna from "../pages/RBAC/Pengguna";
 import Perencanaan from "../pages/Perencanaan";
@@ -250,6 +251,7 @@ const authProtectedRoutes = [
   { path: "/group-detail-menu", component: <GroupDetailMenu />},
   { path: "/roles", component: <Roles />},
   { path: "/group-roles", component: <RolesGroup />},
+  { path: "/group-detail-roles", component: <RolesGroupDetail />},
   { path: "/permission", component: <Permission />},
   { path: "/pengguna", component: <Pengguna />},
 ];
