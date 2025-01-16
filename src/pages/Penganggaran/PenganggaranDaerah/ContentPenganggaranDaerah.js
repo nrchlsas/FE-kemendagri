@@ -25,7 +25,7 @@ const ContentPenganggaranDaerah = () => {
       setcustomActiveTab(tab);
     }
   };
-  const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
+  const [selectedSingleTahun, setSelectedSingleTahun] = useState('2025'); // Set default value
   const [selectedSingleTahapan, setSelectedSingleTahapan] = useState(tahapan); // Set default value
   const [dataPenganggaran, setDataPenganggaran] = useState([]);
   const [dataPenganggaranPersentase, setDataPenganggaranPersentase] = useState(

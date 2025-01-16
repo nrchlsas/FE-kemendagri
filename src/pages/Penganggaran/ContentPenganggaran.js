@@ -39,7 +39,7 @@ const ContentPenganggaran = () => {
       setcustomActiveTab(tab);
     }
   };
-  const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
+  const [selectedSingleTahun, setSelectedSingleTahun] = useState('2025'); // Set default value
   const [selectedSingleTahapan, setSelectedSingleTahapan] = useState('28'); // Set default value
 
   const [dataPenganggaran, setDataPenganggaran] = useState([]);

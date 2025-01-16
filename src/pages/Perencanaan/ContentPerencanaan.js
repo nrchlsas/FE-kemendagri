@@ -52,7 +52,7 @@ const ContentPerencanaan = () => {
       setmaxValueMap(maxValue);
     }
   };
-  const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
+  const [selectedSingleTahun, setSelectedSingleTahun] = useState('2025'); // Set default value
   const [selectedSingleTahapan, setSelectedSingleTahapan] = useState('1'); // Set default value
 
   const [dataPerencanaan, setDataPerencanaan] = useState([]);

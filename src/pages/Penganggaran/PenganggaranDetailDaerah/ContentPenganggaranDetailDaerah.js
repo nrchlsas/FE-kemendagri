@@ -33,7 +33,7 @@ const ContentPenganggaranDetailDaerah = () => {
         setcustomActiveTab(tab);
       }
     };
-    const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
+    const [selectedSingleTahun, setSelectedSingleTahun] = useState('2025'); // Set default value
     const [selectedSingleTahapan, setSelectedSingleTahapan] = useState(subTahapan); // Set default value        
     const [dataPenganggaranPersentase, setDataPenganggaranPersentase] = useState(
       []
@@ -103,7 +103,7 @@ const ContentPenganggaranDetailDaerah = () => {
             }),
           };
           const response = await fetch(
-            `${API_URI_RBAC}/v2/dashboard_Penganggaran_2_komposisi`,
+            `${API_URI_RBAC}/v2/dashboard_penganggaran_2_komposisi`,
             requestOptions
           );
   
@@ -126,6 +126,7 @@ const ContentPenganggaranDetailDaerah = () => {
     };
 
     const [totalPagu, setTotalPagu] = useState(0)
+    const [dataDetailHighlight, setDataDetailHighlight] = useState([])
     const getDataPenganggaranNasionalPersentase = ({
       tahun = "2024",      
       tahapan = subTahapan,
@@ -144,7 +145,7 @@ const ContentPenganggaranDetailDaerah = () => {
             }),
           };
           const response = await fetch(
-            `${API_URI_RBAC}/v2/dashboard_Penganggaran_level_3`,
+            `${API_URI_RBAC}/v2/dashboard_penganggaran_level_3`,
             requestOptions
           );
   
@@ -172,8 +173,10 @@ const ContentPenganggaranDetailDaerah = () => {
           setTotalPagu(sumPaguValidasi)
   
           setDataPenganggaranPersentase(
-            dataPenganggaranNasionalPersentase.data.penganggaran_level_3
+            dataPenganggaranNasionalPersentase?.data?.penganggaran_level_3
           );
+
+          setDataDetailHighlight(dataPenganggaranNasionalPersentase?.data?.data_penganggaran_highlight)
         } catch (errorPenganggaran) {
           setErrorPenganggaran(errorPenganggaran);
         } finally {
@@ -649,6 +652,25 @@ const ContentPenganggaranDetailDaerah = () => {
                       {`Rp ${totalPagu?.toLocaleString("id-ID")}`}
                       </div>
                     </div>
+                    {dataDetailHighlight.map((item,index)=>{
+                      const tahapData = {
+                        5: item?.total_rincian_rapbd,
+                        40: item?.total_rincian_kuappas,
+                        30: item?.total_rincian_apbdgeser,
+                        41: item?.total_rincian_kupa,
+                        8: item?.total_rincian_rapbdubah,
+                        29: item?.total_rincian_apbdubah,
+                        28: item?.total_rincian_apbd,
+                        32: item?.total_rincian_apbdgeserpasca,
+                      };
+                      return(<div className="d-flex mb-3" key={index}>
+                        <div style={{ flexBasis: "180px", color:"#929FB1" }}>{nama_rekening}</div>
+                        <div>:&nbsp;</div>
+                        <div style={{ fontWeight: 650 }}>
+                        {tahapData[selectedSingleTahapan]}
+                        </div>
+                      </div>)
+                    })}                    
                   </div>                    
                   </Col>
                 </Row>

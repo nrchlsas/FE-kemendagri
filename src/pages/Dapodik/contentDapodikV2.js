@@ -102,7 +102,7 @@ const ContentDapodikV2 = () => {
     setDataChartRincianDapodikKabupaten,
   ] = useState([[], []]);
 
-  const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
+  const [selectedSingleTahun, setSelectedSingleTahun] = useState('2025'); // Set default value
 
   const handleSelectChange = (e) => {
     const { name, value } = e.target;

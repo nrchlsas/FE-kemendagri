@@ -73,7 +73,7 @@ const ContentRealisasiDetailDaerah = () => {
       };
       fetchData();
     };
-    const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024');
+    const [selectedSingleTahun, setSelectedSingleTahun] = useState('2025');
     const [selectedSingleTahapan, setSelectedSingleTahapan] = useState('1');
     const [selectedSingleSubTahapan, setSelectedSingleSubTahapan] = useState('6');
     const [dataRealisasi, setDataRealisasi] = useState([]);
