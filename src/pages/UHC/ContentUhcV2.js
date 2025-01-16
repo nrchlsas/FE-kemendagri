@@ -1050,7 +1050,7 @@ const ContentUhcV2 = () => {
                         cursor: "pointer",
                         fontSize: "16px",
                         marginBottom: "8px"
-                    }} onClick={()=>getDataTabelBpjsSeprov({tahun: tahun})}>Kembali ke Provinsi</button></>) : (<></>)}
+                    }} onClick={()=>getDataTabelBpjsSeprov({tahun: selectedSingleTahun})}>Kembali ke Provinsi</button></>) : (<></>)}
                     <div style={{ overflowX: "auto" }}>
                     <table
                       className="table table-bordered table-nowrap align-middle mb-0 custom-table"
