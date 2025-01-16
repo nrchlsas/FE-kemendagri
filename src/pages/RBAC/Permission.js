@@ -206,6 +206,7 @@ const Permission = () => {
     return (
         <>
             <div className="page-content">
+                <h3>Permission</h3>
                 <Row style={{ display: show && "inline" || "none" }}>
                     <Col>
                         <Card>
