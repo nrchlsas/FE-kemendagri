@@ -532,14 +532,14 @@ const Pengguna = () => {
                                                     <Button color="primary" onClick={() => onEdit(item)}>Ubah</Button>
                                                     <br />
                                                     <Button className="mt-1" color="danger" onClick={() => { update_password(item) }}>Ubah Password</Button>
-                                                    <br />
+                                                    {/* <br />
                                                     {
                                                         item.client_id ? (
                                                             <div><Link to={`/verification/${item.uuid}`} target="_blank" className="btn btn-outline-success my-1">Terverifikasi</Link></div>
                                                         ) : (
                                                             <Button className="mt-1" color="warning" onClick={() => onVerification(item)}>Verification</Button>
                                                         )
-                                                    }
+                                                    } */}
                                                 </td>
                                             </tr>
                                         ))}
