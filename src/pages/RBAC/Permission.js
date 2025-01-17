@@ -16,7 +16,7 @@ import { createSelector } from "reselect";
 import { useSelector } from "react-redux";
 import { get_permission_by_url } from "../../slices/thunks";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const API_9007_URI = `${process.env.REACT_APP_API_URL_9007}`;
 const api = new APIClient();
@@ -25,6 +25,7 @@ const FORM_EMPTY = {
     permission_name: '',
     permission_description: '',
     uuid: '',
+    is_active: true,
     createPermission: false,
     updatePermission: false,
     deletePermission: false,
@@ -233,6 +234,16 @@ const Permission = () => {
                                                     value={formData.permission_description}
                                                 />
                                             </FormGroup>
+                                            <FormGroup check>
+                                                <Label>
+                                                    <input type="checkbox" name="is_active"
+                                                        onChange={(e) => changeValue(e)}
+                                                        className="form-check-input"
+                                                        checked={formData.is_active}
+                                                    />
+                                                    <span>Status Aktif</span>
+                                                </Label>
+                                            </FormGroup>
 
                                             {/* <FormGroup check>
                                                 <Label>
@@ -297,7 +308,7 @@ const Permission = () => {
                     <Col>
                         <Card>
                             <CardBody>
-                                <div className="d-flex flex-row justify-content-between">
+                                <div className="d-flex flex-row">
                                     <button style={{
                                         backgroundColor: "#007bff",
                                         color: "white",
@@ -308,6 +319,18 @@ const Permission = () => {
                                         fontSize: "12px",
                                         marginBottom: "6px"
                                     }} onClick={() => setShow(true)}>Tambah</button>
+                                    <Link to="/permission-roles" className="btn btn-outline-warning mx-2" style={{
+                                        padding: "10px 20px",
+                                        marginBottom: "6px"
+                                    }}>
+                                        Form Permission Group Roles
+                                    </Link>
+                                    <Link to="/permission-menus" className="btn btn-outline-warning mx-2" style={{
+                                        padding: "10px 20px",
+                                        marginBottom: "6px"
+                                    }}>
+                                        Form Permission Group Menus
+                                    </Link>
                                 </div>
                                 <table className="table table-bordered table-nowrap align-middle mb-0"
                                     style={{ width: "100%" }}>
@@ -316,6 +339,7 @@ const Permission = () => {
                                             <th style={{ width: "20px" }}>NO</th>
                                             <th>Nama Permission</th>
                                             <th>Deskripsi Permission</th>
+                                            <th style={{ width: "60px" }}>Aktif</th>
                                             <th style={{ width: "60px" }}>Deleted</th>
                                             {/* <th style={{ width: "65px" }}>Read</th>
                                             <th style={{ width: "65px" }}>Create</th>
@@ -334,7 +358,8 @@ const Permission = () => {
                                                     }}>{index + 1}</td>
                                                     <td>{item.permission_name}</td>
                                                     <td>{item.permission_description}</td>
-                                                    <td style={{ width: "60px" }}>{item.is_deleted ? 'Ya' : ''}</td>
+                                                    <td style={{ width: "60px" }}>{item.is_active ? 'Ya' : '-'}</td>
+                                                    <td style={{ width: "60px" }}>{item.is_deleted ? 'Ya' : '-'}</td>
                                                     {/* <td style={{ maxWidth: "200px" }} className="text-wrap">{sItem.url}</td>
                                                             <td>
                                                                 <input type="checkbox" checked={sItem.read_permission} readOnly />

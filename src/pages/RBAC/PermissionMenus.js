@@ -10,8 +10,8 @@ const EMPTY_FORM = {
     uuid: '',
     permission_id: 0,
     permission_name: '',
-    menu_id: 0,
-    menu_name: ''
+    grp_menu_id: 0,
+    grp_menu_name: ''
 }
 
 const PermissionMenus = () => {
@@ -43,7 +43,7 @@ const PermissionMenus = () => {
     useEffect(() => {
         let is_valid = true;
         if (!formData.permission_id) is_valid = false;
-        if (!formData.grp_role_id) is_valid = false;
+        if (!formData.grp_menu_id) is_valid = false;
         setIsValid(is_valid);
     }, [formData])
 
@@ -90,16 +90,16 @@ const PermissionMenus = () => {
     // on create
     useEffect(() => {
         populate_permission();
-        populate_group_roles();
+        populate_group_menus();
     }, [])
 
-    async function populate_group_roles() {
+    async function populate_group_menus() {
         setListGroupRole([]);
         const json = {
             page: 1,
             size: 100
         }
-        let response = api.create(`${API_9007_URI}/rbac/list-group-roles-all`, json);
+        let response = api.create(`${API_9007_URI}/rbac/list-group-menu-table`, json);
 
         let data = await response;
 
@@ -266,15 +266,15 @@ const PermissionMenus = () => {
                                             </select>
                                         </FormGroup>
                                         <FormGroup>
-                                            <Label>Group Role</Label>
-                                            <select name="grp_role_id"
+                                            <Label>Group Menu</Label>
+                                            <select name="grp_menu_id"
                                                 onChange={e => changeValue(e)}
                                                 className="form-select"
-                                                value={formData.grp_role_id}>
+                                                value={formData.grp_menu_id}>
                                                 <option value={0}>-- Pilih Group Role --</option>
                                                 {listGroupRole.map(item => (
-                                                    <option key={'option_permission' + item.grp_role_id} value={item.grp_role_id}>
-                                                        {item.grp_role_name}
+                                                    <option key={'option_permission' + item.grp_menu_id} value={item.grp_menu_id}>
+                                                        {item.grp_menu_name}
                                                     </option>
                                                 ))}
                                             </select>
