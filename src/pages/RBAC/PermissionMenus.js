@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Card, CardBody, Col, FormGroup, Label, Modal, ModalBody, ModalHeader, Row } from "reactstrap";
 import { APIClient } from "../../helpers/api_helper";
 import FormSelectFilter from "../../Components/FormFactory/FormSelectFilter";
+import { Link } from "react-router-dom";
 
 const API_9007_URI = `${process.env.REACT_APP_API_URL_9007}`;
 const api = new APIClient();
@@ -11,7 +12,9 @@ const EMPTY_FORM = {
     permission_id: 0,
     permission_name: '',
     grp_menu_id: 0,
-    grp_menu_name: ''
+    grp_menu_name: '',
+    is_active: true,
+    is_deleted: false
 }
 
 const PermissionMenus = () => {
@@ -301,16 +304,30 @@ const PermissionMenus = () => {
                     <Card>
                         <CardBody>
                             <div className="d-flex justify-content-between">
-                                <button style={{
-                                    backgroundColor: "#007bff",
-                                    color: "white",
-                                    padding: "10px 20px",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                    fontSize: "12px",
-                                    marginBottom: "6px"
-                                }} onClick={() => { reset_form(); setShow(true); }}>Tambah</button>
+                                <div className="d-flex flex-row">
+                                    <button style={{
+                                        backgroundColor: "#007bff",
+                                        color: "white",
+                                        padding: "10px 20px",
+                                        border: "none",
+                                        borderRadius: "5px",
+                                        cursor: "pointer",
+                                        fontSize: "12px",
+                                        marginBottom: "6px"
+                                    }} onClick={() => { reset_form(); setShow(true); }}>Tambah</button>
+                                    <Link to="/permission" className="btn btn-outline-warning mx-2" style={{
+                                        padding: "10px 20px",
+                                        marginBottom: "6px"
+                                    }}>
+                                        Form Permission
+                                    </Link>
+                                    <Link to="/permission-roles" className="btn btn-outline-warning mx-2" style={{
+                                        padding: "10px 20px",
+                                        marginBottom: "6px"
+                                    }}>
+                                        Form Permission Group Roles
+                                    </Link>
+                                </div>
 
                                 <div style={{ width: '400px' }}>
                                     <select name="roles"
@@ -334,6 +351,7 @@ const PermissionMenus = () => {
                                         <th style={{ width: "20px" }}>NO</th>
                                         <th style={{ cursor: "pointer", verticalAlign: "middle" }}>Nama Permission</th>
                                         <th>Nama Group Menus</th>
+                                        <th style={{ width: "60px" }}>Aktif</th>
                                         <th style={{ width: "60px" }}>Deleted</th>
                                         <th>Aksi</th>
                                     </tr>
@@ -353,9 +371,10 @@ const PermissionMenus = () => {
                                                 {item.permission_name}
                                             </td>
                                             <td style={{ maxWidth: "400px" }} className="text-wrap">
-                                                {item.menu_name}
+                                                {item.grp_menu_name}
                                             </td>
-                                            <td style={{ width: "60px" }}>{item.is_deleted ? 'Ya' : ''}</td>
+                                            <td><input type="checkbox" key={'is_active_' + index} checked={item.is_active} readOnly /></td>
+                                            <td><input type="checkbox" key={'is_deleted_' + index} checked={item.is_deleted} readOnly /></td>
                                             <td style={{ width: "160px" }}>
                                                 <Button color="danger" style={{ marginRight: "3px" }} onClick={() => { onDelete(item); }}>Hapus</Button>
                                                 <Button color="primary" onClick={() => onEdit(item)}>Ubah</Button>

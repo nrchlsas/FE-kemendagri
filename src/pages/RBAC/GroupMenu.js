@@ -10,7 +10,9 @@ const EMPTY_FORM = {
     grp_menu_id: 0,
     uuid: '',
     grp_menu_name: '',
-    grp_menu_description: ''
+    grp_menu_description: '',
+    is_active: true,
+    is_deleted: false
 }
 
 const GroupMenu = () => {
@@ -214,6 +216,16 @@ const GroupMenu = () => {
                                                 value={formData.grp_menu_description}
                                             />
                                         </FormGroup>
+                                        <FormGroup check>
+                                            <Label>
+                                                <input type="checkbox" name="is_active"
+                                                    onChange={(e) => changeValue(e)}
+                                                    className="form-check-input"
+                                                    checked={formData.is_active}
+                                                />
+                                                <span>Status Aktif</span>
+                                            </Label>
+                                        </FormGroup>
                                     </Col>
                                 </Row>
                                 <Row>
@@ -266,8 +278,8 @@ const GroupMenu = () => {
                                         <th style={{ width: "20px" }}>NO</th>
                                         <th style={{ cursor: "pointer", verticalAlign: "middle" }}>Nama Group Menu</th>
                                         <th>Deskripsi</th>
-                                        {/* <th style={{ width: "60px" }}>Aktif</th>
-                                        <th style={{ width: "60px" }}>Deleted</th> */}
+                                        <th style={{ width: "60px" }}>Aktif</th>
+                                        <th style={{ width: "60px" }}>Deleted</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -288,8 +300,8 @@ const GroupMenu = () => {
                                             <td style={{ maxWidth: "400px" }} className="text-wrap">
                                                 {item.grp_menu_description}
                                             </td>
-                                            {/* <td style={{ width: "60px" }}>{item.is_active ? 'Ya' : '-'}</td>
-                                            <td style={{ width: "60px" }}>{item.is_deleted ? 'Ya' : '-'}</td> */}
+                                            <td><input type="checkbox" key={'is_active_' + index} checked={item.is_active} readOnly /></td>
+                                            <td><input type="checkbox" key={'is_deleted_' + index} checked={item.is_deleted} readOnly /></td>
                                             <td style={{ width: "160px" }}>
                                                 <Button color="danger" style={{ marginRight: "3px" }} onClick={() => { onDelete(item); }}>Hapus</Button>
                                                 <Button color="primary" onClick={() => onEdit(item)}>Ubah</Button>

@@ -358,8 +358,8 @@ const Permission = () => {
                                                     }}>{index + 1}</td>
                                                     <td>{item.permission_name}</td>
                                                     <td>{item.permission_description}</td>
-                                                    <td style={{ width: "60px" }}>{item.is_active ? 'Ya' : '-'}</td>
-                                                    <td style={{ width: "60px" }}>{item.is_deleted ? 'Ya' : '-'}</td>
+                                                    <td><input type="checkbox" key={'is_active_' + index} checked={item.is_active} readOnly /></td>
+                                                    <td><input type="checkbox" key={'is_deleted_' + index} checked={item.is_deleted} readOnly /></td>
                                                     {/* <td style={{ maxWidth: "200px" }} className="text-wrap">{sItem.url}</td>
                                                             <td>
                                                                 <input type="checkbox" checked={sItem.read_permission} readOnly />
