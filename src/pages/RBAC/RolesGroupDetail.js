@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Card, CardBody, Col, FormGroup, Label, Modal, ModalBody, ModalHeader, Row } from "reactstrap";
 import { APIClient } from "../../helpers/api_helper";
 import FormSelectFilter from "../../Components/FormFactory/FormSelectFilter";
+import { Link } from "react-router-dom";
 
 const API_9007_URI = `${process.env.REACT_APP_API_URL_9007}`;
 const api = new APIClient();
@@ -11,7 +12,9 @@ const EMPTY_FORM = {
     id_roles: 0,
     roles_name: '',
     id_grp_roles: 0,
-    grp_roles_name: ''
+    grp_roles_name: '',
+    is_active: true,
+    is_deleted: false
 }
 
 const GroupDetailRoles = () => {
@@ -248,6 +251,7 @@ const GroupDetailRoles = () => {
 
     return (
         <div className="page-content">
+            <h3>Form Roles Group Detail</h3>
             <Row style={{ display: show && "inline" || "none" }}>
                 <Col>
                     <Card>
@@ -279,6 +283,16 @@ const GroupDetailRoles = () => {
                                                 }}
                                             />
                                         </FormGroup>
+                                        <FormGroup check>
+                                            <Label>
+                                                <input type="checkbox" name="is_active"
+                                                    onChange={(e) => changeValue(e)}
+                                                    className="form-check-input"
+                                                    checked={formData.is_active}
+                                                />
+                                                <span>Aktif</span>
+                                            </Label>
+                                        </FormGroup>
                                     </Col>
                                 </Row>
                                 <Row>
@@ -301,17 +315,30 @@ const GroupDetailRoles = () => {
                     <Card>
                         <CardBody>
                             <div className="d-flex justify-content-between">
-                                <button style={{
-                                    backgroundColor: "#007bff",
-                                    color: "white",
-                                    padding: "10px 20px",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                    fontSize: "12px",
-                                    marginBottom: "6px"
-                                }} onClick={() => { reset_form(); setShow(true); }}>Tambah</button>
-
+                                <div className="d-flex flex-row">
+                                    <button style={{
+                                        backgroundColor: "#007bff",
+                                        color: "white",
+                                        padding: "10px 20px",
+                                        border: "none",
+                                        borderRadius: "5px",
+                                        cursor: "pointer",
+                                        fontSize: "12px",
+                                        marginBottom: "6px"
+                                    }} onClick={() => { reset_form(); setShow(true); }}>Tambah</button>
+                                    <Link to="/roles" className="btn btn-outline-warning mx-2" style={{
+                                        padding: "10px 20px",
+                                        marginBottom: "6px"
+                                    }}>
+                                        Form Role
+                                    </Link>
+                                    <Link to="/roles-group" className="btn btn-outline-warning mx-2" style={{
+                                        padding: "10px 20px",
+                                        marginBottom: "6px"
+                                    }}>
+                                        Form Group Role
+                                    </Link>
+                                </div>
                                 <div style={{ width: '400px' }}>
                                     <select name="roles"
                                         onChange={e => setFormFilter(Object.assign({}, formFilter, { group_roles_id: parseInt(e.target.value) }))}
@@ -334,6 +361,7 @@ const GroupDetailRoles = () => {
                                         <th style={{ width: "20px" }}>NO</th>
                                         <th style={{ cursor: "pointer", verticalAlign: "middle" }}>Nama Group Role</th>
                                         <th>Nama Role</th>
+                                        <th style={{ width: "60px" }}>Aktif</th>
                                         <th style={{ width: "60px" }}>Deleted</th>
                                         <th>Aksi</th>
                                     </tr>
@@ -355,7 +383,8 @@ const GroupDetailRoles = () => {
                                             <td style={{ maxWidth: "400px" }} className="text-wrap">
                                                 {item.role_name}
                                             </td>
-                                            <td style={{ width: "60px" }}>{item.is_deleted ? 'Ya' : ''}</td>
+                                            <td><input type="checkbox" key={'is_active_' + index} checked={item.is_active} readOnly /></td>
+                                            <td><input type="checkbox" key={'is_deleted_' + index} checked={item.is_deleted} readOnly /></td>
                                             <td style={{ width: "160px" }}>
                                                 <Button color="danger" style={{ marginRight: "3px" }} onClick={() => { onDelete(item); }}>Hapus</Button>
                                                 <Button color="primary" onClick={() => onEdit(item)}>Ubah</Button>

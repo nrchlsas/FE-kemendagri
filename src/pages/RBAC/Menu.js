@@ -386,8 +386,8 @@ const Menu = () => {
                                                 <td style={{ maxWidth: "400px" }} className="text-wrap">
                                                     {item.parent_menu_name || '-'}
                                                 </td>
-                                                <td style={{ width: "60px" }}>{item.is_active ? 'Ya' : '-'}</td>
-                                                <td style={{ width: "60px" }}>{item.is_deleted ? 'Ya' : '-'}</td>
+                                                <td><input type="checkbox" key={'is_active_' + index} checked={item.is_active} readOnly /></td>
+                                                <td><input type="checkbox" key={'is_deleted_' + index} checked={item.is_deleted} readOnly /></td>
                                                 <td style={{ width: "160px" }}>
                                                     <Button color="danger" style={{ marginRight: "3px" }} onClick={() => {
                                                         setDeleteData(item);

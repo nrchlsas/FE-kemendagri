@@ -16,7 +16,7 @@ import { createSelector } from "reselect";
 import { useSelector } from "react-redux";
 import { get_permission_by_url } from "../../slices/thunks";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import FormSelectFilter from "../../Components/FormFactory/FormSelectFilter";
 
 const API_9007_URI = `${process.env.REACT_APP_API_URL_9007}`;
@@ -60,7 +60,7 @@ const Roles = () => {
         let data = await response;
 
         if (data.code === 200) {
-            setListParent(data.data.map(d => { return { id: d.id, text: d.role_name } }));
+            setListParent(data.data.map(d => { return { id: d.role_id, text: d.role_name } }));
         } else {
             setListParent([]);
         }
@@ -158,7 +158,6 @@ const Roles = () => {
         let is_valid = true;
         if (!formData.role_name) is_valid = false;
         setIsValid(is_valid);
-        console.log(formData);
     }, [formData])
 
     useEffect(() => {
@@ -242,6 +241,7 @@ const Roles = () => {
     return (
         <>
             <div className="page-content">
+                <h3>Form Roles</h3>
                 <Row style={{ display: show && "inline" || "none" }}>
                     <Col>
                         <Card>
@@ -317,16 +317,30 @@ const Roles = () => {
                     <Col>
                         <Card>
                             <CardBody>
-                                <button style={{
-                                    backgroundColor: "#007bff",
-                                    color: "white",
-                                    padding: "10px 20px",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                    fontSize: "12px",
-                                    marginBottom: "6px"
-                                }} onClick={() => { reset_form(); setShow(true) }}>Tambah</button>
+                                <div className="d-flex flex-row">
+                                    <button style={{
+                                        backgroundColor: "#007bff",
+                                        color: "white",
+                                        padding: "10px 20px",
+                                        border: "none",
+                                        borderRadius: "5px",
+                                        cursor: "pointer",
+                                        fontSize: "12px",
+                                        marginBottom: "6px"
+                                    }} onClick={() => { reset_form(); setShow(true) }}>Tambah</button>
+                                    <Link to="/roles-group" className="btn btn-outline-warning mx-2" style={{
+                                        padding: "10px 20px",
+                                        marginBottom: "6px"
+                                    }}>
+                                        Form Role Group
+                                    </Link>
+                                    <Link to="/roles-group-detail" className="btn btn-outline-warning mx-2" style={{
+                                        padding: "10px 20px",
+                                        marginBottom: "6px"
+                                    }}>
+                                        Form Group Role Detail
+                                    </Link>
+                                </div>
                                 <table
                                     className="table table-bordered table-nowrap align-middle mb-0"
                                     style={{ width: "100%" }}
@@ -339,7 +353,8 @@ const Roles = () => {
                                             </th>
                                             <th>Deskripsi</th>
                                             <th>Parent Role</th>
-                                            <th>Aktif</th>
+                                            <th style={{ width: "60px" }}>Aktif</th>
+                                            <th style={{ width: "60px" }}>Deleted</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
@@ -357,9 +372,8 @@ const Roles = () => {
                                                 <td>{item.role_name}</td>
                                                 <td>{item.role_description}</td>
                                                 <td>{item.parent_role_name || item.parent_role_id || '-'}</td>
-                                                <td>
-                                                    <input type="checkbox" key={index} checked={item.is_active} readOnly />
-                                                </td>
+                                                <td><input type="checkbox" key={'is_active_' + index} checked={item.is_active} readOnly /></td>
+                                                <td><input type="checkbox" key={'is_deleted_' + index} checked={item.is_deleted} readOnly /></td>
                                                 <td style={{ width: "160px" }}>
                                                     <Button color="danger" style={{ marginRight: "3px" }} onClick={() => {
                                                         setDeleteData(item);
