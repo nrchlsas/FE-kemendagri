@@ -16,9 +16,8 @@ import { createSelector } from "reselect";
 import { useSelector } from "react-redux";
 import { get_permission_by_url } from "../../slices/thunks";
 import { useDispatch } from "react-redux";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-
-
+import { Link, useNavigate } from "react-router-dom";
+import FormSelectFilter from "../../Components/FormFactory/FormSelectFilter";
 
 const API_9007_URI = `${process.env.REACT_APP_API_URL_9007}`;
 const api = new APIClient();
@@ -26,6 +25,22 @@ const isEmailValid = (email) => {
     const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
     return emailPattern.test(email);
 };
+const FORM_EMPTY = {
+    id: 0,
+    user_id: 0,
+    email: '',
+    username: '',
+    first_name: "",
+    last_name: "",
+    id_daerah: 0,
+    password: "",
+    confirm_password: "",
+    id_roles: 0,
+    uuid: '',
+    is_active: true,
+    is_deleted: false,
+    is_verifikasi: false,
+}
 
 const Pengguna = () => {
     const dispatch = useDispatch();
@@ -43,19 +58,7 @@ const Pengguna = () => {
         if (changePassword.password && changePassword.password.length < 6) is_valid = false;
         setDisabledChangePassword(!is_valid);
     }, [changePassword])
-    const [formData, setFormData] = useState({
-        id: 0,
-        email: '',
-        status: false,
-        is_verifikasi: false,
-        roles: 0,
-        first_name: "",
-        last_name: "",
-        id_daerah: 0,
-        password: "",
-        confirm_password: "",
-        uuid: '',
-    });
+    const [formData, setFormData] = useState(JSON.parse(JSON.stringify(FORM_EMPTY)));
     const [show, setShow] = useState(false)
     const [modal_center, setmodal_center] = useState(false);
     const [modal_update_password, setmodal_update_password] = useState(false);
@@ -73,8 +76,47 @@ const Pengguna = () => {
     })
     const [delete_data, setDeleteData] = useState(null);
 
+    // select option + filter
+    const [list_search_daerah, setListSearchDaerah] = useState([]);
+    const [daerah_selected, setDaerahSelected] = useState(null);
+
+    // pagination
+    const [paging, setPaging] = useState({
+        page: 1,
+        max: 1,
+        size: 10
+    })
+    function page_goto(page) {
+        if (page == paging.page) return;
+        setPaging(Object.assign({}, paging, { page }));
+    }
     useEffect(() => {
         populate_data();
+    }, [paging])
+    function paging_content() {
+        let content = [];
+        const max_page = 10;
+        const { max, page } = paging;
+        const start = 0;
+        let end = max;
+
+        for (let i = start; i < end; i++) {
+            content.push(<div
+                key={'paging-item-' + i}
+                onClick={() => page_goto(i + 1)}
+                className={`page-item d-flex align-items-center justify-content-center mb-1 ${i + 1 == page ? 'disabled' : ''}`}>
+                {i + 1}</div>)
+        }
+        return content;
+    }
+    function calculate_paging(resp) {
+        const { totalPages, currentPage, pageSize } = resp;
+        paging.page = currentPage;
+        paging.max = totalPages;
+        paging.size = pageSize;
+    }
+
+    useEffect(() => {
         populate_roles();
         populate_daerah();
     }, [])
@@ -82,8 +124,9 @@ const Pengguna = () => {
     useEffect(() => {
         let is_valid = true;
         if (!formData.email) is_valid = false;
+        if (!formData.username) is_valid = false;
         if (!isEmailValid(formData.email)) is_valid = false;
-        if (formData.roles == 0) is_valid = false;
+        if (formData.id_roles == 0) is_valid = false;
         setIsValid(is_valid);
     }, [formData])
 
@@ -118,24 +161,30 @@ const Pengguna = () => {
         }
     }
 
+    function search_daerah(keyword = '') {
+        const result = list_daerah.filter(d => d.nama_daerah.toLowerCase().includes(keyword.toLowerCase()));
+        setListSearchDaerah(result.map(d => { return { id: d.id_daerah, text: d.nama_daerah } }));
+    }
+
     async function populate_roles() {
         // populate list role
         const json = { page: 1, size: 100 }
         let response = api.create(`${API_9007_URI}/rbac/list-roles-all`, json);
         let data = await response;
         if (data.code === 200) {
-            setListRole(data.data); // .filter(d => d.status)
+            setListRole(data.data);
         }
     }
 
     async function populate_data() {
         const json = {
-            "page": 1,
-            "size": 100
+            page: paging.page,
+            size: paging.size,
         }
-        let response = api.create(`${API_9007_URI}/users/list-users`, json);
+        let response = api.create(`${API_9007_URI}/users/list-users-table`, json);
         let data = await response;
         if (data.code === 200) {
+            calculate_paging(data);
             setResultData(data.data);
         }
     }
@@ -148,10 +197,6 @@ const Pengguna = () => {
             let response = null;
 
             if (is_edit) {
-                json.id_user = parseInt(formData.id);
-                json.id_roles = parseInt(formData.roles);
-                delete json.id;
-                delete json.roles;
                 response = api.create(`${API_9007_URI}/users/update-user`, json);
             } else {
                 response = api.create(`${API_9007_URI}/users/register`, json);
@@ -161,7 +206,7 @@ const Pengguna = () => {
             let data = await response;
             if (data.code === 200) {
                 populate_data();
-                reset_form();
+                cancel_form();
                 setModalAlert({
                     open: true,
                     type: 'success',
@@ -194,19 +239,8 @@ const Pengguna = () => {
     function onEdit(data) {
         setIsEdit(true);
         setShow(true);
-        setFormData(Object.assign({}, formData, {
-            id: data.id,
-            email: data.email,
-            status: data.status,
-            is_verifikasi: data.is_verifikasi,
-            roles: data.id_roles,
-            first_name: data.first_name || "",
-            last_name: data.last_name || "",
-            id_daerah: data.id_daerah || 0,
-            password: data.password || "",
-            confirm_password: data.confirm_password || "",
-            uuid: data.uuid,
-        }));
+        setFormData(Object.assign({}, data, { first_name: data.first_name || '', last_name: data.last_name || '' }));
+        setDaerahSelected({ id: data.id_daerah, text: data.nama_daerah });
         window.scrollTo(0, 0)
     }
 
@@ -217,25 +251,17 @@ const Pengguna = () => {
 
     function reset_form() {
         setIsEdit(false);
-        setFormData({
-            id: 0,
-            email: '',
-            status: false,
-            is_verifikasi: false,
-            roles: 0,
-            first_name: "",
-            last_name: "",
-            id_daerah: 0,
-            password: "",
-            confirm_password: "",
-        })
+        setFormData(JSON.parse(JSON.stringify(FORM_EMPTY)));
+        setDaerahSelected(null);
     }
 
     async function do_delete() {
         try {
             const json = {
+                clientId: delete_data.client_id,
                 id_user: parseInt(delete_data.id),
-                is_deleted: true
+                is_deleted: !delete_data.is_deleted,
+                isDeleted: !delete_data.is_deleted
             };
             let response = api.create(`${API_9007_URI}/users/delete-user`, json);
             let data = await response;
@@ -293,6 +319,7 @@ const Pengguna = () => {
     return (
         <>
             <div className="page-content">
+                <h3>Pengguna</h3>
                 <Row style={{ display: show && "inline" || "none" }}>
                     <Col>
                         <Card>
@@ -309,6 +336,14 @@ const Pengguna = () => {
                                                     onChange={(e) => changeValue(e)}
                                                     className="form-control"
                                                     value={formData.email}
+                                                />
+                                            </FormGroup>
+                                            <FormGroup>
+                                                <Label>Username</Label>
+                                                <input type="text" name="username"
+                                                    onChange={(e) => changeValue(e)}
+                                                    className="form-control"
+                                                    value={formData.username}
                                                 />
                                             </FormGroup>
                                             <FormGroup>
@@ -329,15 +364,15 @@ const Pengguna = () => {
                                             </FormGroup>
                                             <FormGroup check>
                                                 <Label>
-                                                    <input type="checkbox" name="status"
+                                                    <input type="checkbox" name="is_active"
                                                         onChange={(e) => changeValue(e)}
                                                         className="form-check-input"
-                                                        checked={formData.status}
+                                                        checked={formData.is_active}
                                                     />
-                                                    <span>Status</span>
+                                                    <span>Aktif</span>
                                                 </Label>
                                             </FormGroup>
-                                            <FormGroup check>
+                                            {/* <FormGroup check>
                                                 <Label>
                                                     <input type="checkbox" name="is_verifikasi"
                                                         onChange={(e) => changeValue(e)}
@@ -346,10 +381,10 @@ const Pengguna = () => {
                                                     />
                                                     <span>Varifikasi</span>
                                                 </Label>
-                                            </FormGroup>
+                                            </FormGroup> */}
                                             <FormGroup>
                                                 <Label>Daerah</Label>
-                                                <select name="id_daerah"
+                                                {/* <select name="id_daerah"
                                                     onChange={(e) => changeValue(e)}
                                                     className="form-select"
                                                     value={formData.id_daerah}>
@@ -359,18 +394,25 @@ const Pengguna = () => {
                                                             {item.nama_daerah}
                                                         </option>
                                                     ))}
-                                                </select>
+                                                </select> */}
+                                                <FormSelectFilter onSearch={search_daerah} dataList={list_search_daerah}
+                                                    selected={daerah_selected}
+                                                    onSelect={val => {
+                                                        setFormData(Object.assign({}, formData, { id_daerah: val ? val.id : 0 }));
+                                                        setDaerahSelected(val);
+                                                    }}
+                                                />
                                             </FormGroup>
                                             <FormGroup>
                                                 <Label>Role</Label>
-                                                <select name="roles"
+                                                <select name="id_roles"
                                                     onChange={(e) => changeValue(e)}
                                                     className="form-select"
-                                                    value={formData.roles}>
+                                                    value={formData.id_roles}>
                                                     <option value={0}>-- Pilih Data --</option>
                                                     {list_role.map(item => (
-                                                        <option key={'option_roles_' + item.id} value={item.id}>
-                                                            {item.nama_roles}
+                                                        <option key={'option_roles_' + item.role_id} value={item.role_id}>
+                                                            {item.role_name}
                                                         </option>
                                                     ))}
                                                 </select>
@@ -435,16 +477,18 @@ const Pengguna = () => {
                                 >
                                     <thead className="table-light">
                                         <tr>
-                                            <th>NO</th>
+                                            <th style={{ width: "20px" }}>NO</th>
                                             <th style={{ cursor: "pointer", verticalAlign: "middle" }}>
                                                 Email
                                             </th>
-                                            <th>First Name</th>
-                                            <th>Last Name</th>
-                                            <th>Status</th>
-                                            <th>Verifikasi</th>
-                                            <th>Update Password</th>
+                                            <th>Username</th>
+                                            <th>Nama</th>
                                             <th>Roles</th>
+                                            <th>Nama Daerah</th>
+                                            <th style={{ width: "60px" }}>Aktif</th>
+                                            <th style={{ width: "60px" }}>Deleted</th>
+                                            {/* <th>Verifikasi</th> */}
+                                            {/* <th>Update Password</th> */}
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
@@ -455,17 +499,19 @@ const Pengguna = () => {
                                                     style={
                                                         {
                                                             textAlign: "center",
-                                                            verticalAlign: "middle"
+                                                            verticalAlign: "middle",
+                                                            width: "20px"
                                                         }}>
-                                                    {index + 1}
+                                                    {(paging.page - 1) * paging.size + index + 1}
                                                 </td>
                                                 <td>{item.email}</td>
-                                                <td>{item.first_name || '-'}</td>
-                                                <td>{item.last_name || '-'}</td>
-                                                <td>
-                                                    <input type="checkbox" key={index} checked={item.status} readOnly />
-                                                </td>
-                                                <td style={{ width: "150px" }}>
+                                                <td>{item.username}</td>
+                                                <td>{item.first_name || ''} {item.last_name || ''}</td>
+                                                <td>{item.role_name || '-'}</td>
+                                                <td>{item.nama_daerah || '-'}</td>
+                                                <td><input type="checkbox" key={'is_active_' + index} checked={item.is_active} readOnly /></td>
+                                                <td><input type="checkbox" key={'is_deleted_' + index} checked={item.is_deleted} readOnly /></td>
+                                                {/* <td style={{ width: "150px" }}>
                                                     {
                                                         item.is_verifikasi ? (
                                                             <div><Link to={`/verification/${item.uuid}`} target="_blank">Terverifikasi</Link></div>
@@ -473,13 +519,10 @@ const Pengguna = () => {
                                                             <Button color="warning" onClick={() => onVerification(item)}>Verification</Button>
                                                         )
                                                     }
-                                                    {/* <input type="checkbox" key={index} checked={item.is_verifikasi} readOnly /> */}
-                                                </td>
-                                                <td style={{ width: "155px" }}>
-                                                    {/* <input type="checkbox" key={index} checked={item.is_update_password} readOnly /> */}
+                                                </td> */}
+                                                {/* <td style={{ width: "155px" }}>
                                                     <Button color="danger" onClick={() => { update_password(item) }}>Ubah Password</Button>
-                                                </td>
-                                                <td>{item.nama_roles || '-'}</td>
+                                                </td> */}
                                                 <td style={{ width: "160px" }}>
                                                     <Button color="danger" style={{ marginRight: "3px" }} onClick={() => {
                                                         setDeleteData(item);
@@ -487,17 +530,32 @@ const Pengguna = () => {
                                                         tog_center();
                                                     }}>Hapus</Button>
                                                     <Button color="primary" onClick={() => onEdit(item)}>Ubah</Button>
+                                                    <br />
+                                                    <Button className="mt-1" color="danger" onClick={() => { update_password(item) }}>Ubah Password</Button>
+                                                    <br />
+                                                    {
+                                                        item.client_id ? (
+                                                            <div><Link to={`/verification/${item.uuid}`} target="_blank" className="btn btn-outline-success my-1">Terverifikasi</Link></div>
+                                                        ) : (
+                                                            <Button className="mt-1" color="warning" onClick={() => onVerification(item)}>Verification</Button>
+                                                        )
+                                                    }
                                                 </td>
                                             </tr>
                                         ))}
 
                                     </tbody>
                                 </table>
+                                <div className="paging-container d-flex justify-content-center mt-3 flex-wrap">
+                                    <div className="d-flex flex-wrap" style={{ maxWidth: '80%' }}>
+                                        {paging_content()}
+                                    </div>
+                                </div>
                             </CardBody>
                         </Card>
                     </Col>
                 </Row>
-            </div>
+            </div >
 
             <Modal
                 isOpen={modal_center}
