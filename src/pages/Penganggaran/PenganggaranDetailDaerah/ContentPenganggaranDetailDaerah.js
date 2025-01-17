@@ -618,35 +618,35 @@ const ContentPenganggaranDetailDaerah = () => {
                       </div>
                     </div> */}
                     <div className="d-flex mb-3">
-                      <div style={{ flexBasis: "180px", color:"#929FB1" }}>Kepala Daerah</div>
+                      <div style={{ flexBasis: "350px", color:"#929FB1" }}>Kepala Daerah</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
                         {dataProfilDaerah?.kepala_daerah}
                       </div>
                     </div>
                     <div className="d-flex mb-3">
-                      <div style={{ flexBasis: "180px", color:"#929FB1" }}>Wakil Kepala Daerah</div>
+                      <div style={{ flexBasis: "350px", color:"#929FB1" }}>Wakil Kepala Daerah</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
                         {dataProfilDaerah?.wakil_kepala_daerah}
                       </div>
                     </div>
                     {/* <div className="d-flex mb-3">
-                      <div style={{ flexBasis: "180px", color:"#929FB1" }}>Sekretaris Daerah</div>
+                      <div style={{ flexBasis: "350px", color:"#929FB1" }}>Sekretaris Daerah</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
                         {dataProfilDaerah?.kepala_daerah}
                       </div>
                     </div>
                     <div className="d-flex mb-3">
-                      <div style={{ flexBasis: "180px", color:"#929FB1" }}>Jumlah SKPD & Unit SKPD</div>
+                      <div style={{ flexBasis: "350px", color:"#929FB1" }}>Jumlah SKPD & Unit SKPD</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
                         {dataProfilDaerah?.kepala_daerah}
                       </div>
                     </div> */}
                     <div className="d-flex mb-3">
-                      <div style={{ flexBasis: "180px", color:"#929FB1" }}>Total Pagu</div>
+                      <div style={{ flexBasis: "350px", color:"#929FB1" }}>Total Pagu</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
                       {`Rp ${totalPagu?.toLocaleString("id-ID")}`}
@@ -664,10 +664,19 @@ const ContentPenganggaranDetailDaerah = () => {
                         32: item?.total_rincian_apbdgeserpasca,
                       };
                       return(<div className="d-flex mb-3" key={index}>
-                        <div style={{ flexBasis: "180px", color:"#929FB1" }}>{nama_rekening}</div>
+                        <div style={{ flexBasis: "350px", color:"#929FB1" }}>{item.nama_rekening}</div>
                         <div>:&nbsp;</div>
                         <div style={{ fontWeight: 650 }}>
-                        {tahapData[selectedSingleTahapan]}
+                        <CountUp
+                      start={0}
+                      end={tahapData[selectedSingleTahapan]}
+                      // decimal=","
+                      // decimals={2}
+                      separator="."
+                      prefix="Rp "
+                      // suffix=" T"
+                      duration={1}
+                    />
                         </div>
                       </div>)
                     })}                    

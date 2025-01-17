@@ -204,7 +204,7 @@ const ContentStunting = () => {
           body: JSON.stringify({
           //  kode_ddn: "11"
             tahun: tahun,
-            tahun_a: "2025"
+            tahun_data: "2024"
         }),
         };
 
@@ -584,39 +584,52 @@ const ContentStunting = () => {
         }
 
         const dataStuntingTabel = await response.json();
-        setDataStuntingTabel(dataStuntingTabel.data);
+        setDataStuntingTabel(dataStuntingTabel?.data);
         setShowNextData(true);
         setCurrentPage(1);
         setDataKolomNamaDaerah("Se-Provinsi");
 
-              // Menyimpan semua data desil ke dalam state dataDesil
-      const desilData = {
-        desil1: dataStuntingTabel.data.map(item => ({
-          name: item.nama_prov,
-          value: parseInt(item.peringkat_kesejahteraan_1)
-        })),
-        desil2: dataStuntingTabel.data.map(item => ({
-          name: item.nama_prov,
-          value: parseInt(item.peringkat_kesejahteraan_2)
-        })),
-        desil3: dataStuntingTabel.data.map(item => ({
-          name: item.nama_prov,
-          value: parseInt(item.peringkat_kesejahteraan_3)
-        })),
-        desil4: dataStuntingTabel.data.map(item => ({
-          name: item.nama_prov,
-          value: parseInt(item.peringkat_kesejahteraan_4)
-        })),
-        desil5: dataStuntingTabel.data.map(item => ({
-          name: item.nama_prov,
-          value: parseInt(item.peringkat_kesejahteraan_diatas_4)
-        }))
-      };
-
-      setDataDesil(desilData); // Simpan semua desil ke dalam state
-      setValueMap(desilData.desil1);
-      const maxDesil1 = Math.max(...desilData.desil1.map(item => item.value));
-      setmaxValueMap(maxDesil1);
+        // Menyimpan semua data desil ke dalam state dataDesil
+        const desilData = {
+          desil1: Array.isArray(dataStuntingTabel?.data)
+            ? dataStuntingTabel?.data?.map(item => ({
+                name: item.nama_prov,
+                value: parseInt(item.peringkat_kesejahteraan_1),
+              }))
+            : [],
+          desil2: Array.isArray(dataStuntingTabel?.data)
+            ? dataStuntingTabel?.data?.map(item => ({
+                name: item.nama_prov,
+                value: parseInt(item.peringkat_kesejahteraan_2),
+              }))
+            : [],
+          desil3: Array.isArray(dataStuntingTabel?.data)
+            ? dataStuntingTabel?.data?.map(item => ({
+                name: item.nama_prov,
+                value: parseInt(item.peringkat_kesejahteraan_3),
+              }))
+            : [],
+          desil4: Array.isArray(dataStuntingTabel?.data)
+            ? dataStuntingTabel?.data?.map(item => ({
+                name: item.nama_prov,
+                value: parseInt(item.peringkat_kesejahteraan_4),
+              }))
+            : [],
+          desil5: Array.isArray(dataStuntingTabel?.data)
+            ? dataStuntingTabel?.data?.map(item => ({
+                name: item.nama_prov,
+                value: parseInt(item.peringkat_kesejahteraan_diatas_4),
+              }))
+            : [],
+        };
+        console.log(desilData, 'ini isi desil data')
+        setDataDesil(desilData); // Simpan semua desil ke dalam state
+        setValueMap(desilData?.desil1);
+        
+        const maxDesil1 = Math.max(
+          ...(Array.isArray(desilData.desil1) ? desilData.desil1.map(item => item.value) : [])
+        );
+        setmaxValueMap(maxDesil1);
       
         // const valueDesil1 = dataStuntingTabel.data.map(item => ({
         //   name: item.nama_prov,
