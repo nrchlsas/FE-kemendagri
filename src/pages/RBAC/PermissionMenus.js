@@ -383,7 +383,11 @@ const PermissionMenus = () => {
                                     ))}
                                 </tbody>
                             </table>
-                            <div className="paging-container d-flex justify-content-center mt-3">{paging_content()}</div>
+                            <div className="paging-container d-flex justify-content-center mt-3">
+                                <div className="d-flex flex-wrap" style={{ maxWidth: '80%' }}>
+                                    {paging_content()}
+                                </div>
+                            </div>
                         </CardBody>
                     </Card>
                 </Col>
