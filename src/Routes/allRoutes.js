@@ -249,11 +249,11 @@ const authProtectedRoutes = [
 
   //RBAC
   { path: "/menu", component: <Menu />},
-  { path: "/group-menu", component: <GroupMenu />},
-  { path: "/group-detail-menu", component: <GroupDetailMenu />},
+  { path: "/menu-group", component: <GroupMenu />},
+  { path: "/menu-group-detail", component: <GroupDetailMenu />},
   { path: "/roles", component: <Roles />},
-  { path: "/group-roles", component: <RolesGroup />},
-  { path: "/group-detail-roles", component: <RolesGroupDetail />},
+  { path: "/roles-group", component: <RolesGroup />},
+  { path: "/roles-group-detail", component: <RolesGroupDetail />},
   { path: "/permission", component: <Permission />},
   { path: "/permission-roles", component: <PermissionRoles />},
   { path: "/permission-menus", component: <PermissionMenus />},

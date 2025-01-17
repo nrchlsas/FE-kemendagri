@@ -17,25 +17,27 @@ import { createSelector } from "reselect";
 import { useSelector } from "react-redux";
 import { get_permission_by_url } from "../../slices/thunks";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import FormSelectFilter from "../../Components/FormFactory/FormSelectFilter";
 
 const API_9007_URI = `${process.env.REACT_APP_API_URL_9007}`;
 const api = new APIClient();
+const FORM_EMPTY = {
+    id: 0,
+    uuid: '',
+    menu_name: "",
+    menu_description: "",
+    parent_menu_id: null,
+    url: "",
+    is_menu: false,
+    is_active: true
+}
 
 const Menu = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [resultData, setResultData] = useState([])
-    const [formData, setFormData] = useState({
-        id: 0,
-        uuid: '',
-        menu_name: "",
-        menu_description: "",
-        parent_menu_id: null,
-        url: "",
-        is_menu: false
-    });
+    const [formData, setFormData] = useState(JSON.parse(JSON.stringify(FORM_EMPTY)));
     const [is_valid, setIsValid] = useState(false);
     const [show, setShow] = useState(false)
     const [submitProcess, setSubmitProcess] = useState(false)
@@ -186,15 +188,7 @@ const Menu = () => {
 
     function reset_form() {
         setIsEdit(false);
-        setFormData({
-            id: 0,
-            uuid: '',
-            menu_name: "",
-            menu_description: "",
-            parent_menu_id: null,
-            url: "",
-            is_menu: false
-        })
+        setFormData(JSON.parse(JSON.stringify(FORM_EMPTY)))
         setMenuParentSelected(null);
     }
 
@@ -229,7 +223,7 @@ const Menu = () => {
         let data = await response;
 
         if (data.code === 200) {
-            setListMenuParent(data.data.map(d => { return { id: d.id, text: d.menu_name } }));
+            setListMenuParent(data.data.map(d => { return { id: d.menu_id, text: d.menu_name } }));
         } else {
             setListMenuParent([]);
         }
@@ -238,6 +232,7 @@ const Menu = () => {
     return (
         <>
             <div className="page-content">
+                <h3>Form Menus</h3>
                 <Row style={{ display: show && "inline" || "none" }}>
                     <Col>
                         <Card>
@@ -294,6 +289,17 @@ const Menu = () => {
                                                 </Label>
                                             </FormGroup>
 
+                                            <FormGroup check>
+                                                <Label>
+                                                    <input type="checkbox" name="is_active"
+                                                        onChange={(e) => changeValue(e)}
+                                                        className="form-check-input"
+                                                        checked={formData.is_active}
+                                                    />
+                                                    <span>Status Aktif</span>
+                                                </Label>
+                                            </FormGroup>
+
                                         </Col>
                                     </Row>
                                     <Row>
@@ -315,16 +321,30 @@ const Menu = () => {
                     <Col>
                         <Card>
                             <CardBody>
-                                <button style={{
-                                    backgroundColor: "#007bff",
-                                    color: "white",
-                                    padding: "10px 20px",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                    fontSize: "12px",
-                                    marginBottom: "6px"
-                                }} onClick={() => { reset_form(); setShow(true); }}>Tambah</button>
+                                <div className="d-flex flex-row">
+                                    <button style={{
+                                        backgroundColor: "#007bff",
+                                        color: "white",
+                                        padding: "10px 20px",
+                                        border: "none",
+                                        borderRadius: "5px",
+                                        cursor: "pointer",
+                                        fontSize: "12px",
+                                        marginBottom: "6px"
+                                    }} onClick={() => { reset_form(); setShow(true); }}>Tambah</button>
+                                    <Link to="/menu-group" className="btn btn-outline-warning mx-2" style={{
+                                        padding: "10px 20px",
+                                        marginBottom: "6px"
+                                    }}>
+                                        Form Menu Group
+                                    </Link>
+                                    <Link to="/menu-group-detail" className="btn btn-outline-warning mx-2" style={{
+                                        padding: "10px 20px",
+                                        marginBottom: "6px"
+                                    }}>
+                                        Form Group Menu Detail
+                                    </Link>
+                                </div>
 
                                 <table
                                     className="table table-bordered table-nowrap align-middle mb-0"
@@ -337,7 +357,8 @@ const Menu = () => {
                                             <th>Deskripsi</th>
                                             <th>Url</th>
                                             <th>Parent</th>
-                                            <th>Deleted</th>
+                                            <th style={{ width: "60px" }}>Aktif</th>
+                                            <th style={{ width: "60px" }}>Deleted</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
@@ -365,7 +386,8 @@ const Menu = () => {
                                                 <td style={{ maxWidth: "400px" }} className="text-wrap">
                                                     {item.parent_menu_name || '-'}
                                                 </td>
-                                                <td style={{ width: "60px" }}>{item.is_deleted ? 'Ya' : ''}</td>
+                                                <td style={{ width: "60px" }}>{item.is_active ? 'Ya' : '-'}</td>
+                                                <td style={{ width: "60px" }}>{item.is_deleted ? 'Ya' : '-'}</td>
                                                 <td style={{ width: "160px" }}>
                                                     <Button color="danger" style={{ marginRight: "3px" }} onClick={() => {
                                                         setDeleteData(item);

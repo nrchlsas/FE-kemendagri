@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button, Card, CardBody, Col, FormGroup, Label, Modal, ModalBody, ModalHeader, Row } from "reactstrap";
 import { APIClient } from "../../helpers/api_helper";
 import FormSelectFilter from "../../Components/FormFactory/FormSelectFilter";
+import { Link } from "react-router-dom";
 
 const API_9007_URI = `${process.env.REACT_APP_API_URL_9007}`;
 const api = new APIClient();
@@ -248,6 +249,7 @@ const GroupDetailMenu = () => {
 
     return (
         <div className="page-content">
+            <h3>Form Menus Group Detail</h3>
             <Row style={{ display: show && "inline" || "none" }}>
                 <Col>
                     <Card>
@@ -301,16 +303,30 @@ const GroupDetailMenu = () => {
                     <Card>
                         <CardBody>
                             <div className="d-flex justify-content-between">
-                                <button style={{
-                                    backgroundColor: "#007bff",
-                                    color: "white",
-                                    padding: "10px 20px",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                    fontSize: "12px",
-                                    marginBottom: "6px"
-                                }} onClick={() => { reset_form(); setShow(true); }}>Tambah</button>
+                                <div className="d-flex flex-row">
+                                    <button style={{
+                                        backgroundColor: "#007bff",
+                                        color: "white",
+                                        padding: "10px 20px",
+                                        border: "none",
+                                        borderRadius: "5px",
+                                        cursor: "pointer",
+                                        fontSize: "12px",
+                                        marginBottom: "6px"
+                                    }} onClick={() => { reset_form(); setShow(true); }}>Tambah</button>
+                                    <Link to="/menu" className="btn btn-outline-warning mx-2" style={{
+                                        padding: "10px 20px",
+                                        marginBottom: "6px"
+                                    }}>
+                                        Form Menu
+                                    </Link>
+                                    <Link to="/menu-group" className="btn btn-outline-warning mx-2" style={{
+                                        padding: "10px 20px",
+                                        marginBottom: "6px"
+                                    }}>
+                                        Form Group Menu
+                                    </Link>
+                                </div>
 
                                 <div style={{ width: '400px' }}>
                                     <select name="roles"
@@ -334,7 +350,7 @@ const GroupDetailMenu = () => {
                                         <th style={{ width: "20px" }}>NO</th>
                                         <th style={{ cursor: "pointer", verticalAlign: "middle" }}>Nama Group Menu</th>
                                         <th>Nama Menu</th>
-                                        <th style={{ width: "60px" }}>Deleted</th>
+                                        {/* <th style={{ width: "60px" }}>Deleted</th> */}
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -355,7 +371,7 @@ const GroupDetailMenu = () => {
                                             <td style={{ maxWidth: "400px" }} className="text-wrap">
                                                 {item.menu_name}
                                             </td>
-                                            <td style={{ width: "60px" }}>{item.is_deleted ? 'Ya' : ''}</td>
+                                            {/* <td style={{ width: "60px" }}>{item.is_deleted ? 'Ya' : ''}</td> */}
                                             <td style={{ width: "160px" }}>
                                                 <Button color="danger" style={{ marginRight: "3px" }} onClick={() => { onDelete(item); }}>Hapus</Button>
                                                 <Button color="primary" onClick={() => onEdit(item)}>Ubah</Button>
