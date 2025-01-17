@@ -50,6 +50,7 @@ const Pengguna = () => {
         password: "",
         confirm_password: "",
         uuid: '',
+        client_id: ''
     });
     useEffect(() => {
         let is_valid = true;
@@ -281,6 +282,7 @@ const Pengguna = () => {
             password: "",
             confirm_password: "",
             uuid: data.uuid,
+            client_id: data.client_id
         });
         setmodal_update_password(true);
     }
@@ -288,12 +290,15 @@ const Pengguna = () => {
         try {
             const json = {
                 uuid: changePassword.uuid,
-                password: changePassword.password
+                passwordBaru: changePassword.password,
+                konfirmasiPassword: changePassword.confirm_password,
+                clientId: changePassword.client_id
             };
-            let response = api.create(`${API_9007_URI}/users/update-password`, json);
+            let response = api.create(`${API_9007_URI}/users/detail-users/update-password`, json);
             let data = await response;
             if (data.code === 200) {
                 setModalAlert(Object.assign({}, modal_alert, { type: 'success', title: "Update Password", message: "Proses update password berhasil", open: true }))
+                setmodal_update_password(false);
             }
         } catch (error) {
             setModalAlert(Object.assign({}, modal_alert, { type: 'error', title: "Error Update Password", message: error, open: true }))
