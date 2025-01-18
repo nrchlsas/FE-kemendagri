@@ -102,21 +102,33 @@ const ContentDapodikV2 = () => {
     setDataChartRincianDapodikKabupaten,
   ] = useState([[], []]);
 
-  const [selectedSingleTahun, setSelectedSingleTahun] = useState('2025'); // Set default value
+  const [selectedSingleTahunAnggaran, setSelectedSingleTahunAnggaran] = useState('2025'); // Set default value
+  const [selectedSingleTahunData, setselectedSingleTahunData] = useState('2025'); // Set default value
 
-  const handleSelectChange = (e) => {
+  const handleSelectChangeAnggaran = (e) => {
     const { name, value } = e.target;
-    setSelectedSingleTahun(value); // Misalnya, untuk dropdown tahun
-    getDataAnakSekolah({kodeWilayah: "", tahun: value});
-    getDataDapodik({kodeDdn: "", tahun: value});
-    getDataTabelDapodikSeProv({tahun:value});
-    getDataTabelDapodikProv({tahun:value});
-    getDataTabelDapodikKab({tahun:value});
-    getDataCrossAnalisis({tahun:value});
+    setSelectedSingleTahunAnggaran(value); // Misalnya, untuk dropdown tahun
+    getDataAnakSekolah({kodeWilayah: "", tahun: value, tahun_data: selectedSingleTahunData});
+    getDataDapodik({kodeDdn: "", tahun: value, tahun_data: selectedSingleTahunData});
+    getDataTabelDapodikSeProv({tahun:value, tahun_data: selectedSingleTahunData});
+    getDataTabelDapodikProv({tahun:value, tahun_data: selectedSingleTahunData});
+    getDataTabelDapodikKab({tahun:value, tahun_data: selectedSingleTahunData});
+    getDataCrossAnalisis({tahun:value, tahun_data: selectedSingleTahunData});
+  };  
+
+  const handleSelectChangeDataPokok = (e) => {
+    const { name, value } = e.target;
+    setselectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
+    getDataAnakSekolah({kodeWilayah: "", tahun: selectedSingleTahunAnggaran, tahun_data: value});
+    getDataDapodik({kodeDdn: "", tahun: selectedSingleTahunAnggaran, tahun_data: value});
+    getDataTabelDapodikSeProv({tahun:selectedSingleTahunAnggaran, tahun_data: value});
+    getDataTabelDapodikProv({tahun:selectedSingleTahunAnggaran, tahun_data: value});
+    getDataTabelDapodikKab({tahun:selectedSingleTahunAnggaran, tahun_data: value});
+    getDataCrossAnalisis({tahun:selectedSingleTahunAnggaran, tahun_data: value});
   };
 
   const [dataSdMap, setDataSdMap] = useState([])
-  const getDataDapodik = ({kodeDdn="", tahun=""}) => {
+  const getDataDapodik = ({kodeDdn="", tahun="", tahun_data=""}) => {
     const fetchData = async () => {
         try {
             const token = JSON.parse(sessionStorage.getItem("authUser"));
@@ -125,7 +137,8 @@ const ContentDapodikV2 = () => {
                 headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
                 body: JSON.stringify({
                     kode_ddn: kodeDdn,
-                    tahun: tahun
+                    tahun: tahun,
+                    tahun_data:tahun_data
                 }),
             };
             const response = await fetch(`${API_URI_RBAC}/v2/dashboard_dapodik`, requestOptions);
@@ -220,7 +233,7 @@ const ContentDapodikV2 = () => {
   const [maxValueMap, setmaxValueMap] = useState(0)
   const [handleCardClick, setHandleCardClick] = useState(() => () => {});
 
-  const getDataTabelDapodikSeProv = ({searchTerm, tahun}) => {
+  const getDataTabelDapodikSeProv = ({searchTerm, tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -230,7 +243,8 @@ const ContentDapodikV2 = () => {
           body: JSON.stringify({
             // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
             nama_prov: searchTerm ? searchTerm : "",
-            tahun: tahun
+            tahun: tahun,
+            tahun_data:tahun_data
           }),
         };
         // /table_dapodik_provinsi
@@ -356,7 +370,7 @@ const ContentDapodikV2 = () => {
     fetchData();
   };
 
-  const getDataTabelDapodikKab = ({searchTerm, tahun}) => {
+  const getDataTabelDapodikKab = ({searchTerm, tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -366,7 +380,8 @@ const ContentDapodikV2 = () => {
           body: JSON.stringify({
             // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
             nama_kabkota: searchTerm ? searchTerm : "",
-            tahun: tahun
+            tahun: tahun,
+            tahun_data:tahun_data
           }),
         };
         // /table_dapodik_provinsi
@@ -393,7 +408,7 @@ const ContentDapodikV2 = () => {
     fetchData();
   };
   
-  const getDataCrossAnalisis = ({tahun}) => {
+  const getDataCrossAnalisis = ({tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -441,7 +456,7 @@ const ContentDapodikV2 = () => {
   };
 
   const [dataDapodikJumlahAnakSekolah, setDataDapodikJumlahAnakSekolah] = useState([])
-  const getDataAnakSekolah = ({kodeWilayah, tahun}) => {
+  const getDataAnakSekolah = ({kodeWilayah, tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -450,7 +465,8 @@ const ContentDapodikV2 = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_wilayah: kodeWilayah,
-            tahun: tahun
+            tahun: tahun,
+            tahun_data:tahun_data
         }),
         };
         
@@ -479,7 +495,7 @@ const ContentDapodikV2 = () => {
 
 
 
-  const getDataTabelDapodikProv = ({searchTerm, tahun}) => {
+  const getDataTabelDapodikProv = ({searchTerm, tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -489,7 +505,8 @@ const ContentDapodikV2 = () => {
           body: JSON.stringify({
             // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
             nama_prov: searchTerm,
-            tahun: tahun
+            tahun: tahun,
+            tahun_data:tahun_data
           }),
         };
         const response = await fetch(
@@ -657,12 +674,12 @@ const ContentDapodikV2 = () => {
   };
 
   useEffect(() => {
-    getDataDapodik({kodeDdn: "", tahun: selectedSingleTahun});
-    getDataAnakSekolah({kodeWilayah: "", tahun: selectedSingleTahun});
-    getDataTabelDapodikSeProv({tahun:selectedSingleTahun});
-    getDataTabelDapodikProv({tahun:selectedSingleTahun});
-    getDataTabelDapodikKab({tahun:selectedSingleTahun});
-    getDataCrossAnalisis({tahun:selectedSingleTahun});
+    getDataDapodik({kodeDdn: "", tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
+    getDataAnakSekolah({kodeWilayah: "", tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
+    getDataTabelDapodikSeProv({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
+    getDataTabelDapodikProv({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
+    getDataTabelDapodikKab({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
+    getDataCrossAnalisis({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
   }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -980,9 +997,9 @@ const ContentDapodikV2 = () => {
     if (area === "kabupaten") {
       getDataTabelDapodikKab(searchTerm); // Panggil API ketika tombol ditekan
     } else if (area === "provinsi") {
-      getDataTabelDapodikProv({searchTerm, tahun:selectedSingleTahun});
+      getDataTabelDapodikProv({searchTerm, tahun:selectedSingleTahunAnggaran});
     } else {
-      getDataTabelDapodikSeProv({searchTerm, tahun:selectedSingleTahun});
+      getDataTabelDapodikSeProv({searchTerm, tahun:selectedSingleTahunAnggaran});
     }
     setCurrentPage(1);
   };
@@ -1123,7 +1140,7 @@ const ContentDapodikV2 = () => {
             </div>
             <div className="d-flex nav-beranda">
                   <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
-                    Pilih Data Tahun:
+                    Data Tahun:
                   </div>
                  <select
               name="tahun"
@@ -1134,15 +1151,35 @@ const ContentDapodikV2 = () => {
                 border: "1px solid #ccc",
                 backgroundColor: "#ffffff",                          
                 cursor: "pointer",                          
-                margin: "15px",
+                margin: "15px 15px 15px 5px",
               }}
-              value={selectedSingleTahun}
-              onChange={handleSelectChange}
+              value={selectedSingleTahunData}
+              onChange={handleSelectChangeDataPokok}
             >                        
               <option value="2024">2024</option>
               <option value="2025">2025</option>
             </select>
-                </div>
+            <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                    Anggaran Tahun:
+                  </div>
+                 <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                margin: "15px 15px 15px 5px",
+              }}
+              value={selectedSingleTahunAnggaran}
+              onChange={handleSelectChangeAnggaran}
+            >                        
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select>
+            </div>
             {/* <select
               name="tahun"
               style={{
@@ -1156,8 +1193,8 @@ const ContentDapodikV2 = () => {
                 marginTop: "16px",
                 marginBottom: "30px",
               }}
-              value={selectedSingleTahun}
-              onChange={handleSelectChange}
+              value={selectedSingleTahunAnggaran}
+              onChange={handleSelectChangeAnggaran}
             >                        
               <option value="2024">2024</option>
               <option value="2025">2025</option>
@@ -2097,7 +2134,7 @@ const ContentDapodikV2 = () => {
                       fontSize: "16px",
                       marginBottom: "8px",
                     }}
-                    onClick={() => getDataTabelDapodikProv({searchTerm, tahun: selectedSingleTahun})}
+                    onClick={() => getDataTabelDapodikProv({searchTerm, tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData})}
                   >
                     Kembali ke Provinsi
                   </button></>
