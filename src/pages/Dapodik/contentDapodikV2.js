@@ -1140,7 +1140,7 @@ const ContentDapodikV2 = () => {
             </div>
             <div className="d-flex nav-beranda">
                   <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
-                    Data Tahun:
+                    Tahun Data:
                   </div>
                  <select
               name="tahun"
@@ -1160,7 +1160,7 @@ const ContentDapodikV2 = () => {
               <option value="2025">2025</option>
             </select>
             <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
-                    Anggaran Tahun:
+                    Tahun Anggaran:
                   </div>
                  <select
               name="tahun"

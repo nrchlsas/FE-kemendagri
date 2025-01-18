@@ -1219,7 +1219,7 @@ const ContentStunting = () => {
   const [showChartBerisiko, setShowChartBerisiko] = useState(false)
 
     const [selectedSingleTahunAnggaran, setSelectedSingleTahunAnggaran] = useState('2025'); // Set default value
-    const [selectedSingleTahunData, setselectedSingleTahunData] = useState('2025'); // Set default value
+    const [selectedSingleTahunData, setselectedSingleTahunData] = useState('2023'); // Set default value
     
     const handleSelectChangeAnggaran = (e) => {
       const { name, value } = e.target;
@@ -1253,7 +1253,7 @@ const ContentStunting = () => {
             </div>
             <div className="d-flex nav-beranda">
               <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
-                    Data Tahun:
+                    Tahun Data:
                   </div>
                  <select
               name="tahun"
@@ -1268,12 +1268,13 @@ const ContentStunting = () => {
               }}
               value={selectedSingleTahunData}
               onChange={handleSelectChangeDataPokok}
-            >                        
+            >    
+              <option value="2023">2023</option>
               <option value="2024">2024</option>
               <option value="2025">2025</option>
             </select>
             <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
-                    Anggaran Tahun:
+                    Tahun Anggaran:
                   </div>
                  <select
               name="tahun"
