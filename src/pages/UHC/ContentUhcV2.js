@@ -220,7 +220,7 @@ const ContentUhcV2 = () => {
   const [loadingDetailAnggaranSub, setLoadingDetailAnggaranSub] = useState([]);
   const [errorDetailAnggaranSub, setErrorDetailAnggaranSub] = useState([]);
 
-  const getDataDetailAnggaran = ({kodeDdn=""}) => {
+  const getDataDetailAnggaran = ({kodeDdn="", tahun, tahun_data}) => {
     const fetchData = async () => {
       setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
       try {
@@ -229,7 +229,9 @@ const ContentUhcV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({            
-            kode_ddn: kodeDdn,            
+            kode_ddn: kodeDdn,      
+            tahun: tahun,
+            tahun_data: tahun_data      
           }),
         };
   
@@ -258,7 +260,7 @@ const ContentUhcV2 = () => {
     fetchData();
   };
 
-  const getDataDetailAnggaranSub = ({kodeDdn="", kodeSubGiat=""}) => {
+  const getDataDetailAnggaranSub = ({kodeDdn="", kodeSubGiat="", tahun, tahun_data}) => {
     const fetchData = async () => {
       setLoadingDetailAnggaranSub(true); // Set loading state to true when starting the fetch
       try {
@@ -268,7 +270,9 @@ const ContentUhcV2 = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({            
             kode_ddn: kodeDdn,
-            kode_sub_giat: kodeSubGiat
+            kode_sub_giat: kodeSubGiat,
+            tahun: tahun,
+            tahun_data: tahun_data
           }),
         };
   
@@ -435,7 +439,7 @@ const ContentUhcV2 = () => {
   const [dataJenisPemda, setDataJenisPemda] = useState("")
   const [dataDetailNamaDaerah, setDataDetailNamaDaerah] = useState('')
   const handleOpen = ({kodeDdn="", rincianDetail= 0, namaDaerah=""}) => {
-    getDataDetailAnggaran({kodeDdn: kodeDdn })      
+    getDataDetailAnggaran({kodeDdn: kodeDdn, tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData })      
     setDataRincianDetail(rincianDetail)
     setDataDetailNamaDaerah(namaDaerah)
     setCardHead(null)
@@ -446,7 +450,7 @@ const ContentUhcV2 = () => {
   const [namaSubGiat, setNamaSubGiat] = useState("")
 
   const handleOpenNextModal = ({kodeDdn="", kodeSubGiat="", rincianDetail= 0, namaSubGiat=""}) => {    
-    getDataDetailAnggaranSub({kodeDdn: kodeDdn, kodeSubGiat: kodeSubGiat})
+    getDataDetailAnggaranSub({kodeDdn: kodeDdn, kodeSubGiat: kodeSubGiat, tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData})
     // setModal(true)
     setDataRincianDetailSub(rincianDetail)
     setNamaSubGiat(namaSubGiat)

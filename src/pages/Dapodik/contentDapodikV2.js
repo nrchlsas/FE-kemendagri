@@ -416,7 +416,8 @@ const ContentDapodikV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
-            tahun:tahun
+            tahun:tahun,
+            tahun_data: tahun_data
           }),
         };
         
@@ -591,7 +592,9 @@ const ContentDapodikV2 = () => {
     kodeDdnKabupaten = "",
     kodeDdnProvinsi = "",
     kodeSubGiat = "",
-    jenisPemda
+    jenisPemda,
+    tahun,
+    tahun_data
   ) => {
     const fetchData = async () => {
       setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
@@ -602,9 +605,10 @@ const ContentDapodikV2 = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_prov: kodeSeProvinsi,
-            kode_ddn:
-              kodeDdnKabupaten != "" ? kodeDdnKabupaten : kodeDdnProvinsi,
+            kode_ddn: kodeDdnKabupaten != "" ? kodeDdnKabupaten : kodeDdnProvinsi,
             kode_sub_giat: kodeSubGiat,
+            tahun: tahun,
+            tahun_data: tahun_data
           }),
         };
 
@@ -918,7 +922,7 @@ const ContentDapodikV2 = () => {
     jenisPemda = "",
     rincianDetail = 0
   ) => {
-    getDataDetailAnggaran(kodeProv, kodeDdnKab, kodeDdnProv, "", jenisPemda);
+    getDataDetailAnggaran(kodeProv, kodeDdnKab, kodeDdnProv, "", jenisPemda, selectedSingleTahunAnggaran, selectedSingleTahunData);
 
     if (jenisPemda == "prov") {
       setDataJenisPemda("prov");
@@ -945,9 +949,9 @@ const ContentDapodikV2 = () => {
     namaSubGiat = ""
   ) => {
     if (kodeDaerah != "") {
-      getDataDetailAnggaran(kodeDaerah, "", "", kodeSubGiat);
+      getDataDetailAnggaran(kodeDaerah, "", "", kodeSubGiat, "", selectedSingleTahunAnggaran, selectedSingleTahunData);
     } else if (kodeDdn != "") {
-      getDataDetailAnggaran("", "", kodeDdn, kodeSubGiat);
+      getDataDetailAnggaran("", "", kodeDdn, kodeSubGiat, "", selectedSingleTahunAnggaran, selectedSingleTahunData);
     }
     // setModal(true);
     setDataRincianDetailSub(rincianDetail);
@@ -3834,7 +3838,7 @@ const ContentDapodikV2 = () => {
             </div> */}
             <Row>
               <Col md={4}>
-                <Card className="card-animate card-height-100">
+                <Card className="card-animate">
                   <CardBody>
                     <div className="d-flex flex-column title-custom-card">
                       <div className="d-flex justify-content-between align-items-start mb-1 title-card">

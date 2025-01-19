@@ -706,12 +706,16 @@ const ContentMiskinEkstremV2 = () => {
   
     // Ambil data desil yang sesuai dan update valueMap
     const selectedData = dataDesil[`desil${selectedValue}`]; // Ambil data sesuai pilihan
-    console.log(selectedData,'ini')
-    if (selectedData) {
+    console.log(selectedData, 'ini');
+
+    if (Array.isArray(selectedData) && selectedData.length > 0) {
       setValueMap(selectedData);
-      const maxValue = Math.max(...selectedData.map(item => item.value));
+      const maxValue = Math.max(...selectedData.map(item => item.value || 0));
       setmaxValueMap(maxValue);
-    }
+    } else {
+      setValueMap([]);
+      setmaxValueMap(0); // Set nilai default jika selectedData tidak valid
+}
   };
 
   const handleShowDataKeluargaDesil1 = (value) => {
@@ -874,7 +878,7 @@ const ContentMiskinEkstremV2 = () => {
   const [loadingDetailAnggaran, setLoadingDetailAnggaran] = useState([]);
   const [errorDetailAnggaran, setErrorDetailAnggaran] = useState([]);
 
-  const getDataDetailAnggaran = (kodeSeProvinsi="", kodeDdnKabupaten="", kodeDdnProvinsi="", kodeSubGiat="") => {
+  const getDataDetailAnggaran = (kodeSeProvinsi="", kodeDdnKabupaten="", kodeDdnProvinsi="", kodeSubGiat="", tahun, tahun_data) => {
     const fetchData = async () => {
       setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
       try {
@@ -885,7 +889,9 @@ const ContentMiskinEkstremV2 = () => {
           body: JSON.stringify({
             kode_prov: kodeSeProvinsi,
             kode_ddn: kodeDdnKabupaten !=""? kodeDdnKabupaten : kodeDdnProvinsi,
-            kode_sub_giat: kodeSubGiat
+            kode_sub_giat: kodeSubGiat,
+            tahun: tahun,
+            tahun_data: tahun_data
           }),
         };
   
@@ -1135,7 +1141,7 @@ const ContentMiskinEkstremV2 = () => {
   const [dataJenisPemda, setDataJenisPemda] = useState("")
   const [dataDetailNamaDaerah, setDataDetailNamaDaerah] = useState('')
   const handleOpen = (kodeProv="",  namaDaerah="", kodeDdnKab="", kodeDdnProv="", jenisPemda="", rincianDetail= 0) => {
-    getDataDetailAnggaran(kodeProv, kodeDdnKab, kodeDdnProv, "")      
+    getDataDetailAnggaran(kodeProv, kodeDdnKab, kodeDdnProv, "", selectedSingleTahunAnggaran, selectedSingleTahunData)      
 
     if(jenisPemda=="prov"){
       setDataJenisPemda("prov")
@@ -1159,11 +1165,11 @@ const ContentMiskinEkstremV2 = () => {
   const handleOpenNextModal = (kodeDaerah="", kodeSubGiat="", kodeDdnProv="", kodeDdnKab="", rincianDetail= 0, namaSubGiat="") => {
 
     if(kodeDaerah != "") {
-      getDataDetailAnggaran(kodeDaerah, "", "", kodeSubGiat)      
+      getDataDetailAnggaran(kodeDaerah, "", "", kodeSubGiat, selectedSingleTahunAnggaran, selectedSingleTahunData)      
     }else if(kodeDdnProv != "") {
-      getDataDetailAnggaran("", "", kodeDdnProv, kodeSubGiat)
+      getDataDetailAnggaran("", "", kodeDdnProv, kodeSubGiat, selectedSingleTahunAnggaran, selectedSingleTahunData)
     }else if(kodeDdnKab != "") {
-      getDataDetailAnggaran("", kodeDdnKab, "", kodeSubGiat)
+      getDataDetailAnggaran("", kodeDdnKab, "", kodeSubGiat, selectedSingleTahunAnggaran, selectedSingleTahunData)
     }
 
     // setModal(true)
