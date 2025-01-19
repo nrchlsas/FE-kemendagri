@@ -46,10 +46,22 @@ const ContentPerencanaan = () => {
   const toggleCustom = (tab) => {
     if (customActiveTab !== tab) {
       setcustomActiveTab(tab);
-      const selectedData = dataPersentaseMap[`tahap${tab}`]; // Ambil data sesuai pilihan
-      setValueMap(selectedData);
-      const maxValue = Math.max(...selectedData.map(item => item.value));
-      setmaxValueMap(maxValue);
+  
+      // Ambil data sesuai pilihan
+      const selectedData = dataPersentaseMap[`tahap${tab}`];
+  
+      if (Array.isArray(selectedData)) {
+        // Set data ke state jika valid
+        setValueMap(selectedData);
+  
+        // Cari nilai maksimum, fallback ke 0 jika kosong
+        const maxValue = selectedData.reduce((max, item) => Math.max(max, item.value || 0), 0);
+        setmaxValueMap(maxValue);
+      } else {
+        // Jika `selectedData` bukan array, reset state
+        setValueMap([]);
+        setmaxValueMap(0);
+      }
     }
   };
   const [selectedSingleTahun, setSelectedSingleTahun] = useState('2025'); // Set default value
@@ -150,98 +162,58 @@ const ContentPerencanaan = () => {
           dataPerencanaanRkpdNasionalPersentase?.data
         );
 
-      //   const dataPersentasePerencanaan = dataPerencanaanRkpdNasionalPersentase?.data?.length < 0 ? [] : {
-      //     tahap1: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
-      //     name: item.nama_daerah||"",
-      //     value: item.persiapan || 0
-      //   })),
-      //     tahap2: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
-      //     name:item.nama_daerah||"",
-      //     value: item.rancangan_awal || 0
-      //   })),
-      //     tahap3: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
-      //     name:item.nama_daerah||"",
-      //     value: item.rancangan || 0
-      //   })),
-      //     tahap4: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
-      //     name:item.nama_daerah||"",
-      //     value: item.musrenbang || 0
-      //   })),
-      //     tahap5: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
-      //     name:item.nama_daerah||"",
-      //     value: item.rancangan_akhir || 0
-      //   })),
-      //     tahap6: (dataPerencanaanRkpdNasionalPersentase?.data || []).map(item => ({
-      //     name:item.nama_daerah||"",
-      //     value: item.penetapan || 0
-      //   })),
-      // }
-
       const dataPersentasePerencanaan = {
-        tahap1: (Array.isArray(dataPerencanaanRkpdNasionalPersentase?.data) 
-          ? dataPerencanaanRkpdNasionalPersentase?.data.map(item => ({
+        tahap1: Array.isArray(dataPerencanaanRkpdNasionalPersentase?.data)
+          ? dataPerencanaanRkpdNasionalPersentase.data.map(item => ({
               name: item?.nama_daerah || "Unknown",
               value: item?.persiapan || 0,
             }))
-          : []
-        ),
-        tahap2: (Array.isArray(dataPerencanaanRkpdNasionalPersentase?.data) 
-          ? dataPerencanaanRkpdNasionalPersentase?.data.map(item => ({
+          : [],
+        tahap2: Array.isArray(dataPerencanaanRkpdNasionalPersentase?.data)
+          ? dataPerencanaanRkpdNasionalPersentase.data.map(item => ({
               name: item?.nama_daerah || "Unknown",
               value: item?.rancangan_awal || 0,
             }))
-          : []
-        ),
-        tahap3: (Array.isArray(dataPerencanaanRkpdNasionalPersentase?.data) 
-          ? dataPerencanaanRkpdNasionalPersentase?.data.map(item => ({
-            name:item.nama_daerah||"",
-            value: item.rancangan || 0
+          : [],
+        tahap3: Array.isArray(dataPerencanaanRkpdNasionalPersentase?.data)
+          ? dataPerencanaanRkpdNasionalPersentase.data.map(item => ({
+              name: item?.nama_daerah || "Unknown",
+              value: item?.rancangan || 0,
             }))
-          : []
-        ),
-        tahap4: (Array.isArray(dataPerencanaanRkpdNasionalPersentase?.data) 
-          ? dataPerencanaanRkpdNasionalPersentase?.data.map(item => ({
-            name:item.nama_daerah||"",
-            value: item.musrenbang || 0
+          : [],
+        tahap4: Array.isArray(dataPerencanaanRkpdNasionalPersentase?.data)
+          ? dataPerencanaanRkpdNasionalPersentase.data.map(item => ({
+              name: item?.nama_daerah || "Unknown",
+              value: item?.musrenbang || 0,
             }))
-          : []
-        ),
-        tahap5: (Array.isArray(dataPerencanaanRkpdNasionalPersentase?.data) 
-          ? dataPerencanaanRkpdNasionalPersentase?.data.map(item => ({
-            name:item.nama_daerah||"",
-            value: item.rancangan_akhir || 0
+          : [],
+        tahap5: Array.isArray(dataPerencanaanRkpdNasionalPersentase?.data)
+          ? dataPerencanaanRkpdNasionalPersentase.data.map(item => ({
+              name: item?.nama_daerah || "Unknown",
+              value: item?.rancangan_akhir || 0,
             }))
-          : []
-        ),
-        tahap6: (Array.isArray(dataPerencanaanRkpdNasionalPersentase?.data) 
-          ? dataPerencanaanRkpdNasionalPersentase?.data.map(item => ({
-            name:item.nama_daerah||"",
-            value: item.penetapan || 0
+          : [],
+        tahap6: Array.isArray(dataPerencanaanRkpdNasionalPersentase?.data)
+          ? dataPerencanaanRkpdNasionalPersentase.data.map(item => ({
+              name: item?.nama_daerah || "Unknown",
+              value: item?.penetapan || 0,
             }))
-          : []
-        ),
-        
-        // Tambahkan tahap lainnya dengan format serupa
+          : [],
       };
-
-      // Tetapkan data valid ke state
+      
+      // Tetapkan seluruh data ke state
       setDataPersentaseMap(dataPersentasePerencanaan);
-
-      // Tetapkan tahap6 atau array kosong
+      
+      // Tetapkan `tahap6` ke state `setValueMap`, atau array kosong jika undefined
       setValueMap(dataPersentasePerencanaan?.tahap6 || []);
-
-      // Cari nilai maksimum dari tahap6, atau fallback ke 0 jika data kosong
-      const maxValue = dataPersentasePerencanaan?.tahap6?.reduce((max, item) => {
-        return Math.max(max, item.value || 0);
-      }, 0);
-      setmaxValueMap(maxValue || 0);
-
-      // setDataPersentaseMap(dataPersentasePerencanaan || [])
-      // setValueMap(dataPersentasePerencanaan?.tahap6 || []);
-      // setmaxValueMap(maxValue || []);
-      // console.log(valueMap, 'ini value map')
-      // console.log(dataPersentaseMap, 'ini data persen map')
-      // const maxValue = Math.max(...dataPersentasePerencanaan?.tahap6?.map(item => item.value));
+      
+      // Cari nilai maksimum dari `tahap6`, atau fallback ke 0 jika data kosong
+      const maxValue = Array.isArray(dataPersentasePerencanaan?.tahap6)
+        ? dataPersentasePerencanaan.tahap6.reduce((max, item) => Math.max(max, item.value || 0), 0)
+        : 0;
+      
+      // Tetapkan nilai maksimum ke state
+      setmaxValueMap(maxValue);
       
       } catch (errorPerencanaan) {
         setErrorPerencanaan(errorPerencanaan);
@@ -649,7 +621,7 @@ const ContentPerencanaan = () => {
                   <VerticalBarChart
                     valueChart={dataPerencanaan[0]}
                     categoryChart={dataPerencanaan[1]}
-                    dataColors={["#57E7B4"]}
+                    dataColors='["#57E7B4"]'
                     background={true}
                   />
                   <div className="mt-4">

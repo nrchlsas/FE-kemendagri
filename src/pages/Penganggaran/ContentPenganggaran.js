@@ -210,45 +210,67 @@ const ContentPenganggaran = () => {
           dataPenganggaranNasionalPersentase.data.penganggaran_level_1
         );
         const dataPersentasePenganggaran = {
-          tahap40: dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
-          name: item.nama_prov,
-          value: item.persen_daerah_kuappas
-        })),
-          tahap5: dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
-          name:item.nama_prov,
-          value: item.persen_daerah_rapbd        
-        })),
-          tahap28: dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
-          name: item.nama_prov,
-          value: item.persen_daerah_apbd       
-        })),
-          tahap30: dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
-          name:item.nama_prov,
-          value: item.persen_daerah_apbdgeser
-        })),
-          tahap41: dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
-          name:item.nama_prov,
-          value: item.persen_daerah_kupa
-        })),
-          tahap8: dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({            
-          name:item.nama_prov,
-          value: item.persen_daerah_rapbdubah
-        })),
-          tahap29: dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
-          name:item.nama_prov,
-          value: item.persen_daerah_apbdubah
-        })),
-          tahap32: dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
-          name:item.nama_prov,
-          value: item.persen_daerah_apbdgeserpasca
-        })),
-      }
-      
-      const selectedData = dataPersentasePenganggaran[`tahap${selectedSingleTahapan}`]; // Ambil data sesuai pilihan
-      const maxValue = Math.max(...selectedData.map(item => item.value));
-      // setDataPersentaseMap(dataPersentasePenganggaran)
-      setValueMap(selectedData);
-      setmaxValueMap(maxValue);
+          tahap40: Array.isArray(dataPenganggaranNasionalPersentase?.data?.penganggaran_level_1)
+            ? dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
+                name: item.nama_prov,
+                value: item.persen_daerah_kuappas,
+              }))
+            : [],
+          tahap5: Array.isArray(dataPenganggaranNasionalPersentase?.data?.penganggaran_level_1)
+            ? dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
+                name: item.nama_prov,
+                value: item.persen_daerah_rapbd,
+              }))
+            : [],
+          tahap28: Array.isArray(dataPenganggaranNasionalPersentase?.data?.penganggaran_level_1)
+            ? dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
+                name: item.nama_prov,
+                value: item.persen_daerah_apbd,
+              }))
+            : [],
+          tahap30: Array.isArray(dataPenganggaranNasionalPersentase?.data?.penganggaran_level_1)
+            ? dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
+                name: item.nama_prov,
+                value: item.persen_daerah_apbdgeser,
+              }))
+            : [],
+          tahap41: Array.isArray(dataPenganggaranNasionalPersentase?.data?.penganggaran_level_1)
+            ? dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
+                name: item.nama_prov,
+                value: item.persen_daerah_kupa,
+              }))
+            : [],
+          tahap8: Array.isArray(dataPenganggaranNasionalPersentase?.data?.penganggaran_level_1)
+            ? dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
+                name: item.nama_prov,
+                value: item.persen_daerah_rapbdubah,
+              }))
+            : [],
+          tahap29: Array.isArray(dataPenganggaranNasionalPersentase?.data?.penganggaran_level_1)
+            ? dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
+                name: item.nama_prov,
+                value: item.persen_daerah_apbdubah,
+              }))
+            : [],
+          tahap32: Array.isArray(dataPenganggaranNasionalPersentase?.data?.penganggaran_level_1)
+            ? dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
+                name: item.nama_prov,
+                value: item.persen_daerah_apbdgeserpasca,
+              }))
+            : [],
+        };
+        
+        const selectedData = dataPersentasePenganggaran[`tahap${selectedSingleTahapan}`]; // Ambil data sesuai pilihan
+        
+        if (Array.isArray(selectedData) && selectedData.length > 0) {
+          const maxValue = Math.max(...selectedData.map(item => item.value || 0));
+          setValueMap(selectedData);
+          setmaxValueMap(maxValue);
+        } else {
+          console.warn('Selected data is not a valid array or is empty:', selectedData);
+          setValueMap([]);
+          setmaxValueMap(0); // Nilai default jika data tidak valid
+        }
       // const maxValue = Math.max(...dataPersentasePenganggaran.tahap28.map(item => item.value));
       
       } catch (errorPenganggaran) {
