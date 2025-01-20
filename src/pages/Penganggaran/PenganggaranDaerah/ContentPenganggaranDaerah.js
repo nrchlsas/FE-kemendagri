@@ -232,7 +232,7 @@ const ContentPenganggaranDaerah = () => {
   const goToDetail = (id, namaDaerah, namaProv) => {
     const encodedNamaDaerah = encodeURIComponent(namaDaerah); 
     const encodedNamaProv = encodeURIComponent(namaProv); 
-    navigate(`/penganggaran/penganggaran-detail/penganggaran-detail-skpd/${id}?namaDaerah=${encodedNamaDaerah}&namaProv=${encodedNamaProv}&idProv=${_id}&tahapan=${tahapan}&subTahapan=${subTahapan}&tahun=${selectedSingleTahun}`);
+    navigate(`/penganggaran/penganggaran-detail/penganggaran-detail-skpd/${id}?namaDaerah=${encodedNamaDaerah}&namaProv=${encodedNamaProv}&idProv=${_id}&tahapan=${selectedSingleTahapan}&subTahapan=${subTahapan}&tahun=${selectedSingleTahun}`);
   };
   
   const [modall, setModall] = useState(false);
