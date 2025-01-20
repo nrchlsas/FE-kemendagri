@@ -141,10 +141,10 @@ const ContentPenganggaranDaerah = () => {
     }, [selectedSingleTahun, selectedSingleTahapan]); // Panggil API jika tahun atau dokumen berubah
   
 
-  useEffect(() => {
-    // getDataPenganggaranNasional();
-    getDataPenganggaranNasionalPersentase();
-  }, []);
+  // useEffect(() => {
+  //   // getDataPenganggaranNasional();
+  //   getDataPenganggaranNasionalPersentase();
+  // }, []);
 
   
   const [currentPage, setCurrentPage] = useState(1);
