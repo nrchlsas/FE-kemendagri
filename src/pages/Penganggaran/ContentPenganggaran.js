@@ -182,8 +182,8 @@ const ContentPenganggaran = () => {
   };
 
   const getDataPenganggaranNasionalPersentase = ({
-    tahun = "2024",
-    tahapan = "28",    
+    tahun,
+    tahapan,    
   } = {}) => {
     const fetchData = async () => {
       try {
@@ -291,10 +291,10 @@ const ContentPenganggaran = () => {
     }, [selectedSingleTahun, selectedSingleTahapan]); // Panggil API jika tahun atau dokumen berubah
 
 
-    useEffect(() => {
-        // getDataPenganggaranNasional();
-        getDataPenganggaranNasionalPersentase();        
-    }, []);
+    // useEffect(() => {
+    //     // getDataPenganggaranNasional();
+    //     getDataPenganggaranNasionalPersentase();        
+    // }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10); // Set items per page
