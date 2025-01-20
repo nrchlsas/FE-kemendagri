@@ -633,7 +633,7 @@ const ContentDapodikV2 = () => {
           setDataDetailAnggaran(
             dataDetailAnggaran?.data?.detail_tabel_dapodik_byprovinsi
           );
-          setDataDetailHighlight(dataDetailAnggaran?.data?.dapodik_highlight_nasional)
+          setDataDetailHighlight(dataDetailAnggaran?.data?.dapodik_highlight_daerah)
           setModall(true);
         } else if (kodeDdnKabupaten != "" && kodeSubGiat == "") {
           setDataDetailAnggaran(
