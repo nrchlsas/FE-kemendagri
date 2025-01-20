@@ -627,16 +627,19 @@ const ContentDapodikV2 = () => {
           setDataDetailAnggaran(
             dataDetailAnggaran?.data?.detail_tabel_dapodik_seprovinsi
           );
+          setDataDetailHighlight(dataDetailAnggaran?.data?.dapodik_highlight_nasional)
           setModall(true);
         } else if (kodeDdnProvinsi != "" && kodeSubGiat == "") {
           setDataDetailAnggaran(
             dataDetailAnggaran?.data?.detail_tabel_dapodik_byprovinsi
           );
+          setDataDetailHighlight(dataDetailAnggaran?.data?.dapodik_highlight_nasional)
           setModall(true);
         } else if (kodeDdnKabupaten != "" && kodeSubGiat == "") {
           setDataDetailAnggaran(
             dataDetailAnggaran?.data?.detail_tabel_dapodik_bykabupaten
           );
+          setDataDetailHighlight(dataDetailAnggaran?.data?.dapodik_highlight_daerah)
           setModall(true);
         }
 
@@ -660,11 +663,11 @@ const ContentDapodikV2 = () => {
         setCurrentPageDetail(1);
         setCurrentPageDetailSub(1);
 
-        if(jenisPemda == "se-prov"){
-          setDataDetailHighlight(dataDetailAnggaran?.data?.dapodik_highlight_nasional)
-        }else{
-          setDataDetailHighlight(dataDetailAnggaran?.data?.dapodik_highlight_daerah)
-        }
+        // if(jenisPemda == "se-prov"){
+          
+        // }else{
+          
+        // }
         
         // Open the modal only after data is successfully fetched
       } catch (errorDetailAnggaran) {
