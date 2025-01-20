@@ -44,7 +44,7 @@ const ContentDashboardAnalisis = () => {
   const [dataChartSumberDana, setDataChartSumberDana] = useState([],[])
   const [dataTotalAnggaran, setDataTotalAnggaran] = useState(0)
   const [executeDate, setExcecuteDate] = useState('')
-  const [persentase, setPersentase] = useState(0)
+  const [labelTahun, setLabelTahun] = useState("2024")
   const getDataDashboardAnalisis = ({
     tahun,
     kodeDdn,
@@ -119,7 +119,8 @@ const ContentDashboardAnalisis = () => {
         }
         const dataDashboardAnalisis = await response.json();
         const totalAnggaran = (dataDashboardAnalisis?.data?.data_dashboard?.rincian_belanja_total_belanja / dataDashboardAnalisis?.data?.data_dashboard_nasional?.total_belanja) * 100                       
-          
+        console.log(tahun, 'ini tahun bro')
+        setLabelTahun(tahun)
         setDataTotalAnggaran(totalAnggaran)
         setDataDashboardAnalisis(dataDashboardAnalisis?.data || []);
 
@@ -141,6 +142,7 @@ const ContentDashboardAnalisis = () => {
         }, [[],[]]);
         
         setDataChartSumberDana(dataChart)
+        
       } catch (errorDashboardAnalisis) {
         setErrorDataDashboardAnalisis(errorDashboardAnalisis);
       } finally {
@@ -148,18 +150,6 @@ const ContentDashboardAnalisis = () => {
       }
     };
     fetchData();
-  };
-
-  const formatAnggaran = (value) => {
-    // Pastikan value dalam bentuk angka
-    const parsedValue = parseFloat(value);
-    
-    // Tentukan jumlah angka di belakang koma
-    if (parsedValue >= 0.01) {
-      return parsedValue.toFixed(2); // 2 angka di belakang koma
-    } else {
-      return parsedValue.toFixed(7); // 7 angka di belakang koma
-    }
   };
 
   useEffect(() => {
@@ -184,6 +174,7 @@ const ContentDashboardAnalisis = () => {
   });
 
 const cleanPayload = (payload) => {
+  setLabelTahun(payload.tahun)
     return Object.fromEntries(
         Object.entries(payload).filter(([_, value]) => !(value === "" || (Array.isArray(value) && value.length === 0) || value === null || value === undefined))
     );
@@ -193,7 +184,7 @@ const handleFilterUpdate = (filters) => {
     setSelectedFilters(filters);
     // Bersihkan payload
     const cleanedFilters = cleanPayload(filters);
-    console.log(cleanedFilters, 'ini cleaned filter', Object.keys(cleanedFilters || {}).length === 0, 'ini 2', cleanedFilters?.daerah?.length > 0, 'ini 1')
+
     if(cleanedFilters?.daerah?.length > 0){
       setTitleBerubah("Daerah")
     }else if (Object.keys(cleanedFilters || {}).length === 0) {
@@ -255,6 +246,14 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                   Terakhir diperbarui: {executeDate}
                 </span>
               </div>
+            </div>
+            <div
+              className="d-flex flex-column title-page"
+              style={{ padding: "0 13px 0 0" }}
+            >
+              <div className="d-flex justify-content-start ms-2 align-items-center">
+                <span>Tahun {labelTahun}</span>
+              </div>              
             </div>
           </div>
               <Row>
