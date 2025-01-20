@@ -413,7 +413,7 @@ const ContentPenganggaran = () => {
   const navigate = useNavigate();
   const goToDetail = (_id, namaDaerah) => {
     const encodedNamaDaerah = encodeURIComponent(namaDaerah);
-    navigate(`/penganggaran/penganggaran-detail/${_id}?namaDaerah=${encodedNamaDaerah}&tahapan=${customActiveTab}&subTahapan=${selectedSingleTahapan}`);
+    navigate(`/penganggaran/penganggaran-detail/${_id}?namaDaerah=${encodedNamaDaerah}&tahapan=${customActiveTab}&subTahapan=${selectedSingleTahapan}&tahun=${selectedSingleTahun}`);
   };
 
   const [modall, setModall] = useState(false);

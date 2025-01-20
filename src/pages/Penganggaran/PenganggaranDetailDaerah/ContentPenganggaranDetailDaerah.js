@@ -26,6 +26,7 @@ const ContentPenganggaranDetailDaerah = () => {
     const idProv = queryParams.get('idProv')
     const tahapan = queryParams.get('tahapan');
     const subTahapan = queryParams.get('subTahapan')
+    const tahun = queryParams.get('tahun')
   
     const [customActiveTab, setcustomActiveTab] = useState(tahapan);
     const toggleCustom = (tab) => {
@@ -33,7 +34,7 @@ const ContentPenganggaranDetailDaerah = () => {
         setcustomActiveTab(tab);
       }
     };
-    const [selectedSingleTahun, setSelectedSingleTahun] = useState('2025'); // Set default value
+    const [selectedSingleTahun, setSelectedSingleTahun] = useState(tahun); // Set default value
     const [selectedSingleTahapan, setSelectedSingleTahapan] = useState(subTahapan); // Set default value        
     const [dataPenganggaranPersentase, setDataPenganggaranPersentase] = useState(
       []
