@@ -591,7 +591,7 @@ const ContentPenganggaranDetailDaerah = () => {
               <div className="page-title-right">
                   <ol className="breadcrumb mb-2 ms-2" style={{fontWeight:600}}>
                       <li className="breadcrumb-item"><Link to="/penganggaran">Penganggaran</Link></li>
-                      <li className="breadcrumb-item"><Link to={`/penganggaran/Penganggaran-detail/${idProv}?namaDaerah=${namaProv}&tahapan=${customActiveTab}&subTahapan=${subTahapan}`}>Detail Se-{namaProv}</Link></li>
+                      <li className="breadcrumb-item"><Link to={`/penganggaran/penganggaran-detail/${idProv}?namaDaerah=${namaProv}&tahapan=${customActiveTab}&subTahapan=${subTahapan}`}>Detail Se-{namaProv}</Link></li>
                       <li className="breadcrumb-item active">Detail SKPD {namaDaerah}</li>
                   </ol>
               </div>
