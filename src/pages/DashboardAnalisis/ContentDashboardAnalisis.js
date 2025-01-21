@@ -221,6 +221,19 @@ const handleCardClick = () => {
   AOS.refresh();
 };
 
+const [selectedTahun, setSelectedTahun] = useState("2024");
+  const handleSelectChangeTahun = (e) => {
+    const { name, value } = e.target;
+    setSelectedTahun(value)
+
+  
+    // Bersihkan payload sebelum dikirim ke parent
+    // const cleanedFilters = cleanPayload(value);
+    getDataDashboardAnalisis({
+      tahun: value,
+    });
+  };
+
 const [titleBerubah, setTitleBerubah] = useState("Nasional")
   return (
     <React.Fragment>
@@ -251,9 +264,27 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
               className="d-flex flex-column title-page"
               style={{ padding: "0 13px 0 0" }}
             >
-              <div className="d-flex justify-content-start ms-2 align-items-center">
-                <span>Tahun {labelTahun}</span>
-              </div>              
+              <div className="d-flex justify-content-center align-items-center">
+            <i className="mdi mdi-calendar fs-22"></i>
+            <span className="m-0 me-2 text-dark">TAHUN:</span>
+            <select
+            name="tahunPerencanaan"
+              style={{
+                padding: "5px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",
+                cursor: "pointer",
+                // marginLeft: "10px"
+              }}
+              value={selectedTahun}
+              onChange={handleSelectChangeTahun}
+            >
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>                    
+            </select>
+            </div>            
             </div>
           </div>
               <Row>

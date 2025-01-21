@@ -428,7 +428,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
             >
               Reset Filter
             </button>
-            <div className="d-flex justify-content-center align-items-center">
+            {/* <div className="d-flex justify-content-center align-items-center">
             <i className="mdi mdi-calendar fs-22"></i>
             <span className="m-0 me-2 text-dark">TAHUN:</span>
             <select
@@ -448,7 +448,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
               <option value="2024">2024</option>
               <option value="2025">2025</option>                    
             </select>
-            </div>
+            </div> */}
           </OffcanvasHeader>
           <OffcanvasBody className="p-0">
             <SimpleBar className="h-100 p-2">
