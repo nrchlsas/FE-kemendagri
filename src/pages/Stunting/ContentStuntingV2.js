@@ -1225,7 +1225,7 @@ const ContentStunting = () => {
   const [showChartBerisiko, setShowChartBerisiko] = useState(false)
 
     const [selectedSingleTahunAnggaran, setSelectedSingleTahunAnggaran] = useState('2025'); // Set default value
-    const [selectedSingleTahunData, setselectedSingleTahunData] = useState('2025'); // Set default value
+    const [selectedSingleTahunData, setselectedSingleTahunData] = useState('2024'); // Set default value
     
     const handleSelectChangeAnggaran = (e) => {
       const { name, value } = e.target;
