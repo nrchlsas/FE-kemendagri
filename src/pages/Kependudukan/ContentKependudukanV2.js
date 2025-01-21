@@ -78,13 +78,16 @@ const ContentKependudukanV2 = () => {
   const [dataChartLakiLaki, setDataChartLakiLaki] = useState([[], []]);
   const [dataChartPerempuan, setDataChartPerempuan] = useState([[], []]);
 
-  const getDataKependudukan = () => {
+  const getDataKependudukan = ({tahun}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+          body: JSON.stringify({
+            tahun: tahun,
+        }),
         };
         const response = await fetch(`${API_URI_RBAC}/v2/dashboard_dukcapil`, requestOptions);
   
@@ -257,6 +260,28 @@ const ContentKependudukanV2 = () => {
     };
     fetchData();
   };
+
+  const [selectedSingleTahunAnggaran, setSelectedSingleTahunAnggaran] = useState('2025'); // Set default value
+  const [selectedSingleTahunData, setselectedSingleTahunData] = useState('2024'); // Set default value
+  const [selectedSingleTahunSemester, setSelectedSingleTahunSemester] = useState('2025'); // Set default value
+  
+  const handleSelectChangeAnggaran = (e) => {
+    const { name, value } = e.target;
+    setSelectedSingleTahunAnggaran(value); 
+   
+  };
+
+  const handleSelectChangeDataPokok = (e) => {
+    const { name, value } = e.target;
+    setselectedSingleTahunData(value); 
+    getDataKependudukan({tahun: value});
+  };
+
+  const handleSelectChangeSemester = (e) => {
+    const { name, value } = e.target;
+    setSelectedSingleTahunSemester(value); 
+  };
+
   const [handleCardClick, setHandleCardClick] = useState(() => () => {});
   const [dataKependudukanTabel, setDataKependudukanTabel] = useState([]);
   const [loadingKependudukanTabel, setLoadingKependudukanTabel] = useState([]);
@@ -413,7 +438,7 @@ const ContentKependudukanV2 = () => {
   };
 
   useEffect(() => {
-    getDataKependudukan();
+    getDataKependudukan({tahun: selectedSingleTahunData});
     getDataTabelKependudukanProv();
   }, []);
 
@@ -494,13 +519,59 @@ const ContentKependudukanV2 = () => {
       <Row>
         <Col>
           <Card className="card-custom">
+          <div className="d-flex justify-content-between">
             <div className="d-flex title-page">
-              <div className="avatar-sm">
-                <i className="ri-account-circle-line text-dark fs-1"></i>
+            <div className="d-flex justify-content-center align-items-center avatar-sm">
+                <span className="logo-sm">
+                  {/* <img src={logoKemenkoPmk} alt="" width="40" height="40" /> */}
+                </span>
               </div>
               <div className="d-flex justify-content-center align-items-center">
                 <span>Data Kependudukan</span>
               </div>
+            </div>
+            <div className="d-flex nav-beranda">
+            <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                    Tahun Data:
+                  </div>
+                 <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                margin: "15px 15px 15px 5px",
+              }}
+              value={selectedSingleTahunData}
+              onChange={handleSelectChangeDataPokok}
+            >                        
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select>
+            <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                   Semester:
+                  </div>
+                 <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                margin: "15px 15px 15px 5px",
+              }}
+              value={selectedSingleTahunSemester}
+              onChange={handleSelectChangeSemester}
+            >                        
+              <option value="1">Semester 1</option>
+              <option value="2">Semester 2</option>
+            </select>
+                </div>
             </div>
           </Card>
         </Col>
