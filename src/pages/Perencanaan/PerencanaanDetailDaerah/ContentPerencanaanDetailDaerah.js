@@ -127,8 +127,8 @@ const ContentPerencanaanDetailDaerah = () => {
   
     const [totalPagu, setTotalPagu] = useState(0)
     const getDataPerencanaanRkpdNasionalPersentase = ({
-      tahun = "2024",
-      tahapan = "1",
+      tahun,
+      tahapan,
       kodeDdn= _id
     } = {}) => {
       const fetchData = async () => {
@@ -187,7 +187,7 @@ const ContentPerencanaanDetailDaerah = () => {
     useEffect(() => {
       getDataLogoDaerah();
       getDataPerencanaanRkpdNasional();
-      getDataPerencanaanRkpdNasionalPersentase();
+      // getDataPerencanaanRkpdNasionalPersentase();
     }, []);
 
     const [dataDetailUnitSkpd, setDataDetailUnitSkpd] = useState([]);    

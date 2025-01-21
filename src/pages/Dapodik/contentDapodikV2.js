@@ -102,8 +102,33 @@ const ContentDapodikV2 = () => {
     setDataChartRincianDapodikKabupaten,
   ] = useState([[], []]);
 
+  const [selectedSingleTahunAnggaran, setSelectedSingleTahunAnggaran] = useState('2025'); // Set default value
+  const [selectedSingleTahunData, setselectedSingleTahunData] = useState('2024'); // Set default value
+
+  const handleSelectChangeAnggaran = (e) => {
+    const { name, value } = e.target;
+    setSelectedSingleTahunAnggaran(value); // Misalnya, untuk dropdown tahun
+    getDataAnakSekolah({kodeWilayah: "", tahun: value, tahun_data: selectedSingleTahunData});
+    getDataDapodik({kodeDdn: "", tahun: value, tahun_data: selectedSingleTahunData});
+    getDataTabelDapodikSeProv({tahun:value, tahun_data: selectedSingleTahunData});
+    getDataTabelDapodikProv({tahun:value, tahun_data: selectedSingleTahunData});
+    getDataTabelDapodikKab({tahun:value, tahun_data: selectedSingleTahunData});
+    getDataCrossAnalisis({tahun:value, tahun_data: selectedSingleTahunData});
+  };  
+
+  const handleSelectChangeDataPokok = (e) => {
+    const { name, value } = e.target;
+    setselectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
+    getDataAnakSekolah({kodeWilayah: "", tahun: selectedSingleTahunAnggaran, tahun_data: value});
+    getDataDapodik({kodeDdn: "", tahun: selectedSingleTahunAnggaran, tahun_data: value});
+    getDataTabelDapodikSeProv({tahun:selectedSingleTahunAnggaran, tahun_data: value});
+    getDataTabelDapodikProv({tahun:selectedSingleTahunAnggaran, tahun_data: value});
+    getDataTabelDapodikKab({tahun:selectedSingleTahunAnggaran, tahun_data: value});
+    getDataCrossAnalisis({tahun:selectedSingleTahunAnggaran, tahun_data: value});
+  };
+
   const [dataSdMap, setDataSdMap] = useState([])
-  const getDataDapodik = ({kodeDdn="", tahun="2024"}) => {
+  const getDataDapodik = ({kodeDdn="", tahun="", tahun_data=""}) => {
     const fetchData = async () => {
         try {
             const token = JSON.parse(sessionStorage.getItem("authUser"));
@@ -112,7 +137,8 @@ const ContentDapodikV2 = () => {
                 headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
                 body: JSON.stringify({
                     kode_ddn: kodeDdn,
-                    tahun: tahun
+                    tahun: tahun,
+                    tahun_data:tahun_data
                 }),
             };
             const response = await fetch(`${API_URI_RBAC}/v2/dashboard_dapodik`, requestOptions);
@@ -207,7 +233,7 @@ const ContentDapodikV2 = () => {
   const [maxValueMap, setmaxValueMap] = useState(0)
   const [handleCardClick, setHandleCardClick] = useState(() => () => {});
 
-  const getDataTabelDapodikSeProv = (searchTerm) => {
+  const getDataTabelDapodikSeProv = ({searchTerm, tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -217,6 +243,8 @@ const ContentDapodikV2 = () => {
           body: JSON.stringify({
             // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
             nama_prov: searchTerm ? searchTerm : "",
+            tahun: tahun,
+            tahun_data:tahun_data
           }),
         };
         // /table_dapodik_provinsi
@@ -232,52 +260,73 @@ const ContentDapodikV2 = () => {
         }
 
         const dataDapodikTabelSeProvinsi = await response.json();
-        setDataDapodikTabelSeProvinsi(dataDapodikTabelSeProvinsi.data);
+        setDataDapodikTabelSeProvinsi(dataDapodikTabelSeProvinsi?.data);
 
-        const valueTotalAnakSekolah = dataDapodikTabelSeProvinsi.data.map(item => {
-          const total = 
-            parseInt(item.sd) + 
-            parseInt(item.smp) + 
-            parseInt(item.sma) + 
-            parseInt(item.smk);
-          return {
-            name: item.nama_prov,
-            value: total
-          };
-        }); 
+        const valueTotalAnakSekolah = Array.isArray(dataDapodikTabelSeProvinsi?.data) 
+        ? dataDapodikTabelSeProvinsi.data.map(item => {
+            const total = 
+              parseInt(item.sd || 0) + 
+              parseInt(item.smp || 0) + 
+              parseInt(item.sma || 0) + 
+              parseInt(item.smk || 0);
+            return {
+              name: item.nama_prov || "Unknown",
+              value: total
+            };
+          }) 
+        : [];
                
         // const valueTotalAnakDropOutSd = dataDapodikTabelSeProvinsi.data.reduce((accumulate, item) => 
         //   accumulate + parseInt(item.totsd_do), 0
         // )        
 
-        const valueTotalSd = dataDapodikTabelSeProvinsi.data.map(item => ({
-          name: item.nama_prov,
-          value: parseInt(item.sd)          
-        }));
+        const valueTotalSd = Array.isArray(dataDapodikTabelSeProvinsi?.data)
+        ? dataDapodikTabelSeProvinsi.data.map(item => ({
+            name: item.nama_prov || "Unknown",
+            value: parseInt(item.sd) || 0,
+          }))
+        : [];
 
-        // const totalValue = valueTotalSd.reduce((accumulator, item) => accumulator + item.value, 0); /aggregate     
+        const valueTotalSmp = Array.isArray(dataDapodikTabelSeProvinsi?.data)
+        ? dataDapodikTabelSeProvinsi.data.map(item => ({
+            name: item.nama_prov || "Unknown",
+            value: parseInt(item.smp) || 0,
+          }))
+        : [];
 
-        const valueTotalSmp = dataDapodikTabelSeProvinsi.data.map(item => ({
-          name: item.nama_prov,
-          value: parseInt(item.sma)
-        }));
+        const valueTotalSma = Array.isArray(dataDapodikTabelSeProvinsi?.data)
+        ? dataDapodikTabelSeProvinsi.data.map(item => ({
+            name: item.nama_prov || "Unknown",
+            value: parseInt(item.sma) || 0,
+          }))
+        : [];
 
-        const valueTotalSma = dataDapodikTabelSeProvinsi.data.map(item => ({
-          name: item.nama_prov,
-          value: parseInt(item.smp)
-        }));
+        const valueTotalSmk = Array.isArray(dataDapodikTabelSeProvinsi?.data)
+        ? dataDapodikTabelSeProvinsi.data.map(item => ({
+            name: item.nama_prov || "Unknown",
+            value: parseInt(item.smk) || 0,
+          }))
+        : [];
 
-        const valueTotalSmk = dataDapodikTabelSeProvinsi.data.map(item => ({
-          name: item.nama_prov,
-          value: parseInt(item.smk)
-        }));
-
-        const maxAnakSekolah  = Math.max(...valueTotalAnakSekolah.map(item => item.value));
-        const maxSd = Math.max(...valueTotalSd.map(item => item.value));
-        const maxSmp = Math.max(...valueTotalSmp.map(item => item.value));
-        const maxSma = Math.max(...valueTotalSma.map(item => item.value));
-        const maxSmk = Math.max(...valueTotalSmk.map(item => item.value));
-
+        const maxAnakSekolah = Array.isArray(valueTotalAnakSekolah) && valueTotalAnakSekolah.length > 0 
+        ? Math.max(...valueTotalAnakSekolah.map(item => item.value || 0)) 
+        : 0;
+      
+      const maxSd = Array.isArray(valueTotalSd) && valueTotalSd.length > 0 
+        ? Math.max(...valueTotalSd.map(item => item.value || 0)) 
+        : 0;
+      
+      const maxSmp = Array.isArray(valueTotalSmp) && valueTotalSmp.length > 0 
+        ? Math.max(...valueTotalSmp.map(item => item.value || 0)) 
+        : 0;
+      
+      const maxSma = Array.isArray(valueTotalSma) && valueTotalSma.length > 0 
+        ? Math.max(...valueTotalSma.map(item => item.value || 0)) 
+        : 0;
+      
+      const maxSmk = Array.isArray(valueTotalSmk) && valueTotalSmk.length > 0 
+        ? Math.max(...valueTotalSmk.map(item => item.value || 0)) 
+        : 0;
         setValueMap(valueTotalAnakSekolah);
         setmaxValueMap(maxAnakSekolah)
 
@@ -307,6 +356,7 @@ const ContentDapodikV2 = () => {
               break;
           }
         };
+        
   
         // Simpan `handleCardClick` di dalam state atau panggil langsung pada setiap card
         setHandleCardClick(() => handleCardClick);
@@ -320,7 +370,7 @@ const ContentDapodikV2 = () => {
     fetchData();
   };
 
-  const getDataTabelDapodikKab = (searchTerm) => {
+  const getDataTabelDapodikKab = ({searchTerm, tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -330,6 +380,8 @@ const ContentDapodikV2 = () => {
           body: JSON.stringify({
             // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
             nama_kabkota: searchTerm ? searchTerm : "",
+            tahun: tahun,
+            tahun_data:tahun_data
           }),
         };
         // /table_dapodik_provinsi
@@ -356,16 +408,17 @@ const ContentDapodikV2 = () => {
     fetchData();
   };
   
-  const getDataCrossAnalisis = () => {
+  const getDataCrossAnalisis = ({tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
-          // body: JSON.stringify({
-          //   // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
-          // }),
+          body: JSON.stringify({
+            tahun:tahun,
+            tahun_data: tahun_data
+          }),
         };
         
         const response = await fetch(
@@ -404,7 +457,7 @@ const ContentDapodikV2 = () => {
   };
 
   const [dataDapodikJumlahAnakSekolah, setDataDapodikJumlahAnakSekolah] = useState([])
-  const getDataAnakSekolah = ({kodeWilayah}) => {
+  const getDataAnakSekolah = ({kodeWilayah, tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -413,7 +466,8 @@ const ContentDapodikV2 = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_wilayah: kodeWilayah,
-            // tahun: "2024"
+            tahun: tahun,
+            tahun_data:tahun_data
         }),
         };
         
@@ -442,7 +496,7 @@ const ContentDapodikV2 = () => {
 
 
 
-  const getDataTabelDapodikProv = (searchTerm) => {
+  const getDataTabelDapodikProv = ({searchTerm, tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -451,7 +505,9 @@ const ContentDapodikV2 = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
-            nama_prov: searchTerm
+            nama_prov: searchTerm,
+            tahun: tahun,
+            tahun_data:tahun_data
           }),
         };
         const response = await fetch(
@@ -527,6 +583,7 @@ const ContentDapodikV2 = () => {
 
   const [dataDetailAnggaran, setDataDetailAnggaran] = useState([]);
   const [dataDetailAnggarnaSub, setDataDetailAnggaranSub] = useState([]);
+  const [dataDetailHighlight, setDataDetailHighlight] = useState([])
   const [loadingDetailAnggaran, setLoadingDetailAnggaran] = useState([]);
   const [errorDetailAnggaran, setErrorDetailAnggaran] = useState([]);
 
@@ -534,7 +591,10 @@ const ContentDapodikV2 = () => {
     kodeSeProvinsi = "",
     kodeDdnKabupaten = "",
     kodeDdnProvinsi = "",
-    kodeSubGiat = ""
+    kodeSubGiat = "",
+    jenisPemda,
+    tahun,
+    tahun_data
   ) => {
     const fetchData = async () => {
       setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
@@ -545,9 +605,10 @@ const ContentDapodikV2 = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_prov: kodeSeProvinsi,
-            kode_ddn:
-              kodeDdnKabupaten != "" ? kodeDdnKabupaten : kodeDdnProvinsi,
+            kode_ddn: kodeDdnKabupaten != "" ? kodeDdnKabupaten : kodeDdnProvinsi,
             kode_sub_giat: kodeSubGiat,
+            tahun: tahun,
+            tahun_data: tahun_data
           }),
         };
 
@@ -566,16 +627,19 @@ const ContentDapodikV2 = () => {
           setDataDetailAnggaran(
             dataDetailAnggaran?.data?.detail_tabel_dapodik_seprovinsi
           );
+          setDataDetailHighlight(dataDetailAnggaran?.data?.dapodik_highlight_nasional)
           setModall(true);
         } else if (kodeDdnProvinsi != "" && kodeSubGiat == "") {
           setDataDetailAnggaran(
             dataDetailAnggaran?.data?.detail_tabel_dapodik_byprovinsi
           );
+          setDataDetailHighlight(dataDetailAnggaran?.data?.dapodik_highlight_daerah)
           setModall(true);
         } else if (kodeDdnKabupaten != "" && kodeSubGiat == "") {
           setDataDetailAnggaran(
             dataDetailAnggaran?.data?.detail_tabel_dapodik_bykabupaten
           );
+          setDataDetailHighlight(dataDetailAnggaran?.data?.dapodik_highlight_daerah)
           setModall(true);
         }
 
@@ -598,6 +662,13 @@ const ContentDapodikV2 = () => {
 
         setCurrentPageDetail(1);
         setCurrentPageDetailSub(1);
+
+        // if(jenisPemda == "se-prov"){
+          
+        // }else{
+          
+        // }
+        
         // Open the modal only after data is successfully fetched
       } catch (errorDetailAnggaran) {
         setErrorDetailAnggaran(errorDetailAnggaran);
@@ -610,12 +681,12 @@ const ContentDapodikV2 = () => {
   };
 
   useEffect(() => {
-    getDataDapodik({kodeDdn: "", tahun: "2024"});
-    getDataAnakSekolah({kodeWilayah: ""});
-    getDataTabelDapodikSeProv();
-    getDataTabelDapodikProv();
-    getDataTabelDapodikKab();
-    getDataCrossAnalisis();
+    getDataDapodik({kodeDdn: "", tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
+    getDataAnakSekolah({kodeWilayah: "", tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
+    getDataTabelDapodikSeProv({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
+    getDataTabelDapodikProv({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
+    getDataTabelDapodikKab({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
+    getDataCrossAnalisis({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
   }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -854,7 +925,7 @@ const ContentDapodikV2 = () => {
     jenisPemda = "",
     rincianDetail = 0
   ) => {
-    getDataDetailAnggaran(kodeProv, kodeDdnKab, kodeDdnProv);
+    getDataDetailAnggaran(kodeProv, kodeDdnKab, kodeDdnProv, "", jenisPemda, selectedSingleTahunAnggaran, selectedSingleTahunData);
 
     if (jenisPemda == "prov") {
       setDataJenisPemda("prov");
@@ -881,9 +952,9 @@ const ContentDapodikV2 = () => {
     namaSubGiat = ""
   ) => {
     if (kodeDaerah != "") {
-      getDataDetailAnggaran(kodeDaerah, "", "", kodeSubGiat);
+      getDataDetailAnggaran(kodeDaerah, "", "", kodeSubGiat, "", selectedSingleTahunAnggaran, selectedSingleTahunData);
     } else if (kodeDdn != "") {
-      getDataDetailAnggaran("", "", kodeDdn, kodeSubGiat);
+      getDataDetailAnggaran("", "", kodeDdn, kodeSubGiat, "", selectedSingleTahunAnggaran, selectedSingleTahunData);
     }
     // setModal(true);
     setDataRincianDetailSub(rincianDetail);
@@ -933,9 +1004,9 @@ const ContentDapodikV2 = () => {
     if (area === "kabupaten") {
       getDataTabelDapodikKab(searchTerm); // Panggil API ketika tombol ditekan
     } else if (area === "provinsi") {
-      getDataTabelDapodikProv(searchTerm);
+      getDataTabelDapodikProv({searchTerm, tahun:selectedSingleTahunAnggaran});
     } else {
-      getDataTabelDapodikSeProv(searchTerm);
+      getDataTabelDapodikSeProv({searchTerm, tahun:selectedSingleTahunAnggaran});
     }
     setCurrentPage(1);
   };
@@ -1063,6 +1134,7 @@ const ContentDapodikV2 = () => {
       <Row>
         <Col>
           <Card className="card-custom">
+            <div className="d-flex justify-content-between">
             <div className="d-flex title-page">
               <div className="d-flex justify-content-center align-items-center avatar-sm">
                 <span className="logo-sm">
@@ -1072,6 +1144,68 @@ const ContentDapodikV2 = () => {
               <div className="d-flex justify-content-center align-items-center">
                 <span>Kementerian Pendidikan Dasar dan Menengah</span>
               </div>
+            </div>
+            <div className="d-flex nav-beranda">
+                  <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                    Tahun Data:
+                  </div>
+                 <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                margin: "15px 15px 15px 5px",
+              }}
+              value={selectedSingleTahunData}
+              onChange={handleSelectChangeDataPokok}
+            >                        
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select>
+            <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                    Tahun Anggaran:
+                  </div>
+                 <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                margin: "15px 15px 15px 5px",
+              }}
+              value={selectedSingleTahunAnggaran}
+              onChange={handleSelectChangeAnggaran}
+            >                        
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select>
+            </div>
+            {/* <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                marginLeft: "10px",
+                marginTop: "16px",
+                marginBottom: "30px",
+              }}
+              value={selectedSingleTahunAnggaran}
+              onChange={handleSelectChangeAnggaran}
+            >                        
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select> */}
             </div>
           </Card>
         </Col>
@@ -1913,7 +2047,7 @@ const ContentDapodikV2 = () => {
                                     item.nama_prov,
                                     "",
                                     "",
-                                    "",
+                                    "se-prov",
                                     item.total_pendidikan
                                   )
                                 }
@@ -2007,7 +2141,7 @@ const ContentDapodikV2 = () => {
                       fontSize: "16px",
                       marginBottom: "8px",
                     }}
-                    onClick={() => getDataTabelDapodikProv(searchTerm)}
+                    onClick={() => getDataTabelDapodikProv({searchTerm, tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData})}
                   >
                     Kembali ke Provinsi
                   </button></>
@@ -3707,7 +3841,7 @@ const ContentDapodikV2 = () => {
             </div> */}
             <Row>
               <Col md={4}>
-                <Card className="card-animate card-height-100">
+                <Card className="card-animate">
                   <CardBody>
                     <div className="d-flex flex-column title-custom-card">
                       <div className="d-flex justify-content-between align-items-start mb-1 title-card">
@@ -3738,6 +3872,27 @@ const ContentDapodikV2 = () => {
                     </div>
                   </CardBody>
                 </Card>
+              </Col>
+              <Col md={8}>
+              {dataDetailHighlight.map((item, index)=>(
+                <div className="d-flex mb-3" key={index}>
+                  <div style={{ flexBasis: "350px", color:"#929FB1" }}>{item.nama_rekening}</div>
+                  <div>:&nbsp;</div>
+                  <div style={{ fontWeight: 650 }}>
+                  <CountUp
+                      start={0}
+                      end={item.anggaran}
+                      // decimal=","
+                      // decimals={2}
+                      separator="."
+                      prefix="Rp "
+                      // suffix=" T"
+                      duration={1}
+                    />
+                    
+                  </div>
+                </div>
+              ))}
               </Col>
             </Row>
 

@@ -257,7 +257,7 @@ const ContentMiskinEkstremV2 = () => {
 
   const [dataPieChartSpm, setDataPieChartSpm] = useState([],[])
 
-  const getDataKemiskinanEkstrem = (tahun="2024") => {
+  const getDataKemiskinanEkstrem = ({tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -265,7 +265,8 @@ const ContentMiskinEkstremV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
-            tahun : tahun
+            tahun : tahun,
+            tahun_data: tahun_data
           }),
         };
         const response = await fetch(
@@ -705,12 +706,16 @@ const ContentMiskinEkstremV2 = () => {
   
     // Ambil data desil yang sesuai dan update valueMap
     const selectedData = dataDesil[`desil${selectedValue}`]; // Ambil data sesuai pilihan
-    console.log(selectedData,'ini')
-    if (selectedData) {
+    console.log(selectedData, 'ini');
+
+    if (Array.isArray(selectedData) && selectedData.length > 0) {
       setValueMap(selectedData);
-      const maxValue = Math.max(...selectedData.map(item => item.value));
+      const maxValue = Math.max(...selectedData.map(item => item.value || 0));
       setmaxValueMap(maxValue);
-    }
+    } else {
+      setValueMap([]);
+      setmaxValueMap(0); // Set nilai default jika selectedData tidak valid
+}
   };
 
   const handleShowDataKeluargaDesil1 = (value) => {
@@ -722,17 +727,17 @@ const ContentMiskinEkstremV2 = () => {
   };
   const [dataMiskinEkstremTabel, setDataMiskinEkstremTabel] = useState([],[]);
   
-  const getDataMiskinEkstremTabel = () => {
+  const getDataMiskinEkstremTabel = ({tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
-          // body: JSON.stringify({
-          //   query:
-          //     "select sum(total_rincian)/1000000000000 TotalPembiayaanK from konsolidasi_apbd where kode_kelompok = '6.2'",
-          // }),
+          body: JSON.stringify({
+            tahun: tahun,
+            tahun_data: tahun_data
+          }),
         };
 
         const response = await fetch(
@@ -747,49 +752,70 @@ const ContentMiskinEkstremV2 = () => {
         const dataMiskinEkstremTabel = await response.json();
 
         setShowNextData(true)        
-        setDataMiskinEkstremTabel(dataMiskinEkstremTabel.data);
+        setDataMiskinEkstremTabel(dataMiskinEkstremTabel?.data);
         setCurrentPage(1)
         setDataKolomNamaDaerah("Se-Provinsi")
         
-        const desilData = {
-          desil1: dataMiskinEkstremTabel.data.map(item => ({
-            name: item.nama_prov,
-            value: parseInt(item. jumlah_keluarga_desil_1)
-          })),
-          desil2: dataMiskinEkstremTabel.data.map(item => ({
-            name: item.nama_prov,
-            value: parseInt(item.jumlah_keluarga_desil_2)
-          })),
-          desil3: dataMiskinEkstremTabel.data.map(item => ({
-            name: item.nama_prov,
-            value: parseInt(item.jumlah_keluarga_desil_3)
-          })),
-          desil4: dataMiskinEkstremTabel.data.map(item => ({
-            name: item.nama_prov,
-            value: parseInt(item.jumlah_keluarga_desil_4)
-          })),
-          desil5: dataMiskinEkstremTabel.data.map(item => ({
-            name: item.nama_prov,
-            value: parseInt(item.jumlah_individu_desil_1)
-          })),
-          desil6: dataMiskinEkstremTabel.data.map(item => ({
-            name: item.nama_prov,
-            value: parseInt(item.jumlah_individu_desil_2)
-          })),
-          desil7: dataMiskinEkstremTabel.data.map(item => ({
-            name: item.nama_prov,
-            value: parseInt(item.jumlah_individu_desil_3)
-          })),
-          desil8: dataMiskinEkstremTabel.data.map(item => ({
-            name: item.nama_prov,
-            value: parseInt(item.jumlah_individu_desil_4)
-          })),
+        const dataDesil = {
+          desil1: Array.isArray(dataMiskinEkstremTabel?.data)
+            ? dataMiskinEkstremTabel.data.map(item => ({
+                name: item.nama_prov || "Unknown",
+                value: parseInt(item.jumlah_keluarga_desil_1) || 0,
+              }))
+            : [],
+          desil2: Array.isArray(dataMiskinEkstremTabel?.data)
+            ? dataMiskinEkstremTabel.data.map(item => ({
+                name: item.nama_prov || "Unknown",
+                value: parseInt(item.jumlah_keluarga_desil_2) || 0,
+              }))
+            : [],
+          desil3: Array.isArray(dataMiskinEkstremTabel?.data)
+            ? dataMiskinEkstremTabel.data.map(item => ({
+                name: item.nama_prov || "Unknown",
+                value: parseInt(item.jumlah_keluarga_desil_3) || 0,
+              }))
+            : [],
+          desil4: Array.isArray(dataMiskinEkstremTabel?.data)
+            ? dataMiskinEkstremTabel.data.map(item => ({
+                name: item.nama_prov || "Unknown",
+                value: parseInt(item.jumlah_keluarga_desil_4) || 0,
+              }))
+            : [],
+          desil5: Array.isArray(dataMiskinEkstremTabel?.data)
+            ? dataMiskinEkstremTabel.data.map(item => ({
+                name: item.nama_prov || "Unknown",
+                value: parseInt(item.jumlah_individu_desil_1) || 0,
+              }))
+            : [],
+          desil6: Array.isArray(dataMiskinEkstremTabel?.data)
+            ? dataMiskinEkstremTabel.data.map(item => ({
+                name: item.nama_prov || "Unknown",
+                value: parseInt(item.jumlah_individu_desil_2) || 0,
+              }))
+            : [],
+          desil7: Array.isArray(dataMiskinEkstremTabel?.data)
+            ? dataMiskinEkstremTabel.data.map(item => ({
+                name: item.nama_prov || "Unknown",
+                value: parseInt(item.jumlah_individu_desil_3) || 0,
+              }))
+            : [],
+          desil8: Array.isArray(dataMiskinEkstremTabel?.data)
+            ? dataMiskinEkstremTabel.data.map(item => ({
+                name: item.nama_prov || "Unknown",
+                value: parseInt(item.jumlah_individu_desil_4) || 0,
+              }))
+            : [],
         };
-  
-        setDataDesil(desilData); // Simpan semua desil ke dalam state
-        setValueMap(desilData.desil1);
-        const maxDesil1 = Math.max(...desilData.desil1.map(item => item.value));
-        setmaxValueMap(maxDesil1);
+        
+        // Simpan data ke state
+        setDataDesil(dataDesil);
+        
+        // Setel data awal untuk peta berdasarkan desil pertama
+        setValueMap(dataDesil?.desil1);
+        
+        // Cari nilai maksimum pada desil pertama
+        const maxValueDesil1 = dataDesil?.desil1.reduce((max, item) => Math.max(max, item.value || 0), 0);
+        setmaxValueMap(maxValueDesil1 || 0);
         
       } catch (errorKemiskinanEkstrem) {
         setErrorKemiskinanEkstrem(errorKemiskinanEkstrem);
@@ -804,7 +830,7 @@ const ContentMiskinEkstremV2 = () => {
   const [dataKolomNamaDaerah, setDataKolomNamaDaerah] = useState("Se-Provinsi");
   const [showNextData, setShowNextData] = useState(true);
   
-  const getDataMiskinEkstremTabelKab = (kodeDdn="", e) => {
+  const getDataMiskinEkstremTabelKab = (kodeDdn="", e, tahun, tahun_data) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -812,7 +838,9 @@ const ContentMiskinEkstremV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
-            kode_ddn: kodeDdn
+            kode_ddn: kodeDdn,
+            tahun: tahun,
+            tahun_data: tahun_data
           }),
         };
 
@@ -846,10 +874,11 @@ const ContentMiskinEkstremV2 = () => {
 
   const [dataDetailAnggaran, setDataDetailAnggaran] = useState([])
   const [dataDetailAnggaranSub, setDataDetailAnggaranSub] = useState([]);
+  const [dataDetailHighlight, setDataDetailHighlight] = useState([])
   const [loadingDetailAnggaran, setLoadingDetailAnggaran] = useState([]);
   const [errorDetailAnggaran, setErrorDetailAnggaran] = useState([]);
 
-  const getDataDetailAnggaran = (kodeSeProvinsi="", kodeDdnKabupaten="", kodeDdnProvinsi="", kodeSubGiat="") => {
+  const getDataDetailAnggaran = (kodeSeProvinsi="", kodeDdnKabupaten="", kodeDdnProvinsi="", kodeSubGiat="", tahun, tahun_data) => {
     const fetchData = async () => {
       setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
       try {
@@ -860,7 +889,9 @@ const ContentMiskinEkstremV2 = () => {
           body: JSON.stringify({
             kode_prov: kodeSeProvinsi,
             kode_ddn: kodeDdnKabupaten !=""? kodeDdnKabupaten : kodeDdnProvinsi,
-            kode_sub_giat: kodeSubGiat
+            kode_sub_giat: kodeSubGiat,
+            tahun: tahun,
+            tahun_data: tahun_data
           }),
         };
   
@@ -893,6 +924,7 @@ const ContentMiskinEkstremV2 = () => {
         
         setCurrentPageDetail(1)
         setCurrentPageDetailSub(1)
+        setDataDetailHighlight(dataDetailAnggaran.data.ke_highlight)
         // Open the modal only after data is successfully fetched
         
       } catch (errorDetailAnggaran) {
@@ -942,9 +974,9 @@ const ContentMiskinEkstremV2 = () => {
   // };
 
   useEffect(() => {
-    getDataKemiskinanEkstrem();
+    getDataKemiskinanEkstrem({tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
     // getDataKemiskinanEkstremTahun("2024");
-    getDataMiskinEkstremTabel();
+    getDataMiskinEkstremTabel({tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
     // getDataMiskinEkstremTabelKab()
   }, []);
 
@@ -1109,7 +1141,7 @@ const ContentMiskinEkstremV2 = () => {
   const [dataJenisPemda, setDataJenisPemda] = useState("")
   const [dataDetailNamaDaerah, setDataDetailNamaDaerah] = useState('')
   const handleOpen = (kodeProv="",  namaDaerah="", kodeDdnKab="", kodeDdnProv="", jenisPemda="", rincianDetail= 0) => {
-    getDataDetailAnggaran(kodeProv, kodeDdnKab, kodeDdnProv, "")      
+    getDataDetailAnggaran(kodeProv, kodeDdnKab, kodeDdnProv, "", selectedSingleTahunAnggaran, selectedSingleTahunData)      
 
     if(jenisPemda=="prov"){
       setDataJenisPemda("prov")
@@ -1133,11 +1165,11 @@ const ContentMiskinEkstremV2 = () => {
   const handleOpenNextModal = (kodeDaerah="", kodeSubGiat="", kodeDdnProv="", kodeDdnKab="", rincianDetail= 0, namaSubGiat="") => {
 
     if(kodeDaerah != "") {
-      getDataDetailAnggaran(kodeDaerah, "", "", kodeSubGiat)      
+      getDataDetailAnggaran(kodeDaerah, "", "", kodeSubGiat, selectedSingleTahunAnggaran, selectedSingleTahunData)      
     }else if(kodeDdnProv != "") {
-      getDataDetailAnggaran("", "", kodeDdnProv, kodeSubGiat)
+      getDataDetailAnggaran("", "", kodeDdnProv, kodeSubGiat, selectedSingleTahunAnggaran, selectedSingleTahunData)
     }else if(kodeDdnKab != "") {
-      getDataDetailAnggaran("", kodeDdnKab, "", kodeSubGiat)
+      getDataDetailAnggaran("", kodeDdnKab, "", kodeSubGiat, selectedSingleTahunAnggaran, selectedSingleTahunData)
     }
 
     // setModal(true)
@@ -1153,11 +1185,29 @@ const ContentMiskinEkstremV2 = () => {
     setModall(false); // Close modal by setting modall to false
   };
 
+  const [selectedSingleTahunAnggaran, setSelectedSingleTahunAnggaran] = useState('2025'); // Set default value
+  const [selectedSingleTahunData, setselectedSingleTahunData] = useState('2024'); // Set default value
+  
+  const handleSelectChangeAnggaran = (e) => {
+    const { name, value } = e.target;
+    setSelectedSingleTahunAnggaran(value); // Misalnya, untuk dropdown tahun
+    getDataKemiskinanEkstrem({tahun: value, tahun_data:selectedSingleTahunData})
+    getDataMiskinEkstremTabel({tahun: value, tahun_data:selectedSingleTahunData});
+  };
+
+  const handleSelectChangeDataPokok = (e) => {
+    const { name, value } = e.target;
+    setselectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
+    getDataKemiskinanEkstrem({tahun: selectedSingleTahunAnggaran, tahun_data: value})
+    getDataMiskinEkstremTabel({tahun: selectedSingleTahunAnggaran, tahun_data: value});
+  };
+
   return (
     <React.Fragment>
       <Row>
         <Col>
           <Card className="card-custom">
+          <div className="d-flex justify-content-between">
             <div className="d-flex title-page">
             <div className="d-flex justify-content-center align-items-center avatar-sm">
                 <span className="logo-sm">
@@ -1167,6 +1217,68 @@ const ContentMiskinEkstremV2 = () => {
               <div className="d-flex justify-content-center align-items-center">
                 <span>KEMISKINAN EKSTREM</span>
               </div>
+            </div>
+            <div className="d-flex nav-beranda">
+            <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                    Tahun Data:
+                  </div>
+                 <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                margin: "15px 15px 15px 5px",
+              }}
+              value={selectedSingleTahunData}
+              onChange={handleSelectChangeDataPokok}
+            >                        
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select>
+            <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                    Tahun Anggaran:
+                  </div>
+                 <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                margin: "15px 15px 15px 5px",
+              }}
+              value={selectedSingleTahunAnggaran}
+              onChange={handleSelectChangeAnggaran}
+            >                        
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select>
+                </div>
+            {/* <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                marginLeft: "10px",
+                marginTop: "16px",
+                marginBottom: "30px",
+              }}
+              value={selectedSingleTahunAnggaran}
+              onChange={handleSelectChange}
+            >                        
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select> */}
             </div>
           </Card>
         </Col>
@@ -1207,9 +1319,9 @@ const ContentMiskinEkstremV2 = () => {
               </div>
               
               <div className="d-flex nav-beranda">
-              <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
-                Penanganan Miskin Ekstrem:
-              </div>
+                  <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                    Penanganan Miskin Ekstrem:
+                  </div>
                   <select
                     name="Desil"
                       style={{
@@ -1409,7 +1521,7 @@ const ContentMiskinEkstremV2 = () => {
                                             separator="."
                                             prefix="Rp "
                                             suffix=" T"
-                                            duration={3}
+                                            duration={1}
                                           />
                                         </span>
                                       </div>
@@ -1449,7 +1561,7 @@ const ContentMiskinEkstremV2 = () => {
                                             separator="."
                                             prefix="Rp "
                                             suffix=" T"
-                                            duration={3}
+                                            duration={1}
                                           />
                                         </span>
                                       </div>
@@ -1510,7 +1622,7 @@ const ContentMiskinEkstremV2 = () => {
                                             separator="."
                                             prefix="Rp "
                                             suffix=" T"
-                                            duration={3}
+                                            duration={1}
                                           />
                                         </span>
                                       </div>
@@ -1555,7 +1667,7 @@ const ContentMiskinEkstremV2 = () => {
                                             separator="."
                                             prefix="Rp "
                                             suffix=" T"
-                                            duration={3}
+                                            duration={1}
                                           />
                                         </span>
                                       </div>
@@ -1618,7 +1730,7 @@ const ContentMiskinEkstremV2 = () => {
                                             separator="."
                                             prefix="Rp "
                                             suffix=" T"
-                                            duration={3}
+                                            duration={1}
                                           />
                                         </span>
                                       </div>
@@ -1660,7 +1772,7 @@ const ContentMiskinEkstremV2 = () => {
                                             separator="."
                                             prefix="Rp "
                                             suffix=" T"
-                                            duration={3}
+                                            duration={1}
                                           />
                                         </span>
                                       </div>
@@ -1725,7 +1837,7 @@ const ContentMiskinEkstremV2 = () => {
                                             separator="."
                                             prefix="Rp "
                                             suffix=" T"
-                                            duration={3}
+                                            duration={1}
                                           />
                                         </span>
                                       </div>
@@ -1767,7 +1879,7 @@ const ContentMiskinEkstremV2 = () => {
                                             separator="."
                                             prefix="Rp "
                                             suffix=" T"
-                                            duration={3}
+                                            duration={1}
                                           />
                                         </span>
                                       </div>
@@ -1863,7 +1975,7 @@ const ContentMiskinEkstremV2 = () => {
                         cursor: "pointer",
                         fontSize: "16px",
                         marginBottom: "8px"
-                      }} onClick={()=>getDataMiskinEkstremTabel()}>Kembali ke Provinsi</button></>)}         
+                      }} onClick={()=>getDataMiskinEkstremTabel({tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData})}>Kembali ke Provinsi</button></>)}         
                     <div style={{ overflowX: "auto" }}>
                     <table
                       className="table table-bordered table-nowrap align-middle mb-0 custom-table"
@@ -2030,7 +2142,7 @@ const ContentMiskinEkstremV2 = () => {
                         verticalAlign: "middle"}}>
                       {indexOfFirstItem + index + 1}
                     </td>
-                    <td className={showNextData ? "click-data" : ""} style={{ minWidth: "270px" }} onClick={(e)=> {showNextData ?  getDataMiskinEkstremTabelKab(item.kode_prov, e) : "", showNextData ? setNamaDaerahDetail(item.nama_prov) : ""}}>
+                    <td className={showNextData ? "click-data" : ""} style={{ minWidth: "270px" }} onClick={(e)=> {showNextData ?  getDataMiskinEkstremTabelKab(item.kode_prov, e, selectedSingleTahunAnggaran, selectedSingleTahunData) : "", showNextData ? setNamaDaerahDetail(item.nama_prov) : ""}}>
                       {item.nama_prov ? item.nama_prov.replace("Provinsi ", "") : item.nama_daerah.replace("Provinsi ", "")}
                     </td>
                     <td>
@@ -2528,7 +2640,7 @@ const ContentMiskinEkstremV2 = () => {
                                   separator="."
                                   prefix="Rp "
                                   suffix=" T"
-                                  duration={3}
+                                  duration={1}
                                 />
                               </span>
                             </div>
@@ -2609,7 +2721,7 @@ const ContentMiskinEkstremV2 = () => {
                                                 separator="."
                                                 // prefix=""
                                                 suffix=""
-                                                duration={3}
+                                                duration={1}
                                               />
                                             </span>
                                           </div>
@@ -2644,7 +2756,7 @@ const ContentMiskinEkstremV2 = () => {
                                                 separator="."
                                                 // prefix=""
                                                 suffix=""
-                                                duration={3}
+                                                duration={1}
                                               />
                                             </span>
                                           </div>
@@ -2814,7 +2926,7 @@ const ContentMiskinEkstremV2 = () => {
                                                 separator="."
                                                 // prefix=""
                                                 suffix=""
-                                                duration={3}
+                                                duration={1}
                                               />
                                             </span>
                                           </div>
@@ -2847,7 +2959,7 @@ const ContentMiskinEkstremV2 = () => {
                                                 separator="."
                                                 // prefix=""
                                                 suffix=""
-                                                duration={3}
+                                                duration={1}
                                               />
                                             </span>
                                           </div>
@@ -3169,7 +3281,7 @@ const ContentMiskinEkstremV2 = () => {
                                     separator="."
                                     prefix=""
                                     suffix=""
-                                    duration={3}
+                                    duration={1}
                                   />
                                 </span>
                               </div>
@@ -3583,39 +3695,62 @@ const ContentMiskinEkstremV2 = () => {
         </ModalHeader>
         <ModalBody>
         <Row>
-              <Col md={4}><Card className="card-animate card-height-100">
-                        <CardBody>
-                          <div
-                            className="d-flex flex-column title-custom-card"                            
-                          >
-                            <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                              <span>Total Anggaran</span>
-                            </div>
-                            <div className="d-flex">
-                              {/* <div className="avatar-xs-half flex-shrink-0">
-                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
-                          <i className=" ri-women-line text-danger"></i>
+          <Col md={4}>
+            <Card className="card-animate">
+                <CardBody>
+                  <div
+                    className="d-flex flex-column title-custom-card"                            
+                  >
+                    <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                      <span>Total Anggaran</span>
+                    </div>
+                    <div className="d-flex">
+                      {/* <div className="avatar-xs-half flex-shrink-0">
+                <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                  <i className=" ri-women-line text-danger"></i>
+                </span>
+              </div> */}
+                      <div className="d-flex justify-content-center align-items-center title-body">
+                        <span>
+                          <CountUp
+                            start={0}
+                            end={
+                              // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                              dataRincianDetail
+                            }
+                            separator="."
+                            prefix="Rp "
+                            suffix=""
+                            duration={1}
+                          />
                         </span>
-                      </div> */}
-                              <div className="d-flex justify-content-center align-items-center title-body">
-                                <span>
-                                  <CountUp
-                                    start={0}
-                                    end={
-                                      // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
-                                      dataRincianDetail
-                                    }
-                                    separator="."
-                                    prefix="Rp "
-                                    suffix=""
-                                    duration={3}
-                                  />
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </CardBody>
-                      </Card></Col>
+                      </div>
+                    </div>
+                  </div>
+                </CardBody>
+              </Card>
+              </Col>
+              <Col md={8}>
+              {dataDetailHighlight.map((item, index)=>(
+                <div className="d-flex mb-3" key={index}>
+                  <div style={{ flexBasis: "350px", color:"#929FB1" }}>{item.nama_rekening}</div>
+                  <div>:&nbsp;</div>
+                  <div style={{ fontWeight: 650 }}>
+                  <CountUp
+                      start={0}
+                      end={item.anggaran3}
+                      // decimal=","
+                      // decimals={2}
+                      separator="."
+                      prefix="Rp "
+                      // suffix=" T"
+                      duration={1}
+                    />
+                    
+                  </div>
+                </div>
+              ))}                
+              </Col>
             </Row>
           <div style={{ overflowY: "scroll", maxHeight:"500px"}}>
           <table
@@ -3773,7 +3908,7 @@ const ContentMiskinEkstremV2 = () => {
                                     separator="."
                                     prefix="Rp "
                                     suffix=""
-                                    duration={3}
+                                    duration={1}
                                   />
                                 </span>
                               </div>

@@ -18,6 +18,7 @@ const ContentPenganggaranDaerah = () => {
   const namaDaerah = queryParams.get("namaDaerah");
   const tahapan = queryParams.get("tahapan")
   const subTahapan = queryParams.get("subTahapan")
+  const tahun = queryParams.get("tahun")
 
   const [customActiveTab, setcustomActiveTab] = useState("6");
   const toggleCustom = (tab) => {
@@ -25,7 +26,7 @@ const ContentPenganggaranDaerah = () => {
       setcustomActiveTab(tab);
     }
   };
-  const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
+  const [selectedSingleTahun, setSelectedSingleTahun] = useState(tahun); // Set default value
   const [selectedSingleTahapan, setSelectedSingleTahapan] = useState(tahapan); // Set default value
   const [dataPenganggaran, setDataPenganggaran] = useState([]);
   const [dataPenganggaranPersentase, setDataPenganggaranPersentase] = useState(
@@ -132,18 +133,18 @@ const ContentPenganggaranDaerah = () => {
   };
 
     // Memanggil fungsi API setiap kali dropdown berubah
-    // useEffect(() => {
-    // getDataPenganggaranNasionalPersentase({
-    //     tahun: selectedSingleTahun,
-    //     tahapan: selectedSingleTahapan,
-    // });
-    // }, [selectedSingleTahun, selectedSingleTahapan]); // Panggil API jika tahun atau dokumen berubah
+    useEffect(() => {
+    getDataPenganggaranNasionalPersentase({
+        tahun: selectedSingleTahun,
+        tahapan: selectedSingleTahapan,
+    });
+    }, [selectedSingleTahun, selectedSingleTahapan]); // Panggil API jika tahun atau dokumen berubah
   
 
-  useEffect(() => {
-    // getDataPenganggaranNasional();
-    getDataPenganggaranNasionalPersentase();
-  }, []);
+  // useEffect(() => {
+  //   // getDataPenganggaranNasional();
+  //   getDataPenganggaranNasionalPersentase();
+  // }, []);
 
   
   const [currentPage, setCurrentPage] = useState(1);
@@ -218,7 +219,6 @@ const ContentPenganggaranDaerah = () => {
   
   const handleSelectChange = (e) => {
     const { name, value } = e.target;
-    console.log(`${name}: ${value}`, 'ini isi selected value');
     
     if (name === 'tahun') {
         setSelectedSingleTahun(value); // Misalnya, untuk dropdown tahun
@@ -232,7 +232,7 @@ const ContentPenganggaranDaerah = () => {
   const goToDetail = (id, namaDaerah, namaProv) => {
     const encodedNamaDaerah = encodeURIComponent(namaDaerah); 
     const encodedNamaProv = encodeURIComponent(namaProv); 
-    navigate(`/penganggaran/penganggaran-detail/penganggaran-detail-skpd/${id}?namaDaerah=${encodedNamaDaerah}&namaProv=${encodedNamaProv}&idProv=${_id}&tahapan=${tahapan}&subTahapan=${subTahapan}`);
+    navigate(`/penganggaran/penganggaran-detail/penganggaran-detail-skpd/${id}?namaDaerah=${encodedNamaDaerah}&namaProv=${encodedNamaProv}&idProv=${_id}&tahapan=${selectedSingleTahapan}&subTahapan=${subTahapan}&tahun=${selectedSingleTahun}`);
   };
   
   const [modall, setModall] = useState(false);
@@ -661,7 +661,7 @@ const ContentPenganggaranDaerah = () => {
                     // onKeyDown={(e) => handleKeyDown(e, "provinsi")}
                     placeholder="Cari Daerah"
                   /> */}
-                  {/* <select
+                  <select
                   name="tahun"
                         style={{
                           padding: "10px 30px 10px 10px",
@@ -679,7 +679,7 @@ const ContentPenganggaranDaerah = () => {
                       >                        
                         <option value="2024">2024</option>
                         <option value="2025">2025</option>
-                      </select> */}
+                      </select>
                       <select
                       name="tahap"
                         style={{

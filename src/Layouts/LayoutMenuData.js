@@ -270,9 +270,19 @@ const Navdata = () => {
       },
     },
     {
+      id: "jkn",
+      label: "JKN",
+      icon: "ri-hand-heart-line", 
+      link: "/jkn",
+      click: function (e) {
+        e.preventDefault();
+        setIscurrentState("JKN");
+      },
+    },
+    {
       id: "integrasi",
       label: "Integrasi",
-      icon: " ri-settings-5-line",
+      icon: "ri-settings-5-line",
       link: "/#",
       stateVariables: isDashboard,
       click: function (e) {

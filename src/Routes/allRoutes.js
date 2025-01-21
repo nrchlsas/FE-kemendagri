@@ -133,6 +133,7 @@ import PenganggaranDaerah from "../pages/Penganggaran/PenganggaranDaerah";
 import PenganggaranDetailDaerah from "../pages/Penganggaran/PenganggaranDetailDaerah";
 import DashboardAnalisis from "../pages/DashboardAnalisis";
 import LoginV2 from "../pages/Authentication/LoginV2";
+import JKN from "../pages/JKN";
 //home
 
 
@@ -146,6 +147,7 @@ const authProtectedRoutes = [
   { path: "/perencanaan/perencanaan-detail/:_id", component: <PerencanaanDaerah />},
   { path: "/perencanaan/perencanaan-detail/perencanaan-detail-skpd/:_id", component: <PerencanaanDetailDaerah />},  
   { path: "/kependudukan", component: <Kependudukan />},
+  { path: "/jkn", component: <JKN />},
   { path: "/realisasi", component: <Realisasi />},
   { path: "/realisasi/realisasi-detail/:_id", component: <RealisasiDaerah />},
   { path: "/realisasi/realisasi-detail/realisasi-detail-skpd/:_id", component: <RealisasiDetailDaerah />},

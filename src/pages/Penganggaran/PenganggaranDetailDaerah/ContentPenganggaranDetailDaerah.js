@@ -26,6 +26,7 @@ const ContentPenganggaranDetailDaerah = () => {
     const idProv = queryParams.get('idProv')
     const tahapan = queryParams.get('tahapan');
     const subTahapan = queryParams.get('subTahapan')
+    const tahun = queryParams.get('tahun')
   
     const [customActiveTab, setcustomActiveTab] = useState(tahapan);
     const toggleCustom = (tab) => {
@@ -33,7 +34,7 @@ const ContentPenganggaranDetailDaerah = () => {
         setcustomActiveTab(tab);
       }
     };
-    const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
+    const [selectedSingleTahun, setSelectedSingleTahun] = useState(tahun); // Set default value
     const [selectedSingleTahapan, setSelectedSingleTahapan] = useState(subTahapan); // Set default value        
     const [dataPenganggaranPersentase, setDataPenganggaranPersentase] = useState(
       []
@@ -103,7 +104,7 @@ const ContentPenganggaranDetailDaerah = () => {
             }),
           };
           const response = await fetch(
-            `${API_URI_RBAC}/v2/dashboard_Penganggaran_2_komposisi`,
+            `${API_URI_RBAC}/v2/dashboard_penganggaran_2_komposisi`,
             requestOptions
           );
   
@@ -126,6 +127,7 @@ const ContentPenganggaranDetailDaerah = () => {
     };
 
     const [totalPagu, setTotalPagu] = useState(0)
+    const [dataDetailHighlight, setDataDetailHighlight] = useState([])
     const getDataPenganggaranNasionalPersentase = ({
       tahun = "2024",      
       tahapan = subTahapan,
@@ -144,7 +146,7 @@ const ContentPenganggaranDetailDaerah = () => {
             }),
           };
           const response = await fetch(
-            `${API_URI_RBAC}/v2/dashboard_Penganggaran_level_3`,
+            `${API_URI_RBAC}/v2/dashboard_penganggaran_level_3`,
             requestOptions
           );
   
@@ -172,8 +174,10 @@ const ContentPenganggaranDetailDaerah = () => {
           setTotalPagu(sumPaguValidasi)
   
           setDataPenganggaranPersentase(
-            dataPenganggaranNasionalPersentase.data.penganggaran_level_3
+            dataPenganggaranNasionalPersentase?.data?.penganggaran_level_3
           );
+
+          setDataDetailHighlight(dataPenganggaranNasionalPersentase?.data?.data_penganggaran_highlight)
         } catch (errorPenganggaran) {
           setErrorPenganggaran(errorPenganggaran);
         } finally {
@@ -587,7 +591,7 @@ const ContentPenganggaranDetailDaerah = () => {
               <div className="page-title-right">
                   <ol className="breadcrumb mb-2 ms-2" style={{fontWeight:600}}>
                       <li className="breadcrumb-item"><Link to="/penganggaran">Penganggaran</Link></li>
-                      <li className="breadcrumb-item"><Link to={`/penganggaran/Penganggaran-detail/${idProv}?namaDaerah=${namaProv}&tahapan=${customActiveTab}&subTahapan=${subTahapan}`}>Detail Se-{namaProv}</Link></li>
+                      <li className="breadcrumb-item"><Link to={`/penganggaran/penganggaran-detail/${idProv}?namaDaerah=${namaProv}&tahapan=${customActiveTab}&subTahapan=${subTahapan}&tahun=${selectedSingleTahun}`}>Detail Se-{namaProv}</Link></li>
                       <li className="breadcrumb-item active">Detail SKPD {namaDaerah}</li>
                   </ol>
               </div>
@@ -615,40 +619,68 @@ const ContentPenganggaranDetailDaerah = () => {
                       </div>
                     </div> */}
                     <div className="d-flex mb-3">
-                      <div style={{ flexBasis: "180px", color:"#929FB1" }}>Kepala Daerah</div>
+                      <div style={{ flexBasis: "350px", color:"#929FB1" }}>Kepala Daerah</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
                         {dataProfilDaerah?.kepala_daerah}
                       </div>
                     </div>
                     <div className="d-flex mb-3">
-                      <div style={{ flexBasis: "180px", color:"#929FB1" }}>Wakil Kepala Daerah</div>
+                      <div style={{ flexBasis: "350px", color:"#929FB1" }}>Wakil Kepala Daerah</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
                         {dataProfilDaerah?.wakil_kepala_daerah}
                       </div>
                     </div>
                     {/* <div className="d-flex mb-3">
-                      <div style={{ flexBasis: "180px", color:"#929FB1" }}>Sekretaris Daerah</div>
+                      <div style={{ flexBasis: "350px", color:"#929FB1" }}>Sekretaris Daerah</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
                         {dataProfilDaerah?.kepala_daerah}
                       </div>
                     </div>
                     <div className="d-flex mb-3">
-                      <div style={{ flexBasis: "180px", color:"#929FB1" }}>Jumlah SKPD & Unit SKPD</div>
+                      <div style={{ flexBasis: "350px", color:"#929FB1" }}>Jumlah SKPD & Unit SKPD</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
                         {dataProfilDaerah?.kepala_daerah}
                       </div>
                     </div> */}
                     <div className="d-flex mb-3">
-                      <div style={{ flexBasis: "180px", color:"#929FB1" }}>Total Pagu</div>
+                      <div style={{ flexBasis: "350px", color:"#929FB1" }}>Total Pagu</div>
                       <div>:&nbsp;</div>
                       <div style={{ fontWeight: 650 }}>
                       {`Rp ${totalPagu?.toLocaleString("id-ID")}`}
                       </div>
                     </div>
+                    {dataDetailHighlight.map((item,index)=>{
+                      const tahapData = {
+                        5: item?.total_rincian_rapbd,
+                        40: item?.total_rincian_kuappas,
+                        30: item?.total_rincian_apbdgeser,
+                        41: item?.total_rincian_kupa,
+                        8: item?.total_rincian_rapbdubah,
+                        29: item?.total_rincian_apbdubah,
+                        28: item?.total_rincian_apbd,
+                        32: item?.total_rincian_apbdgeserpasca,
+                      };
+                      return(<div className="d-flex mb-3" key={index}>
+                        <div style={{ flexBasis: "350px", color:"#929FB1" }}>{item.nama_rekening}</div>
+                        <div>:&nbsp;</div>
+                        <div style={{ fontWeight: 650 }}>
+                        <CountUp
+                      start={0}
+                      end={tahapData[selectedSingleTahapan]}
+                      // decimal=","
+                      // decimals={2}
+                      separator="."
+                      prefix="Rp "
+                      // suffix=" T"
+                      duration={1}
+                    />
+                        </div>
+                      </div>)
+                    })}                    
                   </div>                    
                   </Col>
                 </Row>

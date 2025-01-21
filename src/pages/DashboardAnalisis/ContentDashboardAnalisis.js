@@ -44,8 +44,9 @@ const ContentDashboardAnalisis = () => {
   const [dataChartSumberDana, setDataChartSumberDana] = useState([],[])
   const [dataTotalAnggaran, setDataTotalAnggaran] = useState(0)
   const [executeDate, setExcecuteDate] = useState('')
-  const [persentase, setPersentase] = useState(0)
+  const [labelTahun, setLabelTahun] = useState("2024")
   const getDataDashboardAnalisis = ({
+    tahun,
     kodeDdn,
     kodeProv,
     namaDaerah,
@@ -80,6 +81,7 @@ const ContentDashboardAnalisis = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
+            tahun: tahun,
             kode_ddn: kodeDdn,
             nama_daerah: namaDaerah,
             kode_prov: kodeProv,
@@ -108,7 +110,7 @@ const ContentDashboardAnalisis = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI}/dashboard_anggaran_analisis`,
+          `${API_URI}/v2/dashboard_anggaran_analisis`,
           requestOptions
         );
 
@@ -117,7 +119,8 @@ const ContentDashboardAnalisis = () => {
         }
         const dataDashboardAnalisis = await response.json();
         const totalAnggaran = (dataDashboardAnalisis?.data?.data_dashboard?.rincian_belanja_total_belanja / dataDashboardAnalisis?.data?.data_dashboard_nasional?.total_belanja) * 100                       
-          
+        console.log(tahun, 'ini tahun bro')
+        setLabelTahun(tahun)
         setDataTotalAnggaran(totalAnggaran)
         setDataDashboardAnalisis(dataDashboardAnalisis?.data || []);
 
@@ -139,6 +142,7 @@ const ContentDashboardAnalisis = () => {
         }, [[],[]]);
         
         setDataChartSumberDana(dataChart)
+        
       } catch (errorDashboardAnalisis) {
         setErrorDataDashboardAnalisis(errorDashboardAnalisis);
       } finally {
@@ -148,20 +152,8 @@ const ContentDashboardAnalisis = () => {
     fetchData();
   };
 
-  const formatAnggaran = (value) => {
-    // Pastikan value dalam bentuk angka
-    const parsedValue = parseFloat(value);
-    
-    // Tentukan jumlah angka di belakang koma
-    if (parsedValue >= 0.01) {
-      return parsedValue.toFixed(2); // 2 angka di belakang koma
-    } else {
-      return parsedValue.toFixed(7); // 7 angka di belakang koma
-    }
-  };
-
   useEffect(() => {
-    getDataDashboardAnalisis({});
+    getDataDashboardAnalisis({tahun: "2024"});
   }, []);
   
   const [selectedFilters, setSelectedFilters] = useState({
@@ -182,6 +174,7 @@ const ContentDashboardAnalisis = () => {
   });
 
 const cleanPayload = (payload) => {
+  setLabelTahun(payload.tahun)
     return Object.fromEntries(
         Object.entries(payload).filter(([_, value]) => !(value === "" || (Array.isArray(value) && value.length === 0) || value === null || value === undefined))
     );
@@ -191,7 +184,7 @@ const handleFilterUpdate = (filters) => {
     setSelectedFilters(filters);
     // Bersihkan payload
     const cleanedFilters = cleanPayload(filters);
-    console.log(cleanedFilters, 'ini cleaned filter', Object.keys(cleanedFilters || {}).length === 0, 'ini 2', cleanedFilters?.daerah?.length > 0, 'ini 1')
+
     if(cleanedFilters?.daerah?.length > 0){
       setTitleBerubah("Daerah")
     }else if (Object.keys(cleanedFilters || {}).length === 0) {
@@ -199,20 +192,21 @@ const handleFilterUpdate = (filters) => {
     }
     // Kirimkan request berdasarkan filter yang dipilih
     getDataDashboardAnalisis({
-        kodeProv: cleanedFilters.provinsi,
-        kodeDdn: cleanedFilters.daerah,
-        namaDaerah: cleanedFilters.namaDaerah,
-        kodeSkpd: cleanedFilters.skpd,
-        kodeFungsi: cleanedFilters.fungsi,
-        idSpm: cleanedFilters.spm,
-        kodeUrusan: cleanedFilters.urusan,
-        kodeBidangUrusan: cleanedFilters.bidangUrusan,
-        kodeProgram: cleanedFilters.program,
-        kodeGiat: cleanedFilters.kegiatan,
-        kodeSubGiat: cleanedFilters.subKegiatan,
-        kodeObjek: cleanedFilters.objek,
-        kodeRo: cleanedFilters.rincianObjek,
-        kodeSro: cleanedFilters.subRincianObjek
+      tahun: cleanedFilters.tahun,
+      kodeProv: cleanedFilters.provinsi,
+      kodeDdn: cleanedFilters.daerah,
+      namaDaerah: cleanedFilters.namaDaerah,
+      kodeSkpd: cleanedFilters.skpd,
+      kodeFungsi: cleanedFilters.fungsi,
+      idSpm: cleanedFilters.spm,
+      kodeUrusan: cleanedFilters.urusan,
+      kodeBidangUrusan: cleanedFilters.bidangUrusan,
+      kodeProgram: cleanedFilters.program,
+      kodeGiat: cleanedFilters.kegiatan,
+      kodeSubGiat: cleanedFilters.subKegiatan,
+      kodeObjek: cleanedFilters.objek,
+      kodeRo: cleanedFilters.rincianObjek,
+      kodeSro: cleanedFilters.subRincianObjek
     });
 };
 
@@ -226,6 +220,19 @@ const handleCardClick = () => {
   // Memanggil AOS.refresh() untuk memulai ulang animasi saat card diklik
   AOS.refresh();
 };
+
+const [selectedTahun, setSelectedTahun] = useState("2024");
+  const handleSelectChangeTahun = (e) => {
+    const { name, value } = e.target;
+    setSelectedTahun(value)
+
+  
+    // Bersihkan payload sebelum dikirim ke parent
+    // const cleanedFilters = cleanPayload(value);
+    getDataDashboardAnalisis({
+      tahun: value,
+    });
+  };
 
 const [titleBerubah, setTitleBerubah] = useState("Nasional")
   return (
@@ -252,6 +259,32 @@ const [titleBerubah, setTitleBerubah] = useState("Nasional")
                   Terakhir diperbarui: {executeDate}
                 </span>
               </div>
+            </div>
+            <div
+              className="d-flex flex-column title-page"
+              style={{ padding: "0 13px 0 0" }}
+            >
+              <div className="d-flex justify-content-center align-items-center">
+            <i className="mdi mdi-calendar fs-22"></i>
+            <span className="m-0 me-2 text-dark">TAHUN:</span>
+            <select
+            name="tahunPerencanaan"
+              style={{
+                padding: "5px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",
+                cursor: "pointer",
+                // marginLeft: "10px"
+              }}
+              value={selectedTahun}
+              onChange={handleSelectChangeTahun}
+            >
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>                    
+            </select>
+            </div>            
             </div>
           </div>
               <Row>

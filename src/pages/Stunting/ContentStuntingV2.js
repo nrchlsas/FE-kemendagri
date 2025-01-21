@@ -44,11 +44,14 @@ const ContentStunting = () => {
   
     // Ambil data desil yang sesuai dan update valueMap
     const selectedData = dataDesil[`desil${selectedValue}`]; // Ambil data sesuai pilihan
-    console.log(selectedData,'ini')
-    if (selectedData) {
+    
+    if (Array.isArray(selectedData) && selectedData.length > 0) {
       setValueMap(selectedData);
-      const maxValue = Math.max(...selectedData.map(item => item.value));
+      const maxValue = Math.max(...selectedData.map(item => item.value || 0));
       setmaxValueMap(maxValue);
+    } else {
+      setValueMap([]);
+      setmaxValueMap(0); // Set nilai default jika selectedData tidak valid
     }
   };
 
@@ -194,7 +197,7 @@ const ContentStunting = () => {
   const [loadingStunting, setLoadingStunting] = useState([]);
   const [errorStunting, setErrorStunting] = useState([]);
 
-  const getDataStunting = () => {
+  const getDataStunting = ({tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -203,7 +206,8 @@ const ContentStunting = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
           //  kode_ddn: "11"
-            tahun: "2024"
+            tahun: tahun,
+            tahun_data: tahun_data
         }),
         };
 
@@ -541,7 +545,6 @@ const ContentStunting = () => {
           const values = Object.values(dataStunting.data.pus_4_terlalu);
 
           const resultChartPus4Terlalu = [values, keys]
-          // const resultChartPus4Terlalu = [dataStunting.data.pus_4_terlalu.jumlah_terlalu_banyak, dataStunting.data.pus_4_terlalu.jumlah_terlalu_dekat, dataStunting.data.pus_4_terlalu.jumlah_terlalu_muda, dataStunting.data.pus_4_terlalu.jumlah_terlalu_tua]
             setDataChartPus4Terlalu(resultChartPus4Terlalu)
         } catch (error) {
           console.error("Error processing top 5 akun belanja", error);
@@ -562,17 +565,17 @@ const ContentStunting = () => {
   const [roam, setRoam] = useState(false);
   const [dataDesil, setDataDesil] = useState({}); 
 
-  const getDataStuntingTabel = () => {
+  const getDataStuntingTabel = ({tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
         const requestOptions = {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
-          // body: JSON.stringify({
-          //   query:
-          //     "select sum(total_rincian)/1000000000000 TotalPembiayaanK from konsolidasi_apbd where kode_kelompok = '6.2'",
-          // }),
+          body: JSON.stringify({
+            tahun: tahun,
+            tahun_data: tahun_data
+          }),
         };
 
         const response = await fetch(
@@ -585,39 +588,52 @@ const ContentStunting = () => {
         }
 
         const dataStuntingTabel = await response.json();
-        setDataStuntingTabel(dataStuntingTabel.data);
+        setDataStuntingTabel(dataStuntingTabel?.data);
         setShowNextData(true);
         setCurrentPage(1);
         setDataKolomNamaDaerah("Se-Provinsi");
 
-              // Menyimpan semua data desil ke dalam state dataDesil
-      const desilData = {
-        desil1: dataStuntingTabel.data.map(item => ({
-          name: item.nama_prov,
-          value: parseInt(item.peringkat_kesejahteraan_1)
-        })),
-        desil2: dataStuntingTabel.data.map(item => ({
-          name: item.nama_prov,
-          value: parseInt(item.peringkat_kesejahteraan_2)
-        })),
-        desil3: dataStuntingTabel.data.map(item => ({
-          name: item.nama_prov,
-          value: parseInt(item.peringkat_kesejahteraan_3)
-        })),
-        desil4: dataStuntingTabel.data.map(item => ({
-          name: item.nama_prov,
-          value: parseInt(item.peringkat_kesejahteraan_4)
-        })),
-        desil5: dataStuntingTabel.data.map(item => ({
-          name: item.nama_prov,
-          value: parseInt(item.peringkat_kesejahteraan_diatas_4)
-        }))
-      };
-
-      setDataDesil(desilData); // Simpan semua desil ke dalam state
-      setValueMap(desilData.desil1);
-      const maxDesil1 = Math.max(...desilData.desil1.map(item => item.value));
-      setmaxValueMap(maxDesil1);
+        // Menyimpan semua data desil ke dalam state dataDesil
+        const desilData = {
+          desil1: Array.isArray(dataStuntingTabel?.data)
+            ? dataStuntingTabel?.data?.map(item => ({
+                name: item.nama_prov,
+                value: parseInt(item.peringkat_kesejahteraan_1),
+              }))
+            : [],
+          desil2: Array.isArray(dataStuntingTabel?.data)
+            ? dataStuntingTabel?.data?.map(item => ({
+                name: item.nama_prov,
+                value: parseInt(item.peringkat_kesejahteraan_2),
+              }))
+            : [],
+          desil3: Array.isArray(dataStuntingTabel?.data)
+            ? dataStuntingTabel?.data?.map(item => ({
+                name: item.nama_prov,
+                value: parseInt(item.peringkat_kesejahteraan_3),
+              }))
+            : [],
+          desil4: Array.isArray(dataStuntingTabel?.data)
+            ? dataStuntingTabel?.data?.map(item => ({
+                name: item.nama_prov,
+                value: parseInt(item.peringkat_kesejahteraan_4),
+              }))
+            : [],
+          desil5: Array.isArray(dataStuntingTabel?.data)
+            ? dataStuntingTabel?.data?.map(item => ({
+                name: item.nama_prov,
+                value: parseInt(item.peringkat_kesejahteraan_diatas_4),
+              }))
+            : [],
+        };
+        console.log(desilData, 'ini isi desil data')
+        setDataDesil(desilData); // Simpan semua desil ke dalam state
+        setValueMap(desilData?.desil1);
+        
+        const maxDesil1 = Math.max(
+          ...(Array.isArray(desilData.desil1) ? desilData.desil1.map(item => item.value) : [])
+        );
+        setmaxValueMap(maxDesil1);
       
         // const valueDesil1 = dataStuntingTabel.data.map(item => ({
         //   name: item.nama_prov,
@@ -669,7 +685,7 @@ const ContentStunting = () => {
   const [dataKolomNamaDaerah, setDataKolomNamaDaerah] = useState("Se-Provinsi");
   const [showNextData, setShowNextData] = useState(true);
 
-  const getDataStuntingTabelKabupaten = (kodeDdn = "", e) => {
+  const getDataStuntingTabelKabupaten = (kodeDdn = "", e, tahun, tahun_data) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -678,6 +694,8 @@ const ContentStunting = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_ddn1: kodeDdn,
+            tahun: tahun,
+            tahun_data: tahun_data
           }),
         };
 
@@ -708,6 +726,7 @@ const ContentStunting = () => {
 
   const [dataDetailAnggaran, setDataDetailAnggaran] = useState([]);
   const [dataDetailAnggaranSub, setDataDetailAnggaranSub] = useState([]);
+  const [dataDetailHighlight, setDataDetailHighlight] = useState([])
   const [loadingDetailAnggaran, setLoadingDetailAnggaran] = useState([]);
   const [errorDetailAnggaran, setErrorDetailAnggaran] = useState([]);
 
@@ -715,7 +734,9 @@ const ContentStunting = () => {
     kodeSeProvinsi = "",
     kodeDdnKabupaten = "",
     kodeDdnProvinsi = "",
-    kodeSubGiat = ""
+    kodeSubGiat = "",
+    tahun,
+    tahun_data
   ) => {
     const fetchData = async () => {
       setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
@@ -726,9 +747,10 @@ const ContentStunting = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_prov: kodeSeProvinsi,
-            kode_ddn:
-              kodeDdnKabupaten != "" ? kodeDdnKabupaten : kodeDdnProvinsi,
+            kode_ddn: kodeDdnKabupaten != "" ? kodeDdnKabupaten : kodeDdnProvinsi,
             kode_sub_giat: kodeSubGiat,
+            tahun: tahun,
+            tahun_data: tahun_data
           }),
         };
 
@@ -769,6 +791,7 @@ const ContentStunting = () => {
 
         setCurrentPageDetail(1);
         setCurrentPageDetailSub(1);
+        setDataDetailHighlight(dataDetailAnggaran.data.stunting_highlight)
 
         
         // Open the modal only after data is successfully fetched
@@ -783,8 +806,8 @@ const ContentStunting = () => {
   };
 
   useEffect(() => {
-    getDataStunting();
-    getDataStuntingTabel();
+    getDataStunting({tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
+    getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
     // getDataStuntingTabelKabupaten();
   }, []);
 
@@ -978,7 +1001,7 @@ const ContentStunting = () => {
     jenisPemda = "",
     rincianDetail = 0
   ) => {
-    getDataDetailAnggaran(kodeProv, kodeDdnKab, kodeDdnProv, "");
+    getDataDetailAnggaran(kodeProv, kodeDdnKab, kodeDdnProv, "", selectedSingleTahunAnggaran, selectedSingleTahunData);
 
     if (jenisPemda == "prov") {
       setDataJenisPemda("prov");
@@ -1003,11 +1026,11 @@ const ContentStunting = () => {
     namaSubGiat =""
   ) => {
     if (kodeDaerah != "") {
-      getDataDetailAnggaran(kodeDaerah, "", "", kodeSubGiat);
+      getDataDetailAnggaran(kodeDaerah, "", "", kodeSubGiat, selectedSingleTahunAnggaran, selectedSingleTahunData);
     } else if (kodeDdnProv != "") {
-      getDataDetailAnggaran("", "", kodeDdnProv, kodeSubGiat);
+      getDataDetailAnggaran("", "", kodeDdnProv, kodeSubGiat, selectedSingleTahunAnggaran, selectedSingleTahunData);
     } else if (kodeDdnKab != "") {
-      getDataDetailAnggaran("", kodeDdnKab, "", kodeSubGiat);
+      getDataDetailAnggaran("", kodeDdnKab, "", kodeSubGiat, selectedSingleTahunAnggaran, selectedSingleTahunData);
     }
 
     setDataRincianDetailSub(rincianDetail);
@@ -1079,7 +1102,7 @@ const ContentStunting = () => {
   };
 
   const [dataJambanTidakLayakPemda, setDataJambanTidakLayakPemda] = useState([])
-  const getDataFasilitasKesehatanPerProv = ({kodeProvinsi = "", url=""}) => {
+  const getDataFasilitasKesehatanPerProv = ({kodeProvinsi = "", url="", tahun}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -1088,6 +1111,7 @@ const ContentStunting = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_provinsi: kodeProvinsi,
+            tahun: tahun
           }),
         };
 
@@ -1182,27 +1206,47 @@ const ContentStunting = () => {
 
   const handleBarClickProv = (data) => {
     if (fasilitasShow == "Jamban Tidak Layak") {
-      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_jamban_kabkota"})
+      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_jamban_kabkota", tahun: selectedSingleTahunAnggaran})
     } else {
-      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_air_kabkota"})
+      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_air_kabkota", tahun: selectedSingleTahunAnggaran})
     }
   };
 
   const [titleStack, setTitleStack] = useState("")
   const handleBarClickStackProv = (data) => {     
     setTitleStack(data.category)
-    getDataStackPerProv({kodeProv: data.id})    
+    getDataStackPerProv({kodeProv: data.id})
   }
 
   const handleBack = () => {
     setShowDataChartFasilitasProvinsi(false)
   }
 
+  const [showChartBerisiko, setShowChartBerisiko] = useState(false)
+
+    const [selectedSingleTahunAnggaran, setSelectedSingleTahunAnggaran] = useState('2025'); // Set default value
+    const [selectedSingleTahunData, setselectedSingleTahunData] = useState('2024'); // Set default value
+    
+    const handleSelectChangeAnggaran = (e) => {
+      const { name, value } = e.target;
+      setSelectedSingleTahunAnggaran(value); // Misalnya, untuk dropdown tahun
+      getDataStunting({tahun:value, tahun_data: selectedSingleTahunData});
+      getDataStuntingTabel({tahun:value, tahun_data: selectedSingleTahunData});
+    };
+
+    const handleSelectChangeDataPokok = (e) => {
+      const { name, value } = e.target;
+      setselectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
+      getDataStunting({tahun:selectedSingleTahunAnggaran, tahun_data: value});
+      getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: value});
+    };
+
   return (
     <React.Fragment>
       <Row>
         <Col>
           <Card className="card-custom">
+          <div className="d-flex justify-content-between">
             <div className="d-flex title-page">
               <div className="d-flex justify-content-center align-items-center avatar-sm">
                 <span className="logo-sm">
@@ -1212,6 +1256,69 @@ const ContentStunting = () => {
               <div className="d-flex justify-content-center align-items-center">
                 <span>Kementerian Kependudukan dan Pembangunan Keluarga</span>
               </div>
+            </div>
+            <div className="d-flex nav-beranda">
+              <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                    Tahun Data:
+                  </div>
+                 <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                margin: "15px 15px 15px 5px",
+              }}
+              value={selectedSingleTahunData}
+              onChange={handleSelectChangeDataPokok}
+            >    
+              <option value="2023">2023</option>
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select>
+            <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                    Tahun Anggaran:
+                  </div>
+                 <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                margin: "15px 15px 15px 5px",
+              }}
+              value={selectedSingleTahunAnggaran}
+              onChange={handleSelectChangeAnggaran}
+            >                        
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select>
+                </div>
+            {/* <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                marginLeft: "10px",
+                marginTop: "16px",
+                marginBottom: "30px",
+              }}
+              value={selectedSingleTahunAnggaran}
+              onChange={handleSelectChange}
+            >                        
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select> */}
             </div>
           </Card>
         </Col>
@@ -1313,7 +1420,7 @@ const ContentStunting = () => {
                                     separator="."
                                     prefix="Rp "
                                     suffix=" T"
-                                    duration={3}
+                                    duration={1}
                                   />
                                 </span>
                               </div>
@@ -1358,7 +1465,7 @@ const ContentStunting = () => {
                                         separator="."
                                         prefix="Rp "
                                         suffix=" T"
-                                        duration={3}
+                                        duration={1}
                                       />
                                     </span>
                                   </div>
@@ -1391,7 +1498,7 @@ const ContentStunting = () => {
                                         separator="."
                                         prefix="Rp "
                                         suffix=" T"
-                                        duration={3}
+                                        duration={1}
                                       />
                                     </span>
                                   </div>
@@ -1470,101 +1577,139 @@ const ContentStunting = () => {
                     </>
                   )}
                 </Col>
-              <Row>
-              <Col md={12}>
-              <Card className="card-animate">
-                <CardBody>
-                  <div className="d-flex flex-column title-custom-card">
-                    <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                      <span>JUMLAH KELUARGA</span>
-                    </div>
-                    <div className="d-flex">
-                      <div className="avatar-xs-half flex-shrink-0">
-                        <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
-                          <i className="mdi mdi-human-male-female-child text-warning"></i>
-                        </span>
-                      </div>
-                      <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                        <span>
-                          <CountUp
-                            start={0}
-                            end={dataStunting.jumlah_keluarga}
-                            separator="."
-                            prefix=""
-                            duration={3}
-                          />
-                          {/* {dataStunting?.jumlah_keluarga?.toLocaleString("id-ID")} */}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </CardBody>
-              </Card>
-            </Col>  
               </Row>
-              </Row>
-              <Row>
-            <Col md={6}>
-              <Card className="card-animate">
-                <CardBody>
-                  <div className="d-flex flex-column title-custom-card">
-                    <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                      <span>KELUARGA SASARAN</span>
-                    </div>
-                    <div className="d-flex">
-                      <div className="avatar-xs-half flex-shrink-0">
-                        <span className="avatar-title bg-info-subtle rounded-4 fs-3">
-                          <i className="mdi mdi-human-male-female-child text-info"></i>
-                        </span>
+              {
+                showChartBerisiko ? <><PieChartNew
+                dataChart={dataChartPerbandinganKeluargaStunting}
+                categoryName={[
+                  "Keluarga Tidak Berisiko Stunting",
+                  "Keluarga Berisiko Stunting",
+                ]}                    
+                dataColors={'["#57E7B4", "#2DAED4"]'}
+              />
+              <div className="separator mb-4">
+              <div >
+                <span
+                  onClick={() => setShowChartBerisiko(false)}
+                  style={{
+                    cursor: "pointer",
+                    color: "#2DAED4",
+                  }}
+                >
+                  Lihat Nilai
+                </span>
+              </div>
+            </div>
+              </> : <><Row>
+                <Col md={12}>
+                <Card className="card-animate">
+                  <CardBody>
+                    <div className="d-flex flex-column title-custom-card">
+                      <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                        <span>JUMLAH KELUARGA</span>
                       </div>
-                      <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                        <span>
-                          <CountUp
-                            start={0}
-                            end={dataStunting.jumlah_keluarga_sasaran}
-                            separator="."
-                            prefix=""
-                            duration={3}
-                          />
-                          {/* {dataStunting?.jumlah_keluarga_sasaran?.toLocaleString("id-ID")} */}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </CardBody>
-              </Card>
-            </Col>
-            <Col md={6}>
-              <Card className="card-animate">
-                <CardBody>
-                  <div className="d-flex flex-column title-custom-card">
-                    <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                      <span>KELUARGA BERISIKO STUNTING</span>
-                    </div>
-                    <div className="d-flex">
-                      <div className="avatar-xs-half flex-shrink-0">
-                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
-                          <i className="mdi mdi-human-male-female-child text-danger"></i>
-                        </span>
-                      </div>
-                      <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                        <span>
-                          <CountUp
-                            start={0}
-                            end={dataStunting.jumlah_keluarga_stunting}
-                            separator="."
-                            prefix=""
-                            duration={3}
-                          />
-                          {/* {dataStunting?.jumlah_keluarga_stunting?.toLocaleString("id-ID")} */}
-                        </span>
+                      <div className="d-flex">
+                        <div className="avatar-xs-half flex-shrink-0">
+                          <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
+                            <i className="mdi mdi-human-male-female-child text-warning"></i>
+                          </span>
+                        </div>
+                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                          <span>
+                            <CountUp
+                              start={0}
+                              end={dataStunting.jumlah_keluarga}
+                              separator="."
+                              prefix=""
+                              duration={1}
+                            />
+                            {/* {dataStunting?.jumlah_keluarga?.toLocaleString("id-ID")} */}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </CardBody>
-              </Card>
-            </Col>
-          </Row>
+                  </CardBody>
+                </Card>
+              </Col>  
+                </Row>
+                <Row>
+              <Col md={6}>
+                <Card className="card-animate">
+                  <CardBody>
+                    <div className="d-flex flex-column title-custom-card">
+                      <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                        <span>KELUARGA SASARAN</span>
+                      </div>
+                      <div className="d-flex">
+                        <div className="avatar-xs-half flex-shrink-0">
+                          <span className="avatar-title bg-info-subtle rounded-4 fs-3">
+                            <i className="mdi mdi-human-male-female-child text-info"></i>
+                          </span>
+                        </div>
+                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                          <span>
+                            <CountUp
+                              start={0}
+                              end={dataStunting.jumlah_keluarga_sasaran}
+                              separator="."
+                              prefix=""
+                              duration={1}
+                            />
+                            {/* {dataStunting?.jumlah_keluarga_sasaran?.toLocaleString("id-ID")} */}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+              <Col md={6}>
+                <Card className="card-animate">
+                  <CardBody>
+                    <div className="d-flex flex-column title-custom-card">
+                      <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                        <span>KELUARGA BERISIKO STUNTING</span>
+                      </div>
+                      <div className="d-flex">
+                        <div className="avatar-xs-half flex-shrink-0">
+                          <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                            <i className="mdi mdi-human-male-female-child text-danger"></i>
+                          </span>
+                        </div>
+                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                          <span>
+                            <CountUp
+                              start={0}
+                              end={dataStunting.jumlah_keluarga_stunting}
+                              separator="."
+                              prefix=""
+                              duration={1}
+                            />
+                            {/* {dataStunting?.jumlah_keluarga_stunting?.toLocaleString("id-ID")} */}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+            </Row>
+            <div className="separator mb-4">
+              <div >
+                <span
+                  onClick={() => setShowChartBerisiko(true)}
+                  style={{
+                    cursor: "pointer",
+                    color: "#2DAED4",
+                  }}
+                >
+                  Lihat Grafik Perbandingan
+                </span>
+              </div>
+            </div>
+            </>
+              }
+              
           <Row>
                 <Col md={6}>
                   <Card className="card-animate">
@@ -1680,7 +1825,7 @@ const ContentStunting = () => {
                           fontSize: "16px",
                           marginBottom: "8px",
                         }}
-                        onClick={() => getDataStuntingTabel()}
+                        onClick={() => getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData})}
                       >
                         Kembali ke Provinsi
                       </button>
@@ -1996,7 +2141,9 @@ const ContentStunting = () => {
                                 ? ""
                                 : getDataStuntingTabelKabupaten(
                                     item.kode_prov,
-                                    e
+                                    e,
+                                    selectedSingleTahunAnggaran,
+                                    selectedSingleTahunData
                                   ), dataKolomNamaDaerah == "Se-Provinsi" ? setNamaDaerahDetail(item.nama_prov) : ""}                                
                               }
                             >
@@ -2492,7 +2639,7 @@ const ContentStunting = () => {
                       ANGGARAN SPM
                     </NavLink>
                   </NavItem>
-                  <NavItem>
+                  {/* <NavItem>
                     <NavLink
                       style={{ cursor: "pointer" }}
                       className={classnames("h-100", {
@@ -2505,7 +2652,7 @@ const ContentStunting = () => {
                       Perbandingan Total Keluarga Berisiko Stunting Berdasarkan
                       Total Keluarga Sasaran
                     </NavLink>
-                  </NavItem>
+                  </NavItem> */}
                   <NavItem>
                     <NavLink
                       style={{ cursor: "pointer" }}
@@ -2835,7 +2982,7 @@ const ContentStunting = () => {
                                   separator="."
                                   prefix="Rp "
                                   suffix=" T"
-                                  duration={3}
+                                  duration={1}
                                 />
                               </span>
                             </div>
@@ -2957,7 +3104,7 @@ const ContentStunting = () => {
                                           separator="."
                                           // prefix=""
                                           suffix=""
-                                          duration={3}
+                                          duration={1}
                                         />
                                       </span>
                                     </div>
@@ -3013,7 +3160,7 @@ const ContentStunting = () => {
                                           separator="."
                                           // prefix=""
                                           suffix=""
-                                          duration={3}
+                                          duration={1}
                                         />
                                       </span>
                                     </div>
@@ -3535,7 +3682,7 @@ const ContentStunting = () => {
                               separator="."
                               prefix="Rp "
                               suffix=""
-                              duration={3}
+                              duration={1}
                             />
                           </span>
                         </div>
@@ -3543,6 +3690,27 @@ const ContentStunting = () => {
                     </div>
                   </CardBody>
                 </Card>
+              </Col>
+              <Col md={8}>
+              {dataDetailHighlight.map((item, index)=>(
+                <div className="d-flex mb-3" key={index}>
+                  <div style={{ flexBasis: "350px", color:"#929FB1" }}>{item.nama_rekening}</div>
+                  <div>:&nbsp;</div>
+                  <div style={{ fontWeight: 650 }}>
+                  <CountUp
+                      start={0}
+                      end={item.anggaran}
+                      // decimal=","
+                      // decimals={2}
+                      separator="."
+                      prefix="Rp "
+                      // suffix=" T"
+                      duration={1}
+                    />
+                    
+                  </div>
+                </div>
+              ))}                
               </Col>
             </Row>
             <div style={{ overflowY: "scroll", maxHeight: "500px" }}>
@@ -3778,7 +3946,7 @@ const ContentStunting = () => {
                               separator="."
                               prefix="Rp "
                               suffix=""
-                              duration={3}
+                              duration={1}
                             />
                           </span>
                         </div>

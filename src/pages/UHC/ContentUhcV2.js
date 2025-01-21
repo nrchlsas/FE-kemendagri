@@ -54,7 +54,7 @@ const ContentUhcV2 = () => {
   const [loadingUhc, setLoadingUhc] = useState([]);
   const [errorUhc, setErrorUhc] = useState([]);
 
-  const getDataUhc = () => {
+  const getDataUhc = ({tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -62,7 +62,8 @@ const ContentUhcV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
-            tahun :"2024"
+            tahun: tahun,
+            tahun_data: tahun_data
           }),
         };
         const response = await fetch(
@@ -102,7 +103,7 @@ const ContentUhcV2 = () => {
   const [showNextData, setShowNextData] = useState(false);
   const [dataPeserta, setDataPeserta] = useState([])
 
-  const getDataTabelBpjsSeprov = () => {
+  const getDataTabelBpjsSeprov = ({tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -111,6 +112,8 @@ const ContentUhcV2 = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
+            tahun: tahun,
+            tahun_data: tahun_data
           }),
         };
         // /table_Bpjs_provinsi
@@ -127,23 +130,35 @@ const ContentUhcV2 = () => {
 
         const dataBpjsTabelSeprov = await response.json();
         setDataBpjsTabelSeprov(dataBpjsTabelSeprov?.data);
+
+        // Proses data
         const dataPeserta = {
-            bpjs1: dataBpjsTabelSeprov.data.map(item => ({
-            name: item.nama,
-            value: item.total_bpjs
-          })),
-            bpjs2: dataBpjsTabelSeprov.data.map(item => ({
-            name:item.nama,
-            value: item.jumlah_non_aktif
-          }))
-        }
-        console.log(dataPeserta, 'ini isi data peserta')
+          bpjs1: Array.isArray(dataBpjsTabelSeprov?.data)
+            ? dataBpjsTabelSeprov.data.map(item => ({
+                name: item?.nama || "Unknown",
+                value: item?.total_bpjs || 0,
+              }))
+            : [],
+          bpjs2: Array.isArray(dataBpjsTabelSeprov?.data)
+            ? dataBpjsTabelSeprov.data.map(item => ({
+                name: item?.nama || "Unknown",
+                value: item?.jumlah_non_aktif || 0,
+              }))
+            : [],
+        };
+      
+        // Simpan data peserta dan set map value
+        setDataPeserta(dataPeserta);
         setValueMap(dataPeserta.bpjs1);
-        const maxValue = Math.max(...dataPeserta.bpjs1.map(item => item.value));
+      
+        // Hitung nilai maksimum
+        const maxValue = Array.isArray(dataPeserta.bpjs1) && dataPeserta.bpjs1.length > 0
+          ? Math.max(...dataPeserta.bpjs1.map(item => item.value || 0))
+          : 0;
         setmaxValueMap(maxValue);
-        
-        setShowNextData(false)
-        setDataPeserta(dataPeserta)
+      
+        // Ubah state lain
+        setShowNextData(false);
         
       } catch (errorBpjsTabel) {
         setErrorBpjsTabel(errorBpjsTabel);
@@ -159,7 +174,7 @@ const ContentUhcV2 = () => {
   const [errorBpjsTabelKabupaten, setErrorBpjsTabelKabupaten] = useState([]);
   
 
-  const getDataTabelBpjsKabupaten = ({kodeDdn = "", e}) => {
+  const getDataTabelBpjsKabupaten = ({kodeDdn = "", e, tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -167,7 +182,9 @@ const ContentUhcV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
-            kode_ddn: kodeDdn
+            kode_ddn: kodeDdn,
+            tahun: tahun,
+            tahun_data: tahun_data
             // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
           }),
         };
@@ -203,7 +220,7 @@ const ContentUhcV2 = () => {
   const [loadingDetailAnggaranSub, setLoadingDetailAnggaranSub] = useState([]);
   const [errorDetailAnggaranSub, setErrorDetailAnggaranSub] = useState([]);
 
-  const getDataDetailAnggaran = ({kodeDdn=""}) => {
+  const getDataDetailAnggaran = ({kodeDdn="", tahun, tahun_data}) => {
     const fetchData = async () => {
       setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
       try {
@@ -212,7 +229,9 @@ const ContentUhcV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({            
-            kode_ddn: kodeDdn,            
+            kode_ddn: kodeDdn,      
+            tahun: tahun,
+            tahun_data: tahun_data      
           }),
         };
   
@@ -241,7 +260,7 @@ const ContentUhcV2 = () => {
     fetchData();
   };
 
-  const getDataDetailAnggaranSub = ({kodeDdn="", kodeSubGiat=""}) => {
+  const getDataDetailAnggaranSub = ({kodeDdn="", kodeSubGiat="", tahun, tahun_data}) => {
     const fetchData = async () => {
       setLoadingDetailAnggaranSub(true); // Set loading state to true when starting the fetch
       try {
@@ -251,7 +270,9 @@ const ContentUhcV2 = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({            
             kode_ddn: kodeDdn,
-            kode_sub_giat: kodeSubGiat
+            kode_sub_giat: kodeSubGiat,
+            tahun: tahun,
+            tahun_data: tahun_data
           }),
         };
   
@@ -418,7 +439,7 @@ const ContentUhcV2 = () => {
   const [dataJenisPemda, setDataJenisPemda] = useState("")
   const [dataDetailNamaDaerah, setDataDetailNamaDaerah] = useState('')
   const handleOpen = ({kodeDdn="", rincianDetail= 0, namaDaerah=""}) => {
-    getDataDetailAnggaran({kodeDdn: kodeDdn })      
+    getDataDetailAnggaran({kodeDdn: kodeDdn, tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData })      
     setDataRincianDetail(rincianDetail)
     setDataDetailNamaDaerah(namaDaerah)
     setCardHead(null)
@@ -429,7 +450,7 @@ const ContentUhcV2 = () => {
   const [namaSubGiat, setNamaSubGiat] = useState("")
 
   const handleOpenNextModal = ({kodeDdn="", kodeSubGiat="", rincianDetail= 0, namaSubGiat=""}) => {    
-    getDataDetailAnggaranSub({kodeDdn: kodeDdn, kodeSubGiat: kodeSubGiat})
+    getDataDetailAnggaranSub({kodeDdn: kodeDdn, kodeSubGiat: kodeSubGiat, tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData})
     // setModal(true)
     setDataRincianDetailSub(rincianDetail)
     setNamaSubGiat(namaSubGiat)
@@ -450,12 +471,27 @@ const ContentUhcV2 = () => {
       setcustomActiveTabBelanja(tab);
     }
   };
-
   
+  const [selectedSingleTahunAnggaran, setSelectedSingleTahunAnggaran] = useState('2025'); // Set default value
+  const [selectedSingleTahunData, setselectedSingleTahunData] = useState('2024'); // Set default value
+  
+  const handleSelectChangeAnggaran = (e) => {
+    const { name, value } = e.target;
+    setSelectedSingleTahunAnggaran(value); // Misalnya, untuk dropdown tahun
+    getDataUhc({tahun: value, tahun_data: selectedSingleTahunData})
+    getDataTabelBpjsSeprov({tahun: value, tahun_data: selectedSingleTahunData})
+  };
+
+  const handleSelectChangeDataPokok = (e) => {
+    const { name, value } = e.target;
+    setselectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
+    getDataUhc({tahun: selectedSingleTahunAnggaran, tahun_data:value})
+    getDataTabelBpjsSeprov({tahun: selectedSingleTahunAnggaran, tahun_data:value})
+  };
 
   useEffect(() => {
-    getDataUhc();
-    getDataTabelBpjsSeprov();
+    getDataUhc({tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
+    getDataTabelBpjsSeprov({tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
     // getDataTabelBpjsKabupaten()
   }, []);
 
@@ -464,6 +500,7 @@ const ContentUhcV2 = () => {
       <Row>
         <Col>
           <Card className="card-custom ">
+          <div className="d-flex justify-content-between">
             <div className="d-flex title-page">
               <div className="avatar-sm">
                 <i className="ri-account-circle-line text-dark fs-1"></i>
@@ -471,6 +508,49 @@ const ContentUhcV2 = () => {
               <div className="d-flex justify-content-center align-items-center">
                 <span>BPJS Kesehatan</span>
               </div>
+            </div>
+            <div className="d-flex nav-beranda">
+            <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                    Tahun Data:
+                  </div>
+                 <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                margin: "15px 15px 15px 5px",
+              }}
+              value={selectedSingleTahunData}
+              onChange={handleSelectChangeDataPokok}
+            >                        
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select>
+            <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                    Tahun Anggaran:
+                  </div>
+                 <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                margin: "15px 15px 15px 5px",
+              }}
+              value={selectedSingleTahunAnggaran}
+              onChange={handleSelectChangeAnggaran}
+            >                        
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select>
+                </div>
             </div>
           </Card>
         </Col>
@@ -1017,7 +1097,7 @@ const ContentUhcV2 = () => {
                         cursor: "pointer",
                         fontSize: "16px",
                         marginBottom: "8px"
-                    }} onClick={()=>getDataTabelBpjsSeprov()}>Kembali ke Provinsi</button></>) : (<></>)}
+                    }} onClick={()=>getDataTabelBpjsSeprov({tahun: selectedSingleTahunAnggaran})}>Kembali ke Provinsi</button></>) : (<></>)}
                     <div style={{ overflowX: "auto" }}>
                     <table
                       className="table table-bordered table-nowrap align-middle mb-0 custom-table"
@@ -1183,7 +1263,7 @@ const ContentUhcV2 = () => {
                   {currentItems.map((item, index) =>(
                     <tr key={index}>
                         <td>{indexOfFirstItem+index+1}</td>                        
-                        <td className={showNextData ? "" : "click-data" } style={{ minWidth: "270px" }} onClick={(e)=> showNextData ? "" : getDataTabelBpjsKabupaten({kodeDdn: item.kode, e})}>{showNextData ? item.nama_daerah : item.nama}</td>
+                        <td className={showNextData ? "" : "click-data" } style={{ minWidth: "270px" }} onClick={(e)=> showNextData ? "" : getDataTabelBpjsKabupaten({kodeDdn: item.kode, e:e, tahun:selectedSingleTahunAnggaran})}>{showNextData ? item.nama_daerah : item.nama}</td>
                         <td>{item.jumlah_bp_pn? parseInt(item.jumlah_bp_pn).toLocaleString("id-ID") : "-"}</td>
                         <td>{item.jumlah_bp_swasta? parseInt(item.jumlah_bp_swasta).toLocaleString("id-ID") : "-"}</td>
                         <td>{item.jumlah_pbi_jk? parseInt(item.jumlah_pbi_jk).toLocaleString("id-ID")

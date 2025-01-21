@@ -45,7 +45,7 @@ const ContentRealisasi = () => {
       setcustomActiveTab(tab);
     }
   };
-  const [selectedSingleTahun, setSelectedSingleTahun] = useState('2024'); // Set default value
+  const [selectedSingleTahun, setSelectedSingleTahun] = useState('2025'); // Set default value
   const [selectedSingleTahapan, setSelectedSingleTahapan] = useState('1'); // Set default value
 
   const [dataRealisasi, setDataRealisasi] = useState([]);

@@ -47,6 +47,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
   };
 
   const [selectedValues, setSelectedValues] = useState({
+    tahun:"",
     fungsi: [],
     skpd: [],
     daerah: [],
@@ -365,6 +366,21 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
     onSelectFilter(cleanPayload(initialValues));
   };
 
+  const [selectedTahun, setSelectedTahun] = useState("2024");
+  const handleSelectChangeTahun = (e) => {
+    const { name, value } = e.target;
+    setSelectedTahun(value)
+    const updatedValues = { ...selectedValues };
+    updatedValues.tahun= value
+    setSelectedValues(updatedValues);
+  
+    // Bersihkan payload sebelum dikirim ke parent
+    const cleanedFilters = cleanPayload(updatedValues);
+  
+    // Kirimkan payload ke parent
+    onSelectFilter(cleanedFilters);
+  };
+
   return (
     <React.Fragment>
       <button
@@ -412,6 +428,27 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
             >
               Reset Filter
             </button>
+            {/* <div className="d-flex justify-content-center align-items-center">
+            <i className="mdi mdi-calendar fs-22"></i>
+            <span className="m-0 me-2 text-dark">TAHUN:</span>
+            <select
+            name="tahunPerencanaan"
+              style={{
+                padding: "5px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",
+                cursor: "pointer",
+                // marginLeft: "10px"
+              }}
+              value={selectedTahun}
+              onChange={handleSelectChangeTahun}
+            >
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>                    
+            </select>
+            </div> */}
           </OffcanvasHeader>
           <OffcanvasBody className="p-0">
             <SimpleBar className="h-100 p-2">
