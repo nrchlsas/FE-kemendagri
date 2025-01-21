@@ -119,8 +119,14 @@ import Development from "../pages/Pages/Development/Development";
 import KementerianDanLembaga from "../pages/KementerianDanLembaga";
 
 import Menu from "../pages/RBAC/Menu";
+import GroupMenu from "../pages/RBAC/GroupMenu";
+import GroupDetailMenu from "../pages/RBAC/GroupDetailMenu";
 import Roles from "../pages/RBAC/Roles";
+import RolesGroup from "../pages/RBAC/RolesGroup";
+import RolesGroupDetail from "../pages/RBAC/RolesGroupDetail";
 import Permission from "../pages/RBAC/Permission";
+import PermissionRoles from "../pages/RBAC/PermissionRoles";
+import PermissionMenus from "../pages/RBAC/PermissionMenus";
 import Pengguna from "../pages/RBAC/Pengguna";
 import Perencanaan from "../pages/Perencanaan";
 import PerencanaanDaerah from "../pages/Perencanaan/PerencanaanDaerah";
@@ -245,8 +251,14 @@ const authProtectedRoutes = [
 
   //RBAC
   { path: "/menu", component: <Menu />},
+  { path: "/menu-group", component: <GroupMenu />},
+  { path: "/menu-group-detail", component: <GroupDetailMenu />},
   { path: "/roles", component: <Roles />},
+  { path: "/roles-group", component: <RolesGroup />},
+  { path: "/roles-group-detail", component: <RolesGroupDetail />},
   { path: "/permission", component: <Permission />},
+  { path: "/permission-roles", component: <PermissionRoles />},
+  { path: "/permission-menus", component: <PermissionMenus />},
   { path: "/pengguna", component: <Pengguna />},
 ];
 

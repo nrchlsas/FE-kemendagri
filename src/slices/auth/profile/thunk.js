@@ -55,7 +55,7 @@ export const resetProfileFlag = () => {
 };
 
 export const load_menu_by_profile = (user) => async (dispatch) => {
-    let response = api.create(`${API_9007_URI}/rbac/list-menu`);
+    let response = api.get(`${API_9007_URI}/rbac/list-menu`);
     let data = await response;
 
     let list_menu = [];

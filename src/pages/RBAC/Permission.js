@@ -11,133 +11,37 @@ import {
     Label,
     FormGroup
 } from "reactstrap";
-import FormInput from "../../Components/FormFactory/FormInput";
 import { APIClient } from "../../helpers/api_helper";
 import { createSelector } from "reselect";
 import { useSelector } from "react-redux";
 import { get_permission_by_url } from "../../slices/thunks";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const API_9007_URI = `${process.env.REACT_APP_API_URL_9007}`;
 const api = new APIClient();
-const permissionForm = {
-    menu: {
-        id: "ddl_menu",
-        label: "Menu",
-        type: "select",
-        placeholder: "Input nama role",
-        defaultValue: "",
-        rules: {
-            required: true,
-        },
-    },
-    roles: {
-        id: "ddl_roles",
-        label: "Roles",
-        type: "select",
-        placeholder: "",
-        defaultValue: true,
-        rules: {
-            required: true,
-        },
-    },
-    createPermission: {
-        id: "check_create",
-        label: "Create Permission",
-        type: "checkbox",
-        placeholder: "",
-        defaultValue: true,
-        rules: {
-            required: true,
-        },
-    },
-    updatePermission: {
-        id: "check_update",
-        label: "Update Permission",
-        type: "checkbox",
-        placeholder: "",
-        defaultValue: true,
-        rules: {
-            required: true,
-        },
-    },
-    deletePermission: {
-        id: "check_delete",
-        label: "Delete Permission",
-        type: "checkbox",
-        placeholder: "",
-        defaultValue: true,
-        rules: {
-            required: true,
-        },
-    },
-    readPermission: {
-        id: "check_read",
-        label: "Delete Permission",
-        type: "checkbox",
-        placeholder: "",
-        defaultValue: true,
-        rules: {
-            required: true,
-        },
-    }
-};
-
-const dataMenu = [
-    {
-        val: 1,
-        text: "Dashboard"
-    },
-    {
-        val: 2,
-        text: "Pengaturan"
-    },
-    {
-        val: 3,
-        text: "Data Pendapatan"
-    }
-]
-const dataRoles = [
-    {
-        val: 1,
-        text: "Direktur"
-    },
-    {
-        val: 2,
-        text: "DIRJEN"
-    },
-    {
-        val: 3,
-        text: "KASUBDIT"
-    }
-]
+const FORM_EMPTY = {
+    permission_id: 0,
+    permission_name: '',
+    permission_description: '',
+    uuid: '',
+    is_active: true,
+    createPermission: false,
+    updatePermission: false,
+    deletePermission: false,
+    readPermission: false,
+}
 
 const Permission = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [val, setVal] = useState()
-    const [formFilter, setFilter] = useState({
-        idMenu: 0,
-        idRoles: 0,
-    });
-    const [formData, setFormData] = useState({
-        id_permission: 0,
-        idMenu: 0,
-        idRoles: 0,
-        createPermission: false,
-        updatePermission: false,
-        deletePermission: false,
-        readPermission: false,
-    });
+    const [formData, setFormData] = useState(JSON.parse(JSON.stringify(FORM_EMPTY)));
     const [show, setShow] = useState(false)
     const [modal_center, setmodal_center] = useState(false);
     const [resultData, setResultData] = useState([]);
     const [is_valid, setIsValid] = useState(false);
     const [is_edit, setIsEdit] = useState(false);
     const [submitProcess, setSubmitProcess] = useState(false);
-    const [list_menu, setListMenu] = useState([]);
-    const [list_role, setListRole] = useState([]);
     const [delete_data, setDeleteData] = useState(null);
     const [menu_delete_data, setMenuDeleteData] = useState(null);
     const [modal_alert, setModalAlert] = useState({
@@ -194,48 +98,21 @@ const Permission = () => {
 
     useEffect(() => {
         let is_valid = true;
-        if (!formData.idMenu) is_valid = false;
-        if (!formData.idRoles) is_valid = false;
+        if (!formData.permission_name) is_valid = false;
+        if (!formData.permission_description) is_valid = false;
         setIsValid(is_valid);
-        console.log(formData)
     }, [formData])
 
+    // on create
     useEffect(() => {
-        populate_menu();
-        populate_role();
-        populate_data();
     }, [])
-
-    async function populate_role() {
-        const json = {
-            page: 1,
-            size: 500
-        }
-        let response = api.create(`${API_9007_URI}/rbac/list-roles-all`, json);
-        let data = await response;
-        if (data.code === 200) {
-            setListRole(data.data);
-        }
-    }
-
-    async function populate_menu() {
-        const json = {
-            page: 1,
-            size: 500
-        }
-        let response = api.create(`${API_9007_URI}/rbac/list-menu-table`, json);
-        let data = await response;
-        if (data.code === 200) {
-            setListMenu(data.data);
-        }
-    }
 
     async function populate_data() {
         const json = {
             page: paging.page,
             size: paging.size
         }
-        let response = api.create(`${API_9007_URI}/rbac/list-permission`, json);
+        let response = api.create(`${API_9007_URI}/rbac/list-permission-table`, json);
         let data = await response;
         if (data.code === 200) {
             calculate_paging(data);
@@ -249,13 +126,12 @@ const Permission = () => {
         try {
             let response = null;
             if (is_edit) {
-                response = api.create(`${API_9007_URI}/rbac/update-permission`, json);
+                response = api.put(`${API_9007_URI}/rbac/update-permission`, json);
             } else {
                 response = api.create(`${API_9007_URI}/rbac/create-permission`, json);
             }
             setSubmitProcess(true);
             let data = await response;
-            console.log({ data });
             if (data.code === 200 || data.customResponse.code === 200) {
                 populate_data();
                 cancel_form();
@@ -267,7 +143,6 @@ const Permission = () => {
                 });
             }
         } catch (error) {
-            console.log({ error });
             setModalAlert({
                 open: true,
                 type: 'error',
@@ -281,28 +156,17 @@ const Permission = () => {
     }
     function changeValue(e) {
         const { name, value, checked, type } = e.target;
-
         setFormData({ ...formData, [name]: type == "checkbox" ? checked : type == "select-one" ? parseInt(value) : value })
-        setVal(e)
-
     }
 
     function tog_center() {
         setmodal_center(!modal_center);
     }
 
-    function onEdit(sItem, mItem,) {
+    function onEdit(item) {
         setShow(true);
         setIsEdit(true);
-        setFormData(Object.assign({}, formData, {
-            id_permission: sItem.id_permission,
-            idMenu: mItem.id_menu,
-            idRoles: mItem.id_role,
-            createPermission: sItem.create_permission,
-            updatePermission: sItem.update_permission,
-            deletePermission: sItem.delete_permission,
-            readPermission: sItem.read_permission,
-        }));
+        setFormData(Object.assign({}, formData, item));
         window.scrollTo(0, 0)
     }
 
@@ -313,31 +177,20 @@ const Permission = () => {
 
     function reset_form() {
         setIsEdit(false);
-        setFormData({
-            id_permission: 0,
-            idMenu: 0,
-            idRoles: 0,
-            createPermission: false,
-            updatePermission: false,
-            deletePermission: false,
-            readPermission: false,
-        })
+        setFormData(JSON.parse(JSON.stringify(FORM_EMPTY)));
     }
 
     async function do_delete() {
-        console.log({ delete_data, menu_delete_data });
         try {
             const json = {
-                "id_permission": delete_data.id_permission,
-                "id_menu": menu_delete_data.id_menu,
-                "id_role": menu_delete_data.id_role,
-                "is_deleted": true
+                "uuid": delete_data.uuid,
+                "is_deleted": !delete_data.is_deleted
             }
-            let response = api.create(`${API_9007_URI}/rbac/delete-permission`, json);
+            let response = api.put(`${API_9007_URI}/rbac/delete-permission`, json);
             let data = await response;
             if (data.code === 200) {
                 populate_data();
-                // setModalAlert({ type: 'success', title: "Hapus Data", message: "Proses hapus data berhasil", open: true })
+                setModalAlert({ type: 'success', title: "Hapus Data", message: "Proses hapus data berhasil", open: true })
             }
         } catch (error) {
             setModalAlert({
@@ -354,6 +207,7 @@ const Permission = () => {
     return (
         <>
             <div className="page-content">
+                <h3>Permission</h3>
                 <Row style={{ display: show && "inline" || "none" }}>
                     <Col>
                         <Card>
@@ -365,36 +219,33 @@ const Permission = () => {
                                     <Row>
                                         <Col>
                                             <FormGroup>
-                                                <Label>Menu</Label>
-                                                <select name="idMenu"
+                                                <Label>Nama Permission</Label>
+                                                <input type="text" name="permission_name"
                                                     onChange={(e) => changeValue(e)}
-                                                    className="form-select"
-                                                    value={formData.idMenu}>
-                                                    <option value={0}>-- Please Select Data --</option>
-                                                    {list_menu.map(item => (
-                                                        <option key={'option_menu_' + item.id} value={item.id}>
-                                                            {item.is_menu ? `Menu - ` : `API - `}{item.nama_menu} {item.nama_sub_menu ? '- ' + item.nama_sub_menu : ''} {}
-                                                        </option>
-                                                    ))}
-                                                </select>
+                                                    className="form-control"
+                                                    value={formData.permission_name}
+                                                />
                                             </FormGroup>
-
                                             <FormGroup>
-                                                <Label>Role</Label>
-                                                <select name="idRoles"
+                                                <Label>Deskripsi Permission</Label>
+                                                <input type="text" name="permission_description"
                                                     onChange={(e) => changeValue(e)}
-                                                    className="form-select"
-                                                    value={formData.idRoles}>
-                                                    <option value="0">-- Please Select Data --</option>
-                                                    {list_role.map(item => (
-                                                        <option key={'option_menu_' + item.id} value={item.id}>
-                                                            {item.nama_roles}
-                                                        </option>
-                                                    ))}
-                                                </select>
+                                                    className="form-control"
+                                                    value={formData.permission_description}
+                                                />
+                                            </FormGroup>
+                                            <FormGroup check>
+                                                <Label>
+                                                    <input type="checkbox" name="is_active"
+                                                        onChange={(e) => changeValue(e)}
+                                                        className="form-check-input"
+                                                        checked={formData.is_active}
+                                                    />
+                                                    <span>Status Aktif</span>
+                                                </Label>
                                             </FormGroup>
 
-                                            <FormGroup check>
+                                            {/* <FormGroup check>
                                                 <Label>
                                                     <input type="checkbox" name="createPermission"
                                                         onChange={(e) => changeValue(e)}
@@ -404,7 +255,6 @@ const Permission = () => {
                                                     <span>Create Permission</span>
                                                 </Label>
                                             </FormGroup>
-
                                             <FormGroup check>
                                                 <Label>
                                                     <input type="checkbox" name="readPermission"
@@ -415,7 +265,6 @@ const Permission = () => {
                                                     <span>Read Permission</span>
                                                 </Label>
                                             </FormGroup>
-
                                             <FormGroup check>
                                                 <Label>
                                                     <input type="checkbox" name="updatePermission"
@@ -426,7 +275,6 @@ const Permission = () => {
                                                     <span>Update Permission</span>
                                                 </Label>
                                             </FormGroup>
-
                                             <FormGroup check>
                                                 <Label>
                                                     <input type="checkbox" name="deletePermission"
@@ -436,13 +284,7 @@ const Permission = () => {
                                                     />
                                                     <span>Delete Permission</span>
                                                 </Label>
-                                            </FormGroup>
-
-                                            {/* {
-                                                Object.keys(permissionForm).map((e) => (
-                                                    <FormInput key={e} dynamicForm={permissionForm[e]} changeValue={changeValue} dataMenu={dataMenu} dataRoles={dataRoles} />
-                                                ))
-                                            } */}
+                                            </FormGroup> */}
 
                                         </Col>
                                     </Row>
@@ -466,85 +308,59 @@ const Permission = () => {
                     <Col>
                         <Card>
                             <CardBody>
-                                <div className="d-flex flex-row justify-content-between">
-                                    <div>
-                                        <button style={{
-                                            backgroundColor: "#007bff",
-                                            color: "white",
-                                            padding: "10px 20px",
-                                            border: "none",
-                                            borderRadius: "5px",
-                                            cursor: "pointer",
-                                            fontSize: "12px",
-                                            marginBottom: "6px"
-                                        }} onClick={() => setShow(true)}>Tambah</button></div>
-                                    <div>
-                                        <span>Filter: </span>
-                                        <select name="idRoles"
-                                            onChange={(e) =>
-                                                setFilter({ ...formFilter, idRoles: parseInt(e.target.value) })
-                                            }
-                                            className=""
-                                            value={formFilter.idRoles}>
-                                            <option value="0">-- Please Select Data --</option>
-                                            {list_role.map(item => (
-                                                <option key={'option_menu_' + item.id} value={item.id}>
-                                                    {item.nama_roles}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                <div className="d-flex flex-row">
+                                    <button style={{
+                                        backgroundColor: "#007bff",
+                                        color: "white",
+                                        padding: "10px 20px",
+                                        border: "none",
+                                        borderRadius: "5px",
+                                        cursor: "pointer",
+                                        fontSize: "12px",
+                                        marginBottom: "6px"
+                                    }} onClick={() => setShow(true)}>Tambah</button>
+                                    <Link to="/permission-roles" className="btn btn-outline-warning mx-2" style={{
+                                        padding: "10px 20px",
+                                        marginBottom: "6px"
+                                    }}>
+                                        Form Permission Group Roles
+                                    </Link>
+                                    <Link to="/permission-menus" className="btn btn-outline-warning mx-2" style={{
+                                        padding: "10px 20px",
+                                        marginBottom: "6px"
+                                    }}>
+                                        Form Permission Group Menus
+                                    </Link>
                                 </div>
-                                <table
-                                    className="table table-bordered table-nowrap align-middle mb-0"
-                                    style={{ width: "100%" }}
-                                >
+                                <table className="table table-bordered table-nowrap align-middle mb-0"
+                                    style={{ width: "100%" }}>
                                     <thead className="table-light">
                                         <tr>
-                                            {/* <th>
-                                                NO
-                                            </th> */}
-                                            <th>
-                                                Roles
-                                            </th>
-                                            <th style={{ cursor: "pointer", verticalAlign: "middle" }}>
-                                                Menu
-                                            </th>
-                                            <th style={{ cursor: "pointer", verticalAlign: "middle" }}>
-                                                Sub Menu
-                                            </th>
-                                            <th>URL</th>
-                                            <th style={{ width: "65px" }}>Read</th>
+                                            <th style={{ width: "20px" }}>NO</th>
+                                            <th>Nama Permission</th>
+                                            <th>Deskripsi Permission</th>
+                                            <th style={{ width: "60px" }}>Aktif</th>
+                                            <th style={{ width: "60px" }}>Deleted</th>
+                                            {/* <th style={{ width: "65px" }}>Read</th>
                                             <th style={{ width: "65px" }}>Create</th>
                                             <th style={{ width: "65px" }}>Update</th>
-                                            <th style={{ width: "65px" }}>Delete</th>
+                                            <th style={{ width: "65px" }}>Delete</th> */}
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody style={{ minHeight: "500px" }}>
                                         {
                                             resultData.map((item, index) => (
-                                                item.menus.map((mItem, mIdx) => (
-                                                    mItem.sub_menus.map((sItem, idx) => (
-                                                        <tr key={'role_item' + index + '_' + idx}>
-                                                            {/* <td
-                                                                style={
-                                                                    {
-                                                                        textAlign: "center",
-                                                                        verticalAlign: "middle"
-                                                                    }}>
-                                                                {index + 1}
-                                                            </td> */}
-                                                            <td>
-                                                                {item.nama_roles}
-                                                            </td>
-                                                            <td style={{ maxWidth: "300px" }} className="text-wrap">
-                                                                {mItem.nama_menu}
-                                                            </td>
-                                                            <td style={{ maxWidth: "300px" }} className="text-wrap">
-                                                                {sItem.nama_sub_menu}
-                                                            </td>
-                                                            <td style={{ maxWidth: "200px" }} className="text-wrap">{sItem.url}</td>
+                                                <tr key={'role_item' + index}>
+                                                    <td style={{
+                                                        textAlign: "center",
+                                                        verticalAlign: "middle"
+                                                    }}>{index + 1}</td>
+                                                    <td>{item.permission_name}</td>
+                                                    <td>{item.permission_description}</td>
+                                                    <td><input type="checkbox" key={'is_active_' + index} checked={item.is_active} readOnly /></td>
+                                                    <td><input type="checkbox" key={'is_deleted_' + index} checked={item.is_deleted} readOnly /></td>
+                                                    {/* <td style={{ maxWidth: "200px" }} className="text-wrap">{sItem.url}</td>
                                                             <td>
                                                                 <input type="checkbox" checked={sItem.read_permission} readOnly />
                                                             </td>
@@ -556,30 +372,32 @@ const Permission = () => {
                                                             </td>
                                                             <td>
                                                                 <input type="checkbox" checked={sItem.delete_permission} readOnly />
-                                                            </td>
-                                                            <td style={{ width: "160px" }}>
-                                                                <Button color="danger" style={{ marginRight: "3px" }} onClick={() => {
-                                                                    setDeleteData(sItem);
-                                                                    setMenuDeleteData(mItem);
-                                                                    setShow(false);
-                                                                    tog_center();
-                                                                }}>Hapus</Button>
-                                                                <Button color="primary" onClick={() => onEdit(sItem, mItem)}>Ubah</Button>
-                                                            </td>
-                                                        </tr>
-                                                    ))
-                                                ))
+                                                            </td> */}
+                                                    <td style={{ width: "160px" }}>
+                                                        <Button color="danger" style={{ marginRight: "3px" }} onClick={() => {
+                                                            setDeleteData(item);
+                                                            setMenuDeleteData(item);
+                                                            setShow(false);
+                                                            tog_center();
+                                                        }}>Hapus</Button>
+                                                        <Button color="primary" onClick={() => onEdit(item)}>Ubah</Button>
+                                                    </td>
+                                                </tr>
                                             ))
                                         }
 
                                     </tbody>
                                 </table>
-                                <div className="paging-container d-flex justify-content-center mt-3">{paging_content()}</div>
+                                <div className="paging-container d-flex justify-content-center mt-3">
+                                    <div className="d-flex flex-wrap" style={{ maxWidth: '80%' }}>
+                                        {paging_content()}
+                                    </div>
+                                </div>
                             </CardBody>
                         </Card>
                     </Col>
-                </Row>
-            </div>
+                </Row >
+            </div >
 
             <Modal
                 isOpen={modal_center}

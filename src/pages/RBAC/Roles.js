@@ -16,33 +16,11 @@ import { createSelector } from "reselect";
 import { useSelector } from "react-redux";
 import { get_permission_by_url } from "../../slices/thunks";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import FormSelectFilter from "../../Components/FormFactory/FormSelectFilter";
 
 const API_9007_URI = `${process.env.REACT_APP_API_URL_9007}`;
 const api = new APIClient();
-const rolesForm = {
-    namaRoles: {
-        id: "txt_nama_roles",
-        label: "Nama Role",
-        type: "text",
-        placeholder: "Input nama role",
-        defaultValue: "",
-        rules: {
-            required: true,
-        },
-    },
-    status: {
-        id: "check_status",
-        label: "Status",
-        type: "checkbox",
-        placeholder: "",
-        defaultValue: true,
-        rules: {
-            required: true,
-        },
-    }
-
-};
 
 const Roles = () => {
     const dispatch = useDispatch();
@@ -50,8 +28,10 @@ const Roles = () => {
     const [formData, setFormData] = useState({
         id: 0,
         uuid: '',
-        nama_roles: '',
-        status: false,
+        role_name: '',
+        role_description: '',
+        is_active: false,
+        parent_role_id: null
     });
     const [show, setShow] = useState(false)
     const [modal_center, setmodal_center] = useState(false);
@@ -66,6 +46,25 @@ const Roles = () => {
         title: 'Title',
         message: 'Message'
     })
+
+    const [list_parent, setListParent] = useState([]);
+    const [parent_selected, setParentSelected] = useState(null);
+    async function search_parent(keyword) {
+        const json = {
+            page: 1,
+            size: 10,
+            role_name: keyword
+        }
+        let response = api.create(`${API_9007_URI}/rbac/list-roles-all`, json);
+
+        let data = await response;
+
+        if (data.code === 200) {
+            setListParent(data.data.map(d => { return { id: d.role_id, text: d.role_name } }));
+        } else {
+            setListParent([]);
+        }
+    }
 
     // permission
     const permissionState = (state) => state.Profile;
@@ -114,22 +113,11 @@ const Roles = () => {
 
     const onSubmit = async (e) => {
         e.preventDefault();
-        const json = {
-            id: formData.id,
-            uuid: formData.uuid,
-            namaRoles: formData.nama_roles,
-            status: formData.status
-        };
+        const json = JSON.parse(JSON.stringify(formData));
         try {
             let response = null;
             if (is_edit) {
-                const json_edit = {
-                    id: formData.id,
-                    status: formData.status,
-                    uuid: formData.uuid,
-                    nama_roles: formData.nama_roles,
-                }
-                response = api.create(`${API_9007_URI}/rbac/update-roles`, json_edit);
+                response = api.put(`${API_9007_URI}/rbac/update-roles`, json);
             } else {
                 response = api.create(`${API_9007_URI}/rbac/create-roles`, json);
             }
@@ -168,7 +156,7 @@ const Roles = () => {
 
     useEffect(() => {
         let is_valid = true;
-        if (!formData.nama_roles) is_valid = false;
+        if (!formData.role_name) is_valid = false;
         setIsValid(is_valid);
     }, [formData])
 
@@ -195,9 +183,12 @@ const Roles = () => {
         setFormData(Object.assign({}, formData, {
             id: data.id,
             uuid: data.uuid,
-            nama_roles: data.nama_roles,
-            status: data.status,
+            role_name: data.role_name,
+            role_description: data.role_description || '',
+            is_active: data.is_active,
+            parent_role_id: data.parent_role_id
         }));
+        setParentSelected(data.parent_role_id ? { id: data.parent_role_id, text: data.parent_role_name || 'EMPTY' } : null);
         window.scrollTo(0, 0)
     }
 
@@ -211,8 +202,9 @@ const Roles = () => {
         setFormData({
             id: 0,
             uuid: '',
-            nama_roles: '',
-            status: false,
+            role_name: '',
+            role_description: '',
+            is_active: false,
         })
     }
 
@@ -249,6 +241,7 @@ const Roles = () => {
     return (
         <>
             <div className="page-content">
+                <h3>Form Roles</h3>
                 <Row style={{ display: show && "inline" || "none" }}>
                     <Col>
                         <Card>
@@ -261,20 +254,41 @@ const Roles = () => {
                                         <Col>
                                             <FormGroup>
                                                 <Label>Nama Role</Label>
-                                                <input type="text" name="nama_roles"
+                                                <input type="text" name="role_name"
                                                     onChange={(e) => changeValue(e)}
                                                     className="form-control"
-                                                    value={formData.nama_roles}
+                                                    value={formData.role_name}
                                                 />
                                             </FormGroup>
+
+                                            <FormGroup>
+                                                <Label>Deskripsi Role</Label>
+                                                <input type="text" name="role_description"
+                                                    onChange={(e) => changeValue(e)}
+                                                    className="form-control"
+                                                    value={formData.role_description}
+                                                />
+                                            </FormGroup>
+
+                                            <FormGroup>
+                                                <Label>Role Parent</Label>
+                                                <FormSelectFilter onSearch={search_parent} dataList={list_parent}
+                                                    selected={parent_selected}
+                                                    onSelect={val => {
+                                                        setFormData(Object.assign({}, formData, { parent_role_id: val ? val.id : null }));
+                                                        setParentSelected(val);
+                                                    }}
+                                                />
+                                            </FormGroup>
+
                                             <FormGroup check>
                                                 <Label>
-                                                    <input type="checkbox" name="status"
+                                                    <input type="checkbox" name="is_active"
                                                         onChange={(e) => changeValue(e)}
                                                         className="form-check-input"
-                                                        checked={formData.status}
+                                                        checked={formData.is_active}
                                                     />
-                                                    <span>Status</span>
+                                                    <span>Aktif</span>
                                                 </Label>
                                             </FormGroup>
                                             {/* {
@@ -303,55 +317,63 @@ const Roles = () => {
                     <Col>
                         <Card>
                             <CardBody>
-                                <button style={{
-                                    backgroundColor: "#007bff",
-                                    color: "white",
-                                    padding: "10px 20px",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                    fontSize: "12px",
-                                    marginBottom: "6px"
-                                }} onClick={() => { reset_form(); setShow(true) }}>Tambah</button>
+                                <div className="d-flex flex-row">
+                                    <button style={{
+                                        backgroundColor: "#007bff",
+                                        color: "white",
+                                        padding: "10px 20px",
+                                        border: "none",
+                                        borderRadius: "5px",
+                                        cursor: "pointer",
+                                        fontSize: "12px",
+                                        marginBottom: "6px"
+                                    }} onClick={() => { reset_form(); setShow(true) }}>Tambah</button>
+                                    <Link to="/roles-group" className="btn btn-outline-warning mx-2" style={{
+                                        padding: "10px 20px",
+                                        marginBottom: "6px"
+                                    }}>
+                                        Form Role Group
+                                    </Link>
+                                    <Link to="/roles-group-detail" className="btn btn-outline-warning mx-2" style={{
+                                        padding: "10px 20px",
+                                        marginBottom: "6px"
+                                    }}>
+                                        Form Group Role Detail
+                                    </Link>
+                                </div>
                                 <table
                                     className="table table-bordered table-nowrap align-middle mb-0"
                                     style={{ width: "100%" }}
                                 >
                                     <thead className="table-light">
                                         <tr>
-                                            <th>
-                                                NO
-                                            </th>
-                                            <th
-                                                style={{ cursor: "pointer", verticalAlign: "middle" }}
-                                            >
+                                            <th style={{ width: "20px" }}>NO</th>
+                                            <th style={{ cursor: "pointer", verticalAlign: "middle" }}>
                                                 Nama Role
                                             </th>
-                                            <th>
-                                                Status
-                                            </th>
-                                            <th>
-                                                Aksi
-                                            </th>
+                                            <th>Deskripsi</th>
+                                            <th>Parent Role</th>
+                                            <th style={{ width: "60px" }}>Aktif</th>
+                                            <th style={{ width: "60px" }}>Deleted</th>
+                                            <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody style={{ minHeight: "500px" }}>
                                         {resultData.map((item, index) => (
                                             <tr key={index}>
-                                                <td
-                                                    style={
-                                                        {
-                                                            textAlign: "center",
-                                                            verticalAlign: "middle"
-                                                        }}>
+                                                <td style={
+                                                    {
+                                                        textAlign: "center",
+                                                        verticalAlign: "middle",
+                                                        width: "20px"
+                                                    }}>
                                                     {(paging.page - 1) * paging.size + index + 1}
                                                 </td>
-                                                <td>
-                                                    {item.nama_roles}
-                                                </td>
-                                                <td>
-                                                    <input type="checkbox" key={index} checked={item.status} readOnly />
-                                                </td>
+                                                <td>{item.role_name}</td>
+                                                <td>{item.role_description}</td>
+                                                <td>{item.parent_role_name || item.parent_role_id || '-'}</td>
+                                                <td><input type="checkbox" key={'is_active_' + index} checked={item.is_active} readOnly /></td>
+                                                <td><input type="checkbox" key={'is_deleted_' + index} checked={item.is_deleted} readOnly /></td>
                                                 <td style={{ width: "160px" }}>
                                                     <Button color="danger" style={{ marginRight: "3px" }} onClick={() => {
                                                         setDeleteData(item);
@@ -365,7 +387,11 @@ const Roles = () => {
 
                                     </tbody>
                                 </table>
-                                <div className="paging-container d-flex justify-content-center mt-3">{paging_content()}</div>
+                                <div className="paging-container d-flex justify-content-center mt-3">
+                                    <div className="d-flex flex-wrap" style={{ maxWidth: '80%' }}>
+                                        {paging_content()}
+                                    </div>
+                                </div>
                             </CardBody>
                         </Card>
                     </Col>
