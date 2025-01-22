@@ -413,7 +413,7 @@ const BerandaV2 = () => {
       <Row style={{ fontFamily: "poppins" }}>
         <Col md={4}>
           <Card data-aos="fade-up-right" className="card-animate card-height-100">
-            <CardHeader className="border-bottom-0">            
+            <CardHeader className="border-bottom-0 overflow-hidden">            
               <div className="d-flex justify-content-between">
               <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
                 Tahap:
@@ -426,7 +426,8 @@ const BerandaV2 = () => {
                         border: "1px solid #ccc",
                         backgroundColor: "#ffffff",
                         cursor: "pointer",
-                        marginLeft: "10px"
+                        marginLeft: "10px",
+                        widht: "120px"
                       }}
                       value={selectedTahapPerencanaan}
                       onChange={handleSelectChange}
@@ -645,7 +646,7 @@ const BerandaV2 = () => {
         </Col>
         <Col md={4}>
           <Card data-aos="fade-down" className="card-animate card-height-100">
-            <CardHeader className="border-bottom-0" >
+            <CardHeader className="border-bottom-0 overflow-hidden" >
             <div className="d-flex justify-content-between">
               <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
                 Tahap:
@@ -658,7 +659,8 @@ const BerandaV2 = () => {
                         border: "1px solid #ccc",
                         backgroundColor: "#ffffff",
                         cursor: "pointer",
-                        marginLeft: "10px"
+                        marginLeft: "10px",
+                        widht: "120px"
                       }}
                       value={selectedTahapPenganggaran}
                       onChange={handleSelectChange}

@@ -83,14 +83,20 @@ const ContentRealisasi = () => {
         setDataRealisasiPersentase(
           dataRealisasiNasionalPersentase.data.realisasi_level_1
         );
-        const dataPersentaseMap = dataRealisasiNasionalPersentase.data.realisasi_level_1.map(item => ({
-          name: item.nama_prov,
-          value: item.persenrealisasianggaran
-        }))
+
+        const dataPersentaseMap = Array.isArray(dataRealisasiNasionalPersentase?.data?.realisasi_level_1)
+        ? dataRealisasiNasionalPersentase.data.realisasi_level_1.map(item => ({
+            name: item?.nama_prov || "Unknown",
+            value: item?.persenrealisasianggaran || 0,
+          }))
+        : [];
+
+        const maxValue = Array.isArray(dataPersentaseMap)
+          ? dataPersentaseMap.reduce((max, item) => Math.max(max, item.value || 0), 0)
+          : 0;
 
         setValueMap(dataPersentaseMap)
-        const maxValue = Math.max(...dataPersentaseMap.map(item => item.value));
-        setmaxValueMap(maxValue);        
+        setmaxValueMap(maxValue);
 
       } catch (errorRealisasi) {
         setErrorRealisasi(errorRealisasi);
