@@ -1319,7 +1319,7 @@ const ContentUhcV2 = () => {
         </ModalHeader>
         <ModalBody>
         <Row>
-              <Col md={4}><Card className="card-animate card-height-100">
+              <Col md={4}><Card className="card-animate">
                         <CardBody>
                           <div
                             className="d-flex flex-column title-custom-card"                            

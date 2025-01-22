@@ -427,7 +427,7 @@ const BerandaV2 = () => {
                         backgroundColor: "#ffffff",
                         cursor: "pointer",
                         marginLeft: "10px",
-                        widht: "120px"
+                        width: "120px"
                       }}
                       value={selectedTahapPerencanaan}
                       onChange={handleSelectChange}
@@ -660,7 +660,7 @@ const BerandaV2 = () => {
                         backgroundColor: "#ffffff",
                         cursor: "pointer",
                         marginLeft: "10px",
-                        widht: "120px"
+                        width: "120px"
                       }}
                       value={selectedTahapPenganggaran}
                       onChange={handleSelectChange}
