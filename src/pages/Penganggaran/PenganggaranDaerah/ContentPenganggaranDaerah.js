@@ -56,7 +56,7 @@ const ContentPenganggaranDaerah = () => {
           }),
         };
         const response = await fetch(
-          `${API_URI_RBAC}/v2/dashboard_Penganggaran_2_komposisi`,
+          `${API_URI_RBAC}/v2/dashboard_penganggaran_2_komposisi`,
           requestOptions
         );
 
