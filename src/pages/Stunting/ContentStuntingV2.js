@@ -3659,7 +3659,7 @@ const ContentStunting = () => {
           <ModalBody>
             <Row>
               <Col md={4}>
-                <Card className="card-animate card-height-100">
+                <Card className="card-animate">
                   <CardBody>
                     <div className="d-flex flex-column title-custom-card">
                       <div className="d-flex justify-content-between align-items-start mb-1 title-card">
