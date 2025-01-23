@@ -257,7 +257,7 @@ const ContentMiskinEkstremV2 = () => {
 
   const [dataPieChartSpm, setDataPieChartSpm] = useState([],[])
 
-  const getDataKemiskinanEkstrem = ({tahun}) => {
+  const getDataKemiskinanEkstrem = ({tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -265,7 +265,8 @@ const ContentMiskinEkstremV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
-            tahun : tahun
+            tahun : tahun,
+            tahun_data: tahun_data
           }),
         };
         const response = await fetch(
@@ -705,12 +706,16 @@ const ContentMiskinEkstremV2 = () => {
   
     // Ambil data desil yang sesuai dan update valueMap
     const selectedData = dataDesil[`desil${selectedValue}`]; // Ambil data sesuai pilihan
-    console.log(selectedData,'ini')
-    if (selectedData) {
+    console.log(selectedData, 'ini');
+
+    if (Array.isArray(selectedData) && selectedData.length > 0) {
       setValueMap(selectedData);
-      const maxValue = Math.max(...selectedData.map(item => item.value));
+      const maxValue = Math.max(...selectedData.map(item => item.value || 0));
       setmaxValueMap(maxValue);
-    }
+    } else {
+      setValueMap([]);
+      setmaxValueMap(0); // Set nilai default jika selectedData tidak valid
+}
   };
 
   const handleShowDataKeluargaDesil1 = (value) => {
@@ -722,7 +727,7 @@ const ContentMiskinEkstremV2 = () => {
   };
   const [dataMiskinEkstremTabel, setDataMiskinEkstremTabel] = useState([],[]);
   
-  const getDataMiskinEkstremTabel = ({tahun}) => {
+  const getDataMiskinEkstremTabel = ({tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -730,7 +735,8 @@ const ContentMiskinEkstremV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
-            tahun: tahun
+            tahun: tahun,
+            tahun_data: tahun_data
           }),
         };
 
@@ -824,7 +830,7 @@ const ContentMiskinEkstremV2 = () => {
   const [dataKolomNamaDaerah, setDataKolomNamaDaerah] = useState("Se-Provinsi");
   const [showNextData, setShowNextData] = useState(true);
   
-  const getDataMiskinEkstremTabelKab = (kodeDdn="", e, tahun) => {
+  const getDataMiskinEkstremTabelKab = (kodeDdn="", e, tahun, tahun_data) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -833,7 +839,8 @@ const ContentMiskinEkstremV2 = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_ddn: kodeDdn,
-            tahun: tahun
+            tahun: tahun,
+            tahun_data: tahun_data
           }),
         };
 
@@ -871,7 +878,7 @@ const ContentMiskinEkstremV2 = () => {
   const [loadingDetailAnggaran, setLoadingDetailAnggaran] = useState([]);
   const [errorDetailAnggaran, setErrorDetailAnggaran] = useState([]);
 
-  const getDataDetailAnggaran = (kodeSeProvinsi="", kodeDdnKabupaten="", kodeDdnProvinsi="", kodeSubGiat="") => {
+  const getDataDetailAnggaran = (kodeSeProvinsi="", kodeDdnKabupaten="", kodeDdnProvinsi="", kodeSubGiat="", tahun, tahun_data) => {
     const fetchData = async () => {
       setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
       try {
@@ -882,7 +889,9 @@ const ContentMiskinEkstremV2 = () => {
           body: JSON.stringify({
             kode_prov: kodeSeProvinsi,
             kode_ddn: kodeDdnKabupaten !=""? kodeDdnKabupaten : kodeDdnProvinsi,
-            kode_sub_giat: kodeSubGiat
+            kode_sub_giat: kodeSubGiat,
+            tahun: tahun,
+            tahun_data: tahun_data
           }),
         };
   
@@ -965,9 +974,9 @@ const ContentMiskinEkstremV2 = () => {
   // };
 
   useEffect(() => {
-    getDataKemiskinanEkstrem({tahun: selectedSingleTahun});
+    getDataKemiskinanEkstrem({tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
     // getDataKemiskinanEkstremTahun("2024");
-    getDataMiskinEkstremTabel({tahun: selectedSingleTahun});
+    getDataMiskinEkstremTabel({tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
     // getDataMiskinEkstremTabelKab()
   }, []);
 
@@ -1132,7 +1141,7 @@ const ContentMiskinEkstremV2 = () => {
   const [dataJenisPemda, setDataJenisPemda] = useState("")
   const [dataDetailNamaDaerah, setDataDetailNamaDaerah] = useState('')
   const handleOpen = (kodeProv="",  namaDaerah="", kodeDdnKab="", kodeDdnProv="", jenisPemda="", rincianDetail= 0) => {
-    getDataDetailAnggaran(kodeProv, kodeDdnKab, kodeDdnProv, "")      
+    getDataDetailAnggaran(kodeProv, kodeDdnKab, kodeDdnProv, "", selectedSingleTahunAnggaran, selectedSingleTahunData)      
 
     if(jenisPemda=="prov"){
       setDataJenisPemda("prov")
@@ -1156,11 +1165,11 @@ const ContentMiskinEkstremV2 = () => {
   const handleOpenNextModal = (kodeDaerah="", kodeSubGiat="", kodeDdnProv="", kodeDdnKab="", rincianDetail= 0, namaSubGiat="") => {
 
     if(kodeDaerah != "") {
-      getDataDetailAnggaran(kodeDaerah, "", "", kodeSubGiat)      
+      getDataDetailAnggaran(kodeDaerah, "", "", kodeSubGiat, selectedSingleTahunAnggaran, selectedSingleTahunData)      
     }else if(kodeDdnProv != "") {
-      getDataDetailAnggaran("", "", kodeDdnProv, kodeSubGiat)
+      getDataDetailAnggaran("", "", kodeDdnProv, kodeSubGiat, selectedSingleTahunAnggaran, selectedSingleTahunData)
     }else if(kodeDdnKab != "") {
-      getDataDetailAnggaran("", kodeDdnKab, "", kodeSubGiat)
+      getDataDetailAnggaran("", kodeDdnKab, "", kodeSubGiat, selectedSingleTahunAnggaran, selectedSingleTahunData)
     }
 
     // setModal(true)
@@ -1176,13 +1185,21 @@ const ContentMiskinEkstremV2 = () => {
     setModall(false); // Close modal by setting modall to false
   };
 
-  const [selectedSingleTahun, setSelectedSingleTahun] = useState('2025'); // Set default value
+  const [selectedSingleTahunAnggaran, setSelectedSingleTahunAnggaran] = useState('2025'); // Set default value
+  const [selectedSingleTahunData, setselectedSingleTahunData] = useState('2024'); // Set default value
   
-  const handleSelectChangeTahun = (e) => {
+  const handleSelectChangeAnggaran = (e) => {
     const { name, value } = e.target;
-    setSelectedSingleTahun(value); // Misalnya, untuk dropdown tahun
-    getDataKemiskinanEkstrem({tahun: value})
-    getDataMiskinEkstremTabel({tahun: value});
+    setSelectedSingleTahunAnggaran(value); // Misalnya, untuk dropdown tahun
+    getDataKemiskinanEkstrem({tahun: value, tahun_data:selectedSingleTahunData})
+    getDataMiskinEkstremTabel({tahun: value, tahun_data:selectedSingleTahunData});
+  };
+
+  const handleSelectChangeDataPokok = (e) => {
+    const { name, value } = e.target;
+    setselectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
+    getDataKemiskinanEkstrem({tahun: selectedSingleTahunAnggaran, tahun_data: value})
+    getDataMiskinEkstremTabel({tahun: selectedSingleTahunAnggaran, tahun_data: value});
   };
 
   return (
@@ -1202,8 +1219,8 @@ const ContentMiskinEkstremV2 = () => {
               </div>
             </div>
             <div className="d-flex nav-beranda">
-                  <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
-                    Pilih Data Tahun:
+            <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                    Tahun Data:
                   </div>
                  <select
               name="tahun"
@@ -1214,10 +1231,30 @@ const ContentMiskinEkstremV2 = () => {
                 border: "1px solid #ccc",
                 backgroundColor: "#ffffff",                          
                 cursor: "pointer",                          
-                margin: "15px",
+                margin: "15px 15px 15px 5px",
               }}
-              value={selectedSingleTahun}
-              onChange={handleSelectChangeTahun}
+              value={selectedSingleTahunData}
+              onChange={handleSelectChangeDataPokok}
+            >                        
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select>
+            <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                    Tahun Anggaran:
+                  </div>
+                 <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                margin: "15px 15px 15px 5px",
+              }}
+              value={selectedSingleTahunAnggaran}
+              onChange={handleSelectChangeAnggaran}
             >                        
               <option value="2024">2024</option>
               <option value="2025">2025</option>
@@ -1236,7 +1273,7 @@ const ContentMiskinEkstremV2 = () => {
                 marginTop: "16px",
                 marginBottom: "30px",
               }}
-              value={selectedSingleTahun}
+              value={selectedSingleTahunAnggaran}
               onChange={handleSelectChange}
             >                        
               <option value="2024">2024</option>
@@ -1938,7 +1975,7 @@ const ContentMiskinEkstremV2 = () => {
                         cursor: "pointer",
                         fontSize: "16px",
                         marginBottom: "8px"
-                      }} onClick={()=>getDataMiskinEkstremTabel({tahun: selectedSingleTahun})}>Kembali ke Provinsi</button></>)}         
+                      }} onClick={()=>getDataMiskinEkstremTabel({tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData})}>Kembali ke Provinsi</button></>)}         
                     <div style={{ overflowX: "auto" }}>
                     <table
                       className="table table-bordered table-nowrap align-middle mb-0 custom-table"
@@ -2105,7 +2142,7 @@ const ContentMiskinEkstremV2 = () => {
                         verticalAlign: "middle"}}>
                       {indexOfFirstItem + index + 1}
                     </td>
-                    <td className={showNextData ? "click-data" : ""} style={{ minWidth: "270px" }} onClick={(e)=> {showNextData ?  getDataMiskinEkstremTabelKab(item.kode_prov, e, selectedSingleTahun) : "", showNextData ? setNamaDaerahDetail(item.nama_prov) : ""}}>
+                    <td className={showNextData ? "click-data" : ""} style={{ minWidth: "270px" }} onClick={(e)=> {showNextData ?  getDataMiskinEkstremTabelKab(item.kode_prov, e, selectedSingleTahunAnggaran, selectedSingleTahunData) : "", showNextData ? setNamaDaerahDetail(item.nama_prov) : ""}}>
                       {item.nama_prov ? item.nama_prov.replace("Provinsi ", "") : item.nama_daerah.replace("Provinsi ", "")}
                     </td>
                     <td>
@@ -3708,7 +3745,8 @@ const ContentMiskinEkstremV2 = () => {
                       prefix="Rp "
                       // suffix=" T"
                       duration={1}
-                    />  
+                    />
+                    
                   </div>
                 </div>
               ))}                

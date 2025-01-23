@@ -133,8 +133,8 @@ const ContentPerencanaan = () => {
   };
 
   const getDataPerencanaanRkpdNasionalPersentase = ({
-    tahun = "2024",
-    tahapan = "1",    
+    tahun,
+    tahapan,    
   } = {}) => {
     const fetchData = async () => {
       try {
@@ -279,7 +279,7 @@ const ContentPerencanaan = () => {
 
     useEffect(() => {
         getDataPerencanaanRkpdNasional();
-        getDataPerencanaanRkpdNasionalPersentase();
+        // getDataPerencanaanRkpdNasionalPersentase();
     }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -360,7 +360,7 @@ const ContentPerencanaan = () => {
 
   const [namaTahapan, setNamaTahapan] = useState("Penetapan")  
 
-  const handleSelectChange = (e) => {F
+  const handleSelectChange = (e) => {
     const { name, value } = e.target;
     console.log(`${name}: ${value}`, 'ini isi selected value');
     if (value == "3"){

@@ -44,11 +44,14 @@ const ContentStunting = () => {
   
     // Ambil data desil yang sesuai dan update valueMap
     const selectedData = dataDesil[`desil${selectedValue}`]; // Ambil data sesuai pilihan
-    console.log(selectedData,'ini')
-    if (selectedData) {
+    
+    if (Array.isArray(selectedData) && selectedData.length > 0) {
       setValueMap(selectedData);
-      const maxValue = Math.max(...selectedData.map(item => item.value));
+      const maxValue = Math.max(...selectedData.map(item => item.value || 0));
       setmaxValueMap(maxValue);
+    } else {
+      setValueMap([]);
+      setmaxValueMap(0); // Set nilai default jika selectedData tidak valid
     }
   };
 
@@ -194,7 +197,7 @@ const ContentStunting = () => {
   const [loadingStunting, setLoadingStunting] = useState([]);
   const [errorStunting, setErrorStunting] = useState([]);
 
-  const getDataStunting = ({tahun}) => {
+  const getDataStunting = ({tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -204,7 +207,7 @@ const ContentStunting = () => {
           body: JSON.stringify({
           //  kode_ddn: "11"
             tahun: tahun,
-            // tahun_data: "2024"
+            tahun_data: tahun_data
         }),
         };
 
@@ -562,7 +565,7 @@ const ContentStunting = () => {
   const [roam, setRoam] = useState(false);
   const [dataDesil, setDataDesil] = useState({}); 
 
-  const getDataStuntingTabel = ({tahun}) => {
+  const getDataStuntingTabel = ({tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -570,7 +573,8 @@ const ContentStunting = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
-            tahun: tahun
+            tahun: tahun,
+            tahun_data: tahun_data
           }),
         };
 
@@ -681,7 +685,7 @@ const ContentStunting = () => {
   const [dataKolomNamaDaerah, setDataKolomNamaDaerah] = useState("Se-Provinsi");
   const [showNextData, setShowNextData] = useState(true);
 
-  const getDataStuntingTabelKabupaten = (kodeDdn = "", e, tahun) => {
+  const getDataStuntingTabelKabupaten = (kodeDdn = "", e, tahun, tahun_data) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -690,7 +694,8 @@ const ContentStunting = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_ddn1: kodeDdn,
-            tahun: tahun
+            tahun: tahun,
+            tahun_data: tahun_data
           }),
         };
 
@@ -729,7 +734,9 @@ const ContentStunting = () => {
     kodeSeProvinsi = "",
     kodeDdnKabupaten = "",
     kodeDdnProvinsi = "",
-    kodeSubGiat = ""
+    kodeSubGiat = "",
+    tahun,
+    tahun_data
   ) => {
     const fetchData = async () => {
       setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
@@ -740,9 +747,10 @@ const ContentStunting = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_prov: kodeSeProvinsi,
-            kode_ddn:
-              kodeDdnKabupaten != "" ? kodeDdnKabupaten : kodeDdnProvinsi,
+            kode_ddn: kodeDdnKabupaten != "" ? kodeDdnKabupaten : kodeDdnProvinsi,
             kode_sub_giat: kodeSubGiat,
+            tahun: tahun,
+            tahun_data: tahun_data
           }),
         };
 
@@ -798,8 +806,8 @@ const ContentStunting = () => {
   };
 
   useEffect(() => {
-    getDataStunting({tahun:selectedSingleTahun});
-    getDataStuntingTabel({tahun:selectedSingleTahun});
+    getDataStunting({tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
+    getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
     // getDataStuntingTabelKabupaten();
   }, []);
 
@@ -993,7 +1001,7 @@ const ContentStunting = () => {
     jenisPemda = "",
     rincianDetail = 0
   ) => {
-    getDataDetailAnggaran(kodeProv, kodeDdnKab, kodeDdnProv, "");
+    getDataDetailAnggaran(kodeProv, kodeDdnKab, kodeDdnProv, "", selectedSingleTahunAnggaran, selectedSingleTahunData);
 
     if (jenisPemda == "prov") {
       setDataJenisPemda("prov");
@@ -1018,11 +1026,11 @@ const ContentStunting = () => {
     namaSubGiat =""
   ) => {
     if (kodeDaerah != "") {
-      getDataDetailAnggaran(kodeDaerah, "", "", kodeSubGiat);
+      getDataDetailAnggaran(kodeDaerah, "", "", kodeSubGiat, selectedSingleTahunAnggaran, selectedSingleTahunData);
     } else if (kodeDdnProv != "") {
-      getDataDetailAnggaran("", "", kodeDdnProv, kodeSubGiat);
+      getDataDetailAnggaran("", "", kodeDdnProv, kodeSubGiat, selectedSingleTahunAnggaran, selectedSingleTahunData);
     } else if (kodeDdnKab != "") {
-      getDataDetailAnggaran("", kodeDdnKab, "", kodeSubGiat);
+      getDataDetailAnggaran("", kodeDdnKab, "", kodeSubGiat, selectedSingleTahunAnggaran, selectedSingleTahunData);
     }
 
     setDataRincianDetailSub(rincianDetail);
@@ -1198,9 +1206,9 @@ const ContentStunting = () => {
 
   const handleBarClickProv = (data) => {
     if (fasilitasShow == "Jamban Tidak Layak") {
-      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_jamban_kabkota", tahun: selectedSingleTahun})
+      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_jamban_kabkota", tahun: selectedSingleTahunAnggaran})
     } else {
-      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_air_kabkota", tahun: selectedSingleTahun})
+      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_air_kabkota", tahun: selectedSingleTahunAnggaran})
     }
   };
 
@@ -1216,13 +1224,21 @@ const ContentStunting = () => {
 
   const [showChartBerisiko, setShowChartBerisiko] = useState(false)
 
-  const [selectedSingleTahun, setSelectedSingleTahun] = useState('2025'); // Set default value
+    const [selectedSingleTahunAnggaran, setSelectedSingleTahunAnggaran] = useState('2025'); // Set default value
+    const [selectedSingleTahunData, setselectedSingleTahunData] = useState('2024'); // Set default value
     
-    const handleSelectChangeTahun = (e) => {
+    const handleSelectChangeAnggaran = (e) => {
       const { name, value } = e.target;
-      setSelectedSingleTahun(value); // Misalnya, untuk dropdown tahun
-      getDataStunting({tahun:value});
-      getDataStuntingTabel({tahun:value});
+      setSelectedSingleTahunAnggaran(value); // Misalnya, untuk dropdown tahun
+      getDataStunting({tahun:value, tahun_data: selectedSingleTahunData});
+      getDataStuntingTabel({tahun:value, tahun_data: selectedSingleTahunData});
+    };
+
+    const handleSelectChangeDataPokok = (e) => {
+      const { name, value } = e.target;
+      setselectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
+      getDataStunting({tahun:selectedSingleTahunAnggaran, tahun_data: value});
+      getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: value});
     };
 
   return (
@@ -1242,8 +1258,8 @@ const ContentStunting = () => {
               </div>
             </div>
             <div className="d-flex nav-beranda">
-                  <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
-                    Pilih Data Tahun:
+              <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                    Tahun Data:
                   </div>
                  <select
               name="tahun"
@@ -1254,10 +1270,31 @@ const ContentStunting = () => {
                 border: "1px solid #ccc",
                 backgroundColor: "#ffffff",                          
                 cursor: "pointer",                          
-                margin: "15px",
+                margin: "15px 15px 15px 5px",
               }}
-              value={selectedSingleTahun}
-              onChange={handleSelectChangeTahun}
+              value={selectedSingleTahunData}
+              onChange={handleSelectChangeDataPokok}
+            >    
+              <option value="2023">2023</option>
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select>
+            <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                    Tahun Anggaran:
+                  </div>
+                 <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                margin: "15px 15px 15px 5px",
+              }}
+              value={selectedSingleTahunAnggaran}
+              onChange={handleSelectChangeAnggaran}
             >                        
               <option value="2024">2024</option>
               <option value="2025">2025</option>
@@ -1276,7 +1313,7 @@ const ContentStunting = () => {
                 marginTop: "16px",
                 marginBottom: "30px",
               }}
-              value={selectedSingleTahun}
+              value={selectedSingleTahunAnggaran}
               onChange={handleSelectChange}
             >                        
               <option value="2024">2024</option>
@@ -1788,7 +1825,7 @@ const ContentStunting = () => {
                           fontSize: "16px",
                           marginBottom: "8px",
                         }}
-                        onClick={() => getDataStuntingTabel({tahun:selectedSingleTahun})}
+                        onClick={() => getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData})}
                       >
                         Kembali ke Provinsi
                       </button>
@@ -2105,7 +2142,8 @@ const ContentStunting = () => {
                                 : getDataStuntingTabelKabupaten(
                                     item.kode_prov,
                                     e,
-                                    selectedSingleTahun
+                                    selectedSingleTahunAnggaran,
+                                    selectedSingleTahunData
                                   ), dataKolomNamaDaerah == "Se-Provinsi" ? setNamaDaerahDetail(item.nama_prov) : ""}                                
                               }
                             >
@@ -3621,7 +3659,7 @@ const ContentStunting = () => {
           <ModalBody>
             <Row>
               <Col md={4}>
-                <Card className="card-animate">
+                <Card className="card-animate card-height-100">
                   <CardBody>
                     <div className="d-flex flex-column title-custom-card">
                       <div className="d-flex justify-content-between align-items-start mb-1 title-card">
