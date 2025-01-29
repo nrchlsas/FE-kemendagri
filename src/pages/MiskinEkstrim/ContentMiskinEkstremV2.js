@@ -937,41 +937,46 @@ const ContentMiskinEkstremV2 = () => {
     fetchData();
   };
 
-  // const getDataKemiskinanEkstremTahun = (tahun) => {
-  //   const fetchData = async () => {
-  //     setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
-  //     try {
-  //       const requestOptions = {
-  //         method: "POST",
-  //         headers: { "Content-Type": "application/json" },
-  //         body: JSON.stringify({
-  //           tahun : tahun
-  //         }),
-  //       };
+  const [dataDetailAnggaranSubSub, setDataDetailAnggaranSubSub] = useState([]);
+  const [loadingDetailAnggaranSub, setLoadingDetailAnggaranSub] = useState([]);
+  const [errorDetailAnggaranSub, setErrorDetailAnggaranSub] = useState([]);
+
+  const getDataDetailAnggaranSubSub = ({kodeDdn, kodeSubGiat, kodeSro, tahun}) => {
+    const fetchData = async () => {
+      setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
+      try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+          body: JSON.stringify({
+            kode_ddn: kodeDdn,
+            kode_sub_giat: kodeSubGiat,
+            kode_sro: kodeSro,
+            tahun: tahun
+          }),
+        };
   
-  //       const response = await fetch(
-  //         `${API_URI}/dashboard_kemiskinan_ekstrim`,
-  //         requestOptions
-  //       );
+        const response = await fetch(
+          `${API_URI_RBAC}/v2/ke_ssro_provkabkota`,
+          requestOptions
+        );
   
-  //       if (!response.ok) {
-  //         throw new Error("Network response was not ok");
-  //       }
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
   
-  //       const dataKemiskinanEkstremTahun = await response.json();
-      
-  //       setDataKemiskinanEkstremTahun(dataKemiskinanEkstremTahun.data)
-  //       // Open the modal only after data is successfully fetched
+        const dataDetailAnggaranSub = await response.json();
         
-  //     } catch (errorDetailAnggaran) {
-  //       setErrorDetailAnggaran(errorDetailAnggaran);
-  //     } finally {
-  //       setLoadingDetailAnggaran(false);
-  //     }
-  //   };
+      } catch (errorDetailAnggaran) {
+        setErrorDetailAnggaran(errorDetailAnggaran);
+      } finally {
+        setLoadingDetailAnggaran(false);
+      }
+    };
   
-  //   fetchData();
-  // };
+    fetchData();
+  };
 
   useEffect(() => {
     getDataKemiskinanEkstrem({tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
@@ -1136,6 +1141,7 @@ const ContentMiskinEkstremV2 = () => {
 
   const [modall, setModall] = useState(false)
   const [modal, setModal] = useState(false)
+  const [modalSub, setModalSub] = useState(false)
   const [dataRincianDetail, setDataRincianDetail] = useState(0)
   const [dataRincianDetailSub, setDataRincianDetailSub] = useState(0)
   const [dataJenisPemda, setDataJenisPemda] = useState("")
@@ -1177,8 +1183,18 @@ const ContentMiskinEkstremV2 = () => {
     setNamaSubGiat(namaSubGiat)
     setCardHead(null)
   }
+
+  const handleOpenNextModalSub = ({kodeDdn, kodeSubGiat, kodeSro,tahun}) => {
+    getDataDetailAnggaranSubSub({kodeDdn:kodeDdn, kodeSubGiat:kodeSubGiat, kodeSro:kodeSro, tahun:tahun})
+    setModalSub(true)
+    setCardHead(null)
+  }
   const handleCloseNextModal = () => {
     setModal(false)
+  }
+
+  const handleCloseNextModalSub = () => {
+    setModalSub(false)
   }
 
   const handleClose = () => {
@@ -3942,6 +3958,142 @@ const ContentMiskinEkstremV2 = () => {
                       <th onClick={() => requestSort("total_rinciansro")}
                         style={{ cursor: "pointer", textAlign: "center" }}>
                         Total Rincian (Rp) {getSortIcon("total_rinciansro")}
+                      </th>
+                      <th onClick={() => requestSort("persentase")}
+                        style={{ cursor: "pointer", textAlign: "center",whiteSpace: "normal",
+                          wordWrap: "break-word" }}>
+                        Persentase {getSortIcon("persentase")}
+                      </th>     
+                      <th style={{verticalAlign: "middle", textAlign: "center", whiteSpace: "normal", wordWrap: "break-word",maxWidth:"100px"  }}>
+                        Lihat Sub Sub Rincian Objek 
+                      </th>                                                           
+                    </tr>                  
+                  </thead>
+                  <tbody style={{ minHeight: "500px" }}>
+                    {currentItemDetailSub.map((item, index) => (
+                      <tr key={index}>                        
+                        <td style={{textAlign: "center",
+                        verticalAlign: "middle"}}>
+                          {/* { index + 1} */}
+                          {indexOfFirstItemDetailSub + index + 1}
+                        </td>
+                        <td>
+                          {item.kode_sro}
+                        </td>
+                        <td style={{
+                            whiteSpace: "normal",  // Membolehkan teks turun ke baris berikutnya
+                            wordWrap: "break-word",  // Memastikan teks panjang terpotong dan turun ke bawah
+                            maxWidth: "200px"  // Menetapkan lebar maksimum sel (sesuaikan dengan kebutuhan)
+                          }}>
+                          {" "}
+                          {item.nama_sro || "-"}
+                        </td>                                                                        
+                        <td>
+                        <span style={{float: "right"}}>{item.total_rinciansro ? parseInt(item.total_rinciansro).toLocaleString("id-ID")
+                            : "-"}</span>                          
+                        </td>                                      
+                        <td>
+                        <span style={{float: "right"}}>
+                        {item.persentase
+                          ? (item.persentase >= 1
+                              ? `${Number(item.persentase).toLocaleString("id-ID", {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                })}%`
+                              : `${Number(item.persentase).toLocaleString("id-ID", {
+                                  minimumFractionDigits: 4,
+                                })}%`
+                            )
+                          : "-"}
+                        </span>   
+                        </td>
+                        <td style={{verticalAlign: "middle", textAlign: "center" }}>
+                    <i style={{                                            
+                      padding: "5px 10px",                      
+                      cursor: "pointer",
+                      fontSize: "30px"
+                    }} onClick={()=>handleOpenNextModalSub({kodeDdn: item.kode_ddn, kodeSubGiat: item.kode_sub_giat, kodeSro: item.kode_sro, tahun: selectedSingleTahunAnggaran})} className="bx bx-list-ul text-primary"></i>
+                        </td> 
+                      </tr>
+                    ))}
+                    {/* {placeholders} */}
+                  </tbody>
+                </table>
+          </div> 
+          <Pagination currentPage={currentPageDetailSub} totalPages={totalPagesDetailSub} onPageChange={paginateDetailSub} />
+        </ModalBody>
+      </div>          
+      </Modal>   
+
+      <Modal size="xl" isOpen={modalSub} toggle={handleOpenNextModalSub} centered={true} backdrop="static">
+      <div className="modal-content border-0">
+        <ModalHeader className=" p-3 bg-info-subtle" toggle={handleCloseNextModalSub}>Sub Rincian Objek {namaSubGiat}
+        </ModalHeader>
+        <ModalBody>
+        <Row>
+            <Col md={4}><Card className="card-animate card-height-100">
+                        <CardBody>
+                          <div
+                            className="d-flex flex-column title-custom-card"                            
+                          >
+                            <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                              <span>Total Anggaran Sub Kegiatan</span>
+                            </div>
+                            <div className="d-flex">
+                              {/* <div className="avatar-xs-half flex-shrink-0">
+                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                          <i className=" ri-women-line text-danger"></i>
+                        </span>
+                      </div> */}
+                              <div className="d-flex justify-content-center align-items-center title-body">
+                                <span>
+                                  <CountUp
+                                    start={0}
+                                    end={
+                                      // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                                      dataRincianDetailSub
+                                    }
+                                    separator="."
+                                    prefix="Rp "
+                                    suffix=""
+                                    duration={1}
+                                  />
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </CardBody>
+                      </Card></Col>
+          </Row>
+          <div style={{ overflowY: "scroll", maxHeight:"500px"}}>
+          <table
+                  className="table table-bordered table-nowrap align-middle mb-0"
+                  // style={{ width: "100%" }}
+                >
+                  <thead className="table-light" style={{ position: "sticky", top: 0, zIndex: 2 }}>
+                    <tr>
+                      <th style={{ verticalAlign: "middle", textAlign: "center" }}>
+                        NO
+                      </th>                      
+                      <th                        
+                        onClick={() => requestSort("kode_sro")}
+                        style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
+                          wordWrap: "break-word", maxWidth:"100px" }}
+                      >
+                        Satuan {getSortIcon("kode_sro")}
+                      </th>                                                                  
+                      <th onClick={() => requestSort("nama_sro")}
+                        style={{ cursor: "pointer", textAlign: "center", whiteSpace: "normal",
+                          wordWrap: "break-word", maxWidth:"100px" }}>
+                        Volume {getSortIcon("nam_sro")}
+                      </th>  
+                      <th onClick={() => requestSort("total_rinciansro")}
+                        style={{ cursor: "pointer", textAlign: "center" }}>
+                        Harga Satuan (Rp) {getSortIcon("total_rinciansro")}
+                      </th>
+                      <th onClick={() => requestSort("total_rinciansro")}
+                        style={{ cursor: "pointer", textAlign: "center" }}>
+                        Total Rincian Sub sro {getSortIcon("total_rinciansro")}
                       </th>
                       <th onClick={() => requestSort("persentase")}
                         style={{ cursor: "pointer", textAlign: "center",whiteSpace: "normal",

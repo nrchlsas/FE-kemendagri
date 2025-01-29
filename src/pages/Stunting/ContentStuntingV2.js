@@ -989,6 +989,7 @@ const ContentStunting = () => {
 
   const [modall, setModall] = useState(false);
   const [modal, setModal] = useState(false);
+  const [modalSub, setModalSub] = useState(false);
   const [dataRincianDetail, setDataRincianDetail] = useState(0);
   const [dataRincianDetailSub, setDataRincianDetailSub] = useState(0);
   const [dataJenisPemda, setDataJenisPemda] = useState("");
@@ -1037,6 +1038,17 @@ const ContentStunting = () => {
     setNamaSubGiat(namaSubGiat)
     // setModal(true)
   };
+
+  const handleOpenNextModalSub = ({kodeDdn, kodeSubGiat, kodeSro,tahun}) => {
+    getDataDetailAnggaranSubSub({kodeDdn:kodeDdn, kodeSubGiat:kodeSubGiat, kodeSro:kodeSro, tahun:tahun})
+    setModalSub(true)
+    setCardHead(null)
+  }
+  
+  const handleCloseNextModalSub = () => {
+    setModalSub(false)
+  }
+
   const handleCloseNextModal = () => {
     setModal(false);
   };
@@ -3997,6 +4009,9 @@ const ContentStunting = () => {
                     >
                       Persentase {getSortIcon("persentase")}
                     </th>
+                    <th style={{verticalAlign: "middle", textAlign: "center", whiteSpace: "normal", wordWrap: "break-word",maxWidth:"100px"  }}>
+                        Lihat Sub Sub Rincian Objek 
+                      </th>           
                   </tr>
                 </thead>
                 <tbody style={{ minHeight: "500px" }}>
@@ -4048,6 +4063,22 @@ const ContentStunting = () => {
                             : "-"}
                         </span>
                       </td>
+                      <td style={{verticalAlign: "middle", textAlign: "center" }}>            
+                        {/* <button style={{
+                      backgroundColor: "#28a745",
+                      color: "white",
+                      padding: "5px 10px",
+                      border: "none",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                      fontSize: "16px"
+                    }} onClick={()=>dataJenisPemda=="prov" ? handleOpenNextModal("", item.kode_sub_giat, item.kode_ddn, "") : (dataJenisPemda=="kab" || dataJenisPemda=="kota") ? handleOpenNextModal("", item.kode_sub_giat, "", item.kode_ddn) : handleOpenNextModal(item.kode_prov, item.kode_sub_giat, "", "")}>Lihat Detail</button> */}
+                    <i style={{                                            
+                      padding: "5px 10px",                      
+                      cursor: "pointer",
+                      fontSize: "30px"
+                    }} onClick={()=>handleOpenNextModalSub({kodeDdn: item.kode_ddn, kodeSubGiat: item.kode_sub_giat, kodeSro: item.kode_sro, tahun: selectedSingleTahunAnggaran})} className="bx bx-list-ul text-primary"></i>
+                        </td> 
                     </tr>
                   ))}
                   {/* {placeholders} */}

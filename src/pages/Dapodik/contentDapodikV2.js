@@ -536,6 +536,47 @@ const ContentDapodikV2 = () => {
     fetchData();
   };
 
+    const [dataDetailAnggaranSubSub, setDataDetailAnggaranSubSub] = useState([]);
+    const [loadingDetailAnggaranSub, setLoadingDetailAnggaranSub] = useState([]);
+    const [errorDetailAnggaranSub, setErrorDetailAnggaranSub] = useState([]);
+  
+    const getDataDetailAnggaranSubSub = ({kodeDdn, kodeSubGiat, kodeSro, tahun, url}) => {
+      const fetchData = async () => {
+        setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
+        try {
+          const token = JSON.parse(sessionStorage.getItem("authUser"))
+          const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+            body: JSON.stringify({
+              kode_ddn: kodeDdn,
+              kode_sub_giat: kodeSubGiat,
+              kode_sro: kodeSro,
+              tahun: tahun
+            }),
+          };
+    
+          const response = await fetch(
+            `${API_URI_RBAC}/v2${url}`,
+            requestOptions
+          );
+    
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+    
+          const dataDetailAnggaran = await response.json();
+          
+        } catch (errorDetailAnggaran) {
+          setErrorDetailAnggaran(errorDetailAnggaran);
+        } finally {
+          setLoadingDetailAnggaran(false);
+        }
+      };
+    
+      fetchData();
+    };
+
   const getDataTabelDapodikProvDetail = (kodeProv, e) => {
     const fetchData = async () => {      
       try {
@@ -913,6 +954,7 @@ const ContentDapodikV2 = () => {
   // create Modal
   const [modall, setModall] = useState(false);
   const [modal, setModal] = useState(false);
+  const [modalSub, setModalSub] = useState(false);
   const [dataJenisPemda, setDataJenisPemda] = useState("");
   const [dataRincianDetail, setDataRincianDetail] = useState(0);
   const [dataRincianDetailSub, setDataRincianDetailSub] = useState(0);
@@ -940,6 +982,16 @@ const ContentDapodikV2 = () => {
     setDataRincianDetail(rincianDetail);
     setCardHead(null);
   };
+
+  const handleOpenNextModalSub = ({kodeDdn, kodeSubGiat, kodeSro,tahun}) => {
+    getDataDetailAnggaranSubSub({kodeDdn:kodeDdn, kodeSubGiat:kodeSubGiat, kodeSro:kodeSro, tahun:tahun, url: "/dapodik_ssro_seprov"})
+    setModalSub(true)
+    setCardHead(null)
+  }
+  
+  const handleCloseNextModalSub = () => {
+    setModalSub(false)
+  }
 
   const [cardhead, setCardHead] = useState();
   const [namaSubGiat, setNamaSubGiat] = useState("")
@@ -4227,6 +4279,9 @@ const ContentDapodikV2 = () => {
                     >
                       Persentase {getSortIcon("persentase")}
                     </th>
+                    <th style={{verticalAlign: "middle", textAlign: "center", whiteSpace: "normal", wordWrap: "break-word",maxWidth:"100px"  }}>
+                        Lihat Sub Sub Rincian Objek 
+                      </th>   
                   </tr>
                 </thead>
                 <tbody style={{ minHeight: "500px" }}>
@@ -4283,6 +4338,22 @@ const ContentDapodikV2 = () => {
                             : "-"}
                         </span>
                       </td>
+                      <td style={{verticalAlign: "middle", textAlign: "center" }}>            
+                        {/* <button style={{
+                      backgroundColor: "#28a745",
+                      color: "white",
+                      padding: "5px 10px",
+                      border: "none",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                      fontSize: "16px"
+                    }} onClick={()=>dataJenisPemda=="prov" ? handleOpenNextModal("", item.kode_sub_giat, item.kode_ddn, "") : (dataJenisPemda=="kab" || dataJenisPemda=="kota") ? handleOpenNextModal("", item.kode_sub_giat, "", item.kode_ddn) : handleOpenNextModal(item.kode_prov, item.kode_sub_giat, "", "")}>Lihat Detail</button> */}
+                    <i style={{                                            
+                      padding: "5px 10px",                      
+                      cursor: "pointer",
+                      fontSize: "30px"
+                    }} onClick={()=>handleOpenNextModalSub({kodeDdn: item.kode_ddn, kodeSubGiat: item.kode_sub_giat, kodeSro: item.kode_sro, tahun: selectedSingleTahunAnggaran})} className="bx bx-list-ul text-primary"></i>
+                        </td> 
                     </tr>
                   ))}
                   {placeholders}
@@ -4298,262 +4369,131 @@ const ContentDapodikV2 = () => {
         </div>
       </Modal>
 
-      {/* <Row>
-        <Col>
-          <Card>
-            <CardBody>
-              <div className="separator mb-2">
-                <h4 className="card-title d-flex justify-content-start">
-                  Persentase Anggaran untuk Bidang Urusan Pendidikan
-                  Dibandingkan dengan persentase Anak Tidak Sekolah
-                </h4>
-              </div>
-              <BarWithPercentageModified
-                valueChart={dataChartRincianDapodik[4]}
-                categoryChart={dataChartRincianDapodik[0]}
-                percentageChart1={dataChartRincianDapodik[1]}
-                percentageChart2={dataChartRincianDapodik[2]}
-                axisY={["Total Anggaran", "Persentase"]}
-                additionalData={dataChartRincianDapodik[3]}
-                dataColors='["#2DAED4", "#090909"]'
-              />
-            </CardBody>
-          </Card>
-        </Col>
-      </Row> */}
-      {/* <Row>
-        <Col md={6}>
-        <Card>
-          <CardBody>
-            <Row>
-              <Col>              
-                <Card>
-                  <CardBody>
-
-                  </CardBody>
-                </Card>              
-              </Col>
-            </Row>
-            <Row>
-              <Col md={6}>
-              <Card>
-                <CardBody>
-
-                </CardBody>
-              </Card>
-              </Col>
-              <Col md={6}>
-              <Card>
-                <CardBody>
-                  
-                </CardBody>
-              </Card>
-              </Col>
-            </Row>
-          </CardBody>
-        </Card>
-        </Col>
-        <Col md={6}>
-        <Card>
-          <CardBody>
-
-          </CardBody>
-        </Card>
-        </Col>
-      </Row> */}
-
-      {/* <Row>
-        <Col md={6}>
-          <Card className="card-animate card-height-100">
-            <CardBody>
-              <div className="separator">
-                <h4 className="card-title mb-0">
-                  Anak Tidak Sekolah Karena Drop Out
-                </h4>
-              </div>
-              <div className="nav-beranda">
-                <Nav
-                  tabs
-                  className="nav nav-tabs nav-success nav-justified mb-3"
+      <Modal size="xl" isOpen={modalSub} toggle={handleOpenNextModalSub} centered={true} backdrop="static">
+      <div className="modal-content border-0">
+        <ModalHeader className=" p-3 bg-info-subtle" toggle={handleCloseNextModalSub}>Sub Rincian Objek {namaSubGiat}
+        </ModalHeader>
+        <ModalBody>
+        <Row>
+            <Col md={4}><Card className="card-animate card-height-100">
+                        <CardBody>
+                          <div
+                            className="d-flex flex-column title-custom-card"                            
+                          >
+                            <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                              <span>Total Anggaran Sub Kegiatan</span>
+                            </div>
+                            <div className="d-flex">
+                              {/* <div className="avatar-xs-half flex-shrink-0">
+                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                          <i className=" ri-women-line text-danger"></i>
+                        </span>
+                      </div> */}
+                              <div className="d-flex justify-content-center align-items-center title-body">
+                                <span>
+                                  <CountUp
+                                    start={0}
+                                    end={
+                                      // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                                      dataRincianDetailSub
+                                    }
+                                    separator="."
+                                    prefix="Rp "
+                                    suffix=""
+                                    duration={1}
+                                  />
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </CardBody>
+                      </Card></Col>
+          </Row>
+          <div style={{ overflowY: "scroll", maxHeight:"500px"}}>
+          <table
+                  className="table table-bordered table-nowrap align-middle mb-0"
+                  // style={{ width: "100%" }}
                 >
-                  <NavItem>
-                    <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames({
-                        active: customActiveTab === "1",
-                      })}
-                      onClick={() => {
-                        toggleCustom("1");
-                      }}
-                    >
-                      PAUD
-                    </NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames({
-                        active: customActiveTab === "2",
-                      })}
-                      onClick={() => {
-                        toggleCustom("2");
-                      }}
-                    >
-                      SD
-                    </NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames({
-                        active: customActiveTab === "3",
-                      })}
-                      onClick={() => {
-                        toggleCustom("3");
-                      }}
-                    >
-                      SMP
-                    </NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames({
-                        active: customActiveTab === "4",
-                      })}
-                      onClick={() => {
-                        toggleCustom("4");
-                      }}
-                    >
-                      SMA/SMK
-                    </NavLink>
-                  </NavItem>
-                </Nav>
-              </div>
-              <TabContent activeTab={customActiveTab} className="text-muted">
-                <TabPane tabId="1" id="paud">
-                  <VerticalBarChart
-                    valueChart={dataDropOutPaud}
-                    categoryChart={[
-                      "TK-A",
-                      "TK-B",
-                      "Kelompok Belajar",
-                      "Taman Pendidikan Al-Quran (TPA)",
-                      "Satuan Paud Selain TK, KB, dan TPA",
-                    ]}
-                    dataColors='["#66CDAA"]'
-                  />
-                </TabPane>
-                <TabPane tabId="2" id="sd">
-                  <VerticalBarChart
-                    valueChart={dataDropOutSd}
-                    categoryChart={[
-                      "Kelas 1",
-                      "Kelas 2",
-                      "Kelas 3",
-                      "Kelas 4",
-                      "Kelas 5",
-                      "Kelas 6",
-                    ]}
-                    dataColors='["#F35F52"]'
-                  />
-                </TabPane>
-                <TabPane tabId="3" id="smp">
-                  <VerticalBarChart
-                    valueChart={dataDropOutSmp}
-                    categoryChart={["Kelas 7", "Kelas 8", "Kelas 9"]}
-                    dataColors='["#7CCCE4"]'
-                  />
-                </TabPane>
-                <TabPane tabId="4" id="sma/smk">
-                  <VerticalBarChart
-                    valueChart={dataDropOutSma}
-                    categoryChart={[
-                      "Kelas 10",
-                      "Kelas 11",
-                      "Kelas 12",
-                      "kelas 13",
-                    ]}
-                    dataColors='["#FCAD24"]'
-                  />
-                </TabPane>
-              </TabContent>
-            </CardBody>
-          </Card>
-        </Col>
-        <Col md={6}>
-          <Card className="card-animate card-height-100">
-            <CardBody>
-              <div className="separator">
-                <h4 className="card-title mb-0">
-                  Anak Tidak Sekolah Karena Tidak Melanjutkan Ke Jenjang
-                  Pendidikan
-                </h4>
-              </div>
-              <HorizontalBarChart
-                valueChart={dataChartAts}
-                categoryChart={["SMP", "SMA"]}
-                dataColors='["#FCAD24"]'
-              />
-            </CardBody>
-          </Card>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <Card className="card-height-100">
-            <CardBody>
-              <div className="separator">
-                <h4 className="card-title mb-0">
-                  Anak Tidak Sekolah Karena Belum Pernah Bersekolah
-                </h4>
-              </div>
-              <Row>
-                <Col md={2}>
-                  <div style={{ marginTop: "30px" }}>
-                    <div
-                      className="card-title d-flex justify-content-start"
-                      style={{ fontWeight: 600, fontSize: "12px" }}
-                    >
-                      Jumlah Anak Belum Pernah Bersekolah
-                    </div>
-                    <div
-                      className="d-flex justify-content-start mb-3"
-                      style={{ fontWeight: 700 }}
-                    >
-                      {dataDapodik?.dapodik_jumlah_belum_pernah_sekolah?.belum_pernah_sekolah?.toLocaleString(
-                        "id-ID"
-                      )}
-                    </div>
-                  </div>
-                </Col>
-                <Col md={10}>
-                  <HorizontalBarChart
-                    valueChart={dataBelumPernahSekolahByUsia}
-                    categoryChart={[
-                      "Usia 8",
-                      "Usia 9",
-                      "Usia 10",
-                      "Usia 11",
-                      "Usia 12",
-                      "Usia 13",
-                      "Usia 14",
-                      "Usia 15",
-                      "Usia 16",
-                      "Usia 17",
-                      "Usia 18",
-                      "Usia 19",
-                      "Usia 20",
-                      "Usia 21",
-                    ]}
-                    dataColors='["#57E7B4"]'
-                  />                
-                </Col>
-              </Row>
-            </CardBody>
-          </Card>
-        </Col>
-      </Row> */}
+                  <thead className="table-light" style={{ position: "sticky", top: 0, zIndex: 2 }}>
+                    <tr>
+                      <th style={{ verticalAlign: "middle", textAlign: "center" }}>
+                        NO
+                      </th>                      
+                      <th                        
+                        onClick={() => requestSort("kode_sro")}
+                        style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
+                          wordWrap: "break-word", maxWidth:"100px" }}
+                      >
+                        Satuan {getSortIcon("kode_sro")}
+                      </th>                                                                  
+                      <th onClick={() => requestSort("nama_sro")}
+                        style={{ cursor: "pointer", textAlign: "center", whiteSpace: "normal",
+                          wordWrap: "break-word", maxWidth:"100px" }}>
+                        Volume {getSortIcon("nam_sro")}
+                      </th>  
+                      <th onClick={() => requestSort("total_rinciansro")}
+                        style={{ cursor: "pointer", textAlign: "center" }}>
+                        Harga Satuan (Rp) {getSortIcon("total_rinciansro")}
+                      </th>
+                      <th onClick={() => requestSort("total_rinciansro")}
+                        style={{ cursor: "pointer", textAlign: "center" }}>
+                        Total Rincian Sub sro {getSortIcon("total_rinciansro")}
+                      </th>
+                      <th onClick={() => requestSort("persentase")}
+                        style={{ cursor: "pointer", textAlign: "center",whiteSpace: "normal",
+                          wordWrap: "break-word" }}>
+                        Persentase {getSortIcon("persentase")}
+                      </th>                                                                
+                    </tr>                  
+                  </thead>
+                  <tbody style={{ minHeight: "500px" }}>
+                    {currentItemsDetailSub.map((item, index) => (
+                      <tr key={index}>                        
+                        <td style={{textAlign: "center",
+                        verticalAlign: "middle"}}>
+                          {/* { index + 1} */}
+                          {indexOfFirstItemDetailSub + index + 1}
+                        </td>
+                        <td>
+                          {item.kode_sro}
+                        </td>
+                        <td style={{
+                            whiteSpace: "normal",  // Membolehkan teks turun ke baris berikutnya
+                            wordWrap: "break-word",  // Memastikan teks panjang terpotong dan turun ke bawah
+                            maxWidth: "200px"  // Menetapkan lebar maksimum sel (sesuaikan dengan kebutuhan)
+                          }}>
+                          {" "}
+                          {item.nama_sro || "-"}
+                        </td>                                                                        
+                        <td>
+                        <span style={{float: "right"}}>{item.total_rinciansro ? parseInt(item.total_rinciansro).toLocaleString("id-ID")
+                            : "-"}</span>                          
+                        </td>                                      
+                        <td>
+                        <span style={{float: "right"}}>
+                        {item.persentase
+                          ? (item.persentase >= 1
+                              ? `${Number(item.persentase).toLocaleString("id-ID", {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                })}%`
+                              : `${Number(item.persentase).toLocaleString("id-ID", {
+                                  minimumFractionDigits: 4,
+                                })}%`
+                            )
+                          : "-"}
+                        </span>   
+                        </td>
+                      </tr>
+                    ))}
+                    {/* {placeholders} */}
+                  </tbody>
+                </table>
+          </div> 
+          <Pagination currentPage={currentPageDetailSub} totalPages={totalPagesDetailSub} onPageChange={paginateDetailSub} />
+        </ModalBody>
+      </div>          
+      </Modal>   
     </React.Fragment>
   );
 };
