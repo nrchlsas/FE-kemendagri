@@ -805,6 +805,47 @@ const ContentStunting = () => {
     fetchData();
   };
 
+    const [dataDetailAnggaranSubSub, setDataDetailAnggaranSubSub] = useState([]);
+    const [loadingDetailAnggaranSub, setLoadingDetailAnggaranSub] = useState([]);
+    const [errorDetailAnggaranSub, setErrorDetailAnggaranSub] = useState([]);
+  
+    const getDataDetailAnggaranSubSub = ({kodeDdn, kodeSubGiat, kodeSro, tahun}) => {
+      const fetchData = async () => {
+        setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
+        try {
+          const token = JSON.parse(sessionStorage.getItem("authUser"))
+          const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+            body: JSON.stringify({
+              kode_ddn: kodeDdn,
+              kode_sub_giat: kodeSubGiat,
+              kode_sro: kodeSro,
+              tahun: tahun
+            }),
+          };
+    
+          const response = await fetch(
+            `${API_URI_RBAC}/v2/stunting_ssro_provkabkota`,
+            requestOptions
+          );
+    
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+    
+          const dataDetailAnggaranSub = await response.json();
+          
+        } catch (errorDetailAnggaran) {
+          setErrorDetailAnggaran(errorDetailAnggaran);
+        } finally {
+          setLoadingDetailAnggaran(false);
+        }
+      };
+    
+      fetchData();
+    };
+
   useEffect(() => {
     getDataStunting({tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
     getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
@@ -1042,7 +1083,6 @@ const ContentStunting = () => {
   const handleOpenNextModalSub = ({kodeDdn, kodeSubGiat, kodeSro,tahun}) => {
     getDataDetailAnggaranSubSub({kodeDdn:kodeDdn, kodeSubGiat:kodeSubGiat, kodeSro:kodeSro, tahun:tahun})
     setModalSub(true)
-    setCardHead(null)
   }
   
   const handleCloseNextModalSub = () => {
