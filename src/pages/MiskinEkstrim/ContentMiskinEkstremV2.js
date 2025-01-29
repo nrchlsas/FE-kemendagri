@@ -1189,13 +1189,15 @@ const ContentMiskinEkstremV2 = () => {
     setModalSub(true)
     setCardHead(null)
   }
+  
+  const handleCloseNextModalSub = () => {
+    setModalSub(false)
+  }
+
   const handleCloseNextModal = () => {
     setModal(false)
   }
 
-  const handleCloseNextModalSub = () => {
-    setModalSub(false)
-  }
 
   const handleClose = () => {
     setModall(false); // Close modal by setting modall to false
@@ -1252,6 +1254,7 @@ const ContentMiskinEkstremV2 = () => {
               value={selectedSingleTahunData}
               onChange={handleSelectChangeDataPokok}
             >                        
+              <option value="2024">2024</option>
               <option value="2024">2024</option>
               <option value="2025">2025</option>
             </select>
