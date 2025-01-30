@@ -1293,6 +1293,13 @@ const ContentStunting = () => {
       getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: value});
     };
 
+    const handleRegionClick = (kodeProv, namaProv) => {
+      // getDataDapodik({kodeDdn: kodeProv})
+      // getDataAnakSekolah({kodeWilayah: kodeProv})
+      // setClickNamaDaerah(namaProv)
+      // setClickDaerah(true)
+    };
+
   return (
     <React.Fragment>
       <Row>
@@ -1436,7 +1443,7 @@ const ContentStunting = () => {
                     </select>
                 </div>
               </div>
-              <MapIndoChart roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#FFCDD2", "#FF9EA7", "#FF7380", "#FF4B5C", "#FF2438", "#FF0017"]} />
+              <MapIndoChart roam={roam} maxValue={maxValueMap} onRegionClick={handleRegionClick} valueSeries={valueMap} colorData={["#FFCDD2", "#FF9EA7", "#FF7380", "#FF4B5C", "#FF2438", "#FF0017"]} />
             </CardBody>
           </Card>
         </Col>

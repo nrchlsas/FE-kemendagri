@@ -1220,6 +1220,13 @@ const ContentMiskinEkstremV2 = () => {
     getDataMiskinEkstremTabel({tahun: selectedSingleTahunAnggaran, tahun_data: value});
   };
 
+  const handleRegionClick = (kodeProv, namaProv) => {
+    // getDataDapodik({kodeDdn: kodeProv})
+    // getDataAnakSekolah({kodeWilayah: kodeProv})
+    // setClickNamaDaerah(namaProv)
+    // setClickDaerah(true)
+  };
+
   return (
     <React.Fragment>
       <Row>
@@ -1254,7 +1261,7 @@ const ContentMiskinEkstremV2 = () => {
               value={selectedSingleTahunData}
               onChange={handleSelectChangeDataPokok}
             >                        
-              <option value="2024">2024</option>
+              <option value="2024">2023</option>
               <option value="2024">2024</option>
               <option value="2025">2025</option>
             </select>
@@ -1366,7 +1373,7 @@ const ContentMiskinEkstremV2 = () => {
                     </select>
                 </div>
               </div>
-              <MapIndoChart roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#D1ED87","#B9D676","#A1BF66","#89A855","#719145","#597A34"]} />
+              <MapIndoChart roam={roam} maxValue={maxValueMap} valueSeries={valueMap} onRegionClick={handleRegionClick} colorData={["#D1ED87","#B9D676","#A1BF66","#89A855","#719145","#597A34"]} />
             </CardBody>
           </Card>
         </Col>
