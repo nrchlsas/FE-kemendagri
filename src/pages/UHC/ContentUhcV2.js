@@ -1163,7 +1163,7 @@ const ContentUhcV2 = () => {
                         value={searchTerm}
                         onChange={handleSearchInput}
                         onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
-                        placeholder={showNextData ? "Cari Se-Provinsi" : "Cari Provinsi"} 
+                        placeholder={showNextData ? "Cari Daerah" : "Cari Se-Provinsi"} 
                       />
 
                       {/* Tombol "X" di dalam input */}
@@ -1186,7 +1186,7 @@ const ContentUhcV2 = () => {
                         </button>
                       )}
                     </div>
-                    <div>
+                    {/* <div>
                       <button
                         style={{
                           backgroundColor: "#007bff",
@@ -1201,7 +1201,7 @@ const ContentUhcV2 = () => {
                       >
                         search
                       </button>
-                    </div>
+                    </div> */}
                   </div>
                     {showNextData ? (<><button style={{
                         backgroundColor: "#007bff",

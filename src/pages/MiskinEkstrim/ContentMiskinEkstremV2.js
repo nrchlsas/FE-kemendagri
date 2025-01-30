@@ -2066,7 +2066,7 @@ const ContentMiskinEkstremV2 = () => {
                         value={searchTerm}
                         onChange={handleSearchInput}
                         onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
-                        placeholder={showNextData ? "Cari Se-Provinsi" : "Cari Provinsi"} 
+                        placeholder={showNextData ? "Cari Daerah" : "Cari Se-Provinsi"} 
                       />
 
                       {/* Tombol "X" di dalam input */}
@@ -2089,7 +2089,7 @@ const ContentMiskinEkstremV2 = () => {
                         </button>
                       )}
                     </div>
-                    <div>
+                    {/* <div>
                       <button
                         style={{
                           backgroundColor: "#007bff",
@@ -2104,7 +2104,7 @@ const ContentMiskinEkstremV2 = () => {
                       >
                         search
                       </button>
-                    </div>
+                    </div> */}
                   </div>
                     {showNextData ? (<><button style={{
                         backgroundColor: "#007bff",

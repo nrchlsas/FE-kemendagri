@@ -1886,7 +1886,7 @@ const ContentStunting = () => {
                         value={searchTerm}
                         onChange={handleSearchInput}
                         onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
-                        placeholder={showNextData ? "Cari Se-Provinsi" : "Cari Provinsi"} 
+                        placeholder={showNextData ? "Cari Daerah" : "Cari Se-Provinsi"} 
                       />
 
                       {/* Tombol "X" di dalam input */}
@@ -1909,7 +1909,7 @@ const ContentStunting = () => {
                         </button>
                       )}
                     </div>
-                    <div>
+                    {/* <div>
                       <button
                         style={{
                           backgroundColor: "#007bff",
@@ -1924,7 +1924,7 @@ const ContentStunting = () => {
                       >
                         search
                       </button>
-                    </div>
+                    </div> */}
                   </div>
                   {showNextData ? (
                     <>
