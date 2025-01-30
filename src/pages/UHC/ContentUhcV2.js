@@ -1466,8 +1466,71 @@ const ContentUhcV2 = () => {
                             </div>
                           </div>
                         </CardBody>
-                      </Card></Col>
+                      </Card>
+                      </Col>
             </Row>
+            <div className="mb-2 d-flex">
+                    <div
+                      className="mx-2"
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        maxWidth: "300px",
+                        marginBottom: "20px",
+                      }}
+                    >
+                      <input
+                        style={{
+                          padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                          width: "100%",
+                          border: "1px solid #ccc",
+                          borderRadius: "5px",
+                          fontSize: "16px",
+                        }}
+                        type="text"
+                        value={searchTerm}
+                        onChange={handleSearchInput}
+                        onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                        placeholder={showNextData ? "Cari Daerah" : "Cari Se-Provinsi"} 
+                      />
+
+                      {/* Tombol "X" di dalam input */}
+                      {searchTerm && (
+                        <button
+                          onClick={() => handleClearSearch("seprovinsi")}
+                          style={{
+                            position: "absolute",
+                            right: "10px",
+                            top: "50%",
+                            transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                            background: "transparent",
+                            border: "none",
+                            fontSize: "16px",
+                            cursor: "pointer",
+                            color: "#999",
+                          }}
+                        >
+                          &#10006;
+                        </button>
+                      )}
+                    </div>
+                    {/* <div>
+                      <button
+                        style={{
+                          backgroundColor: "#007bff",
+                          color: "white",
+                          padding: "10px 20px",
+                          border: "none",
+                          borderRadius: "5px",
+                          cursor: "pointer",
+                          fontSize: "16px",
+                        }}
+                        onClick={() => handleButtonClick("seprovinsi")}
+                      >
+                        search
+                      </button>
+                    </div> */}
+                  </div>
           <div style={{ overflowY: "scroll", maxHeight:"500px"}}>
           <table
                   className="table table-bordered table-nowrap align-middle mb-0"
