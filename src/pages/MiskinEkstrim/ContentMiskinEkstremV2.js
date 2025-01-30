@@ -726,6 +726,8 @@ const ContentMiskinEkstremV2 = () => {
     setDataShowIndividuDesil1(value);
   };
   const [dataMiskinEkstremTabel, setDataMiskinEkstremTabel] = useState([],[]);
+  const [filteredDataMiskinEkstremTabel, setFilteredDataMiskinEkstremTabel] = useState([]); // Data hasil filter
+  const [filteredDataMiskinEkstremTabelKabupaten, setFilteredDataMiskinEkstremTabelKabupaten] = useState([]); // Data hasil filter
   
   const getDataMiskinEkstremTabel = ({tahun, tahun_data}) => {
     const fetchData = async () => {
@@ -751,8 +753,9 @@ const ContentMiskinEkstremV2 = () => {
 
         const dataMiskinEkstremTabel = await response.json();
 
-        setShowNextData(true)        
+        setShowNextData(false)        
         setDataMiskinEkstremTabel(dataMiskinEkstremTabel?.data);
+        setFilteredDataMiskinEkstremTabel(dataMiskinEkstremTabel?.data)
         setCurrentPage(1)
         setDataKolomNamaDaerah("Se-Provinsi")
         
@@ -828,7 +831,7 @@ const ContentMiskinEkstremV2 = () => {
 
   const [dataMiskinEkstremTabelKab, setDataMiskinEkstremTabelKab] = useState([],[]);
   const [dataKolomNamaDaerah, setDataKolomNamaDaerah] = useState("Se-Provinsi");
-  const [showNextData, setShowNextData] = useState(true);
+  const [showNextData, setShowNextData] = useState(false);
   
   const getDataMiskinEkstremTabelKab = (kodeDdn="", e, tahun, tahun_data) => {
     const fetchData = async () => {
@@ -856,12 +859,13 @@ const ContentMiskinEkstremV2 = () => {
         const dataMiskinEkstremTabelKab = await response.json();
         
         e.stopPropagation(); // Mencegah event bubbling jika dibutuhkan
-        setShowNextData(false); // Mengatur state agar class 'test' dihilangkan dari semua elemen
+        setShowNextData(true); // Mengatur state agar class 'test' dihilangkan dari semua elemen
 
         setDataKolomNamaDaerah("Nama Daerah")
         setCurrentPage(1)
 
-        setDataMiskinEkstremTabel(dataMiskinEkstremTabelKab.data);
+        setDataMiskinEkstremTabel(dataMiskinEkstremTabelKab?.data);
+        setFilteredDataMiskinEkstremTabelKabupaten(dataMiskinEkstremTabelKab?.data)
         
       } catch (errorKemiskinanEkstrem) {
         setErrorKemiskinanEkstrem(errorKemiskinanEkstrem);
@@ -1009,7 +1013,7 @@ const ContentMiskinEkstremV2 = () => {
   const indexOfFirstItemDetailSub = indexOfLastItemDetailSub - itemsPerPage;
   
   const sortedItems = React.useMemo(() => {
-    let sortableItems = [...(dataMiskinEkstremTabel || [])];
+    let sortableItems = [...((showNextData ? filteredDataMiskinEkstremTabelKabupaten : filteredDataMiskinEkstremTabel) || [])];
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key] || 0;
@@ -1025,7 +1029,7 @@ const ContentMiskinEkstremV2 = () => {
       });
     }
     return sortableItems;
-  }, [dataMiskinEkstremTabel, sortConfig]);
+  }, [showNextData ? filteredDataMiskinEkstremTabelKabupaten : filteredDataMiskinEkstremTabel, sortConfig]);
 
   const sortedItemsKab = React.useMemo(() => {
     let sortableItems = [...(dataMiskinEkstremTabelKab || [])];
@@ -1089,7 +1093,7 @@ const ContentMiskinEkstremV2 = () => {
   const currentItemDetail = sortedItemsDetail.slice(indexOfFirstItemDetail, indexOfLastItemDetail);
   const currentItemDetailSub = sortedItemsDetailSub.slice(indexOfFirstItemDetailSub, indexOfLastItemDetailSub);
 
-  const totalPages = Math.ceil((dataMiskinEkstremTabel?.length || 0) / itemsPerPage);
+  const totalPages = Math.ceil(((showNextData ? filteredDataMiskinEkstremTabelKabupaten?.length : filteredDataMiskinEkstremTabel?.length)|| 0) / itemsPerPage);
   const totalPagesKab = Math.ceil((dataMiskinEkstremTabelKab?.length || 0) / itemsPerPage);
   const totalPagesDetail = Math.ceil((dataDetailAnggaran?.length || 0) / itemsPerPage);
   const totalPagesDetailSub = Math.ceil((dataDetailAnggaranSub?.length || 0) / itemsPerPage);
@@ -1202,6 +1206,54 @@ const ContentMiskinEkstremV2 = () => {
   const handleClose = () => {
     setModall(false); // Close modal by setting modall to false
   };
+
+  const [searchTerm, setSearchTerm] = useState(""); // State untuk menampung nilai input search
+    const handleSearchInput = (e) => {
+      const value = e.target.value.toLowerCase();
+      setSearchTerm(value);
+      if (value === "") {
+        if(showNextData){
+          setFilteredDataMiskinEkstremTabelKabupaten(dataMiskinEkstremTabel)
+        }else{
+          setFilteredDataMiskinEkstremTabel(dataMiskinEkstremTabel);
+        }
+      } else {
+        // Filter data berdasarkan input
+        const filtered = dataMiskinEkstremTabel.filter((item) => {
+          if(showNextData){
+            return item.nama_daerah.toLowerCase().includes(value)
+          }else{
+            return item.nama_prov.toLowerCase().includes(value)
+          }
+        }
+        );
+        showNextData ? setFilteredDataMiskinEkstremTabelKabupaten(filtered) : setFilteredDataMiskinEkstremTabel(filtered)
+      }
+    };
+  
+    const handleButtonClick = (area) => {
+      setCurrentPage(1);
+    };
+  
+    const handleClearSearch = (area = "") => {
+      showNextData ? setFilteredDataMiskinEkstremTabelKabupaten(dataMiskinEkstremTabel) : setFilteredDataMiskinEkstremTabel(dataMiskinEkstremTabel)
+      setCurrentPage(1);
+      // setCurrentPageKabupaten(1);
+      setSearchTerm(""); // Kosongkan isi input
+    };
+
+    const handleKeyDown = (e, area) => {
+      // if (e.key === "Enter") {
+      //   if (area === "kabupaten") {
+      //     getDataTabelDapodikKab(e.target.value); // Panggil API ketika tombol ditekan
+      //   } else if (area === "provinsi") {
+      //     getDataTabelDapodikProv(e.target.value);
+      //   } else {
+      //     getDataTabelDapodikSeProv(e.target.value);
+      //   }
+      //   setCurrentPage(1);
+      // }
+    };
 
   const [selectedSingleTahunAnggaran, setSelectedSingleTahunAnggaran] = useState('2025'); // Set default value
   const [selectedSingleTahunData, setselectedSingleTahunData] = useState('2024'); // Set default value
@@ -1992,7 +2044,69 @@ const ContentMiskinEkstremV2 = () => {
                     className="text-muted"
                   >
                     <TabPane tabId="1">
-                    {showNextData ? (<></>) : (<><button style={{
+                    <div className="mb-2 d-flex">
+                    <div
+                      className="mx-2"
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        maxWidth: "300px",
+                        marginBottom: "20px",
+                      }}
+                    >
+                      <input
+                        style={{
+                          padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                          width: "100%",
+                          border: "1px solid #ccc",
+                          borderRadius: "5px",
+                          fontSize: "16px",
+                        }}
+                        type="text"
+                        value={searchTerm}
+                        onChange={handleSearchInput}
+                        onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                        placeholder={showNextData ? "Cari Se-Provinsi" : "Cari Provinsi"} 
+                      />
+
+                      {/* Tombol "X" di dalam input */}
+                      {searchTerm && (
+                        <button
+                          onClick={() => handleClearSearch("seprovinsi")}
+                          style={{
+                            position: "absolute",
+                            right: "10px",
+                            top: "50%",
+                            transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                            background: "transparent",
+                            border: "none",
+                            fontSize: "16px",
+                            cursor: "pointer",
+                            color: "#999",
+                          }}
+                        >
+                          &#10006;
+                        </button>
+                      )}
+                    </div>
+                    <div>
+                      <button
+                        style={{
+                          backgroundColor: "#007bff",
+                          color: "white",
+                          padding: "10px 20px",
+                          border: "none",
+                          borderRadius: "5px",
+                          cursor: "pointer",
+                          fontSize: "16px",
+                        }}
+                        onClick={() => handleButtonClick("seprovinsi")}
+                      >
+                        search
+                      </button>
+                    </div>
+                  </div>
+                    {showNextData ? (<><button style={{
                         backgroundColor: "#007bff",
                         color: "white",
                         padding: "10px 20px",
@@ -2001,7 +2115,7 @@ const ContentMiskinEkstremV2 = () => {
                         cursor: "pointer",
                         fontSize: "16px",
                         marginBottom: "8px"
-                      }} onClick={()=>getDataMiskinEkstremTabel({tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData})}>Kembali ke Provinsi</button></>)}         
+                      }} onClick={()=>getDataMiskinEkstremTabel({tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData})}>Kembali ke Provinsi</button></>) : (<></>)}         
                     <div style={{ overflowX: "auto" }}>
                     <table
                       className="table table-bordered table-nowrap align-middle mb-0 custom-table"
@@ -2168,7 +2282,7 @@ const ContentMiskinEkstremV2 = () => {
                         verticalAlign: "middle"}}>
                       {indexOfFirstItem + index + 1}
                     </td>
-                    <td className={showNextData ? "click-data" : ""} style={{ minWidth: "270px" }} onClick={(e)=> {showNextData ?  getDataMiskinEkstremTabelKab(item.kode_prov, e, selectedSingleTahunAnggaran, selectedSingleTahunData) : "", showNextData ? setNamaDaerahDetail(item.nama_prov) : ""}}>
+                    <td className={showNextData ? "" : "click-data"} style={{ minWidth: "270px" }} onClick={(e)=> {!showNextData ?  getDataMiskinEkstremTabelKab(item.kode_prov, e, selectedSingleTahunAnggaran, selectedSingleTahunData) : "", !showNextData ? setNamaDaerahDetail(item.nama_prov) : ""}}>
                       {item.nama_prov ? item.nama_prov.replace("Provinsi ", "") : item.nama_daerah.replace("Provinsi ", "")}
                     </td>
                     <td>
@@ -2268,7 +2382,7 @@ const ContentMiskinEkstremV2 = () => {
                     
                   </tr>
                   ))}
-                  {placeholders}
+                  {/* {placeholders} */}
                 </tbody>
             </table>
             </div>            
