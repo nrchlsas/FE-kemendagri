@@ -558,6 +558,7 @@ const ContentStunting = () => {
   };
 
   const [dataStuntingTabel, setDataStuntingTabel] = useState([], []);
+  const [filteredDataStuntingTabel, setFilteredDataStuntingTabel] = useState([]); // Data hasil filter
   const [titleMap, setTitleMap] = useState("Berisiko Stunting Desil 1")
   const [valueMap, setValueMap] = useState([]);
   const [maxValueMap, setmaxValueMap] = useState(0)
@@ -588,8 +589,9 @@ const ContentStunting = () => {
         }
 
         const dataStuntingTabel = await response.json();
-        setDataStuntingTabel(dataStuntingTabel?.data);
-        setShowNextData(true);
+        setDataStuntingTabel(dataStuntingTabel?.data); // Simpan data asli
+        setFilteredDataStuntingTabel(dataStuntingTabel?.data); // Tampilkan data awal
+        setShowNextData(false);
         setCurrentPage(1);
         setDataKolomNamaDaerah("Se-Provinsi");
 
@@ -634,40 +636,6 @@ const ContentStunting = () => {
           ...(Array.isArray(desilData.desil1) ? desilData.desil1.map(item => item.value) : [])
         );
         setmaxValueMap(maxDesil1);
-      
-        // const valueDesil1 = dataStuntingTabel.data.map(item => ({
-        //   name: item.nama_prov,
-        //   value: parseInt(item.peringkat_kesejahteraan_1)          
-        // }));
-        // setValueMap(valueDesil1);
-
-        // console.log(valueDesil1)
-
-        // const valueDesil2 = dataStuntingTabel.data.map(item => ({
-        //   name: item.nama_prov,
-        //   value: parseInt(item.peringkat_kesejahteraan_2)          
-        // }));
-
-        // const valueDesil3 = dataStuntingTabel.data.map(item => ({
-        //   name: item.nama_prov,
-        //   value: parseInt(item.peringkat_kesejahteraan_3)          
-        // }));
-
-        // const valueDesil4 = dataStuntingTabel.data.map(item => ({
-        //   name: item.nama_prov,
-        //   value: parseInt(item.peringkat_kesejahteraan_4)          
-        // }));
-
-        // const valueDesilLebihDari4 = dataStuntingTabel.data.map(item => ({
-        //   name: item.nama_prov,
-        //   value: parseInt(item.peringkat_kesejahteraan_diatas_4)          
-        // }));
-
-        // const maxDesil1 = Math.max(...valueDesil1.map(item => item.value));
-        // const maxDesil2  = Math.max(...valueDesil2.map(item => item.value));
-        // const maxDesil3  = Math.max(...valueDesil3.map(item => item.value));
-        // const maxDesil4  = Math.max(...valueDesil4.map(item => item.value));
-        // const maxDesilLebiDari4  = Math.max(...valueDesilLebihDari4.map(item => item.value));
 
       } catch (errorStunting) {
         setErrorStunting(errorStunting);
@@ -677,13 +645,10 @@ const ContentStunting = () => {
     };
     fetchData();
   };
-
-  const [dataStuntingTabelKabupaten, setDataStuntingTabelKabupaten] = useState(
-    [],
-    []
-  );
+  const [dataStuntingTabelKabupaten, setDataStuntingTabelKabupaten] = useState([],[]);
+  const [filteredDataStuntingTabelKabupaten, setFilteredDataStuntingTabelKabupaten] = useState([]); // Data hasil filter
   const [dataKolomNamaDaerah, setDataKolomNamaDaerah] = useState("Se-Provinsi");
-  const [showNextData, setShowNextData] = useState(true);
+  const [showNextData, setShowNextData] = useState(false);
 
   const getDataStuntingTabelKabupaten = (kodeDdn = "", e, tahun, tahun_data) => {
     const fetchData = async () => {
@@ -709,12 +674,13 @@ const ContentStunting = () => {
         }
 
         const dataStuntingTabelKabupaten = await response.json();
-        e.stopPropagation(); // Mencegah event bubbling jika dibutuhkan
-        setShowNextData(false); // Mengatur state agar class 'test' dihilangkan dari semua elemen
-
+        e.stopPropagation(); 
+        setShowNextData(true);
+        
         setDataKolomNamaDaerah("Nama Daerah");
         setCurrentPage(1);
-        setDataStuntingTabel(dataStuntingTabelKabupaten.data);        
+        setDataStuntingTabel(dataStuntingTabelKabupaten?.data);
+        setFilteredDataStuntingTabelKabupaten(dataStuntingTabelKabupaten?.data);
       } catch (errorStunting) {
         setErrorStunting(errorStunting);
       } finally {
@@ -886,7 +852,7 @@ const ContentStunting = () => {
   };
 
   const sortedItems = React.useMemo(() => {
-    let sortableItems = [...(dataStuntingTabel || [])];
+    let sortableItems = [...((showNextData ? filteredDataStuntingTabelKabupaten : filteredDataStuntingTabel) || [])];
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key] || 0;
@@ -902,10 +868,10 @@ const ContentStunting = () => {
       });
     }
     return sortableItems;
-  }, [dataStuntingTabel, sortConfig]);
+  }, [showNextData ? filteredDataStuntingTabelKabupaten : filteredDataStuntingTabel, sortConfig]);
 
   const sortedItemsKabupaten = React.useMemo(() => {
-    let sortableItems = [...(dataStuntingTabelKabupaten || [])];
+    let sortableItems = [...(filteredDataStuntingTabelKabupaten || [])];
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key] || 0;
@@ -921,7 +887,7 @@ const ContentStunting = () => {
       });
     }
     return sortableItems;
-  }, [dataStuntingTabelKabupaten, sortConfig]);
+  }, [filteredDataStuntingTabelKabupaten, sortConfig]);
 
   const sortedItemsDetail = React.useMemo(() => {
     let sortableItems = [...(dataDetailAnggaran || [])];
@@ -977,9 +943,9 @@ const ContentStunting = () => {
   );
 
   // Calculate total number of pages
-  const totalPages = Math.ceil((dataStuntingTabel?.length || 0) / itemsPerPage);
+  const totalPages = Math.ceil(((showNextData ? filteredDataStuntingTabelKabupaten?.length : filteredDataStuntingTabel?.length) || 0) / itemsPerPage);
   const totalPagesKabupaten = Math.ceil(
-    (dataStuntingTabelKabupaten?.length || 0) / itemsPerPage
+    (filteredDataStuntingTabelKabupaten?.length || 0) / itemsPerPage
   );
   const totalPagesDetail = Math.ceil(
     (dataDetailAnggaran?.length || 0) / itemsPerPage
@@ -1103,23 +1069,52 @@ const ContentStunting = () => {
   };
 
   const [searchTerm, setSearchTerm] = useState(""); // State untuk menampung nilai input search
-
-  // Fungsi untuk menangani perubahan pada input
   const handleSearchInput = (e) => {
-    setSearchTerm(e.target.value); // Memperbarui nilai input pencarian
+    const value = e.target.value.toLowerCase();
+    setSearchTerm(value);
+    console.log(dataStuntingTabel, 'ini isi data stunting <tabel>   </tabel>')
+    if (value === "") {
+      if(showNextData){
+        setFilteredDataStuntingTabelKabupaten(dataStuntingTabel)
+      }else{
+        setFilteredDataStuntingTabel(dataStuntingTabel);
+      }
+    } else {
+      // Filter data berdasarkan input
+      const filtered = dataStuntingTabel.filter((item) => {
+        if(showNextData){
+          return item.nama_kabupaten.toLowerCase().includes(value)
+        }else{
+          return item.nama_prov.toLowerCase().includes(value)
+        }
+      }
+      );
+      showNextData ? setFilteredDataStuntingTabelKabupaten(filtered) : setFilteredDataStuntingTabel(filtered)
+    }
+  };
+
+  const handleButtonClick = (area) => {
+    setCurrentPage(1);
+  };
+
+  const handleClearSearch = (area = "") => {
+    showNextData ? setFilteredDataStuntingTabelKabupaten(dataStuntingTabel) : setFilteredDataStuntingTabel(dataStuntingTabel)
+    setCurrentPage(1);
+    setCurrentPageKabupaten(1);
+    setSearchTerm(""); // Kosongkan isi input
   };
 
   const handleKeyDown = (e, area) => {
-    if (e.key === "Enter") {
-      if (area === "kabupaten") {
-        getDataTabelDapodikKab(e.target.value); // Panggil API ketika tombol ditekan
-      } else if (area === "provinsi") {
-        getDataTabelDapodikProv(e.target.value);
-      } else {
-        getDataTabelDapodikSeProv(e.target.value);
-      }
-      setCurrentPage(1);
-    }
+    // if (e.key === "Enter") {
+    //   if (area === "kabupaten") {
+    //     getDataTabelDapodikKab(e.target.value); // Panggil API ketika tombol ditekan
+    //   } else if (area === "provinsi") {
+    //     getDataTabelDapodikProv(e.target.value);
+    //   } else {
+    //     getDataTabelDapodikSeProv(e.target.value);
+    //   }
+    //   setCurrentPage(1);
+    // }
   };
 
   const [dataShowChartAnggaran, setDataShowChartAnggaran] = useState(false);
@@ -1869,10 +1864,52 @@ const ContentStunting = () => {
                 className="text-muted"
               >
                 <TabPane tabId="1">
-                  {showNextData ? (
-                    <></>
-                  ) : (
-                    <>
+                <div className="mb-2 d-flex">
+                    <div
+                      className="mx-2"
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        maxWidth: "300px",
+                        marginBottom: "20px",
+                      }}
+                    >
+                      <input
+                        style={{
+                          padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                          width: "100%",
+                          border: "1px solid #ccc",
+                          borderRadius: "5px",
+                          fontSize: "16px",
+                        }}
+                        type="text"
+                        value={searchTerm}
+                        onChange={handleSearchInput}
+                        onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                        placeholder="Cari Provinsi"
+                      />
+
+                      {/* Tombol "X" di dalam input */}
+                      {searchTerm && (
+                        <button
+                          onClick={() => handleClearSearch("seprovinsi")}
+                          style={{
+                            position: "absolute",
+                            right: "10px",
+                            top: "50%",
+                            transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                            background: "transparent",
+                            border: "none",
+                            fontSize: "16px",
+                            cursor: "pointer",
+                            color: "#999",
+                          }}
+                        >
+                          &#10006;
+                        </button>
+                      )}
+                    </div>
+                    <div>
                       <button
                         style={{
                           backgroundColor: "#007bff",
@@ -1882,13 +1919,33 @@ const ContentStunting = () => {
                           borderRadius: "5px",
                           cursor: "pointer",
                           fontSize: "16px",
-                          marginBottom: "8px",
                         }}
-                        onClick={() => getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData})}
+                        onClick={() => handleButtonClick("seprovinsi")}
                       >
-                        Kembali ke Provinsi
+                        search
                       </button>
-                    </>
+                    </div>
+                  </div>
+                  {showNextData ? (
+                    <>
+                    <button
+                      style={{
+                        backgroundColor: "#007bff",
+                        color: "white",
+                        padding: "10px 20px",
+                        border: "none",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                        fontSize: "16px",
+                        marginBottom: "8px",
+                      }}
+                      onClick={() => getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData})}
+                    >
+                      Kembali ke Provinsi
+                    </button>
+                  </>
+                  ) : (
+                    <></>
                   )}
                   <div style={{ overflowX: "auto" }}>
                     <table
@@ -2194,7 +2251,7 @@ const ContentStunting = () => {
                               {indexOfFirstItem + index + 1}
                             </td>
                             <td
-                              className={showNextData ? "click-data" : ""}
+                              className={showNextData ? "" : "click-data"}
                               style={{ minWidth: "270px" }}
                               onClick={(e) =>{item.nama_kabupaten
                                 ? ""
