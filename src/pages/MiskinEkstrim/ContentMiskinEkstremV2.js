@@ -3764,16 +3764,43 @@ const ContentMiskinEkstremV2 = () => {
                   <div style={{ fontWeight: 650 }}>
                   <CountUp
                       start={0}
-                      end={item.anggaran3}
+                      end={item.anggaran}
                       // decimal=","
                       // decimals={2}
                       separator="."
                       prefix="Rp "
                       // suffix=" T"
                       duration={1}
-                    />
-                    
+                    /> 
+                    &nbsp;
                   </div>
+                  {((item.anggaran/dataRincianDetail)*100)>=1 ? <>
+                    <div>
+                    (<CountUp
+                      start={0}
+                      end={(item.anggaran/dataRincianDetail)*100}
+                      decimal=","
+                      decimals={2}
+                      separator="."
+                      // prefix="Rp "
+                      suffix="%"
+                      duration={1}
+                    />)
+                  </div>
+                  </> : <>
+                  <div>
+                    (<CountUp
+                      start={0}
+                      end={(item.anggaran/dataRincianDetail)*100}
+                      decimal=","
+                      decimals={6}
+                      separator="."
+                      // prefix="Rp "
+                      suffix="%"
+                      duration={1}
+                    />)
+                  </div>
+                  </>}
                 </div>
               ))}                
               </Col>
