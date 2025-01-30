@@ -1261,7 +1261,7 @@ const ContentMiskinEkstremV2 = () => {
               value={selectedSingleTahunData}
               onChange={handleSelectChangeDataPokok}
             >                        
-              <option value="2024">2023</option>
+              <option value="2023">2023</option>
               <option value="2024">2024</option>
               <option value="2025">2025</option>
             </select>
