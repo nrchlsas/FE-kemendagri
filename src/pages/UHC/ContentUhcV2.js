@@ -102,6 +102,8 @@ const ContentUhcV2 = () => {
   const [errorBpjsTabel, setErrorBpjsTabel] = useState([]);
   const [showNextData, setShowNextData] = useState(false);
   const [dataPeserta, setDataPeserta] = useState([])
+  const [filteredDataUhcTabel, setFilteredDataUhcTabel] = useState([]); // Data hasil filter
+  const [filteredDataUhcTabelKabupaten, setFilteredDataUhcTabelKabupaten] = useState([]); // Data hasil filter
 
   const getDataTabelBpjsSeprov = ({tahun, tahun_data}) => {
     const fetchData = async () => {
@@ -130,6 +132,7 @@ const ContentUhcV2 = () => {
 
         const dataBpjsTabelSeprov = await response.json();
         setDataBpjsTabelSeprov(dataBpjsTabelSeprov?.data);
+        setFilteredDataUhcTabel(dataBpjsTabelSeprov?.data)
 
         // Proses data
         const dataPeserta = {
@@ -204,6 +207,7 @@ const ContentUhcV2 = () => {
         setShowNextData(true)
         e.stopPropagation(); // Mencegah event bubbling jika dibutuhkan        
         setDataBpjsTabelSeprov(dataBpjsTabelKabupaten?.data);
+        setFilteredDataUhcTabelKabupaten(dataBpjsTabelKabupaten?.data);
       } catch (errorBpjsTabelKabupaten) {
         setErrorBpjsTabelKabupaten(errorBpjsTabelKabupaten);
       } finally {
@@ -325,7 +329,7 @@ const ContentUhcV2 = () => {
   const indexOfFirstItemDetailSub = indexOfLastItemDetailSub - itemsPerPage;
 
   const sortedItems = React.useMemo(() => {
-    let sortableItems = [...(dataBpjsTabelSeprov || [])];
+    let sortableItems = [...((showNextData ? filteredDataUhcTabelKabupaten : filteredDataUhcTabel)  || [])];
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key] || 0;
@@ -341,7 +345,7 @@ const ContentUhcV2 = () => {
       });
     }
     return sortableItems;
-  }, [dataBpjsTabelSeprov, sortConfig]);
+  }, [showNextData ? filteredDataUhcTabelKabupaten : filteredDataUhcTabel, sortConfig]);
 
   const sortedItemsKab = React.useMemo(() => {
     let sortableItems = [...(dataBpjsTabelKabupaten || [])];
@@ -406,7 +410,7 @@ const ContentUhcV2 = () => {
   const currentItemDetail = sortedItemsDetail.slice(indexOfFirstItemDetail, indexOfLastItemDetail);
   const currentItemDetailSub = sortedItemsDetailSub.slice(indexOfFirstItemDetailSub, indexOfLastItemDetailSub);
   
-  const totalPages = Math.ceil((dataBpjsTabelSeprov?.length || 0) / itemsPerPage);
+  const totalPages = Math.ceil(((showNextData ? filteredDataUhcTabelKabupaten?.length : filteredDataUhcTabel?.length) || 0) / itemsPerPage);
   const totalPagesKab = Math.ceil((dataBpjsTabelKabupaten?.length || 0) / itemsPerPage);
   const totalPagesDetail = Math.ceil((dataDetailAnggaran?.length || 0) / itemsPerPage);
   const totalPagesDetailSub = Math.ceil((dataDetailAnggaranSub?.length || 0) / itemsPerPage);
@@ -463,6 +467,54 @@ const ContentUhcV2 = () => {
   const handleClose = () => {
     setModall(false); // Close modal by setting modall to false
   };
+
+   const [searchTerm, setSearchTerm] = useState(""); // State untuk menampung nilai input search
+      const handleSearchInput = (e) => {
+        const value = e.target.value.toLowerCase();
+        setSearchTerm(value);
+        if (value === "") {
+          if(showNextData){
+            setFilteredDataUhcTabelKabupaten(dataBpjsTabelSeprov)
+          }else{
+            setFilteredDataUhcTabel(dataBpjsTabelSeprov);
+          }
+        } else {
+          // Filter data berdasarkan input
+          const filtered = dataBpjsTabelSeprov.filter((item) => {
+            if(showNextData){
+              return item.nama_daerah.toLowerCase().includes(value)
+            }else{
+              return item.nama.toLowerCase().includes(value)
+            }
+          }
+          );
+          showNextData ? setFilteredDataUhcTabelKabupaten(filtered) : setFilteredDataUhcTabel(filtered)
+        }
+      };
+    
+      const handleButtonClick = (area) => {
+        setCurrentPage(1);
+      };
+    
+      const handleClearSearch = (area = "") => {
+        showNextData ? setFilteredDataUhcTabelKabupaten(dataBpjsTabelSeprov) : setFilteredDataUhcTabel(dataBpjsTabelSeprov)
+        setCurrentPage(1);
+        // setCurrentPageKabupaten(1);
+        setSearchTerm(""); // Kosongkan isi input
+      };
+  
+      const handleKeyDown = (e, area) => {
+        // if (e.key === "Enter") {
+        //   if (area === "kabupaten") {
+        //     getDataTabelDapodikKab(e.target.value); // Panggil API ketika tombol ditekan
+        //   } else if (area === "provinsi") {
+        //     getDataTabelDapodikProv(e.target.value);
+        //   } else {
+        //     getDataTabelDapodikSeProv(e.target.value);
+        //   }
+        //   setCurrentPage(1);
+        // }
+      };
 
   const [dataShowChartAnggaran, setDataShowChartAnggaran] = useState(false);
   const [customActiveTabBelanja, setcustomActiveTabBelanja] = useState("1");
@@ -1089,6 +1141,68 @@ const ContentUhcV2 = () => {
                     className="text-muted"
                   >
                     <TabPane tabId="1">
+                    <div className="mb-2 d-flex">
+                    <div
+                      className="mx-2"
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        maxWidth: "300px",
+                        marginBottom: "20px",
+                      }}
+                    >
+                      <input
+                        style={{
+                          padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                          width: "100%",
+                          border: "1px solid #ccc",
+                          borderRadius: "5px",
+                          fontSize: "16px",
+                        }}
+                        type="text"
+                        value={searchTerm}
+                        onChange={handleSearchInput}
+                        onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                        placeholder={showNextData ? "Cari Se-Provinsi" : "Cari Provinsi"} 
+                      />
+
+                      {/* Tombol "X" di dalam input */}
+                      {searchTerm && (
+                        <button
+                          onClick={() => handleClearSearch("seprovinsi")}
+                          style={{
+                            position: "absolute",
+                            right: "10px",
+                            top: "50%",
+                            transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                            background: "transparent",
+                            border: "none",
+                            fontSize: "16px",
+                            cursor: "pointer",
+                            color: "#999",
+                          }}
+                        >
+                          &#10006;
+                        </button>
+                      )}
+                    </div>
+                    <div>
+                      <button
+                        style={{
+                          backgroundColor: "#007bff",
+                          color: "white",
+                          padding: "10px 20px",
+                          border: "none",
+                          borderRadius: "5px",
+                          cursor: "pointer",
+                          fontSize: "16px",
+                        }}
+                        onClick={() => handleButtonClick("seprovinsi")}
+                      >
+                        search
+                      </button>
+                    </div>
+                  </div>
                     {showNextData ? (<><button style={{
                         backgroundColor: "#007bff",
                         color: "white",
