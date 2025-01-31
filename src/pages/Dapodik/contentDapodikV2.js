@@ -567,6 +567,7 @@ const ContentDapodikV2 = () => {
           }
     
           const dataDetailAnggaran = await response.json();
+          setDataDetailAnggaranSubSubFiltered(dataDetailAnggaran)
           
         } catch (errorDetailAnggaran) {
           setErrorDetailAnggaran(errorDetailAnggaran);
@@ -4095,7 +4096,7 @@ const ContentDapodikV2 = () => {
                         value={searchTermDetail}
                         onChange={handleSearchInputDetail}
                         onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
-                        placeholder="Cari Sub Giat"
+                        placeholder="Cari Nama Sub Giat"
                       />
 
                       {/* Tombol "X" di dalam input */}

@@ -3994,7 +3994,7 @@ const ContentMiskinEkstremV2 = () => {
                         value={searchTermDetail}
                         onChange={handleSearchInputDetail}
                         onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
-                        placeholder={"Cari Sub Giat"} 
+                        placeholder={"Cari Nama Sub Giat"} 
                       />
 
                       {/* Tombol "X" di dalam input */}
