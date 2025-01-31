@@ -2168,7 +2168,7 @@ const ContentMiskinEkstremV2 = () => {
                         cursor: "pointer",
                         fontSize: "16px",
                         marginBottom: "8px"
-                      }} onClick={()=>getDataMiskinEkstremTabel({tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData})}>Kembali ke Provinsi</button></>) : (<></>)}         
+                      }} onClick={()=> {getDataMiskinEkstremTabel({tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData}); setSearchTerm("")}}>Kembali ke Provinsi</button></>) : (<></>)}         
                     <div style={{ overflowX: "auto" }}>
                     <table
                       className="table table-bordered table-nowrap align-middle mb-0 custom-table"
@@ -2335,7 +2335,7 @@ const ContentMiskinEkstremV2 = () => {
                         verticalAlign: "middle"}}>
                       {indexOfFirstItem + index + 1}
                     </td>
-                    <td className={showNextData ? "" : "click-data"} style={{ minWidth: "270px" }} onClick={(e)=> {!showNextData ?  getDataMiskinEkstremTabelKab(item.kode_prov, e, selectedSingleTahunAnggaran, selectedSingleTahunData) : "", !showNextData ? setNamaDaerahDetail(item.nama_prov) : ""}}>
+                    <td className={showNextData ? "" : "click-data"} style={{ minWidth: "270px" }} onClick={(e)=> {!showNextData ?  getDataMiskinEkstremTabelKab(item.kode_prov, e, selectedSingleTahunAnggaran, selectedSingleTahunData) : "", !showNextData ? setNamaDaerahDetail(item.nama_prov) : ""; setSearchTerm("")}}>
                       {item.nama_prov ? item.nama_prov.replace("Provinsi ", "") : item.nama_daerah.replace("Provinsi ", "")}
                     </td>
                     <td>

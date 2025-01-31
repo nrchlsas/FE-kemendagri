@@ -1996,7 +1996,7 @@ const ContentStunting = () => {
                         fontSize: "16px",
                         marginBottom: "8px",
                       }}
-                      onClick={() => getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData})}
+                      onClick={() => {getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData}); setSearchTerm("")}}
                     >
                       Kembali ke Provinsi
                     </button>
@@ -2317,7 +2317,7 @@ const ContentStunting = () => {
                                     e,
                                     selectedSingleTahunAnggaran,
                                     selectedSingleTahunData
-                                  ), dataKolomNamaDaerah == "Se-Provinsi" ? setNamaDaerahDetail(item.nama_prov) : ""}                                
+                                  ), dataKolomNamaDaerah == "Se-Provinsi" ? setNamaDaerahDetail(item.nama_prov) : ""; setSearchTerm("")}                                
                               }
                             >
                               {item.nama_kabupaten? item.nama_kabupaten.replace("Provinsi ", "") || "-"

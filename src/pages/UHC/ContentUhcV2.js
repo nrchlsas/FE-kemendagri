@@ -1263,7 +1263,7 @@ const ContentUhcV2 = () => {
                         cursor: "pointer",
                         fontSize: "16px",
                         marginBottom: "8px"
-                    }} onClick={()=>getDataTabelBpjsSeprov({tahun: selectedSingleTahunAnggaran})}>Kembali ke Provinsi</button></>) : (<></>)}
+                    }} onClick={()=>{getDataTabelBpjsSeprov({tahun: selectedSingleTahunAnggaran}); setSearchTerm("")}}>Kembali ke Provinsi</button></>) : (<></>)}
                     <div style={{ overflowX: "auto" }}>
                     <table
                       className="table table-bordered table-nowrap align-middle mb-0 custom-table"
@@ -1429,7 +1429,7 @@ const ContentUhcV2 = () => {
                   {currentItems.map((item, index) =>(
                     <tr key={index}>
                         <td>{indexOfFirstItem+index+1}</td>                        
-                        <td className={showNextData ? "" : "click-data" } style={{ minWidth: "270px" }} onClick={(e)=> showNextData ? "" : getDataTabelBpjsKabupaten({kodeDdn: item.kode, e:e, tahun:selectedSingleTahunAnggaran})}>{showNextData ? item.nama_daerah : item.nama}</td>
+                        <td className={showNextData ? "" : "click-data" } style={{ minWidth: "270px" }} onClick={(e)=> {showNextData ? "" : getDataTabelBpjsKabupaten({kodeDdn: item.kode, e:e, tahun:selectedSingleTahunAnggaran}); setSearchTerm("")}}>{showNextData ? item.nama_daerah : item.nama}</td>
                         <td>{item.jumlah_bp_pn? parseInt(item.jumlah_bp_pn).toLocaleString("id-ID") : "-"}</td>
                         <td>{item.jumlah_bp_swasta? parseInt(item.jumlah_bp_swasta).toLocaleString("id-ID") : "-"}</td>
                         <td>{item.jumlah_pbi_jk? parseInt(item.jumlah_pbi_jk).toLocaleString("id-ID")
