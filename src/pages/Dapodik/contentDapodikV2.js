@@ -537,6 +537,7 @@ const ContentDapodikV2 = () => {
   };
 
     const [dataDetailAnggaranSubSub, setDataDetailAnggaranSubSub] = useState([]);
+    const [dataDetailAnggaranSubSubFiltered, setDataDetailAnggaranSubSubFiltered] = useState([]);
     const [loadingDetailAnggaranSub, setLoadingDetailAnggaranSub] = useState([]);
     const [errorDetailAnggaranSub, setErrorDetailAnggaranSub] = useState([]);
   
@@ -589,9 +590,6 @@ const ContentDapodikV2 = () => {
             kode_prov: kodeProv
           }),
         };
-        // /table_dapodik_provinsi
-        // /table_dapodik_kabupaten
-        // /table_stunting_provinsi
         const response = await fetch(
           `${API_URI_RBAC}/v2/tabel_dapodik_provinsi_detail`,
           requestOptions
@@ -605,13 +603,7 @@ const ContentDapodikV2 = () => {
         setShowNextData(true);
         setDataKolomNamaDaerah("Nama Daerah");
         setCurrentPageProvinsi(1)
-         // Mengatur state agar class 'test' dihilangkan dari semua elemen
-        // const filterKabupaten = dataDapodikTabelProvinsi?.data?.tabel_dapodik_provinsi.filter((item)=>(
-          //   item.jns_pemda=="kab" || item.jns_pemda=="kota"
-          setDataDapodikTabelProvinsi(dataDapodikTabelProvinsiDetail?.data);
-        // ))
-        // console.log(filterKabupaten, 'ini')
-
+        setDataDapodikTabelProvinsi(dataDapodikTabelProvinsiDetail?.data);
 
       } catch (errorDapodikTabel) {
         setErrorDapodikTabel(errorDapodikTabel);
@@ -623,7 +615,9 @@ const ContentDapodikV2 = () => {
   };
 
   const [dataDetailAnggaran, setDataDetailAnggaran] = useState([]);
-  const [dataDetailAnggarnaSub, setDataDetailAnggaranSub] = useState([]);
+  const [dataDetailAnggaranFiltered, setDataDetailAnggaranFiltered] = useState([]);
+  const [dataDetailAnggaranSub, setDataDetailAnggaranSub] = useState([]);
+  const [dataDetailAnggaranSubFiltered, setDataDetailAnggaranSubFiltered] = useState([]);
   const [dataDetailHighlight, setDataDetailHighlight] = useState([])
   const [loadingDetailAnggaran, setLoadingDetailAnggaran] = useState([]);
   const [errorDetailAnggaran, setErrorDetailAnggaran] = useState([]);
@@ -668,16 +662,25 @@ const ContentDapodikV2 = () => {
           setDataDetailAnggaran(
             dataDetailAnggaran?.data?.detail_tabel_dapodik_seprovinsi
           );
+          setDataDetailAnggaranFiltered(
+            dataDetailAnggaran?.data?.detail_tabel_dapodik_seprovinsi
+          );
           setDataDetailHighlight(dataDetailAnggaran?.data?.dapodik_highlight_nasional)
           setModall(true);
         } else if (kodeDdnProvinsi != "" && kodeSubGiat == "") {
           setDataDetailAnggaran(
             dataDetailAnggaran?.data?.detail_tabel_dapodik_byprovinsi
           );
+          setDataDetailAnggaranFiltered(
+            dataDetailAnggaran?.data?.detail_tabel_dapodik_byprovinsi
+          );
           setDataDetailHighlight(dataDetailAnggaran?.data?.dapodik_highlight_daerah)
           setModall(true);
         } else if (kodeDdnKabupaten != "" && kodeSubGiat == "") {
           setDataDetailAnggaran(
+            dataDetailAnggaran?.data?.detail_tabel_dapodik_bykabupaten
+          );
+          setDataDetailAnggaranFiltered(
             dataDetailAnggaran?.data?.detail_tabel_dapodik_bykabupaten
           );
           setDataDetailHighlight(dataDetailAnggaran?.data?.dapodik_highlight_daerah)
@@ -688,9 +691,15 @@ const ContentDapodikV2 = () => {
           setDataDetailAnggaranSub(
             dataDetailAnggaran?.data?.detail_tabel_dapodik_seprovinsi_sro
           );
+          setDataDetailAnggaranSubFiltered(
+            dataDetailAnggaran?.data?.detail_tabel_dapodik_seprovinsi_sro
+          );
           setModal(true);
         } else if (kodeDdnProvinsi != "" && kodeSubGiat != "") {
           setDataDetailAnggaranSub(
+            dataDetailAnggaran?.data?.detail_tabel_dapodik_provinsi_sro
+          );
+          setDataDetailAnggaranSubFiltered(
             dataDetailAnggaran?.data?.detail_tabel_dapodik_provinsi_sro
           );
           setModal(true);
@@ -698,19 +707,14 @@ const ContentDapodikV2 = () => {
           setDataDetailAnggaranSub(
             dataDetailAnggaran?.data?.detail_tabel_dapodik_provinsi_sro
           );
+          setDataDetailAnggaranSubFiltered(
+            dataDetailAnggaran?.data?.detail_tabel_dapodik_provinsi_sro
+          );
           setModal(true);
         }
 
         setCurrentPageDetail(1);
         setCurrentPageDetailSub(1);
-
-        // if(jenisPemda == "se-prov"){
-          
-        // }else{
-          
-        // }
-        
-        // Open the modal only after data is successfully fetched
       } catch (errorDetailAnggaran) {
         setErrorDetailAnggaran(errorDetailAnggaran);
       } finally {
@@ -735,9 +739,11 @@ const ContentDapodikV2 = () => {
   const [currentPageKabupaten, setCurrentPageKabupaten] = useState(1);
   const [currentPageDetail, setCurrentPageDetail] = useState(1);
   const [currentPageDetailSub, setCurrentPageDetailSub] = useState(1);
+  const [currentPageDetailSubSub, setCurrentPageDetailSubSub] = useState(1);
   const [itemsPerPage] = useState(10);
   const [itemsPerPageDetail] = useState(10);
   const [itemsPerPageDetailSub] = useState(10); // Set items per page
+  const [itemsPerPageDetailSubSub] = useState(10); // Set items per page
   const [itemsPerPageProv] = useState(10); // Set items per page
   const [itemsPerPageKab] = useState(10); // Set items per page
   const [sortConfig, setSortConfig] = useState({
@@ -761,6 +767,10 @@ const ContentDapodikV2 = () => {
   const indexOfLastItemDetailSub = currentPageDetailSub * itemsPerPageDetailSub;
   const indexOfFirstItemDetailSub =
     indexOfLastItemDetailSub - itemsPerPageDetailSub;
+
+    const indexOfLastItemDetailSubSub = currentPageDetailSubSub * itemsPerPageDetailSubSub;
+  const indexOfFirstItemDetailSubSub =
+    indexOfLastItemDetailSubSub - itemsPerPageDetailSubSub;
 
   // Sorting logic
   const requestSort = (key) => {
@@ -829,7 +839,7 @@ const ContentDapodikV2 = () => {
   }, [dataDapodikTabelProvinsi, sortConfig]);
 
   const sortedItemsDetail = React.useMemo(() => {
-    let sortableItems = [...(dataDetailAnggaran || [])];
+    let sortableItems = [...(dataDetailAnggaranFiltered || [])];
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key] || 0;
@@ -845,10 +855,10 @@ const ContentDapodikV2 = () => {
       });
     }
     return sortableItems;
-  }, [dataDetailAnggaran, sortConfig]);
+  }, [dataDetailAnggaranFiltered, sortConfig]);
 
   const sortedItemsDetailSub = React.useMemo(() => {
-    let sortableItems = [...(dataDetailAnggarnaSub || [])];
+    let sortableItems = [...(dataDetailAnggaranSubFiltered || [])];
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key] || 0;
@@ -864,7 +874,26 @@ const ContentDapodikV2 = () => {
       });
     }
     return sortableItems;
-  }, [dataDetailAnggarnaSub, sortConfig]);
+  }, [dataDetailAnggaranSubFiltered, sortConfig]);
+
+  const sortedItemsDetailSubSub = React.useMemo(() => {
+    let sortableItems = [...(dataDetailAnggaranSubSubFiltered || [])];
+    if (sortConfig.key !== null) {
+      sortableItems.sort((a, b) => {
+        const aValue = a[sortConfig.key] || 0;
+        const bValue = b[sortConfig.key] || 0;
+
+        if (aValue < bValue) {
+          return sortConfig.direction === "ascending" ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === "ascending" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [dataDetailAnggaranSubSubFiltered, sortConfig]);
 
   // Slice the sorted data for the current page
   const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);
@@ -886,6 +915,11 @@ const ContentDapodikV2 = () => {
     indexOfLastItemDetailSub
   );
 
+  const currentItemsDetailSubSub = sortedItemsDetailSubSub.slice(
+    indexOfFirstItemDetailSubSub,
+    indexOfLastItemDetailSubSub
+  );
+
   // Calculate total number of pages
   const totalPages = Math.ceil(
     (dataDapodikTabelSeProvinsi?.length || 0) / itemsPerPage
@@ -897,10 +931,13 @@ const ContentDapodikV2 = () => {
     (dataDapodikTabelKabupaten?.length || 0) / itemsPerPage
   );
   const totalPagesDetail = Math.ceil(
-    (dataDetailAnggaran?.length || 0) / itemsPerPage
+    (dataDetailAnggaranFiltered?.length || 0) / itemsPerPage
   );
   const totalPagesDetailSub = Math.ceil(
-    (dataDetailAnggarnaSub?.length || 0) / itemsPerPage
+    (dataDetailAnggaranSubFiltered?.length || 0) / itemsPerPage
+  );
+  const totalPagesDetailSubSub = Math.ceil(
+    (dataDetailAnggaranSubSubFiltered?.length || 0) / itemsPerPage
   );
 
   // Pagination change handler
@@ -1028,20 +1065,20 @@ const ContentDapodikV2 = () => {
     navigate(`/sipdhub/dapodik/detail-anggaran-dapodik/${kodeProv}`);
   };
 
-  const [searchTerm, setSearchTerm] = useState(""); // State untuk menampung nilai input search
-  // useEffect(() => {
-  //   getDataTabelDapodikKab(searchTerm);
-  // }, [searchTerm]);
+  const [searchTerm, setSearchTerm] = useState(""); 
+  const [searchTermDetail, setSearchTermDetail] = useState(""); 
+  const [searchTermDetailSub, setSearchTermDetailSub] = useState(""); 
+  const [searchTermDetailSubSub, setSearchTermDetailSubSub] = useState(""); 
 
   // Fungsi untuk menangani perubahan pada input
   const handleSearchInput = (e) => {
-    setSearchTerm(e.target.value); // Memperbarui nilai input pencarian
+    setSearchTerm(e.target.value);
   };
 
   const handleKeyDown = (e, area) => {
     if (e.key === "Enter") {
       if (area === "kabupaten") {
-        getDataTabelDapodikKab(e.target.value); // Panggil API ketika tombol ditekan
+        getDataTabelDapodikKab(e.target.value);
       } else if (area === "provinsi") {
         getDataTabelDapodikProv(e.target.value);
       } else {
@@ -1054,7 +1091,7 @@ const ContentDapodikV2 = () => {
   // Fungsi untuk memanggil API ketika tombol ditekan
   const handleButtonClick = (area) => {
     if (area === "kabupaten") {
-      getDataTabelDapodikKab(searchTerm); // Panggil API ketika tombol ditekan
+      getDataTabelDapodikKab(searchTerm);
     } else if (area === "provinsi") {
       getDataTabelDapodikProv({searchTerm, tahun:selectedSingleTahunAnggaran});
     } else {
@@ -1065,14 +1102,74 @@ const ContentDapodikV2 = () => {
 
   const handleClearSearch = (area = "") => {
     if (area === "kabupaten") {
-      getDataTabelDapodikKab(); // Panggil API ketika tombol ditekan
+      getDataTabelDapodikKab();
     } else if (area === "provinsi") {
       getDataTabelDapodikProv();
     } else {
       getDataTabelDapodikSeProv();
     }
     setCurrentPage(1);
-    setSearchTerm(""); // Kosongkan isi input
+    setSearchTerm("");
+  };
+
+  const handleSearchInputDetail = (e) => {
+    setSearchTermDetail(e.target.value);
+    const value = e.target.value.toLowerCase();
+    setSearchTermDetail(value);
+    if (value === "") {
+      setDataDetailAnggaranFiltered(dataDetailAnggaran)  
+    } else {
+      const filtered = dataDetailAnggaran.filter((item) => {
+          return item.nama_sub_giat.toLowerCase().includes(value)
+      }
+      );
+      setDataDetailAnggaranFiltered(filtered)
+    }
+  };
+
+  const handleClearSearchDetail = (area = "") => {
+    setCurrentPageDetail(1);
+    setSearchTermDetail(""); // Kosongkan isi input
+  };
+
+  const handleSearchInputDetailSub = (e) => {
+    setSearchTermDetail(e.target.value);
+    const value = e.target.value.toLowerCase();
+    setSearchTermDetailSub(value);
+    if (value === "") {
+      setDataDetailAnggaranSubFiltered(dataDetailAnggaranSub)  
+    } else {
+      const filtered = dataDetailAnggaranSub.filter((item) => {
+          return item.nama_sro.toLowerCase().includes(value)
+      }
+      );
+      setDataDetailAnggaranSubFiltered(filtered)
+    }
+  };
+
+  const handleClearSearchDetailSub = (area = "") => {
+    setCurrentPageDetailSub(1);
+    setSearchTermDetailSub(""); // Kosongkan isi input
+  };
+
+  const handleSearchInputDetailSubSub = (e) => {
+    setSearchTermDetail(e.target.value);
+    const value = e.target.value.toLowerCase();
+    setSearchTermDetail(value);
+    if (value === "") {
+      setDataDetailAnggaranFiltered(dataDetailAnggaran)  
+    } else {
+      const filtered = dataDetailAnggaran.filter((item) => {
+          return item.nama_sub_giat.toLowerCase().includes(value)
+      }
+      );
+      setDataDetailAnggaranFiltered(filtered)
+    }
+  };
+
+  const handleClearSearchDetailSubSub = (area = "") => {
+    setCurrentPageDetail(1);
+    setSearchTermDetail(""); // Kosongkan isi input
   };
 
   const [dataWidth, setDataWidth] = useState(6)  
@@ -3926,68 +4023,6 @@ const ContentDapodikV2 = () => {
                   </CardBody>
                 </Card>
               </Col>
-              <div className="mb-2 d-flex">
-                    <div
-                      className="mx-2"
-                      style={{
-                        position: "relative",
-                        width: "100%",
-                        maxWidth: "300px",
-                        marginBottom: "20px",
-                      }}
-                    >
-                      <input
-                        style={{
-                          padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
-                          width: "100%",
-                          border: "1px solid #ccc",
-                          borderRadius: "5px",
-                          fontSize: "16px",
-                        }}
-                        type="text"
-                        value={searchTerm}
-                        onChange={handleSearchInput}
-                        onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
-                        placeholder={showNextData ? "Cari Daerah" : "Cari Se-Provinsi"} 
-                      />
-
-                      {/* Tombol "X" di dalam input */}
-                      {searchTerm && (
-                        <button
-                          onClick={() => handleClearSearch("seprovinsi")}
-                          style={{
-                            position: "absolute",
-                            right: "10px",
-                            top: "50%",
-                            transform: "translateY(-50%)", // Tengah-tengah secara vertikal
-                            background: "transparent",
-                            border: "none",
-                            fontSize: "16px",
-                            cursor: "pointer",
-                            color: "#999",
-                          }}
-                        >
-                          &#10006;
-                        </button>
-                      )}
-                    </div>
-                    {/* <div>
-                      <button
-                        style={{
-                          backgroundColor: "#007bff",
-                          color: "white",
-                          padding: "10px 20px",
-                          border: "none",
-                          borderRadius: "5px",
-                          cursor: "pointer",
-                          fontSize: "16px",
-                        }}
-                        onClick={() => handleButtonClick("seprovinsi")}
-                      >
-                        search
-                      </button>
-                    </div> */}
-                  </div>
               <Col md={8}>
               {dataDetailHighlight.map((item, index)=>(
                 <div className="d-flex mb-3" key={index}>
@@ -4038,7 +4073,68 @@ const ContentDapodikV2 = () => {
               ))}
               </Col>
             </Row>
+            <div className="mb-2 d-flex">
+                    <div
+                      className="mx-2"
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        maxWidth: "300px",
+                        marginBottom: "20px",
+                      }}
+                    >
+                      <input
+                        style={{
+                          padding: "10px 30px 10px 10px",
+                          width: "100%",
+                          border: "1px solid #ccc",
+                          borderRadius: "5px",
+                          fontSize: "16px",
+                        }}
+                        type="text"
+                        value={searchTermDetail}
+                        onChange={handleSearchInputDetail}
+                        onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                        placeholder="Cari Sub Giat"
+                      />
 
+                      {/* Tombol "X" di dalam input */}
+                      {searchTermDetail && (
+                        <button
+                          onClick={() => handleClearSearchDetailSub()}
+                          style={{
+                            position: "absolute",
+                            right: "10px",
+                            top: "50%",
+                            transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                            background: "transparent",
+                            border: "none",
+                            fontSize: "16px",
+                            cursor: "pointer",
+                            color: "#999",
+                          }}
+                        >
+                          &#10006;
+                        </button>
+                      )}
+                    </div>
+                    {/* <div>
+                      <button
+                        style={{
+                          backgroundColor: "#007bff",
+                          color: "white",
+                          padding: "10px 20px",
+                          border: "none",
+                          borderRadius: "5px",
+                          cursor: "pointer",
+                          fontSize: "16px",
+                        }}
+                        onClick={() => handleButtonClick("seprovinsi")}
+                      >
+                        search
+                      </button>
+                    </div> */}
+                  </div>
             <div style={{ overflowY: "scroll", maxHeight: "500px" }}>
               <table
                 className="table table-bordered table-nowrap align-middle mb-0"
@@ -4325,7 +4421,68 @@ const ContentDapodikV2 = () => {
                 </Card>
               </Col>
             </Row>
+            <div className="mb-2 d-flex">
+            <div
+              className="mx-2"
+              style={{
+                position: "relative",
+                width: "100%",
+                maxWidth: "300px",
+                marginBottom: "20px",
+              }}
+            >
+              <input
+                style={{
+                  padding: "10px 30px 10px 10px",
+                  width: "100%",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  fontSize: "16px",
+                }}
+                type="text"
+                value={searchTermDetailSub}
+                onChange={handleSearchInputDetailSub}
+                onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                placeholder="Cari Sub Rincian Objek"
+              />
 
+              {/* Tombol "X" di dalam input */}
+              {searchTermDetailSub && (
+                <button
+                  onClick={() => handleClearSearchDetailSub()}
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    color: "#999",
+                  }}
+                >
+                  &#10006;
+                </button>
+              )}
+            </div>
+            {/* <div>
+              <button
+                style={{
+                  backgroundColor: "#007bff",
+                  color: "white",
+                  padding: "10px 20px",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                  fontSize: "16px",
+                }}
+                onClick={() => handleButtonClick("seprovinsi")}
+              >
+                search
+              </button>
+            </div> */}
+          </div>
             <div style={{ overflowY: "scroll", maxHeight: "500px" }}>
               <table
                 className="table table-bordered table-nowrap align-middle mb-0"
@@ -4500,6 +4657,68 @@ const ContentDapodikV2 = () => {
                         </CardBody>
                       </Card></Col>
           </Row>
+          <div className="mb-2 d-flex">
+            <div
+              className="mx-2"
+              style={{
+                position: "relative",
+                width: "100%",
+                maxWidth: "300px",
+                marginBottom: "20px",
+              }}
+            >
+              <input
+                style={{
+                  padding: "10px 30px 10px 10px",
+                  width: "100%",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  fontSize: "16px",
+                }}
+                type="text"
+                value={searchTermDetailSubSub}
+                onChange={handleSearchInputDetailSubSub}
+                onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                placeholder="Cari Sub Rincian Objek"
+              />
+
+              {/* Tombol "X" di dalam input */}
+              {searchTermDetailSubSub && (
+                <button
+                  onClick={() => handleClearSearchDetailSubSub()}
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    color: "#999",
+                  }}
+                >
+                  &#10006;
+                </button>
+              )}
+            </div>
+            {/* <div>
+              <button
+                style={{
+                  backgroundColor: "#007bff",
+                  color: "white",
+                  padding: "10px 20px",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                  fontSize: "16px",
+                }}
+                onClick={() => handleButtonClick("seprovinsi")}
+              >
+                search
+              </button>
+            </div> */}
+          </div>
           <div style={{ overflowY: "scroll", maxHeight:"500px"}}>
           <table
                   className="table table-bordered table-nowrap align-middle mb-0"

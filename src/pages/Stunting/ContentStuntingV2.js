@@ -691,7 +691,9 @@ const ContentStunting = () => {
   };
 
   const [dataDetailAnggaran, setDataDetailAnggaran] = useState([]);
+  const [dataDetailAnggaranFiltered, setDataDetailAnggaranFiltered] = useState([]);
   const [dataDetailAnggaranSub, setDataDetailAnggaranSub] = useState([]);
+  const [dataDetailAnggaranSubFiltered, setDataDetailAnggaranSubFiltered] = useState([]);
   const [dataDetailHighlight, setDataDetailHighlight] = useState([])
   const [loadingDetailAnggaran, setLoadingDetailAnggaran] = useState([]);
   const [errorDetailAnggaran, setErrorDetailAnggaran] = useState([]);
@@ -735,9 +737,15 @@ const ContentStunting = () => {
           setDataDetailAnggaran(
             dataDetailAnggaran.data.detail_stunting_subgiat
           );
+          setDataDetailAnggaranFiltered(
+            dataDetailAnggaran.data.detail_stunting_subgiat
+          );
           setModall(true);
         } else if (kodeDdnKabupaten != "" && kodeSubGiat == "") {
           setDataDetailAnggaran(
+            dataDetailAnggaran.data.detail_stunting_subgiat
+          );
+          setDataDetailAnggaranFiltered(
             dataDetailAnggaran.data.detail_stunting_subgiat
           );
           setModall(true);
@@ -747,9 +755,15 @@ const ContentStunting = () => {
           setDataDetailAnggaranSub(
             dataDetailAnggaran.data.detail_stunting_subgiat_sro
           );
+          setDataDetailAnggaranSubFiltered(
+            dataDetailAnggaran.data.detail_stunting_subgiat_sro
+          );
           setModal(true);
         } else if (kodeDdnKabupaten != "" && kodeSubGiat != "") {
           setDataDetailAnggaranSub(
+            dataDetailAnggaran.data.detail_stunting_subgiat_sro
+          );
+          setDataDetailAnggaranSubFiltered(
             dataDetailAnggaran.data.detail_stunting_subgiat_sro
           );
           setModal(true);
@@ -890,7 +904,7 @@ const ContentStunting = () => {
   }, [filteredDataStuntingTabelKabupaten, sortConfig]);
 
   const sortedItemsDetail = React.useMemo(() => {
-    let sortableItems = [...(dataDetailAnggaran || [])];
+    let sortableItems = [...(dataDetailAnggaranFiltered || [])];
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key] || 0;
@@ -906,10 +920,10 @@ const ContentStunting = () => {
       });
     }
     return sortableItems;
-  }, [dataDetailAnggaran, sortConfig]);
+  }, [dataDetailAnggaranFiltered, sortConfig]);
 
   const sortedItemsDetailSub = React.useMemo(() => {
-    let sortableItems = [...(dataDetailAnggaranSub || [])];
+    let sortableItems = [...(dataDetailAnggaranSubFiltered || [])];
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key] || 0;
@@ -925,7 +939,7 @@ const ContentStunting = () => {
       });
     }
     return sortableItems;
-  }, [dataDetailAnggaranSub, sortConfig]);
+  }, [dataDetailAnggaranSubFiltered, sortConfig]);
 
   // Slice the sorted data for the current page
   const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);
@@ -948,10 +962,10 @@ const ContentStunting = () => {
     (filteredDataStuntingTabelKabupaten?.length || 0) / itemsPerPage
   );
   const totalPagesDetail = Math.ceil(
-    (dataDetailAnggaran?.length || 0) / itemsPerPage
+    (dataDetailAnggaranFiltered?.length || 0) / itemsPerPage
   );
   const totalPagesDetailSub = Math.ceil(
-    (dataDetailAnggaranSub?.length || 0) / itemsPerPage
+    (dataDetailAnggaranSubFiltered?.length || 0) / itemsPerPage
   );
 
   // Pagination change handler
@@ -1069,6 +1083,9 @@ const ContentStunting = () => {
   };
 
   const [searchTerm, setSearchTerm] = useState(""); // State untuk menampung nilai input search
+  const [searchTermDetail, setSearchTermDetail] = useState(""); // State untuk menampung nilai input search
+  const [searchTermDetailSub, setSearchTermDetailSub] = useState(""); // State untuk menampung nilai input search
+  const [searchTermDetailSubSub, setSearchTermDetailSubSub] = useState(""); // State untuk menampung nilai input search
   const handleSearchInput = (e) => {
     const value = e.target.value.toLowerCase();
     setSearchTerm(value);
@@ -1093,10 +1110,6 @@ const ContentStunting = () => {
     }
   };
 
-  const handleButtonClick = (area) => {
-    setCurrentPage(1);
-  };
-
   const handleClearSearch = (area = "") => {
     showNextData ? setFilteredDataStuntingTabelKabupaten(dataStuntingTabel) : setFilteredDataStuntingTabel(dataStuntingTabel)
     setCurrentPage(1);
@@ -1104,6 +1117,50 @@ const ContentStunting = () => {
     setSearchTerm(""); // Kosongkan isi input
   };
 
+  const handleSearchInputDetail = (e) => {
+    const value = e.target.value.toLowerCase();
+    setSearchTermDetail(value);
+    if (value === "") {
+      setDataDetailAnggaranFiltered(dataDetailAnggaran)
+    } else {
+      // Filter data berdasarkan input
+      const filtered = dataDetailAnggaran.filter((item) => {
+        return item.nama_sub_giat.toLowerCase().includes(value)
+      }
+      );
+      setDataDetailAnggaranFiltered(filtered)
+    }
+  };
+  
+  const handleClearSearchDetail = (area = "") => {
+    setDataDetailAnggaranFiltered(dataDetailAnggaran)
+    setCurrentPageDetail(1);
+    // setCurrentPageKabupaten(1);
+    setSearchTermDetail(""); // Kosongkan isi input
+  };
+
+  const handleSearchInputDetailSub = (e) => {
+    const value = e.target.value.toLowerCase();
+    setSearchTermDetailSub(value);
+    if (value === "") {
+      setDataDetailAnggaranSubFiltered(dataDetailAnggaranSub)
+    } else {
+      // Filter data berdasarkan input
+      const filtered = dataDetailAnggaranSub.filter((item) => {
+        return item.nama_sro.toLowerCase().includes(value)
+      }
+      );
+      setDataDetailAnggaranSubFiltered(filtered)
+    }
+  };
+  
+  const handleClearSearchDetailSub = (area = "") => {
+    setDataDetailAnggaranSubFiltered(dataDetailAnggaranSub)
+    setCurrentPageDetail(1);
+    // setCurrentPageKabupaten(1);
+    setSearchTermDetailSub(""); // Kosongkan isi input
+  };
+  
   const handleKeyDown = (e, area) => {
     // if (e.key === "Enter") {
     //   if (area === "kabupaten") {
@@ -3807,68 +3864,6 @@ const ContentStunting = () => {
                   </CardBody>
                 </Card>
               </Col>
-              <div className="mb-2 d-flex">
-                    <div
-                      className="mx-2"
-                      style={{
-                        position: "relative",
-                        width: "100%",
-                        maxWidth: "300px",
-                        marginBottom: "20px",
-                      }}
-                    >
-                      <input
-                        style={{
-                          padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
-                          width: "100%",
-                          border: "1px solid #ccc",
-                          borderRadius: "5px",
-                          fontSize: "16px",
-                        }}
-                        type="text"
-                        value={searchTerm}
-                        onChange={handleSearchInput}
-                        onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
-                        placeholder={showNextData ? "Cari Daerah" : "Cari Se-Provinsi"} 
-                      />
-
-                      {/* Tombol "X" di dalam input */}
-                      {searchTerm && (
-                        <button
-                          onClick={() => handleClearSearch("seprovinsi")}
-                          style={{
-                            position: "absolute",
-                            right: "10px",
-                            top: "50%",
-                            transform: "translateY(-50%)", // Tengah-tengah secara vertikal
-                            background: "transparent",
-                            border: "none",
-                            fontSize: "16px",
-                            cursor: "pointer",
-                            color: "#999",
-                          }}
-                        >
-                          &#10006;
-                        </button>
-                      )}
-                    </div>
-                    {/* <div>
-                      <button
-                        style={{
-                          backgroundColor: "#007bff",
-                          color: "white",
-                          padding: "10px 20px",
-                          border: "none",
-                          borderRadius: "5px",
-                          cursor: "pointer",
-                          fontSize: "16px",
-                        }}
-                        onClick={() => handleButtonClick("seprovinsi")}
-                      >
-                        search
-                      </button>
-                    </div> */}
-                  </div>
               <Col md={8}>
               {dataDetailHighlight.map((item, index)=>(
                 <div className="d-flex mb-3" key={index}>
@@ -3918,6 +3913,68 @@ const ContentStunting = () => {
               ))}                
               </Col>
             </Row>
+            <div className="mb-2 d-flex">
+                    <div
+                      className="mx-2"
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        maxWidth: "300px",
+                        marginBottom: "20px",
+                      }}
+                    >
+                      <input
+                        style={{
+                          padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                          width: "100%",
+                          border: "1px solid #ccc",
+                          borderRadius: "5px",
+                          fontSize: "16px",
+                        }}
+                        type="text"
+                        value={searchTermDetail}
+                        onChange={handleSearchInputDetail}
+                        onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                        placeholder={"Cari Sub Giat"} 
+                      />
+
+                      {/* Tombol "X" di dalam input */}
+                      {searchTermDetail && (
+                        <button
+                          onClick={() => handleClearSearchDetail()}
+                          style={{
+                            position: "absolute",
+                            right: "10px",
+                            top: "50%",
+                            transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                            background: "transparent",
+                            border: "none",
+                            fontSize: "16px",
+                            cursor: "pointer",
+                            color: "#999",
+                          }}
+                        >
+                          &#10006;
+                        </button>
+                      )}
+                    </div>
+                    {/* <div>
+                      <button
+                        style={{
+                          backgroundColor: "#007bff",
+                          color: "white",
+                          padding: "10px 20px",
+                          border: "none",
+                          borderRadius: "5px",
+                          cursor: "pointer",
+                          fontSize: "16px",
+                        }}
+                        onClick={() => handleButtonClick("seprovinsi")}
+                      >
+                        search
+                      </button>
+                    </div> */}
+                  </div>
             <div style={{ overflowY: "scroll", maxHeight: "500px" }}>
               <table
                 className="table table-bordered table-nowrap align-middle mb-0"
@@ -4161,6 +4218,68 @@ const ContentStunting = () => {
                 </Card>
               </Col>
             </Row>
+            <div className="mb-2 d-flex">
+                    <div
+                      className="mx-2"
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        maxWidth: "300px",
+                        marginBottom: "20px",
+                      }}
+                    >
+                      <input
+                        style={{
+                          padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                          width: "100%",
+                          border: "1px solid #ccc",
+                          borderRadius: "5px",
+                          fontSize: "16px",
+                        }}
+                        type="text"
+                        value={searchTermDetailSub}
+                        onChange={handleSearchInputDetailSub}
+                        onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                        placeholder={"Cari Sub Rincian Objek"} 
+                      />
+
+                      {/* Tombol "X" di dalam input */}
+                      {searchTermDetailSub && (
+                        <button
+                          onClick={() => handleClearSearchDetailSub()}
+                          style={{
+                            position: "absolute",
+                            right: "10px",
+                            top: "50%",
+                            transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                            background: "transparent",
+                            border: "none",
+                            fontSize: "16px",
+                            cursor: "pointer",
+                            color: "#999",
+                          }}
+                        >
+                          &#10006;
+                        </button>
+                      )}
+                    </div>
+                    {/* <div>
+                      <button
+                        style={{
+                          backgroundColor: "#007bff",
+                          color: "white",
+                          padding: "10px 20px",
+                          border: "none",
+                          borderRadius: "5px",
+                          cursor: "pointer",
+                          fontSize: "16px",
+                        }}
+                        onClick={() => handleButtonClick("seprovinsi")}
+                      >
+                        search
+                      </button>
+                    </div> */}
+                  </div>
             <div style={{ overflowY: "scroll", maxHeight: "500px" }}>
               <table
                 className="table table-bordered table-nowrap align-middle mb-0"

@@ -218,9 +218,11 @@ const ContentUhcV2 = () => {
   };
 
   const [dataDetailAnggaran, setDataDetailAnggaran] = useState([])
+  const [dataDetailAnggaranFiltered, setDataDetailAnggaranFiltered] = useState([])
   const [loadingDetailAnggaran, setLoadingDetailAnggaran] = useState([]);
   const [errorDetailAnggaran, setErrorDetailAnggaran] = useState([]);
   const [dataDetailAnggaranSub, setDataDetailAnggaranSub] = useState([]);
+  const [dataDetailAnggaranSubFiltered, setDataDetailAnggaranSubFiltered] = useState([]);
   const [loadingDetailAnggaranSub, setLoadingDetailAnggaranSub] = useState([]);
   const [errorDetailAnggaranSub, setErrorDetailAnggaranSub] = useState([]);
 
@@ -250,6 +252,7 @@ const ContentUhcV2 = () => {
   
         const dataDetailAnggaran = await response.json();
         setDataDetailAnggaran(dataDetailAnggaran?.data?.uhc_sub_giat)
+        setDataDetailAnggaranFiltered(dataDetailAnggaran?.data?.uhc_sub_giat)
         setCurrentPageDetail(1)
         setCurrentPageDetailSub(1)
         // Open the modal only after data is successfully fetched
@@ -291,6 +294,7 @@ const ContentUhcV2 = () => {
   
         const dataDetailAnggaranSub = await response.json();    
         setDataDetailAnggaranSub(dataDetailAnggaranSub?.data?.uhc_sro)    
+        setDataDetailAnggaranSubFiltered(dataDetailAnggaranSub?.data?.uhc_sro)    
         setCurrentPageDetail(1)
         setCurrentPageDetailSub(1)
         // Open the modal only after data is successfully fetched
@@ -367,7 +371,7 @@ const ContentUhcV2 = () => {
   }, [dataBpjsTabelKabupaten, sortConfig]);  
 
   const sortedItemsDetail = React.useMemo(() => {
-    let sortableItems = [...(dataDetailAnggaran || [])];
+    let sortableItems = [...(dataDetailAnggaranFiltered || [])];
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key] || 0;
@@ -383,10 +387,10 @@ const ContentUhcV2 = () => {
       });
     }
     return sortableItems;
-  }, [dataDetailAnggaran, sortConfig]);
+  }, [dataDetailAnggaranFiltered, sortConfig]);
 
   const sortedItemsDetailSub = React.useMemo(() => {
-    let sortableItems = [...(dataDetailAnggaranSub || [])];
+    let sortableItems = [...(dataDetailAnggaranSubFiltered || [])];
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key] || 0;
@@ -402,7 +406,7 @@ const ContentUhcV2 = () => {
       });
     }
     return sortableItems;
-  }, [dataDetailAnggaranSub, sortConfig]);
+  }, [dataDetailAnggaranSubFiltered, sortConfig]);
 
   
   const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);  
@@ -412,8 +416,8 @@ const ContentUhcV2 = () => {
   
   const totalPages = Math.ceil(((showNextData ? filteredDataUhcTabelKabupaten?.length : filteredDataUhcTabel?.length) || 0) / itemsPerPage);
   const totalPagesKab = Math.ceil((dataBpjsTabelKabupaten?.length || 0) / itemsPerPage);
-  const totalPagesDetail = Math.ceil((dataDetailAnggaran?.length || 0) / itemsPerPage);
-  const totalPagesDetailSub = Math.ceil((dataDetailAnggaranSub?.length || 0) / itemsPerPage);
+  const totalPagesDetail = Math.ceil((dataDetailAnggaranFiltered?.length || 0) / itemsPerPage);
+  const totalPagesDetailSub = Math.ceil((dataDetailAnggaranSubFiltered?.length || 0) / itemsPerPage);
   
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const paginateKab = (pageNumber) => setCurrentPageKab(pageNumber);
@@ -468,7 +472,10 @@ const ContentUhcV2 = () => {
     setModall(false); // Close modal by setting modall to false
   };
 
-   const [searchTerm, setSearchTerm] = useState(""); // State untuk menampung nilai input search
+    const [searchTerm, setSearchTerm] = useState(""); 
+    const [searchTermDetail, setSearchTermDetail] = useState(""); 
+    const [searchTermDetailSub, setSearchTermDetailSub] = useState(""); 
+    const [searchTermDetailSubSub, setSearchTermDetailSubSub] = useState(""); 
       const handleSearchInput = (e) => {
         const value = e.target.value.toLowerCase();
         setSearchTerm(value);
@@ -501,6 +508,50 @@ const ContentUhcV2 = () => {
         setCurrentPage(1);
         // setCurrentPageKabupaten(1);
         setSearchTerm(""); // Kosongkan isi input
+      };
+
+      const handleSearchInputDetail = (e) => {
+        const value = e.target.value.toLowerCase();
+        setSearchTermDetail(value);
+        if (value === "") {
+          setDataDetailAnggaranFiltered(dataDetailAnggaran)
+        } else {
+          // Filter data berdasarkan input
+          const filtered = dataDetailAnggaran.filter((item) => {
+            return item.nama_sub_giat.toLowerCase().includes(value)
+          }
+          );
+          setDataDetailAnggaranFiltered(filtered)
+        }
+      };
+      
+      const handleClearSearchDetail = (area = "") => {
+        setDataDetailAnggaranFiltered(dataDetailAnggaran)
+        setCurrentPageDetail(1);
+        // setCurrentPageKabupaten(1);
+        setSearchTermDetail(""); // Kosongkan isi input
+      };
+    
+      const handleSearchInputDetailSub = (e) => {
+        const value = e.target.value.toLowerCase();
+        setSearchTermDetailSub(value);
+        if (value === "") {
+          setDataDetailAnggaranSubFiltered(dataDetailAnggaranSub)
+        } else {
+          // Filter data berdasarkan input
+          const filtered = dataDetailAnggaranSub.filter((item) => {
+            return item.nama_sro.toLowerCase().includes(value)
+          }
+          );
+          setDataDetailAnggaranSubFiltered(filtered)
+        }
+      };
+      
+      const handleClearSearchDetailSub = (area = "") => {
+        setDataDetailAnggaranSubFiltered(dataDetailAnggaranSub)
+        setCurrentPageDetail(1);
+        // setCurrentPageKabupaten(1);
+        setSearchTermDetailSub(""); // Kosongkan isi input
       };
   
       const handleKeyDown = (e, area) => {
@@ -1488,16 +1539,16 @@ const ContentUhcV2 = () => {
                           fontSize: "16px",
                         }}
                         type="text"
-                        value={searchTerm}
-                        onChange={handleSearchInput}
+                        value={searchTermDetail}
+                        onChange={handleSearchInputDetail}
                         onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
-                        placeholder={showNextData ? "Cari Daerah" : "Cari Se-Provinsi"} 
+                        placeholder={"Cari Sub Giat"} 
                       />
 
                       {/* Tombol "X" di dalam input */}
-                      {searchTerm && (
+                      {searchTermDetail && (
                         <button
-                          onClick={() => handleClearSearch("seprovinsi")}
+                          onClick={() => handleClearSearchDetail()}
                           style={{
                             position: "absolute",
                             right: "10px",
@@ -1696,6 +1747,68 @@ const ContentUhcV2 = () => {
                         </CardBody>
                       </Card></Col>
           </Row>
+          <div className="mb-2 d-flex">
+                    <div
+                      className="mx-2"
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        maxWidth: "300px",
+                        marginBottom: "20px",
+                      }}
+                    >
+                      <input
+                        style={{
+                          padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                          width: "100%",
+                          border: "1px solid #ccc",
+                          borderRadius: "5px",
+                          fontSize: "16px",
+                        }}
+                        type="text"
+                        value={searchTermDetailSub}
+                        onChange={handleSearchInputDetailSub}
+                        onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                        placeholder={"Cari Sub Rincian Objek"} 
+                      />
+
+                      {/* Tombol "X" di dalam input */}
+                      {searchTermDetailSub && (
+                        <button
+                          onClick={() => handleClearSearchDetailSub()}
+                          style={{
+                            position: "absolute",
+                            right: "10px",
+                            top: "50%",
+                            transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                            background: "transparent",
+                            border: "none",
+                            fontSize: "16px",
+                            cursor: "pointer",
+                            color: "#999",
+                          }}
+                        >
+                          &#10006;
+                        </button>
+                      )}
+                    </div>
+                    {/* <div>
+                      <button
+                        style={{
+                          backgroundColor: "#007bff",
+                          color: "white",
+                          padding: "10px 20px",
+                          border: "none",
+                          borderRadius: "5px",
+                          cursor: "pointer",
+                          fontSize: "16px",
+                        }}
+                        onClick={() => handleButtonClick("seprovinsi")}
+                      >
+                        search
+                      </button>
+                    </div> */}
+                  </div>
           <div style={{ overflowY: "scroll", maxHeight:"500px"}}>
           <table
                   className="table table-bordered table-nowrap align-middle mb-0"
