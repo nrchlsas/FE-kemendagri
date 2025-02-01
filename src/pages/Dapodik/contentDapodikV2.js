@@ -1714,8 +1714,8 @@ const ContentDapodikV2 = () => {
                         }}
                         type="text"
                         value={searchTerm}
-                        onChange={handleSearchInput(e, 'seprovinsi')}
-                        onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                        onChange={(e) =>handleSearchInput(e, 'seprovinsi')}
+                        // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
                         placeholder="Cari Provinsi"
                       />
 
@@ -2230,7 +2230,7 @@ const ContentDapodikV2 = () => {
                             </td>
                           </tr>
                         ))}
-                        {placeholders}
+                        {/* {placeholders} */}
                       </tbody>
                     </table>
                   </div>
@@ -2261,8 +2261,8 @@ const ContentDapodikV2 = () => {
                         }}
                         type="text"
                         value={searchTerm}
-                        onChange={handleSearchInput(e, 'provinsi')}
-                        onKeyDown={(e) => handleKeyDown(e, "provinsi")}
+                        onChange={(e) =>handleSearchInput(e, 'provinsi')}
+                        // onKeyDown={(e) => handleKeyDown(e, "provinsi")}
                         placeholder="Cari Provinsi"
                       />
 
@@ -2713,8 +2713,8 @@ const ContentDapodikV2 = () => {
                         }}
                         type="text"
                         value={searchTerm}
-                        onChange={handleSearchInput(e, 'kabupaten')}
-                        onKeyDown={(e) => handleKeyDown(e, "kabupaten")}
+                        onChange={(e) =>handleSearchInput(e, 'kabupaten')}
+                        // onKeyDown={(e) => handleKeyDown(e, "kabupaten")}
                         placeholder="Cari Kabupaten/Kota"
                       />
 
@@ -4118,7 +4118,7 @@ const ContentDapodikV2 = () => {
                         type="text"
                         value={searchTermDetail}
                         onChange={handleSearchInputDetail}
-                        onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                        // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
                         placeholder="Cari Nama Sub Giat"
                       />
 
@@ -4382,7 +4382,7 @@ const ContentDapodikV2 = () => {
                       </td>
                     </tr>
                   ))}
-                  {placeholders}
+                  {/* {placeholders} */}
                 </tbody>
               </table>
             </div>
@@ -4466,7 +4466,7 @@ const ContentDapodikV2 = () => {
                 type="text"
                 value={searchTermDetailSub}
                 onChange={handleSearchInputDetailSub}
-                onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
                 placeholder="Cari Sub Rincian Objek"
               />
 
@@ -4628,7 +4628,7 @@ const ContentDapodikV2 = () => {
                         </td> 
                     </tr>
                   ))}
-                  {placeholders}
+                  {/* {placeholders} */}
                 </tbody>
               </table>
             </div>
@@ -4702,7 +4702,7 @@ const ContentDapodikV2 = () => {
                 type="text"
                 value={searchTermDetailSubSub}
                 onChange={handleSearchInputDetailSubSub}
-                onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
                 placeholder="Cari Sub Rincian Objek"
               />
 
