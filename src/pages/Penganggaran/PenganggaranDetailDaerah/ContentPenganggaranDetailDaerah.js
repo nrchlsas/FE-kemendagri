@@ -678,6 +678,17 @@ const ContentPenganggaranDetailDaerah = () => {
                       // suffix=" T"
                       duration={1}
                     />
+                    &nbsp;
+                    (<CountUp
+                      start={0}
+                      end={tahapData[selectedSingleTahapan]/totalPagu}
+                      decimal=","
+                      decimals={2}
+                      separator="."
+                      // prefix="Rp "
+                      suffix=" %"
+                      duration={1}
+                    />)
                         </div>
                       </div>)
                     })}                    

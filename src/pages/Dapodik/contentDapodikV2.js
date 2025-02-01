@@ -84,8 +84,15 @@ const ContentDapodikV2 = () => {
   const [dataDapodikTabelSeProvinsi, setDataDapodikTabelSeProvinsi] = useState(
     []
   );
+  const [dataDapodikTabelSeProvinsiFiltered, setDataDapodikTabelSeProvinsiFiltered] = useState(
+    []
+  );
   const [dataDapodikTabelProvinsi, setDataDapodikTabelProvinsi] = useState([]);
+  const [dataDapodikTabelProvinsiFiltered, setDataDapodikTabelProvinsiFiltered] = useState([]);
   const [dataDapodikTabelKabupaten, setDataDapodikTabelKabupaten] = useState(
+    []
+  );
+  const [dataDapodikTabelKabupatenFiltered, setDataDapodikTabelKabupatenFiltered] = useState(
     []
   );
   const [loadingDapodikTabel, setLoadingDapodikTabel] = useState([]);
@@ -261,6 +268,7 @@ const ContentDapodikV2 = () => {
 
         const dataDapodikTabelSeProvinsi = await response.json();
         setDataDapodikTabelSeProvinsi(dataDapodikTabelSeProvinsi?.data);
+        setDataDapodikTabelSeProvinsiFiltered(dataDapodikTabelSeProvinsi?.data);
 
         const valueTotalAnakSekolah = Array.isArray(dataDapodikTabelSeProvinsi?.data) 
         ? dataDapodikTabelSeProvinsi.data.map(item => {
@@ -399,6 +407,7 @@ const ContentDapodikV2 = () => {
         const dataDapodikTabelKabupaten = await response.json();
 
         setDataDapodikTabelKabupaten(dataDapodikTabelKabupaten?.data);
+        setDataDapodikTabelKabupatenFiltered(dataDapodikTabelKabupaten?.data);
       } catch (errorDapodikTabel) {
         setErrorDapodikTabel(errorDapodikTabel);
       } finally {
@@ -520,6 +529,7 @@ const ContentDapodikV2 = () => {
         }
         const dataDapodikTabelProvinsi = await response.json();
         setDataDapodikTabelProvinsi(dataDapodikTabelProvinsi?.data);
+        setDataDapodikTabelSeProvinsiFiltered(dataDapodikTabelProvinsi?.data);
         setShowNextData(false)
         const filterKabupaten = dataDapodikTabelProvinsi?.data?.filter((item)=>(
           item.jns_pemda=="kab" || item.jns_pemda=="kota"
@@ -783,7 +793,7 @@ const ContentDapodikV2 = () => {
   };
 
   const sortedItems = React.useMemo(() => {
-    let sortableItems = [...(dataDapodikTabelSeProvinsi || [])];
+    let sortableItems = [...(dataDapodikTabelSeProvinsiFiltered || [])];
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key] || 0;
@@ -799,10 +809,10 @@ const ContentDapodikV2 = () => {
       });
     }
     return sortableItems;
-  }, [dataDapodikTabelSeProvinsi, sortConfig]);
+  }, [dataDapodikTabelSeProvinsiFiltered, sortConfig]);
 
   const sortedItemsKabupaten = React.useMemo(() => {
-    let sortableItems = [...(dataDapodikTabelKabupaten || [])];
+    let sortableItems = [...(dataDapodikTabelKabupatenFiltered || [])];
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key] || 0;
@@ -818,10 +828,10 @@ const ContentDapodikV2 = () => {
       });
     }
     return sortableItems;
-  }, [dataDapodikTabelKabupaten, sortConfig]);
+  }, [dataDapodikTabelKabupatenFiltered, sortConfig]);
 
   const sortedItemsProvinsi = React.useMemo(() => {
-    let sortableItems = [...(dataDapodikTabelProvinsi || [])];
+    let sortableItems = [...(dataDapodikTabelProvinsiFiltered || [])];
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key] || 0;
@@ -837,7 +847,7 @@ const ContentDapodikV2 = () => {
       });
     }
     return sortableItems;
-  }, [dataDapodikTabelProvinsi, sortConfig]);
+  }, [dataDapodikTabelProvinsiFiltered, sortConfig]);
 
   const sortedItemsDetail = React.useMemo(() => {
     let sortableItems = [...(dataDetailAnggaranFiltered || [])];
@@ -923,13 +933,13 @@ const ContentDapodikV2 = () => {
 
   // Calculate total number of pages
   const totalPages = Math.ceil(
-    (dataDapodikTabelSeProvinsi?.length || 0) / itemsPerPage
+    (dataDapodikTabelSeProvinsiFiltered?.length || 0) / itemsPerPage
   );
   const totalPagesProvinsi = Math.ceil(
-    (dataDapodikTabelProvinsi?.length || 0) / itemsPerPage
+    (dataDapodikTabelProvinsiFiltered?.length || 0) / itemsPerPage
   );
   const totalPagesKabupaten = Math.ceil(
-    (dataDapodikTabelKabupaten?.length || 0) / itemsPerPage
+    (dataDapodikTabelKabupatenFiltered?.length || 0) / itemsPerPage
   );
   const totalPagesDetail = Math.ceil(
     (dataDetailAnggaranFiltered?.length || 0) / itemsPerPage
@@ -1066,50 +1076,63 @@ const ContentDapodikV2 = () => {
     navigate(`/sipdhub/dapodik/detail-anggaran-dapodik/${kodeProv}`);
   };
 
-  const [searchTerm, setSearchTerm] = useState(""); 
+  const [searchTerm, setSearchTerm] = useState("");
   const [searchTermDetail, setSearchTermDetail] = useState(""); 
   const [searchTermDetailSub, setSearchTermDetailSub] = useState(""); 
   const [searchTermDetailSubSub, setSearchTermDetailSubSub] = useState(""); 
 
   // Fungsi untuk menangani perubahan pada input
-  const handleSearchInput = (e) => {
+  const handleSearchInput = (e, area) => {
+    const value = e.target.value.toLowerCase()
     setSearchTerm(e.target.value);
+    if(value===""){
+      area === "kabupaten" ? setDataDapodikTabelKabupatenFiltered(dataDapodikTabelKabupaten) : area ==="provinsi" ? setDataDapodikTabelProvinsiFiltered(dataDapodikTabelProvinsi) : setDataDapodikTabelSeProvinsiFiltered(dataDapodikTabelSeProvinsi)
+    }else{
+      const filtered = dataDetailAnggaran.filter((item) => {
+          if(area==="kabupaten"){
+            return item.nama_kabkota.toLowerCase().includes(value)
+          }else if(area==="provinsi"){
+            return item.nama_prov.toLowerCase().includes(value)
+          }else{
+            return item.nama_prov.toLowerCase().includes(value)
+          }
+        }
+      );
+      area === "kabupaten" ? setDataDapodikTabelKabupatenFiltered(filtered) : area ==="provinsi" ? setDataDapodikTabelProvinsiFiltered(filtered) : setDataDapodikTabelSeProvinsiFiltered(filtered)
+    }
+
   };
 
-  const handleKeyDown = (e, area) => {
-    if (e.key === "Enter") {
-      if (area === "kabupaten") {
-        getDataTabelDapodikKab(e.target.value);
-      } else if (area === "provinsi") {
-        getDataTabelDapodikProv(e.target.value);
-      } else {
-        getDataTabelDapodikSeProv(e.target.value);
-      }
-      setCurrentPage(1);
-    }
-  };
+  // const handleKeyDown = (e, area) => {
+  //   if (e.key === "Enter") {
+  //     if (area === "kabupaten") {
+  //       getDataTabelDapodikKab(e.target.value);
+  //     } else if (area === "provinsi") {
+  //       getDataTabelDapodikProv(e.target.value);
+  //     } else {
+  //       getDataTabelDapodikSeProv(e.target.value);
+  //     }
+  //     setCurrentPage(1);
+  //   }
+  // };
 
-  // Fungsi untuk memanggil API ketika tombol ditekan
-  const handleButtonClick = (area) => {
-    if (area === "kabupaten") {
-      getDataTabelDapodikKab(searchTerm);
-    } else if (area === "provinsi") {
-      getDataTabelDapodikProv({searchTerm, tahun:selectedSingleTahunAnggaran});
-    } else {
-      getDataTabelDapodikSeProv({searchTerm, tahun:selectedSingleTahunAnggaran});
-    }
-    setCurrentPage(1);
-  };
+  // // Fungsi untuk memanggil API ketika tombol ditekan
+  // const handleButtonClick = (area) => {
+  //   if (area === "kabupaten") {
+  //     getDataTabelDapodikKab(searchTerm);
+  //   } else if (area === "provinsi") {
+  //     getDataTabelDapodikProv({searchTerm, tahun:selectedSingleTahunAnggaran});
+  //   } else {
+  //     getDataTabelDapodikSeProv({searchTerm, tahun:selectedSingleTahunAnggaran});
+  //   }
+  //   setCurrentPage(1);
+  // };
 
   const handleClearSearch = (area = "") => {
-    if (area === "kabupaten") {
-      getDataTabelDapodikKab();
-    } else if (area === "provinsi") {
-      getDataTabelDapodikProv();
-    } else {
-      getDataTabelDapodikSeProv();
-    }
+    // area === "kabupaten" ? setDataDapodikTabelKabupatenFiltered(dataDapodikTabelKabupaten) : area ==="provinsi" ? setDataDapodikTabelProvinsiFiltered(dataDapodikTabelProvinsi) : setDataDapodikTabelSeProvinsiFiltered(dataDapodikTabelSeProvinsi)
     setCurrentPage(1);
+    setCurrentPageProvinsi(1);
+    setCurrentPageKabupaten(1);
     setSearchTerm("");
   };
 
@@ -1118,7 +1141,7 @@ const ContentDapodikV2 = () => {
     const value = e.target.value.toLowerCase();
     setSearchTermDetail(value);
     if (value === "") {
-      setDataDetailAnggaranFiltered(dataDetailAnggaran)  
+      setDataDetailAnggaranFiltered(dataDetailAnggaran)
     } else {
       const filtered = dataDetailAnggaran.filter((item) => {
           return item.nama_sub_giat.toLowerCase().includes(value)
@@ -1148,7 +1171,7 @@ const ContentDapodikV2 = () => {
     }
   };
 
-  const handleClearSearchDetailSub = (area = "") => {
+  const handleClearSearchDetailSub = () => {
     setCurrentPageDetailSub(1);
     setSearchTermDetailSub(""); // Kosongkan isi input
   };
@@ -1168,7 +1191,7 @@ const ContentDapodikV2 = () => {
     }
   };
 
-  const handleClearSearchDetailSubSub = (area = "") => {
+  const handleClearSearchDetailSubSub = () => {
     setCurrentPageDetail(1);
     setSearchTermDetail(""); // Kosongkan isi input
   };
@@ -1691,7 +1714,7 @@ const ContentDapodikV2 = () => {
                         }}
                         type="text"
                         value={searchTerm}
-                        onChange={handleSearchInput}
+                        onChange={handleSearchInput(e, 'seprovinsi')}
                         onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
                         placeholder="Cari Provinsi"
                       />
@@ -2238,7 +2261,7 @@ const ContentDapodikV2 = () => {
                         }}
                         type="text"
                         value={searchTerm}
-                        onChange={handleSearchInput}
+                        onChange={handleSearchInput(e, 'provinsi')}
                         onKeyDown={(e) => handleKeyDown(e, "provinsi")}
                         placeholder="Cari Provinsi"
                       />
@@ -2690,7 +2713,7 @@ const ContentDapodikV2 = () => {
                         }}
                         type="text"
                         value={searchTerm}
-                        onChange={handleSearchInput}
+                        onChange={handleSearchInput(e, 'kabupaten')}
                         onKeyDown={(e) => handleKeyDown(e, "kabupaten")}
                         placeholder="Cari Kabupaten/Kota"
                       />
