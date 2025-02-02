@@ -4618,53 +4618,53 @@ const ContentStunting = () => {
                   <tbody style={{ minHeight: "500px" }}>
                     {currentItemDetailSubSub.map((item, index) => (
                       <tr key={index}>                        
-                        <td style={{textAlign: "center",
-                        verticalAlign: "middle"}}>
-                          {/* { index + 1} */}
-                          {indexOfFirstItemDetailSubSub + index + 1}
-                        </td>
-                        <td>
-                          {item.kode_standar_harga}
-                        </td>
-                        <td>
-                          {item.nama_standar_harga}
-                        </td>
-                        <td style={{
-                            whiteSpace: "normal",  // Membolehkan teks turun ke baris berikutnya
-                            wordWrap: "break-word",  // Memastikan teks panjang terpotong dan turun ke bawah
-                            maxWidth: "200px"  // Menetapkan lebar maksimum sel (sesuaikan dengan kebutuhan)
-                          }}>
-                          {" "}
-                          {item.volume || "-"}
-                        </td>     
-                        <td>
-                        <span style={{float: "right"}}>{item.volume ? parseInt(item.volume).toLocaleString("id-ID")
-                            : "-"}</span>                          
-                        </td>         
-                        <td>
-                        <span style={{float: "right"}}>{item.harga_satuan ? parseInt(item.harga_satuan).toLocaleString("id-ID")
-                            : "-"}</span>                          
-                        </td>                                                                    
-                        <td>
-                        <span style={{float: "right"}}>{item.total_rinciansro ? parseInt(item.total_rinciansro).toLocaleString("id-ID")
-                            : "-"}</span>                          
-                        </td>                                      
-                        <td>
-                        <span style={{float: "right"}}>
-                        {item.persentase
-                          ? (item.persentase >= 1
-                              ? `${Number(item.persentase).toLocaleString("id-ID", {
-                                  minimumFractionDigits: 2,
-                                  maximumFractionDigits: 2,
-                                })}%`
-                              : `${Number(item.persentase).toLocaleString("id-ID", {
-                                  minimumFractionDigits: 4,
-                                })}%`
-                            )
-                          : "-"}
-                        </span>   
-                        </td>
-                      </tr>
+                      <td style={{textAlign: "center",
+                      verticalAlign: "middle"}}>
+                        {/* { index + 1} */}
+                        {indexOfFirstItemDetailSubSub + index + 1}
+                      </td>
+                      <td>
+                        {item.kode_standar_harga}
+                      </td>
+                      <td>
+                        {item.nama_standar_harga}
+                      </td>
+                      <td style={{
+                          whiteSpace: "normal",  // Membolehkan teks turun ke baris berikutnya
+                          wordWrap: "break-word",  // Memastikan teks panjang terpotong dan turun ke bawah
+                          maxWidth: "200px"  // Menetapkan lebar maksimum sel (sesuaikan dengan kebutuhan)
+                        }}>
+                        {" "}
+                        {item.satuan || "-"}
+                      </td>     
+                      <td>
+                      <span style={{float: "right"}}>{item.volume ? parseInt(item.volume).toLocaleString("id-ID")
+                          : "-"}</span>                          
+                      </td>         
+                      <td>
+                      <span style={{float: "right"}}>{item.harga_satuan ? parseInt(item.harga_satuan).toLocaleString("id-ID")
+                          : "-"}</span>                          
+                      </td>                                                                    
+                      <td>
+                      <span style={{float: "right"}}>{item.total_rinciansro ? parseInt(item.total_rinciansro).toLocaleString("id-ID")
+                          : "-"}</span>                          
+                      </td>                                      
+                      <td>
+                      <span style={{float: "right"}}>
+                      {item.persentase
+                        ? (item.persentase >= 1
+                            ? `${Number(item.persentase).toLocaleString("id-ID", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}%`
+                            : `${Number(item.persentase).toLocaleString("id-ID", {
+                                minimumFractionDigits: 4,
+                              })}%`
+                          )
+                        : "-"}
+                      </span>   
+                      </td>
+                    </tr>
                     ))}
                     {/* {placeholders} */}
                   </tbody>
