@@ -1160,7 +1160,20 @@ const ContentDapodikV2 = () => {
   // };
 
   const handleClearSearch = (area = "") => {
-    area === "kabupaten" ? (setCurrentPageKabupaten(1), setSearchTermKab(""), setDataDapodikTabelKabupatenFiltered(dataDapodikTabelKabupaten)) : area ==="provinsi" ? (setSearchTerm(""), setCurrentPageProvinsi(1), setDataDapodikTabelProvinsiFiltered(dataDapodikTabelProvinsi)) : (setCurrentPage(1), setSearchTerm(""), setDataDapodikTabelSeProvinsiFiltered(dataDapodikTabelSeProvinsi))
+    // area === "kabupaten" ? (setCurrentPageKabupaten(1), setSearchTermKab(""), setDataDapodikTabelKabupatenFiltered(dataDapodikTabelKabupaten)) : area ==="provinsi" ? (setSearchTerm(""), setCurrentPageProvinsi(1), setDataDapodikTabelProvinsiFiltered(dataDapodikTabelProvinsi)) : (setCurrentPage(1), setSearchTerm(""), setDataDapodikTabelSeProvinsiFiltered(dataDapodikTabelSeProvinsi))
+    if (area === "kabupaten") {
+      setCurrentPageKabupaten(1);
+      setSearchTermKab("");
+      setDataDapodikTabelKabupatenFiltered(dataDapodikTabelKabupaten);
+    } else if (area === "provinsi") {
+      setSearchTermProvinsi("");
+      setCurrentPageProvinsi(1);
+      setDataDapodikTabelProvinsiFiltered(dataDapodikTabelProvinsi);
+    } else {
+      setCurrentPage(1);
+      setSearchTerm("");
+      setDataDapodikTabelSeProvinsiFiltered(dataDapodikTabelSeProvinsi);
+    }
   };
 
   const handleSearchInputDetail = (e) => {
