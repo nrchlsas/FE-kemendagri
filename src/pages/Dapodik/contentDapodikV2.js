@@ -1162,7 +1162,6 @@ const ContentDapodikV2 = () => {
   };
 
   const handleSearchInputDetail = (e) => {
-    setSearchTermDetail(e.target.value);
     const value = e.target.value.toLowerCase();
     setSearchTermDetail(value);
     if (value === "") {
@@ -1182,7 +1181,6 @@ const ContentDapodikV2 = () => {
   };
 
   const handleSearchInputDetailSub = (e) => {
-    setSearchTermDetail(e.target.value);
     const value = e.target.value.toLowerCase();
     setSearchTermDetailSub(value);
     if (value === "") {
@@ -1202,9 +1200,8 @@ const ContentDapodikV2 = () => {
   };
 
   const handleSearchInputDetailSubSub = (e) => {
-    setSearchTermDetail(e.target.value);
     const value = e.target.value.toLowerCase();
-    setSearchTermDetail(value);
+    setSearchTermDetailSubSub(value);
     if (value === "") {
       setDataDetailAnggaranSubSubFiltered(dataDetailAnggaranSubSub)  
     } else {
