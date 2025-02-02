@@ -267,8 +267,8 @@ const ContentDapodikV2 = () => {
         }
 
         const dataDapodikTabelSeProvinsi = await response.json();
-        setDataDapodikTabelSeProvinsi(dataDapodikTabelSeProvinsi?.data);
-        setDataDapodikTabelSeProvinsiFiltered(dataDapodikTabelSeProvinsi?.data);
+        setDataDapodikTabelProvinsi(dataDapodikTabelSeProvinsi?.data);
+        setDataDapodikTabelProvinsiFiltered(dataDapodikTabelSeProvinsi?.data);
 
         const valueTotalAnakSekolah = Array.isArray(dataDapodikTabelSeProvinsi?.data) 
         ? dataDapodikTabelSeProvinsi.data.map(item => {
@@ -577,8 +577,9 @@ const ContentDapodikV2 = () => {
           }
     
           const dataDetailAnggaran = await response.json();
-          setDataDetailAnggaranSubSubFiltered(dataDetailAnggaran)
-          
+          setDataDetailAnggaranSubSub(dataDetailAnggaran?.data)
+          setDataDetailAnggaranSubSubFiltered(dataDetailAnggaran?.data)
+          setModalSub(true)
         } catch (errorDetailAnggaran) {
           setErrorDetailAnggaran(errorDetailAnggaran);
         } finally {
@@ -955,6 +956,7 @@ const ContentDapodikV2 = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const paginateDetail = (pageNumber) => setCurrentPageDetail(pageNumber);
   const paginateDetailSub = (pageNumber) => setCurrentPageDetailSub(pageNumber);
+  const paginateDetailSubSub = (pageNumber) => setCurrentPageDetailSubSub(pageNumber);
   const paginateProvinsi = (pageNumber) => setCurrentPageProvinsi(pageNumber);
   const paginateKabupaten = (pageNumber) => setCurrentPageKabupaten(pageNumber);
 
@@ -1006,6 +1008,7 @@ const ContentDapodikV2 = () => {
   const [dataJenisPemda, setDataJenisPemda] = useState("");
   const [dataRincianDetail, setDataRincianDetail] = useState(0);
   const [dataRincianDetailSub, setDataRincianDetailSub] = useState(0);
+  const [dataRincianDetailSubSub, setDataRincianDetailSubSub] = useState(0);
 
   const handleOpen = (
     kodeProv,
@@ -1031,9 +1034,9 @@ const ContentDapodikV2 = () => {
     setCardHead(null);
   };
 
-  const handleOpenNextModalSub = ({kodeDdn, kodeSubGiat, kodeSro,tahun}) => {
+  const handleOpenNextModalSub = ({kodeDdn, kodeSubGiat, kodeSro,tahun, rincianDetail}) => {
     getDataDetailAnggaranSubSub({kodeDdn:kodeDdn, kodeSubGiat:kodeSubGiat, kodeSro:kodeSro, tahun:tahun, url: "/dapodik_ssro_seprov"})
-    setModalSub(true)
+    setDataRincianDetailSubSub(rincianDetail);
     setCardHead(null)
   }
   
@@ -1077,28 +1080,54 @@ const ContentDapodikV2 = () => {
   };
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [searchTermProvinsi, setSearchTermProvinsi] = useState("");
+  const [searchTermKab, setSearchTermKab] = useState("");
   const [searchTermDetail, setSearchTermDetail] = useState(""); 
   const [searchTermDetailSub, setSearchTermDetailSub] = useState(""); 
   const [searchTermDetailSubSub, setSearchTermDetailSubSub] = useState(""); 
 
   // Fungsi untuk menangani perubahan pada input
-  const handleSearchInput = (e, area) => {
+  const handleSearchInput = (e) => {
     const value = e.target.value.toLowerCase()
     setSearchTerm(e.target.value);
     if(value===""){
-      area === "kabupaten" ? setDataDapodikTabelKabupatenFiltered(dataDapodikTabelKabupaten) : area ==="provinsi" ? setDataDapodikTabelProvinsiFiltered(dataDapodikTabelProvinsi) : setDataDapodikTabelSeProvinsiFiltered(dataDapodikTabelSeProvinsi)
+     setDataDapodikTabelSeProvinsiFiltered(dataDapodikTabelSeProvinsi)
     }else{
-      const filtered = dataDetailAnggaran.filter((item) => {
-          if(area==="kabupaten"){
-            return item.nama_kabkota.toLowerCase().includes(value)
-          }else if(area==="provinsi"){
-            return item.nama_prov.toLowerCase().includes(value)
-          }else{
-            return item.nama_prov.toLowerCase().includes(value)
-          }
+      const filtered = dataDapodikTabelSeProvinsi.filter((item) => {
+        return item.nama_prov.toLowerCase().includes(value)
         }
       );
-      area === "kabupaten" ? setDataDapodikTabelKabupatenFiltered(filtered) : area ==="provinsi" ? setDataDapodikTabelProvinsiFiltered(filtered) : setDataDapodikTabelSeProvinsiFiltered(filtered)
+      setDataDapodikTabelSeProvinsiFiltered(filtered)
+    }
+
+  };
+
+  const handleSearchInputProvinsi = (e) => {
+    const value = e.target.value.toLowerCase()
+    setSearchTermProvinsi(e.target.value);
+    if(value===""){
+     setDataDapodikTabelProvinsiFiltered(dataDapodikTabelProvinsi)
+    }else{
+      const filtered = dataDapodikTabelProvinsi.filter((item) => {
+          return item.nama_prov.toLowerCase().includes(value)
+        }
+      );
+     setDataDapodikTabelProvinsiFiltered(filtered)
+    }
+
+  };
+
+  const handleSearchInputKabupaten = (e) => {
+    const value = e.target.value.toLowerCase()
+    setSearchTermKab(e.target.value);
+    if(value===""){
+     setDataDapodikTabelKabupatenFiltered(dataDapodikTabelKabupaten)
+    }else{
+      const filtered = dataDapodikTabelKabupaten.filter((item) => {  
+          return item.nama_kabkota.toLowerCase().includes(value)
+        }
+      );
+      setDataDapodikTabelKabupatenFiltered(filtered)
     }
 
   };
@@ -1129,11 +1158,7 @@ const ContentDapodikV2 = () => {
   // };
 
   const handleClearSearch = (area = "") => {
-    // area === "kabupaten" ? setDataDapodikTabelKabupatenFiltered(dataDapodikTabelKabupaten) : area ==="provinsi" ? setDataDapodikTabelProvinsiFiltered(dataDapodikTabelProvinsi) : setDataDapodikTabelSeProvinsiFiltered(dataDapodikTabelSeProvinsi)
-    setCurrentPage(1);
-    setCurrentPageProvinsi(1);
-    setCurrentPageKabupaten(1);
-    setSearchTerm("");
+    area === "kabupaten" ? (setCurrentPageKabupaten(1), setSearchTermKab("")) : area ==="provinsi" ? (setSearchTerm(""), setCurrentPageProvinsi(1)) : (setCurrentPage(1), setSearchTerm(""))
   };
 
   const handleSearchInputDetail = (e) => {
@@ -1181,13 +1206,13 @@ const ContentDapodikV2 = () => {
     const value = e.target.value.toLowerCase();
     setSearchTermDetail(value);
     if (value === "") {
-      setDataDetailAnggaranFiltered(dataDetailAnggaran)  
+      setDataDetailAnggaranSubSubFiltered(dataDetailAnggaranSubSub)  
     } else {
-      const filtered = dataDetailAnggaran.filter((item) => {
-          return item.nama_sub_giat.toLowerCase().includes(value)
+      const filtered = dataDetailAnggaranSubSub.filter((item) => {
+          return item.nama_standar_harga.toLowerCase().includes(value)
       }
       );
-      setDataDetailAnggaranFiltered(filtered)
+      setDataDetailAnggaranSubSubFiltered(filtered)
     }
   };
 
@@ -1714,7 +1739,7 @@ const ContentDapodikV2 = () => {
                         }}
                         type="text"
                         value={searchTerm}
-                        onChange={(e) =>handleSearchInput(e, 'seprovinsi')}
+                        onChange={handleSearchInput}
                         // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
                         placeholder="Cari Provinsi"
                       />
@@ -1739,7 +1764,7 @@ const ContentDapodikV2 = () => {
                         </button>
                       )}
                     </div>
-                    <div>
+                    {/* <div>
                       <button
                         style={{
                           backgroundColor: "#007bff",
@@ -1754,7 +1779,7 @@ const ContentDapodikV2 = () => {
                       >
                         search
                       </button>
-                    </div>
+                    </div> */}
                   </div>
 
                   <div style={{ overflowX: "auto" }}>
@@ -2260,14 +2285,14 @@ const ContentDapodikV2 = () => {
                           fontSize: "16px",
                         }}
                         type="text"
-                        value={searchTerm}
-                        onChange={(e) =>handleSearchInput(e, 'provinsi')}
+                        value={searchTermProvinsi}
+                        onChange={handleSearchInputProvinsi}
                         // onKeyDown={(e) => handleKeyDown(e, "provinsi")}
                         placeholder="Cari Provinsi"
                       />
 
                       {/* Tombol "X" di dalam input */}
-                      {searchTerm && (
+                      {searchTermProvinsi && (
                         <button
                           onClick={() => handleClearSearch("provinsi")}
                           style={{
@@ -2286,7 +2311,7 @@ const ContentDapodikV2 = () => {
                         </button>
                       )}
                     </div>
-                    <div>
+                    {/* <div>
                       <button
                         style={{
                           backgroundColor: "#007bff",
@@ -2301,7 +2326,8 @@ const ContentDapodikV2 = () => {
                       >
                         search
                       </button>
-                    </div></>)}                    
+                    </div> */}
+                    </>)}                    
                   </div>                  
                   {showNextData ? (
                     <><button
@@ -2712,14 +2738,14 @@ const ContentDapodikV2 = () => {
                           fontSize: "16px",
                         }}
                         type="text"
-                        value={searchTerm}
-                        onChange={(e) =>handleSearchInput(e, 'kabupaten')}
+                        value={searchTermKab}
+                        onChange={handleSearchInputKabupaten}
                         // onKeyDown={(e) => handleKeyDown(e, "kabupaten")}
                         placeholder="Cari Kabupaten/Kota"
                       />
 
                       {/* Tombol "X" di dalam input */}
-                      {searchTerm && (
+                      {searchTermKab && (
                         <button
                           onClick={() => handleClearSearch("kabupaten")}
                           style={{
@@ -2738,7 +2764,7 @@ const ContentDapodikV2 = () => {
                         </button>
                       )}
                     </div>
-                    <div>
+                    {/* <div>
                       <button
                         style={{
                           backgroundColor: "#007bff",
@@ -2753,7 +2779,7 @@ const ContentDapodikV2 = () => {
                       >
                         search
                       </button>
-                    </div>
+                    </div> */}
                   </div>
                   <div style={{ overflowX: "auto" }}>
                     {/* Render Table */}
@@ -4624,7 +4650,7 @@ const ContentDapodikV2 = () => {
                       padding: "5px 10px",                      
                       cursor: "pointer",
                       fontSize: "30px"
-                    }} onClick={()=>handleOpenNextModalSub({kodeDdn: item.kode_ddn, kodeSubGiat: item.kode_sub_giat, kodeSro: item.kode_sro, tahun: selectedSingleTahunAnggaran})} className="bx bx-list-ul text-primary"></i>
+                    }} onClick={()=>handleOpenNextModalSub({kodeDdn: item.kode_prov? item.kode_prov : item.kode_ddn, kodeSubGiat: item.kode_sub_giat, kodeSro: item.kode_sro, tahun: selectedSingleTahunAnggaran, rincianDetail: item.total_rinciansro})} className="bx bx-list-ul text-primary"></i>
                         </td> 
                     </tr>
                   ))}
@@ -4667,7 +4693,7 @@ const ContentDapodikV2 = () => {
                                     start={0}
                                     end={
                                       // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
-                                      dataRincianDetailSub
+                                      dataRincianDetailSubSub
                                     }
                                     separator="."
                                     prefix="Rp "
@@ -4703,7 +4729,7 @@ const ContentDapodikV2 = () => {
                 value={searchTermDetailSubSub}
                 onChange={handleSearchInputDetailSubSub}
                 // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
-                placeholder="Cari Sub Rincian Objek"
+                placeholder="Cari Sub Sub Rincian Objek"
               />
 
               {/* Tombol "X" di dalam input */}
@@ -4758,6 +4784,20 @@ const ContentDapodikV2 = () => {
                         style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
                           wordWrap: "break-word", maxWidth:"100px" }}
                       >
+                        Kode Standar Harga {getSortIcon("kode_sro")}
+                      </th>                                                                  
+                      <th                        
+                        onClick={() => requestSort("kode_sro")}
+                        style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
+                          wordWrap: "break-word", maxWidth:"100px" }}
+                      >
+                        Nama Standar Harga {getSortIcon("kode_sro")}
+                      </th>                                                                  
+                      <th                        
+                        onClick={() => requestSort("kode_sro")}
+                        style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
+                          wordWrap: "break-word", maxWidth:"100px" }}
+                      >
                         Satuan {getSortIcon("kode_sro")}
                       </th>                                                                  
                       <th onClick={() => requestSort("nama_sro")}
@@ -4781,15 +4821,18 @@ const ContentDapodikV2 = () => {
                     </tr>                  
                   </thead>
                   <tbody style={{ minHeight: "500px" }}>
-                    {currentItemsDetailSub.map((item, index) => (
+                    {currentItemsDetailSubSub.map((item, index) => (
                       <tr key={index}>                        
                         <td style={{textAlign: "center",
                         verticalAlign: "middle"}}>
                           {/* { index + 1} */}
-                          {indexOfFirstItemDetailSub + index + 1}
+                          {indexOfFirstItemDetailSubSub + index + 1}
                         </td>
                         <td>
-                          {item.kode_sro}
+                          {item.kode_standar_harga}
+                        </td>
+                        <td>
+                          {item.nama_standar_harga}
                         </td>
                         <td style={{
                             whiteSpace: "normal",  // Membolehkan teks turun ke baris berikutnya
@@ -4797,8 +4840,16 @@ const ContentDapodikV2 = () => {
                             maxWidth: "200px"  // Menetapkan lebar maksimum sel (sesuaikan dengan kebutuhan)
                           }}>
                           {" "}
-                          {item.nama_sro || "-"}
-                        </td>                                                                        
+                          {item.volume || "-"}
+                        </td>     
+                        <td>
+                        <span style={{float: "right"}}>{item.volume ? parseInt(item.volume).toLocaleString("id-ID")
+                            : "-"}</span>                          
+                        </td>         
+                        <td>
+                        <span style={{float: "right"}}>{item.harga_satuan ? parseInt(item.harga_satuan).toLocaleString("id-ID")
+                            : "-"}</span>                          
+                        </td>                                                                    
                         <td>
                         <span style={{float: "right"}}>{item.total_rinciansro ? parseInt(item.total_rinciansro).toLocaleString("id-ID")
                             : "-"}</span>                          
@@ -4824,7 +4875,7 @@ const ContentDapodikV2 = () => {
                   </tbody>
                 </table>
           </div> 
-          <Pagination currentPage={currentPageDetailSub} totalPages={totalPagesDetailSub} onPageChange={paginateDetailSub} />
+          <Pagination currentPage={currentPageDetailSubSub} totalPages={totalPagesDetailSubSub} onPageChange={paginateDetailSubSub} />
         </ModalBody>
       </div>          
       </Modal>   

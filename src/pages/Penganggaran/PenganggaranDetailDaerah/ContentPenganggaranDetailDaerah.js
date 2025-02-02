@@ -257,7 +257,7 @@ const ContentPenganggaranDetailDaerah = () => {
     const [errorDetailUnitSkpdSro, setErrorDetailUnitSkpdSro] = useState([]);    
   
     const getDataDetailUnitSkpdSro = ({
-      tahun= "2024",
+      tahun=selectedSingleTahun,
       kodeDdn=_id,
       idTahap=selectedSingleTahapan,
       kodeSubGiat="",
