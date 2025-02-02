@@ -230,7 +230,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
     // Kirimkan payload ke parent
     onSelectFilter(cleanedFilters);
   };
-
+  const [searchQuery, setSearchQuery] = useState('');
   const [displayedData, setDisplayedData] = useState({
     daerah: [],
     skpd: [],
@@ -254,8 +254,16 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
     subRincianObjek: 10,
   });
   const [isLoading, setIsLoading] = useState(false);
+  // Fungsi untuk menangani perubahan input pencarian
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
 
-  // Fungsi untuk memuat lebih banyak data berdasarkan kategori
+  const handleClearSearchQuery = () => {
+    setSearchQuery("")
+  } 
+
+  // Fungsi untuk memuat lebih banyak data
   const loadMoreData = (namaField, dataKey) => {
     if (dataFilter[namaField] && !isLoading) {
       setIsLoading(true);
@@ -267,7 +275,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
         [dataKey]: newData,
       }));
 
-      // Update jumlah data yang ditampilkan
       setDataToShow((prev) => ({
         ...prev,
         [dataKey]: prev[dataKey] + 5,
@@ -276,6 +283,48 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
       setIsLoading(false);
     }
   };
+
+  // Fungsi untuk memfilter data berdasarkan pencarian
+  const filterData = (data, searchQuery) => {
+    return data.filter((item) =>
+      item.nama_prov
+        ? item.nama_prov.toLowerCase().includes(searchQuery.toLowerCase()) // Jika item memiliki field nama_prov (misalnya provinsi)
+        : item.nama?.toLowerCase().includes(searchQuery.toLowerCase()) // Jika item memiliki field nama (misalnya skpd, daerah, dll)
+    );
+  };
+
+  // Menampilkan data yang sudah difilter
+  const filteredDaerah = filterData(displayedData.daerah, searchQuery);
+  const filteredSkpd = filterData(displayedData.skpd, searchQuery);
+  const filteredProvinsi = filterData(displayedData.provinsi, searchQuery);
+  const filteredProgram = filterData(displayedData.program, searchQuery);
+  const filteredKegiatan = filterData(displayedData.kegiatan, searchQuery);
+  const filteredSubKegiatan = filterData(displayedData.subKegiatan, searchQuery);
+  const filteredObjek = filterData(displayedData.objek, searchQuery);
+  const filteredRincianObjek = filterData(displayedData.rincianObjek, searchQuery);
+  const filteredSubRincianObjek = filterData(displayedData.subRincianObjek, searchQuery);
+
+  // Fungsi untuk memuat lebih banyak data berdasarkan kategori
+  // const loadMoreData = (namaField, dataKey) => {
+  //   if (dataFilter[namaField] && !isLoading) {
+  //     setIsLoading(true);
+
+  //     const newData = dataFilter[namaField].slice(0, dataToShow[dataKey] + 5);
+
+  //     setDisplayedData((prev) => ({
+  //       ...prev,
+  //       [dataKey]: newData,
+  //     }));
+
+  //     // Update jumlah data yang ditampilkan
+  //     setDataToShow((prev) => ({
+  //       ...prev,
+  //       [dataKey]: prev[dataKey] + 5,
+  //     }));
+
+  //     setIsLoading(false);
+  //   }
+  // };
 
   // Fungsi untuk menangani scroll
   const handleScroll = (e, namaField, dataKey) => {
@@ -471,7 +520,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           Se-Provinsi
                         </span>
                       </div>
-                      {/* <div
+                      <div
                         style={{
                           position: "relative",
                           width: "100%",
@@ -479,23 +528,23 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           marginBottom: "10px",
                         }}
                       >
-                        <input
+                       <input
                           style={{
-                            padding: "5px 15px 5px 10px",
+                            padding: "5px 15px 5px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
                             width: "100%",
                             border: "1px solid #ccc",
                             borderRadius: "5px",
                             fontSize: "16px",
                           }}
                           type="text"
-                          value={searchFilter}
-                          onChange={handleSearchInput}
-                          onKeyDown={(e) => handleKeyDown(e)}
-                          placeholder="Cari Daerah"
+                          value={searchQuery}
+                          onChange={handleSearchChange}
+                          placeholder="Cari Provinsi"
                         />
-                        {searchFilter && (
+                        {/* Tombol "X" di dalam input */}
+                        {searchQuery && (
                           <button
-                            onClick={() => handleClearSearch()}
+                            onClick={() => handleClearSearchQuery()}
                             style={{
                               position: "absolute",
                               right: "10px",
@@ -511,7 +560,8 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                             &#10006;
                           </button>
                         )}
-                      </div> */}
+                      </div>
+                      
                       {selectedNames["provinsi"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
@@ -557,6 +607,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           )
                           )}
                         </ul>
+                        
                       ) : (
                         <p style={{ fontSize: "14px", color: "gray" }}>
                           Tidak ada filter yang dipilih.
@@ -570,7 +621,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           handleScroll(e, "filter_provinsi", "provinsi")
                         }
                       >
-                        {displayedData?.provinsi?.map((item, index) => (
+                        {filteredProvinsi.map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
