@@ -84,7 +84,7 @@ const ContentPerencanaanDetailDaerah = () => {
     const [errorPerencanaan, setErrorPerencanaan] = useState([]);
   
     const getDataPerencanaanRkpdNasional = ({
-      // tahun = "2024",
+      tahun,
       // tahapan = "1",
       kodeDdn=_id
     } = {}) => {
@@ -96,7 +96,7 @@ const ContentPerencanaanDetailDaerah = () => {
             headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
             body: JSON.stringify({
               // id_tahap: tahapan,
-              // tahun: tahun,
+              tahun: tahun,
               kode_ddn: kodeDdn
             }),
           };
@@ -181,12 +181,16 @@ const ContentPerencanaanDetailDaerah = () => {
           tahun: selectedSingleTahun,
           tahapan: selectedSingleTahapan,
       });
+      getDataPerencanaanRkpdNasional({
+        tahun: selectedSingleTahun,
+        tahapan: selectedSingleTahapan,
+      });
       }, [selectedSingleTahun, selectedSingleTahapan]); // Panggil API jika tahun atau dokumen berubah
     
   
     useEffect(() => {
       getDataLogoDaerah();
-      getDataPerencanaanRkpdNasional();
+      // getDataPerencanaanRkpdNasional();
       // getDataPerencanaanRkpdNasionalPersentase();
     }, []);
 

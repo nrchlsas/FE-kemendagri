@@ -4870,7 +4870,7 @@ const ContentDapodikV2 = () => {
                             maxWidth: "200px"  // Menetapkan lebar maksimum sel (sesuaikan dengan kebutuhan)
                           }}>
                           {" "}
-                          {item.volume || "-"}
+                          {item.satuan || "-"}
                         </td>     
                         <td>
                         <span style={{float: "right"}}>{item.volume ? parseInt(item.volume).toLocaleString("id-ID")
