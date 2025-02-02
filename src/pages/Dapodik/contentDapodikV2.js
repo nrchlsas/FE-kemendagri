@@ -267,8 +267,8 @@ const ContentDapodikV2 = () => {
         }
 
         const dataDapodikTabelSeProvinsi = await response.json();
-        setDataDapodikTabelProvinsi(dataDapodikTabelSeProvinsi?.data);
-        setDataDapodikTabelProvinsiFiltered(dataDapodikTabelSeProvinsi?.data);
+        setDataDapodikTabelSeProvinsi(dataDapodikTabelSeProvinsi?.data);
+        setDataDapodikTabelSeProvinsiFiltered(dataDapodikTabelSeProvinsi?.data);
 
         const valueTotalAnakSekolah = Array.isArray(dataDapodikTabelSeProvinsi?.data) 
         ? dataDapodikTabelSeProvinsi.data.map(item => {
@@ -529,7 +529,7 @@ const ContentDapodikV2 = () => {
         }
         const dataDapodikTabelProvinsi = await response.json();
         setDataDapodikTabelProvinsi(dataDapodikTabelProvinsi?.data);
-        setDataDapodikTabelSeProvinsiFiltered(dataDapodikTabelProvinsi?.data);
+        setDataDapodikTabelProvinsiFiltered(dataDapodikTabelProvinsi?.data);
         setShowNextData(false)
         const filterKabupaten = dataDapodikTabelProvinsi?.data?.filter((item)=>(
           item.jns_pemda=="kab" || item.jns_pemda=="kota"
@@ -1035,7 +1035,9 @@ const ContentDapodikV2 = () => {
   };
 
   const handleOpenNextModalSub = ({kodeDdn, kodeSubGiat, kodeSro,tahun, rincianDetail}) => {
-    getDataDetailAnggaranSubSub({kodeDdn:kodeDdn, kodeSubGiat:kodeSubGiat, kodeSro:kodeSro, tahun:tahun, url: "/dapodik_ssro_seprov"})
+    let url = ""
+    dataJenisPemda === "seProv" ? url = "/dapodik_ssro_seprov" : url = "/dapodik_ssro_provkabkota"
+    getDataDetailAnggaranSubSub({kodeDdn:kodeDdn, kodeSubGiat:kodeSubGiat, kodeSro:kodeSro, tahun:tahun, url: url})
     setDataRincianDetailSubSub(rincianDetail);
     setCardHead(null)
   }
@@ -1158,7 +1160,7 @@ const ContentDapodikV2 = () => {
   // };
 
   const handleClearSearch = (area = "") => {
-    area === "kabupaten" ? (setCurrentPageKabupaten(1), setSearchTermKab("")) : area ==="provinsi" ? (setSearchTerm(""), setCurrentPageProvinsi(1)) : (setCurrentPage(1), setSearchTerm(""))
+    area === "kabupaten" ? (setCurrentPageKabupaten(1), setSearchTermKab(""), setDataDapodikTabelKabupatenFiltered(dataDapodikTabelKabupaten)) : area ==="provinsi" ? (setSearchTerm(""), setCurrentPageProvinsi(1), setDataDapodikTabelProvinsiFiltered(dataDapodikTabelProvinsi)) : (setCurrentPage(1), setSearchTerm(""), setDataDapodikTabelSeProvinsiFiltered(dataDapodikTabelSeProvinsi))
   };
 
   const handleSearchInputDetail = (e) => {
@@ -1178,6 +1180,7 @@ const ContentDapodikV2 = () => {
   const handleClearSearchDetail = (area = "") => {
     setCurrentPageDetail(1);
     setSearchTermDetail(""); // Kosongkan isi input
+    setDataDetailAnggaranFiltered(dataDetailAnggaran)
   };
 
   const handleSearchInputDetailSub = (e) => {
@@ -1197,6 +1200,7 @@ const ContentDapodikV2 = () => {
   const handleClearSearchDetailSub = () => {
     setCurrentPageDetailSub(1);
     setSearchTermDetailSub(""); // Kosongkan isi input
+    setDataDetailAnggaranSubFiltered(dataDetailAnggaranSub)
   };
 
   const handleSearchInputDetailSubSub = (e) => {
@@ -1214,8 +1218,9 @@ const ContentDapodikV2 = () => {
   };
 
   const handleClearSearchDetailSubSub = () => {
-    setCurrentPageDetail(1);
-    setSearchTermDetail(""); // Kosongkan isi input
+    setCurrentPageDetailSubSub(1);
+    setSearchTermDetailSubSub(""); // Kosongkan isi input
+    setDataDetailAnggaranSubSubFiltered(dataDetailAnggaranSubSub)
   };
 
   const [dataWidth, setDataWidth] = useState(6)  
@@ -1323,6 +1328,21 @@ const ContentDapodikV2 = () => {
     getDataAnakSekolah({kodeWilayah: ""});
     setClickDaerah(false)
   }
+
+  useEffect(() => {
+    const handleEscKey = (event) => {
+      if (event.key === "Escape") {
+        handleCloseNextModalSub();
+        handleCloseNextModal()
+        handleClose()
+      }
+    };
+  
+    window.addEventListener("keydown", handleEscKey);
+    return () => {
+      window.removeEventListener("keydown", handleEscKey);
+    };
+  }, []);
 
   return (
     <React.Fragment>
@@ -4490,7 +4510,7 @@ const ContentDapodikV2 = () => {
                 value={searchTermDetailSub}
                 onChange={handleSearchInputDetailSub}
                 // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
-                placeholder="Cari Sub Rincian Objek"
+                placeholder="Cari Nama Sub Rincian Objek"
               />
 
               {/* Tombol "X" di dalam input */}
