@@ -880,6 +880,7 @@ const ContentMiskinEkstremV2 = () => {
   const [dataDetailAnggaranSub, setDataDetailAnggaranSub] = useState([]);
   const [dataDetailAnggaranFiltered, setDataDetailAnggaranFiltered] = useState([])
   const [dataDetailAnggaranSubFiltered, setDataDetailAnggaranSubFiltered] = useState([]);
+  const [dataDetailAnggaranSubSubFiltered, setDataDetailAnggaranSubSubFiltered] = useState([]);
   const [dataDetailHighlight, setDataDetailHighlight] = useState([])
   const [loadingDetailAnggaran, setLoadingDetailAnggaran] = useState([]);
   const [errorDetailAnggaran, setErrorDetailAnggaran] = useState([]);
@@ -977,7 +978,8 @@ const ContentMiskinEkstremV2 = () => {
         }
   
         const dataDetailAnggaranSub = await response.json();
-        
+        dataDetailAnggaranSubSub(dataDetailAnggaranSub?.data)
+        setDataDetailAnggaranSubSubFiltered(dataDetailAnggaranSub?.data)
       } catch (errorDetailAnggaran) {
         setErrorDetailAnggaran(errorDetailAnggaran);
       } finally {
@@ -999,6 +1001,7 @@ const ContentMiskinEkstremV2 = () => {
   const [currentPageKab, setCurrentPageKab] = useState(1);
   const [currentPageDetail, setCurrentPageDetail] = useState(1);
   const [currentPageDetailSub, setCurrentPageDetailSub] = useState(1);
+  const [currentPageDetailSubSub, setCurrentPageDetailSubSub] = useState(1);
   const [itemsPerPage] = useState(10); // Set items per page
   const [itemsPerPageKab] = useState(10); // Set items per page
   const [sortConfig, setSortConfig] = useState({
@@ -1017,6 +1020,9 @@ const ContentMiskinEkstremV2 = () => {
 
   const indexOfLastItemDetailSub = currentPageDetailSub * itemsPerPage;
   const indexOfFirstItemDetailSub = indexOfLastItemDetailSub - itemsPerPage;
+
+  const indexOfLastItemDetailSubSub = currentPageDetailSubSub * itemsPerPage;
+  const indexOfFirstItemDetailSubSub = indexOfLastItemDetailSubSub - itemsPerPage;
   
   const sortedItems = React.useMemo(() => {
     let sortableItems = [...((showNextData ? filteredDataMiskinEkstremTabelKabupaten : filteredDataMiskinEkstremTabel) || [])];
@@ -1093,21 +1099,43 @@ const ContentMiskinEkstremV2 = () => {
     }
     return sortableItems;
   }, [dataDetailAnggaranSubFiltered, sortConfig]);
+
+  const sortedItemsDetailSubSub = React.useMemo(() => {
+    let sortableItems = [...(dataDetailAnggaranSubSubFiltered || [])];
+    if (sortConfig.key !== null) {
+      sortableItems.sort((a, b) => {
+        const aValue = a[sortConfig.key] || 0;
+        const bValue = b[sortConfig.key] || 0;
+
+        if (aValue < bValue) {
+          return sortConfig.direction === "ascending" ? -1 : 1;
+        }
+        if (aValue > bValue) {
+          return sortConfig.direction === "ascending" ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [dataDetailAnggaranSubSubFiltered, sortConfig]);
   
   const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);
   const currentItemsKab = sortedItemsKab.slice(indexOfFirstItemKab, indexOfLastItemKab);
   const currentItemDetail = sortedItemsDetail.slice(indexOfFirstItemDetail, indexOfLastItemDetail);
   const currentItemDetailSub = sortedItemsDetailSub.slice(indexOfFirstItemDetailSub, indexOfLastItemDetailSub);
+  const currentItemDetailSubSub = sortedItemsDetailSubSub.slice(indexOfFirstItemDetailSubSub, indexOfLastItemDetailSubSub);
 
   const totalPages = Math.ceil(((showNextData ? filteredDataMiskinEkstremTabelKabupaten?.length : filteredDataMiskinEkstremTabel?.length)|| 0) / itemsPerPage);
   const totalPagesKab = Math.ceil((dataMiskinEkstremTabelKab?.length || 0) / itemsPerPage);
   const totalPagesDetail = Math.ceil((setDataDetailAnggaranFiltered?.length || 0) / itemsPerPage);
   const totalPagesDetailSub = Math.ceil((dataDetailAnggaranSubFiltered?.length || 0) / itemsPerPage);
+  const totalPagesDetailSubSub = Math.ceil((dataDetailAnggaranSubSubFiltered?.length || 0) / itemsPerPage);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const paginateKab = (pageNumber) => setCurrentPageKab(pageNumber);
   const paginateDetail = (pageNumber) => setCurrentPageDetail(pageNumber);
   const paginateDetailSub = (pageNumber) => setCurrentPageDetailSub(pageNumber);
+  const paginateDetailSubSub = (pageNumber) => setCurrentPageDetailSubSub(pageNumber);
   
   const placeholders = Array.from(
     { length: itemsPerPage - currentItems.length },
@@ -1154,6 +1182,7 @@ const ContentMiskinEkstremV2 = () => {
   const [modalSub, setModalSub] = useState(false)
   const [dataRincianDetail, setDataRincianDetail] = useState(0)
   const [dataRincianDetailSub, setDataRincianDetailSub] = useState(0)
+  const [dataRincianDetailSubSub, setDataRincianDetailSubSub] = useState(0);
   const [dataJenisPemda, setDataJenisPemda] = useState("")
   const [dataDetailNamaDaerah, setDataDetailNamaDaerah] = useState('')
   const handleOpen = (kodeProv="",  namaDaerah="", kodeDdnKab="", kodeDdnProv="", jenisPemda="", rincianDetail= 0) => {
@@ -1194,8 +1223,9 @@ const ContentMiskinEkstremV2 = () => {
     setCardHead(null)
   }
 
-  const handleOpenNextModalSub = ({kodeDdn, kodeSubGiat, kodeSro,tahun}) => {
+  const handleOpenNextModalSub = ({kodeDdn, kodeSubGiat, kodeSro,tahun,rincianDetail}) => {
     getDataDetailAnggaranSubSub({kodeDdn:kodeDdn, kodeSubGiat:kodeSubGiat, kodeSro:kodeSro, tahun:tahun})
+    setDataRincianDetailSubSub(rincianDetail)
     setModalSub(true)
     setCardHead(null)
   }
@@ -1293,6 +1323,26 @@ const ContentMiskinEkstremV2 = () => {
       setCurrentPageDetailSub(1);
       // setCurrentPageKabupaten(1);
       setSearchTermDetailSub(""); // Kosongkan isi input
+    };
+
+    const handleSearchInputDetailSubSub = (e) => {
+      const value = e.target.value.toLowerCase();
+      setSearchTermDetailSubSub(value);
+      if (value === "") {
+        setDataDetailAnggaranSubSubFiltered(dataDetailAnggaranSubSub)  
+      } else {
+        const filtered = dataDetailAnggaranSubSub.filter((item) => {
+            return item.nama_standar_harga.toLowerCase().includes(value)
+        }
+        );
+        setDataDetailAnggaranSubSubFiltered(filtered)
+      }
+    };
+
+    const handleClearSearchDetailSubSub = () => {
+      setCurrentPageDetailSubSub(1);
+      setSearchTermDetailSubSub(""); // Kosongkan isi input
+      setDataDetailAnggaranSubSubFiltered(dataDetailAnggaranSubSub)
     };
 
     const handleKeyDown = (e, area) => {
@@ -4340,7 +4390,7 @@ const ContentMiskinEkstremV2 = () => {
                       padding: "5px 10px",                      
                       cursor: "pointer",
                       fontSize: "30px"
-                    }} onClick={()=>handleOpenNextModalSub({kodeDdn: item.kode_ddn, kodeSubGiat: item.kode_sub_giat, kodeSro: item.kode_sro, tahun: selectedSingleTahunAnggaran})} className="bx bx-list-ul text-primary"></i>
+                    }} onClick={()=>handleOpenNextModalSub({kodeDdn: item.kode_ddn, kodeSubGiat: item.kode_sub_giat, kodeSro: item.kode_sro, tahun: selectedSingleTahunAnggaran, rincianDetail:item.total_rinciansro})} className="bx bx-list-ul text-primary"></i>
                         </td> 
                       </tr>
                     ))}
@@ -4379,7 +4429,7 @@ const ContentMiskinEkstremV2 = () => {
                                     start={0}
                                     end={
                                       // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
-                                      dataRincianDetailSub
+                                      dataRincianDetailSubSub
                                     }
                                     separator="."
                                     prefix="Rp "
@@ -4393,6 +4443,68 @@ const ContentMiskinEkstremV2 = () => {
                         </CardBody>
                       </Card></Col>
           </Row>
+          <div className="mb-2 d-flex">
+            <div
+              className="mx-2"
+              style={{
+                position: "relative",
+                width: "100%",
+                maxWidth: "300px",
+                marginBottom: "20px",
+              }}
+            >
+              <input
+                style={{
+                  padding: "10px 30px 10px 10px",
+                  width: "100%",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  fontSize: "16px",
+                }}
+                type="text"
+                value={searchTermDetailSubSub}
+                onChange={handleSearchInputDetailSubSub}
+                // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                placeholder="Cari Sub Sub Rincian Objek"
+              />
+
+              {/* Tombol "X" di dalam input */}
+              {searchTermDetailSubSub && (
+                <button
+                  onClick={() => handleClearSearchDetailSubSub()}
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    color: "#999",
+                  }}
+                >
+                  &#10006;
+                </button>
+              )}
+            </div>
+            {/* <div>
+              <button
+                style={{
+                  backgroundColor: "#007bff",
+                  color: "white",
+                  padding: "10px 20px",
+                  border: "none",
+                  borderRadius: "5px",
+                  cursor: "pointer",
+                  fontSize: "16px",
+                }}
+                onClick={() => handleButtonClick("seprovinsi")}
+              >
+                search
+              </button>
+            </div> */}
+          </div>
           <div style={{ overflowY: "scroll", maxHeight:"500px"}}>
           <table
                   className="table table-bordered table-nowrap align-middle mb-0"
@@ -4403,6 +4515,20 @@ const ContentMiskinEkstremV2 = () => {
                       <th style={{ verticalAlign: "middle", textAlign: "center" }}>
                         NO
                       </th>                      
+                      <th                        
+                        onClick={() => requestSort("kode_sro")}
+                        style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
+                          wordWrap: "break-word", maxWidth:"100px" }}
+                      >
+                        Kode Standar Harga {getSortIcon("kode_sro")}
+                      </th>                                                                  
+                      <th                        
+                        onClick={() => requestSort("kode_sro")}
+                        style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
+                          wordWrap: "break-word", maxWidth:"100px" }}
+                      >
+                        Nama Standar Harga {getSortIcon("kode_sro")}
+                      </th>                                                                  
                       <th                        
                         onClick={() => requestSort("kode_sro")}
                         style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
@@ -4431,15 +4557,18 @@ const ContentMiskinEkstremV2 = () => {
                     </tr>                  
                   </thead>
                   <tbody style={{ minHeight: "500px" }}>
-                    {currentItemDetailSub.map((item, index) => (
+                    {currentItemDetailSubSub.map((item, index) => (
                       <tr key={index}>                        
                         <td style={{textAlign: "center",
                         verticalAlign: "middle"}}>
                           {/* { index + 1} */}
-                          {indexOfFirstItemDetailSub + index + 1}
+                          {indexOfFirstItemDetailSubSub + index + 1}
                         </td>
                         <td>
-                          {item.kode_sro}
+                          {item.kode_standar_harga}
+                        </td>
+                        <td>
+                          {item.nama_standar_harga}
                         </td>
                         <td style={{
                             whiteSpace: "normal",  // Membolehkan teks turun ke baris berikutnya
@@ -4447,8 +4576,16 @@ const ContentMiskinEkstremV2 = () => {
                             maxWidth: "200px"  // Menetapkan lebar maksimum sel (sesuaikan dengan kebutuhan)
                           }}>
                           {" "}
-                          {item.nama_sro || "-"}
-                        </td>                                                                        
+                          {item.volume || "-"}
+                        </td>     
+                        <td>
+                        <span style={{float: "right"}}>{item.volume ? parseInt(item.volume).toLocaleString("id-ID")
+                            : "-"}</span>                          
+                        </td>         
+                        <td>
+                        <span style={{float: "right"}}>{item.harga_satuan ? parseInt(item.harga_satuan).toLocaleString("id-ID")
+                            : "-"}</span>                          
+                        </td>                                                                    
                         <td>
                         <span style={{float: "right"}}>{item.total_rinciansro ? parseInt(item.total_rinciansro).toLocaleString("id-ID")
                             : "-"}</span>                          
@@ -4474,7 +4611,7 @@ const ContentMiskinEkstremV2 = () => {
                   </tbody>
                 </table>
           </div> 
-          <Pagination currentPage={currentPageDetailSub} totalPages={totalPagesDetailSub} onPageChange={paginateDetailSub} />
+          <Pagination currentPage={currentPageDetailSubSub} totalPages={totalPagesDetailSubSub} onPageChange={paginateDetailSubSub} />
         </ModalBody>
       </div>          
       </Modal>   
