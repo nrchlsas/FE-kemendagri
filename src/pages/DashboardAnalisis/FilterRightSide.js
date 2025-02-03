@@ -230,7 +230,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
     // Kirimkan payload ke parent
     onSelectFilter(cleanedFilters);
   };
-  const [searchQuery, setSearchQuery] = useState('');
   const [displayedData, setDisplayedData] = useState({
     daerah: [],
     skpd: [],
@@ -254,14 +253,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
     subRincianObjek: 10,
   });
   const [isLoading, setIsLoading] = useState(false);
-  // Fungsi untuk menangani perubahan input pencarian
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const handleClearSearchQuery = () => {
-    setSearchQuery("")
-  } 
 
   // Fungsi untuk memuat lebih banyak data
   const loadMoreData = (namaField, dataKey) => {
@@ -284,25 +275,56 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
     }
   };
 
+  const [searchTerms, setSearchTerms] = useState({
+    spm:"",
+    urusan:"",
+    bidangUrusan: "",
+    fungsi:"",
+    daerah: "",
+    skpd: "",
+    provinsi: "",
+    program: "",
+    kegiatan: "",
+    subKegiatan: "",
+    objek: "",
+    rincianObjek: "",
+    subRincianObjek: "",
+  });
+  
+  const handleSearchChange = (e, key) => {
+    setSearchTerms((prev) => ({ ...prev, [key]: e.target.value }));
+  };
+  
+  const handleClearSearchTerm = (key) => {
+    setSearchTerms((prev) => ({ ...prev, [key]: "" }));
+  };
+
   // Fungsi untuk memfilter data berdasarkan pencarian
-  const filterData = (data, searchQuery) => {
+  const filterData = (data, searchTerm, searchFields) => {
+    if (!searchTerm) return data; // Jika tidak ada pencarian, kembalikan semua data
+  
     return data.filter((item) =>
-      item.nama_prov
-        ? item.nama_prov.toLowerCase().includes(searchQuery.toLowerCase()) // Jika item memiliki field nama_prov (misalnya provinsi)
-        : item.nama?.toLowerCase().includes(searchQuery.toLowerCase()) // Jika item memiliki field nama (misalnya skpd, daerah, dll)
+      searchFields.some((field) =>
+        item[field]?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
     );
   };
 
-  // Menampilkan data yang sudah difilter
-  const filteredDaerah = filterData(displayedData.daerah, searchQuery);
-  const filteredSkpd = filterData(displayedData.skpd, searchQuery);
-  const filteredProvinsi = filterData(displayedData.provinsi, searchQuery);
-  const filteredProgram = filterData(displayedData.program, searchQuery);
-  const filteredKegiatan = filterData(displayedData.kegiatan, searchQuery);
-  const filteredSubKegiatan = filterData(displayedData.subKegiatan, searchQuery);
-  const filteredObjek = filterData(displayedData.objek, searchQuery);
-  const filteredRincianObjek = filterData(displayedData.rincianObjek, searchQuery);
-  const filteredSubRincianObjek = filterData(displayedData.subRincianObjek, searchQuery);
+  const filteredData = {
+    spm: filterData(dataFilter.filter_spm, searchTerms.spm, ['spm_teks']),
+    fungsi: filterData(dataFilter.filter_fungsi, searchTerms.fungsi, ['nama_fungsi']),
+    urusan: filterData(dataFilter.filter_urusan, searchTerms.urusan, ['nama_urusan']),
+    bidangUrusan: filterData(dataFilter.filter_bidang_urusan, searchTerms.bidangUrusan, ['nama_bidang_urusan']),
+    daerah: filterData(displayedData.daerah, searchTerms.daerah, ['nama_daerah']),
+    skpd: filterData(displayedData.skpd, searchTerms.skpd, ['nama_skpd']),
+    provinsi: filterData(displayedData.provinsi, searchTerms.provinsi, ['nama_prov']),
+    program: filterData(displayedData.program, searchTerms.program, ['nama_program']),
+    kegiatan: filterData(displayedData.kegiatan, searchTerms.kegiatan, ['nama_giat']),
+    subKegiatan: filterData(displayedData.subKegiatan, searchTerms.subKegiatan, ['nama_sub_giat']),
+    objek: filterData(displayedData.objek, searchTerms.objek, ['nama_objek']),
+    rincianObjek: filterData(displayedData.rincianObjek, searchTerms.rincianObjek, ['nama_ro']),
+    subRincianObjek: filterData(displayedData.subRincianObjek, searchTerms.subRincianObjek, ['nama_sro']),
+  };
 
   // Fungsi untuk memuat lebih banyak data berdasarkan kategori
   // const loadMoreData = (namaField, dataKey) => {
@@ -537,14 +559,14 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                             fontSize: "16px",
                           }}
                           type="text"
-                          value={searchQuery}
-                          onChange={handleSearchChange}
+                          value={searchTerms['provinsi']}
+                          onChange={(e) => handleSearchChange(e, 'provinsi')}
                           placeholder="Cari Provinsi"
                         />
                         {/* Tombol "X" di dalam input */}
-                        {searchQuery && (
+                        {searchTerms['provinsi'] && (
                           <button
-                            onClick={() => handleClearSearchQuery()}
+                            onClick={() => handleClearSearchTerm('provinsi')}
                             style={{
                               position: "absolute",
                               right: "10px",
@@ -561,7 +583,6 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           </button>
                         )}
                       </div>
-                      
                       {selectedNames["provinsi"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
@@ -621,7 +642,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           handleScroll(e, "filter_provinsi", "provinsi")
                         }
                       >
-                        {filteredProvinsi.map((item, index) => (
+                        {filteredData['provinsi'].map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
@@ -683,15 +704,15 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                             fontSize: "16px",
                           }}
                           type="text"
-                          value={searchFilter}
-                          onChange={handleSearchInput}
-                          onKeyDown={(e) => handleKeyDown(e)}
+                          value={searchTerms['daerah']}
+                          onChange={(e) => handleSearchChange(e, 'daerah')}
+                          // onKeyDown={(e) => handleKeyDown(e)}
                           placeholder="Cari Daerah"
                         />
                         {/* Tombol "X" di dalam input */}
-                        {searchFilter && (
+                        {searchTerms['daerah'] && (
                           <button
-                            onClick={() => handleClearSearch()}
+                            onClick={() => handleClearSearchTerm('daerah')}
                             style={{
                               position: "absolute",
                               right: "10px",
@@ -764,7 +785,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           handleScroll(e, "filter_daerah", "daerah")
                         }
                       >
-                        {displayedData?.daerah?.map((item, index) => (
+                        {filteredData['daerah'].map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
@@ -809,6 +830,47 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         >
                           SKPD
                         </span>
+                      </div>
+                      <div
+                        style={{
+                          position: "relative",
+                          width: "100%",
+                          maxWidth: "300px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                       <input
+                          style={{
+                            padding: "5px 15px 5px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                            width: "100%",
+                            border: "1px solid #ccc",
+                            borderRadius: "5px",
+                            fontSize: "16px",
+                          }}
+                          type="text"
+                          value={searchTerms['skpd']}
+                          onChange={(e) => handleSearchChange(e, 'skpd')}
+                          placeholder="Cari skpd"
+                        />
+                        {/* Tombol "X" di dalam input */}
+                        {searchTerms['skpd'] && (
+                          <button
+                            onClick={() => handleClearSearchTerm('skpd')}
+                            style={{
+                              position: "absolute",
+                              right: "10px",
+                              top: "50%",
+                              transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                              background: "transparent",
+                              border: "none",
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              color: "#999",
+                            }}
+                          >
+                            &#10006;
+                          </button>
+                        )}
                       </div>
                       {selectedNames["skpd"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
@@ -865,7 +927,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         style={{ overflowY: "auto", maxHeight: "300px" }}
                         onScroll={(e) => handleScroll(e, "filter_skpd", "skpd")}
                       >
-                        {displayedData?.skpd?.map((item, index) => (
+                        {filteredData['skpd'].map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) => handleCheckboxChange(e, "skpd", item.nama_skpd)}
@@ -907,6 +969,48 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         >
                           Fungsi
                         </span>
+                      </div>
+                      <div
+                        style={{
+                          position: "relative",
+                          width: "100%",
+                          maxWidth: "300px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <input
+                          style={{
+                            padding: "5px 15px 5px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                            width: "100%",
+                            border: "1px solid #ccc",
+                            borderRadius: "5px",
+                            fontSize: "16px",
+                          }}
+                          type="text"
+                          value={searchTerms['fungsi']}
+                          onChange={(e) => handleSearchChange(e, 'fungsi')}
+                          // onKeyDown={(e) => handleKeyDown(e)}
+                          placeholder="Cari Fungsi"
+                        />
+                        {/* Tombol "X" di dalam input */}
+                        {searchTerms['fungsi'] && (
+                          <button
+                            onClick={() => handleClearSearchTerm('fungsi')}
+                            style={{
+                              position: "absolute",
+                              right: "10px",
+                              top: "50%",
+                              transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                              background: "transparent",
+                              border: "none",
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              color: "#999",
+                            }}
+                          >
+                            &#10006;
+                          </button>
+                        )}
                       </div>
                       {selectedNames["fungsi"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
@@ -959,7 +1063,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
-                        {dataFilter?.filter_fungsi?.map((item, index) => (
+                        {filteredData['fungsi'].map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
@@ -1004,6 +1108,48 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         >
                           SPM
                         </span>
+                      </div>
+                      <div
+                        style={{
+                          position: "relative",
+                          width: "100%",
+                          maxWidth: "300px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <input
+                          style={{
+                            padding: "5px 15px 5px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                            width: "100%",
+                            border: "1px solid #ccc",
+                            borderRadius: "5px",
+                            fontSize: "16px",
+                          }}
+                          type="text"
+                          value={searchTerms['spm']}
+                          onChange={(e) => handleSearchChange(e, 'spm')}
+                          // onKeyDown={(e) => handleKeyDown(e)}
+                          placeholder="Cari spm"
+                        />
+                        {/* Tombol "X" di dalam input */}
+                        {searchTerms['spm'] && (
+                          <button
+                            onClick={() => handleClearSearchTerm('spm')}
+                            style={{
+                              position: "absolute",
+                              right: "10px",
+                              top: "50%",
+                              transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                              background: "transparent",
+                              border: "none",
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              color: "#999",
+                            }}
+                          >
+                            &#10006;
+                          </button>
+                        )}
                       </div>
                       {selectedNames["spm"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
@@ -1055,7 +1201,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
-                        {dataFilter?.filter_spm?.map((item, index) => (
+                        {filteredData['spm'].map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) => handleCheckboxChange(e, "spm", item.spm_teks)}
@@ -1097,6 +1243,48 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         >
                           Urusan
                         </span>
+                      </div>
+                      <div
+                        style={{
+                          position: "relative",
+                          width: "100%",
+                          maxWidth: "300px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <input
+                          style={{
+                            padding: "5px 15px 5px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                            width: "100%",
+                            border: "1px solid #ccc",
+                            borderRadius: "5px",
+                            fontSize: "16px",
+                          }}
+                          type="text"
+                          value={searchTerms['urusan']}
+                          onChange={(e) => handleSearchChange(e, 'urusan')}
+                          // onKeyDown={(e) => handleKeyDown(e)}
+                          placeholder="Cari Urusan"
+                        />
+                        {/* Tombol "X" di dalam input */}
+                        {searchTerms['urusan'] && (
+                          <button
+                            onClick={() => handleClearSearchTerm('urusan')}
+                            style={{
+                              position: "absolute",
+                              right: "10px",
+                              top: "50%",
+                              transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                              background: "transparent",
+                              border: "none",
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              color: "#999",
+                            }}
+                          >
+                            &#10006;
+                          </button>
+                        )}
                       </div>
                      {selectedNames["urusan"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
@@ -1147,7 +1335,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
-                        {dataFilter?.filter_urusan?.map((item, index) => (
+                        {filteredData['urusan'].map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
@@ -1192,6 +1380,48 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         >
                           Bidang Urusan
                         </span>
+                      </div>
+                      <div
+                        style={{
+                          position: "relative",
+                          width: "100%",
+                          maxWidth: "300px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                        <input
+                          style={{
+                            padding: "5px 15px 5px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                            width: "100%",
+                            border: "1px solid #ccc",
+                            borderRadius: "5px",
+                            fontSize: "16px",
+                          }}
+                          type="text"
+                          value={searchTerms['bidangUrusan']}
+                          onChange={(e) => handleSearchChange(e, 'bidangUrusan')}
+                          // onKeyDown={(e) => handleKeyDown(e)}
+                          placeholder="Cari Bidang Urusan"
+                        />
+                        {/* Tombol "X" di dalam input */}
+                        {searchTerms['bidangUrusan'] && (
+                          <button
+                            onClick={() => handleClearSearchTerm('bidangUrusan')}
+                            style={{
+                              position: "absolute",
+                              right: "10px",
+                              top: "50%",
+                              transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                              background: "transparent",
+                              border: "none",
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              color: "#999",
+                            }}
+                          >
+                            &#10006;
+                          </button>
+                        )}
                       </div>
                       {selectedNames["bidangUrusan"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
@@ -1242,7 +1472,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
-                        {dataFilter?.filter_bidang_urusan?.map(
+                        {filteredData['bidangUrusan'].map(
                           (item, index) => (
                             <div key={index} class="form-check mb-2">
                               <input
@@ -1288,6 +1518,47 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         >
                           Program
                         </span>
+                      </div>
+                      <div
+                        style={{
+                          position: "relative",
+                          width: "100%",
+                          maxWidth: "300px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                       <input
+                          style={{
+                            padding: "5px 15px 5px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                            width: "100%",
+                            border: "1px solid #ccc",
+                            borderRadius: "5px",
+                            fontSize: "16px",
+                          }}
+                          type="text"
+                          value={searchTerms['program']}
+                          onChange={(e) => handleSearchChange(e, 'program')}
+                          placeholder="Cari Program"
+                        />
+                        {/* Tombol "X" di dalam input */}
+                        {searchTerms['program'] && (
+                          <button
+                            onClick={() => handleClearSearchTerm('program')}
+                            style={{
+                              position: "absolute",
+                              right: "10px",
+                              top: "50%",
+                              transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                              background: "transparent",
+                              border: "none",
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              color: "#999",
+                            }}
+                          >
+                            &#10006;
+                          </button>
+                        )}
                       </div>
                       {selectedNames["program"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
@@ -1345,7 +1616,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           handleScroll(e, "filter_program", "program")
                         }
                       >
-                        {displayedData?.program?.map((item, index) => (
+                        {filteredData['program'].map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
@@ -1396,6 +1667,47 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         >
                           Kegiatan
                         </span>
+                      </div>
+                      <div
+                        style={{
+                          position: "relative",
+                          width: "100%",
+                          maxWidth: "300px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                       <input
+                          style={{
+                            padding: "5px 15px 5px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                            width: "100%",
+                            border: "1px solid #ccc",
+                            borderRadius: "5px",
+                            fontSize: "16px",
+                          }}
+                          type="text"
+                          value={searchTerms['kegiatan']}
+                          onChange={(e) => handleSearchChange(e, 'kegiatan')}
+                          placeholder="Cari Kegiatan"
+                        />
+                        {/* Tombol "X" di dalam input */}
+                        {searchTerms['kegiatan'] && (
+                          <button
+                            onClick={() => handleClearSearchTerm('kegiatan')}
+                            style={{
+                              position: "absolute",
+                              right: "10px",
+                              top: "50%",
+                              transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                              background: "transparent",
+                              border: "none",
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              color: "#999",
+                            }}
+                          >
+                            &#10006;
+                          </button>
+                        )}
                       </div>
                       {selectedNames["kegiatan"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
@@ -1452,7 +1764,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           handleScroll(e, "filter_giat", "kegiatan")
                         }
                       >
-                        {displayedData.kegiatan.map((item, index) => (
+                        {filteredData['kegiatan'].map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
@@ -1496,6 +1808,47 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         >
                           Sub Kegiatan
                         </span>
+                      </div>
+                      <div
+                        style={{
+                          position: "relative",
+                          width: "100%",
+                          maxWidth: "300px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                       <input
+                          style={{
+                            padding: "5px 15px 5px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                            width: "100%",
+                            border: "1px solid #ccc",
+                            borderRadius: "5px",
+                            fontSize: "16px",
+                          }}
+                          type="text"
+                          value={searchTerms['subKegiatan']}
+                          onChange={(e) => handleSearchChange(e, 'subKegiatan')}
+                          placeholder="Cari sub Kegiatan"
+                        />
+                        {/* Tombol "X" di dalam input */}
+                        {searchTerms['subKegiatan'] && (
+                          <button
+                            onClick={() => handleClearSearchTerm('subKegiatan')}
+                            style={{
+                              position: "absolute",
+                              right: "10px",
+                              top: "50%",
+                              transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                              background: "transparent",
+                              border: "none",
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              color: "#999",
+                            }}
+                          >
+                            &#10006;
+                          </button>
+                        )}
                       </div>
                       {selectedNames["subKegiatan"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
@@ -1552,7 +1905,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           handleScroll(e, "filter_subgiat", "subKegiatan")
                         }
                       >
-                        {displayedData.subKegiatan.map((item, index) => (
+                        {filteredData['subKegiatan'].map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
@@ -1598,6 +1951,47 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         >
                           Objek
                         </span>
+                      </div>
+                      <div
+                        style={{
+                          position: "relative",
+                          width: "100%",
+                          maxWidth: "300px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                       <input
+                          style={{
+                            padding: "5px 15px 5px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                            width: "100%",
+                            border: "1px solid #ccc",
+                            borderRadius: "5px",
+                            fontSize: "16px",
+                          }}
+                          type="text"
+                          value={searchTerms['objek']}
+                          onChange={(e) => handleSearchChange(e, 'objek')}
+                          placeholder="Cari Objek"
+                        />
+                        {/* Tombol "X" di dalam input */}
+                        {searchTerms['objek'] && (
+                          <button
+                            onClick={() => handleClearSearchTerm('objek')}
+                            style={{
+                              position: "absolute",
+                              right: "10px",
+                              top: "50%",
+                              transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                              background: "transparent",
+                              border: "none",
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              color: "#999",
+                            }}
+                          >
+                            &#10006;
+                          </button>
+                        )}
                       </div>
                       {selectedNames["objek"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
@@ -1655,7 +2049,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           handleScroll(e, "filter_objek", "objek")
                         }
                       >
-                        {displayedData?.objek?.map((item, index) => (
+                        {filteredData['objek'].map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) => handleCheckboxChange(e, "objek", item.nama_objek)}
@@ -1697,6 +2091,47 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         >
                           Rincian Objek
                         </span>
+                      </div>
+                      <div
+                        style={{
+                          position: "relative",
+                          width: "100%",
+                          maxWidth: "300px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                       <input
+                          style={{
+                            padding: "5px 15px 5px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                            width: "100%",
+                            border: "1px solid #ccc",
+                            borderRadius: "5px",
+                            fontSize: "16px",
+                          }}
+                          type="text"
+                          value={searchTerms['rincianObjek']}
+                          onChange={(e) => handleSearchChange(e, 'rincianObjek')}
+                          placeholder="Cari Rincian Objek"
+                        />
+                        {/* Tombol "X" di dalam input */}
+                        {searchTerms['rincianObjek'] && (
+                          <button
+                            onClick={() => handleClearSearchTerm('rincianObjek')}
+                            style={{
+                              position: "absolute",
+                              right: "10px",
+                              top: "50%",
+                              transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                              background: "transparent",
+                              border: "none",
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              color: "#999",
+                            }}
+                          >
+                            &#10006;
+                          </button>
+                        )}
                       </div>
                       {selectedNames["rincianObjek"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
@@ -1755,7 +2190,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           handleScroll(e, "filter_ro", "rincianObjek")
                         }
                       >
-                        {displayedData?.rincianObjek?.map((item, index) => (
+                        {filteredData['rincianObjek'].map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
@@ -1802,6 +2237,47 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         >
                           Sub Rincian Objek
                         </span>
+                      </div>
+                      <div
+                        style={{
+                          position: "relative",
+                          width: "100%",
+                          maxWidth: "300px",
+                          marginBottom: "10px",
+                        }}
+                      >
+                       <input
+                          style={{
+                            padding: "5px 15px 5px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                            width: "100%",
+                            border: "1px solid #ccc",
+                            borderRadius: "5px",
+                            fontSize: "16px",
+                          }}
+                          type="text"
+                          value={searchTerms['subRincianObjek']}
+                          onChange={(e) => handleSearchChange(e, 'subRincianObjek')}
+                          placeholder="Cari sub Rincian Objek"
+                        />
+                        {/* Tombol "X" di dalam input */}
+                        {searchTerms['subRincianObjek'] && (
+                          <button
+                            onClick={() => handleClearSearchTerm('subRincianObjek')}
+                            style={{
+                              position: "absolute",
+                              right: "10px",
+                              top: "50%",
+                              transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                              background: "transparent",
+                              border: "none",
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              color: "#999",
+                            }}
+                          >
+                            &#10006;
+                          </button>
+                        )}
                       </div>
                       {selectedNames["subRincianObjek"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
@@ -1860,7 +2336,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           handleScroll(e, "filter_sro", "subRincianObjek")
                         }
                       >                        
-                        {displayedData?.subRincianObjek?.map((item, index) => (
+                        {filteredData['subRincianObjek'].map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
