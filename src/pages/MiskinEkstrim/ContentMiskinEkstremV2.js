@@ -1205,6 +1205,7 @@ const ContentMiskinEkstremV2 = () => {
   const [cardhead, setCardHead] = useState()
   const [namaDaerahDetail, setNamaDaerahDetail] = useState("")
   const [namaSubGiat, setNamaSubGiat] = useState("")
+  const [namaSro, setNamaSro] = useState("")
   
 
   const handleOpenNextModal = (kodeDaerah="", kodeSubGiat="", kodeDdnProv="", kodeDdnKab="", rincianDetail= 0, namaSubGiat="") => {
@@ -1223,8 +1224,9 @@ const ContentMiskinEkstremV2 = () => {
     setCardHead(null)
   }
 
-  const handleOpenNextModalSub = ({kodeDdn, kodeSubGiat, kodeSro,tahun,rincianDetail}) => {
+  const handleOpenNextModalSub = ({kodeDdn, kodeSubGiat, kodeSro,tahun,rincianDetail,namaSro}) => {
     getDataDetailAnggaranSubSub({kodeDdn:kodeDdn, kodeSubGiat:kodeSubGiat, kodeSro:kodeSro, tahun:tahun})
+    setNamaSro(namaSro)
     setDataRincianDetailSubSub(rincianDetail)
     setModalSub(true)
     setCardHead(null)
@@ -4211,7 +4213,7 @@ const ContentMiskinEkstremV2 = () => {
 
       <Modal size="xl" isOpen={modal} toggle={handleOpenNextModal} centered={true} backdrop="static">
       <div className="modal-content border-0">
-        <ModalHeader className=" p-3 bg-info-subtle" toggle={handleCloseNextModal}>Sub Rincian Objek {namaSubGiat}
+        <ModalHeader className=" p-3 bg-info-subtle" toggle={handleCloseNextModal}>Sub Rincian Objek {namaSro}
         </ModalHeader>
         <ModalBody>
         <Row>
@@ -4390,7 +4392,7 @@ const ContentMiskinEkstremV2 = () => {
                       padding: "5px 10px",                      
                       cursor: "pointer",
                       fontSize: "30px"
-                    }} onClick={()=>handleOpenNextModalSub({kodeDdn: item.kode_ddn, kodeSubGiat: item.kode_sub_giat, kodeSro: item.kode_sro, tahun: selectedSingleTahunAnggaran, rincianDetail:item.total_rinciansro})} className="bx bx-list-ul text-primary"></i>
+                    }} onClick={()=>handleOpenNextModalSub({kodeDdn: item.kode_ddn, kodeSubGiat: item.kode_sub_giat, kodeSro: item.kode_sro, tahun: selectedSingleTahunAnggaran, rincianDetail:item.total_rinciansro, namaSro: item.nama_sro})} className="bx bx-list-ul text-primary"></i>
                         </td> 
                       </tr>
                     ))}
@@ -4405,7 +4407,7 @@ const ContentMiskinEkstremV2 = () => {
 
       <Modal size="xl" isOpen={modalSub} toggle={handleOpenNextModalSub} centered={true} backdrop="static">
       <div className="modal-content border-0">
-        <ModalHeader className=" p-3 bg-info-subtle" toggle={handleCloseNextModalSub}>Sub Rincian Objek {namaSubGiat}
+        <ModalHeader className=" p-3 bg-info-subtle" toggle={handleCloseNextModalSub}>Sub Sub Rincian Objek {namaSubGiat}
         </ModalHeader>
         <ModalBody>
         <Row>
@@ -4415,7 +4417,7 @@ const ContentMiskinEkstremV2 = () => {
                             className="d-flex flex-column title-custom-card"                            
                           >
                             <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                              <span>Total Anggaran Sub Kegiatan</span>
+                              <span>Total Anggaran Sub Rincian Objek</span>
                             </div>
                             <div className="d-flex">
                               {/* <div className="avatar-xs-half flex-shrink-0">
