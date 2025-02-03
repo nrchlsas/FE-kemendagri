@@ -4184,7 +4184,7 @@ const ContentDapodikV2 = () => {
                       {/* Tombol "X" di dalam input */}
                       {searchTermDetail && (
                         <button
-                          onClick={() => handleClearSearchDetailSub()}
+                          onClick={() => handleClearSearchDetail()}
                           style={{
                             position: "absolute",
                             right: "10px",
