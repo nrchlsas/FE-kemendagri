@@ -305,6 +305,59 @@ const ContentPenganggaranDetailDaerah = () => {
   
       fetchData();
     };
+
+    const [dataDetailAnggaranSubSubFiltered, setDataDetailAnggaranSubSubFiltered] = useState([]);
+    const [dataDetailUnitSkpdSubSro, setDataDetailUnitSkpdSubSro] = useState([]);    
+    const getDataDetailUnitSkpdSubSro = ({
+      tahun=selectedSingleTahun,
+      kodeDdn=_id,
+      idTahap=selectedSingleTahapan,
+      kodeSubGiat="",
+      kodeUnitSkpd=""
+    }      
+    ) => {
+      const fetchData = async () => {
+        // setLoadingDetailUnitSkpdSro(true); // Set loading state to true when starting the fetch
+        try {
+          const token = JSON.parse(sessionStorage.getItem("authUser"))
+          const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+            body: JSON.stringify({
+              kode_ddn: kodeDdn,
+              kode_sub_giat: kodeSubGiat,
+              tahun : tahun,
+              id_tahap: idTahap,
+              kode_unit_skpd: kodeUnitSkpd
+            }),
+          };
+  
+          const response = await fetch(
+            `${API_URI_RBAC}/v2/dashboard_penganggaran_ssro`,
+            requestOptions
+          );
+  
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+  
+          const dataDetailUnitSkpdSubSro = await response.json();
+  
+          setDataDetailUnitSkpdSubSro(dataDetailUnitSkpdSubSro.data.penganggaran_level_3_sro)
+          setDataDetailAnggaranSubSubFiltered(dataDetailUnitSkpdSubSro.data.penganggaran_level_3_sro)
+
+          setModall(true);            
+          setCurrentPageDetail(1);     
+          // Open the modal only after data is successfully fetched
+        } catch (errorDetailUnitSkpdSro) {
+          setErrorDetailUnitSkpdSro(errorDetailUnitSkpdSro);
+        } finally {
+          setLoadingDetailUnitSkpdSro(false);
+        }
+      };
+  
+      fetchData();
+    };
   
     const [modall, setModall] = useState(false);
     const [dataRincianDetail, setDataRincianDetail] = useState(0);
@@ -333,6 +386,7 @@ const ContentPenganggaranDetailDaerah = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [currentPageDetail, setCurrentPageDetail] = useState(1);
     const [currentPageDetailSub, setCurrentPageDetailSub] = useState(1);
+    const [currentPageDetailSubSub, setCurrentPageDetailSubSub] = useState(1);
     const [itemsPerPage] = useState(10); // Set items per page
     const [itemsPerPageDetail] = useState(10);
     const [itemsPerPageDetailSub] = useState(10); // Set items per page
@@ -353,6 +407,9 @@ const ContentPenganggaranDetailDaerah = () => {
 
     const indexOfLastItemDetailSub = currentPageDetailSub * itemsPerPageDetailSub;
     const indexOfFirstItemDetailSub = indexOfLastItemDetailSub - itemsPerPageDetailSub;
+
+    const indexOfLastItemDetailSubSub = currentPageDetailSubSub * itemsPerPage;
+    const indexOfFirstItemDetailSubSub = indexOfLastItemDetailSubSub - itemsPerPage;
     
     const sortedItems = React.useMemo(() => {
       let sortableItems = [...(dataPenganggaranPersentase || [])];
@@ -410,6 +467,25 @@ const ContentPenganggaranDetailDaerah = () => {
       }
       return sortableItems;
     }, [dataDetailUnitSkpdSro, sortConfig]);
+
+    const sortedItemsDetailSubSub = React.useMemo(() => {
+        let sortableItems = [...(dataDetailAnggaranSubSubFiltered || [])];
+        if (sortConfig.key !== null) {
+          sortableItems.sort((a, b) => {
+            const aValue = a[sortConfig.key] || 0;
+            const bValue = b[sortConfig.key] || 0;
+    
+            if (aValue < bValue) {
+              return sortConfig.direction === "ascending" ? -1 : 1;
+            }
+            if (aValue > bValue) {
+              return sortConfig.direction === "ascending" ? 1 : -1;
+            }
+            return 0;
+          });
+        }
+        return sortableItems;
+      }, [dataDetailAnggaranSubSubFiltered, sortConfig]);
     
     const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);
     const currentItemsDetail = sortedItemsDetail.slice(
@@ -420,6 +496,11 @@ const ContentPenganggaranDetailDaerah = () => {
       indexOfFirstItemDetailSub,
       indexOfLastItemDetailSub
     );    
+
+    const currentItemDetailSubSub = sortedItemsDetailSubSub.slice(
+      indexOfFirstItemDetailSubSub,
+      indexOfLastItemDetailSubSub
+    );
     
     const totalPages = Math.ceil(
       (dataPenganggaranPersentase?.length || 0) / itemsPerPage
@@ -430,10 +511,14 @@ const ContentPenganggaranDetailDaerah = () => {
     const totalPagesDetailSub = Math.ceil(
       (dataDetailUnitSkpdSro?.length || 0) / itemsPerPage
     );
+    const totalPagesDetailSubSub = Math.ceil(
+      (dataDetailAnggaranSubSubFiltered?.length || 0) / itemsPerPage
+    );
     
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
     const paginateDetail = (pageNumber) => setCurrentPageDetail(pageNumber);
     const paginateDetailSub = (pageNumber) => setCurrentPageDetailSub(pageNumber);
+    const paginateDetailSubSub = (pageNumber) => setCurrentPageDetailSubSub(pageNumber);
   
     const [dataShowSumberUsulan, setDataShowSumberUsulan] = useState(false);
     const handleShowDataSumberUsulan = (value) => {
@@ -485,7 +570,10 @@ const ContentPenganggaranDetailDaerah = () => {
     const [dataRincianDetailAnggaranSub, setDataRincianDetailAnggaranSub] = useState(0);
     const [dataRincianDetailRealisasiSub, setDataRincianDetailRealisasiSub] = useState(0);
     const [dataDetailNamaSubRincinianObjek, setDataDetailNamaSubRincinianObjek] = useState("");
-
+    const [namaSro, setNamaSro] = useState("")
+    const [dataRincianDetailSubSub, setDataRincianDetailSubSub] = useState(0);
+    const [modalSub, setModalSub] = useState(false);
+    const [searchTermDetailSubSub, setSearchTermDetailSubSub] = useState(""); // State untuk menampung nilai input search
     const handleOpenNextModal = ({
       kodeSubGiat = "",
       namaSubGiat = "",
@@ -501,6 +589,37 @@ const ContentPenganggaranDetailDaerah = () => {
     };
     const handleCloseNextModal = () => {
       setModal(false);
+    };
+
+    const handleOpenNextModalSub = ({kodeDdn, kodeSubGiat, kodeSro,tahun, rincianDetail, namaSro}) => {
+      getDataDetailUnitSkpdSubSro({kodeDdn:kodeDdn, kodeSubGiat:kodeSubGiat, kodeSro:kodeSro, tahun:tahun})
+      setNamaSro(namaSro)
+      setDataRincianDetailSubSub(rincianDetail)
+      setModalSub(true)
+    }
+    
+    const handleCloseNextModalSub = () => {
+      setModalSub(false)
+    }
+
+    const handleSearchInputDetailSubSub = (e) => {
+      const value = e.target.value.toLowerCase();
+      setSearchTermDetailSubSub(value);
+      if (value === "") {
+        setDataDetailAnggaranSubSubFiltered(dataDetailUnitSkpdSubSro)  
+      } else {
+        const filtered = dataDetailUnitSkpdSubSro.filter((item) => {
+            return item.nama_standar_harga.toLowerCase().includes(value)
+        }
+        );
+        setDataDetailAnggaranSubSubFiltered(filtered)
+      }
+    };
+  
+    const handleClearSearchDetailSubSub = () => {
+      setCurrentPageDetailSubSub(1);
+      setSearchTermDetailSubSub(""); // Kosongkan isi input
+      setDataDetailAnggaranSubSubFiltered(dataDetailUnitSkpdSubSro)
     };
       
       return (
@@ -1188,7 +1307,10 @@ const ContentPenganggaranDetailDaerah = () => {
                       style={{ cursor: "pointer", textAlign: "center" }}
                     >
                       Anggaran (Rp) {getSortIcon("total_rinciansro")}
-                    </th>                                        
+                    </th>            
+                    <th style={{verticalAlign: "middle", textAlign: "center", whiteSpace: "normal", wordWrap: "break-word",maxWidth:"100px"  }}>
+                        Lihat Sub Sub Rincian Objek 
+                      </th>                                
                   </tr>
                 </thead>
                 <tbody style={{ minHeight: "500px" }}>
@@ -1235,6 +1357,13 @@ const ContentPenganggaranDetailDaerah = () => {
                           : "-"}
                       </span>
                     </td>                                          
+                      <td style={{verticalAlign: "middle", textAlign: "center" }}>            
+                        <i style={{                                            
+                          padding: "5px 10px",                      
+                          cursor: "pointer",
+                          fontSize: "30px"
+                        }} onClick={()=>handleOpenNextModalSub({kodeDdn: item.kode_ddn, kodeSubGiat: item.kode_sub_giat, kodeSro: item.kode_sro, tahun: selectedSingleTahun, rincianDetail:item.total_rinciansro, namaSro: item.nama_sro})} className="bx bx-list-ul text-primary"></i>
+                      </td>                                     
                     </tr>
                     )                    
                   })}
@@ -1249,6 +1378,201 @@ const ContentPenganggaranDetailDaerah = () => {
           </ModalBody>
         </div>
       </Modal>
+      <Modal size="xl" isOpen={modalSub} toggle={handleOpenNextModalSub} centered={true} backdrop="static">
+      <div className="modal-content border-0">
+        <ModalHeader className=" p-3 bg-info-subtle" toggle={handleCloseNextModalSub}>Sub Sub Rincian Objek {namaSro}
+        </ModalHeader>
+        <ModalBody>
+        <Row>
+            <Col md={4}><Card className="card-animate card-height-100">
+                        <CardBody>
+                          <div
+                            className="d-flex flex-column title-custom-card"                            
+                          >
+                            <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                              <span>Total Anggaran Sub Rincian Objek</span>
+                            </div>
+                            <div className="d-flex">
+                              {/* <div className="avatar-xs-half flex-shrink-0">
+                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                          <i className=" ri-women-line text-danger"></i>
+                        </span>
+                      </div> */}
+                              <div className="d-flex justify-content-center align-items-center title-body">
+                                <span>
+                                  <CountUp
+                                    start={0}
+                                    end={
+                                      // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                                      dataRincianDetailSubSub
+                                    }
+                                    separator="."
+                                    prefix="Rp "
+                                    suffix=""
+                                    duration={1}
+                                  />
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </CardBody>
+                      </Card></Col>
+          </Row>
+          <div className="mb-2 d-flex">
+            <div
+              className="mx-2"
+              style={{
+                position: "relative",
+                width: "100%",
+                maxWidth: "300px",
+                marginBottom: "20px",
+              }}
+            >
+              <input
+                style={{
+                  padding: "10px 30px 10px 10px",
+                  width: "100%",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  fontSize: "16px",
+                }}
+                type="text"
+                value={searchTermDetailSubSub}
+                onChange={handleSearchInputDetailSubSub}
+                placeholder="Cari Sub Sub Rincian Objek"
+              />
+
+              {/* Tombol "X" di dalam input */}
+              {searchTermDetailSubSub && (
+                <button
+                  onClick={() => handleClearSearchDetailSubSub()}
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    color: "#999",
+                  }}
+                >
+                  &#10006;
+                </button>
+              )}
+            </div>
+          </div>
+          <div style={{ overflowY: "scroll", maxHeight:"500px"}}>
+          <table
+                  className="table table-bordered table-nowrap align-middle mb-0"
+                  // style={{ width: "100%" }}
+                >
+                  <thead className="table-light" style={{ position: "sticky", top: 0, zIndex: 2 }}>
+                    <tr>
+                      <th style={{ verticalAlign: "middle", textAlign: "center" }}>
+                        NO
+                      </th>                      
+                      <th                        
+                        onClick={() => requestSort("kode_sro")}
+                        style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
+                          wordWrap: "break-word", maxWidth:"100px" }}
+                      >
+                        Kode Standar Harga {getSortIcon("kode_sro")}
+                      </th>                                                                  
+                      <th                        
+                        onClick={() => requestSort("kode_sro")}
+                        style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
+                          wordWrap: "break-word", maxWidth:"100px" }}
+                      >
+                        Nama Standar Harga {getSortIcon("kode_sro")}
+                      </th>                                                                  
+                      <th                        
+                        onClick={() => requestSort("kode_sro")}
+                        style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
+                          wordWrap: "break-word", maxWidth:"100px" }}
+                      >
+                        Satuan {getSortIcon("kode_sro")}
+                      </th>                                                                  
+                      <th onClick={() => requestSort("nama_sro")}
+                        style={{ cursor: "pointer", textAlign: "center", whiteSpace: "normal",
+                          wordWrap: "break-word", maxWidth:"100px" }}>
+                        Volume {getSortIcon("nam_sro")}
+                      </th>  
+                      <th onClick={() => requestSort("total_rinciansro")}
+                        style={{ cursor: "pointer", textAlign: "center" }}>
+                        Harga Satuan (Rp) {getSortIcon("total_rinciansro")}
+                      </th>
+                      <th onClick={() => requestSort("total_rinciansro")}
+                        style={{ cursor: "pointer", textAlign: "center" }}>
+                        Total Rincian Sub sro {getSortIcon("total_rinciansro")}
+                      </th>
+                      <th onClick={() => requestSort("persentase")}
+                        style={{ cursor: "pointer", textAlign: "center",whiteSpace: "normal",
+                          wordWrap: "break-word" }}>
+                        Persentase {getSortIcon("persentase")}
+                      </th>                                                                
+                    </tr>                  
+                  </thead>
+                  <tbody style={{ minHeight: "500px" }}>
+                    {currentItemDetailSubSub.map((item, index) => (
+                      <tr key={index}>                        
+                      <td style={{textAlign: "center",
+                      verticalAlign: "middle"}}>
+                        {/* { index + 1} */}
+                        {indexOfFirstItemDetailSubSub + index + 1}
+                      </td>
+                      <td>
+                        {item.kode_standar_harga}
+                      </td>
+                      <td>
+                        {item.nama_standar_harga}
+                      </td>
+                      <td style={{
+                          whiteSpace: "normal",  // Membolehkan teks turun ke baris berikutnya
+                          wordWrap: "break-word",  // Memastikan teks panjang terpotong dan turun ke bawah
+                          maxWidth: "200px"  // Menetapkan lebar maksimum sel (sesuaikan dengan kebutuhan)
+                        }}>
+                        {" "}
+                        {item.satuan || "-"}
+                      </td>     
+                      <td>
+                      <span style={{float: "right"}}>{item.volume ? parseInt(item.volume).toLocaleString("id-ID")
+                          : "-"}</span>                          
+                      </td>         
+                      <td>
+                      <span style={{float: "right"}}>{item.harga_satuan ? parseInt(item.harga_satuan).toLocaleString("id-ID")
+                          : "-"}</span>                          
+                      </td>                                                                    
+                      <td>
+                      <span style={{float: "right"}}>{item.total_rinciansro ? parseInt(item.total_rinciansro).toLocaleString("id-ID")
+                          : "-"}</span>                          
+                      </td>                                      
+                      <td>
+                      <span style={{float: "right"}}>
+                      {item.persentase
+                        ? (item.persentase >= 1
+                            ? `${Number(item.persentase).toLocaleString("id-ID", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                              })}%`
+                            : `${Number(item.persentase).toLocaleString("id-ID", {
+                                minimumFractionDigits: 4,
+                              })}%`
+                          )
+                        : "-"}
+                      </span>   
+                      </td>
+                    </tr>
+                    ))}
+                    {/* {placeholders} */}
+                  </tbody>
+                </table>
+          </div> 
+          <Pagination currentPage={currentPageDetailSubSub} totalPages={totalPagesDetailSubSub} onPageChange={paginateDetailSubSub} />
+        </ModalBody>
+      </div>          
+      </Modal>  
       </React.Fragment>
     )
 }
