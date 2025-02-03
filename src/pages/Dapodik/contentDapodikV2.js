@@ -1680,6 +1680,7 @@ const ContentDapodikV2 = () => {
                     onClick={() => {
                       toggleCustomTabel("1");
                       setSearchTerm("");
+                      handleClearSearch('seprov')
                     }}
                   >
                     NASIONAL
@@ -1694,6 +1695,7 @@ const ContentDapodikV2 = () => {
                     onClick={() => {
                       toggleCustomTabel("2");
                       setSearchTerm("");
+                      handleClearSearch('provinsi')
                     }}
                   >
                     PROVINSI
@@ -1708,6 +1710,7 @@ const ContentDapodikV2 = () => {
                     onClick={() => {
                       toggleCustomTabel("3");
                       setSearchTerm("");
+                      handleClearSearch('kabupaten')
                     }}
                   >
                     KABUPATEN/KOTA
