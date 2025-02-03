@@ -4884,8 +4884,9 @@ const ContentDapodikV2 = () => {
                             : "-"}</span>                          
                         </td>                                                                    
                         <td>
-                        <span style={{float: "right"}}>{item.total_rinciansubsro ? parseInt(item.total_rinciansubsro).toLocaleString("id-ID")
-                            : "-"}</span>                          
+                        <span style={{float: "right"}}>{dataJenisPemda ==="seProv" ? (item.total_rinciansubsro ? parseInt(item.total_rinciansubsro).toLocaleString("id-ID")
+                            : "-") : (item.total_rinciansro ? parseInt(item.total_rinciansro).toLocaleString("id-ID")
+                            : "-")}</span>                          
                         </td>                                      
                         <td>
                         <span style={{float: "right"}}>
