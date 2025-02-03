@@ -680,7 +680,6 @@ const ContentPenganggaranDetailDaerah = () => {
                     />
                     &nbsp;
                     {((tahapData[selectedSingleTahapan]/totalPagu)*100)>=1 ? <>
-                    <div>
                     (<CountUp
                       start={0}
                       end={(tahapData[selectedSingleTahapan]/totalPagu)*100}
@@ -691,9 +690,7 @@ const ContentPenganggaranDetailDaerah = () => {
                       suffix="%"
                       duration={1}
                     />)
-                  </div>
                   </> : <>
-                  <div>
                     (<CountUp
                       start={0}
                       end={(tahapData[selectedSingleTahapan]/totalPagu)*100}
@@ -704,7 +701,6 @@ const ContentPenganggaranDetailDaerah = () => {
                       suffix="%"
                       duration={1}
                     />)
-                  </div>
                   </>}
                     {/* (<CountUp
                       start={0}
