@@ -978,7 +978,7 @@ const ContentMiskinEkstremV2 = () => {
         }
   
         const dataDetailAnggaranSub = await response.json();
-        dataDetailAnggaranSubSub(dataDetailAnggaranSub?.data)
+        setDataDetailAnggaranSubSub(dataDetailAnggaranSub?.data)
         setDataDetailAnggaranSubSubFiltered(dataDetailAnggaranSub?.data)
       } catch (errorDetailAnggaran) {
         setErrorDetailAnggaran(errorDetailAnggaran);
