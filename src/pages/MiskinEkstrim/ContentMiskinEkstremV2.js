@@ -4589,7 +4589,7 @@ const ContentMiskinEkstremV2 = () => {
                           : "-"}</span>                          
                       </td>                                                                    
                       <td>
-                      <span style={{float: "right"}}>{item.total_rinciansubsro ? parseInt(item.total_rinciansubsro).toLocaleString("id-ID")
+                      <span style={{float: "right"}}>{item.total_rinciansro ? parseInt(item.total_rinciansro).toLocaleString("id-ID")
                           : "-"}</span>                          
                       </td>                                      
                       <td>
