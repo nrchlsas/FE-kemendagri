@@ -311,10 +311,10 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
   };
 
   const filteredData = {
-    spm: filterData(dataFilter.filter_spm, searchTerms.spm, ['spm_teks']),
-    fungsi: filterData(dataFilter.filter_fungsi, searchTerms.fungsi, ['nama_fungsi']),
-    urusan: filterData(dataFilter.filter_urusan, searchTerms.urusan, ['nama_urusan']),
-    bidangUrusan: filterData(dataFilter.filter_bidang_urusan, searchTerms.bidangUrusan, ['nama_bidang_urusan']),
+    spm: filterData(dataFilter?.filter_spm, searchTerms.spm, ['spm_teks']),
+    fungsi: filterData(dataFilter?.filter_fungsi, searchTerms.fungsi, ['nama_fungsi']),
+    urusan: filterData(dataFilter?.filter_urusan, searchTerms.urusan, ['nama_urusan']),
+    bidangUrusan: filterData(dataFilter?.filter_bidang_urusan, searchTerms.bidangUrusan, ['nama_bidang_urusan']),
     daerah: filterData(displayedData.daerah, searchTerms.daerah, ['nama_daerah']),
     skpd: filterData(displayedData.skpd, searchTerms.skpd, ['nama_skpd']),
     provinsi: filterData(displayedData.provinsi, searchTerms.provinsi, ['nama_prov']),
@@ -1063,7 +1063,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
-                        {filteredData['fungsi'].map((item, index) => (
+                        {filteredData['fungsi']?.map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
@@ -1201,7 +1201,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
-                        {filteredData['spm'].map((item, index) => (
+                        {filteredData['spm']?.map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) => handleCheckboxChange(e, "spm", item.spm_teks)}
@@ -1335,7 +1335,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
-                        {filteredData['urusan'].map((item, index) => (
+                        {filteredData['urusan']?.map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
@@ -1472,7 +1472,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
-                        {filteredData['bidangUrusan'].map(
+                        {filteredData['bidangUrusan']?.map(
                           (item, index) => (
                             <div key={index} class="form-check mb-2">
                               <input
