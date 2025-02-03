@@ -111,7 +111,7 @@ const ContentPerencanaanDetailDaerah = () => {
   
           const dataPerencanaanRkpdNasional = await response.json();
   
-          const dataResultChartTahapan = [dataPerencanaanRkpdNasional.data.dashboard_perencanaan_2_komposisi_rkpd[0].eksekutif, dataPerencanaanRkpdNasional.data.dashboard_perencanaan_2_komposisi_rkpd[0].legislatif, dataPerencanaanRkpdNasional.data.dashboard_perencanaan_2_komposisi_rkpd[0].masyarakat]
+          const dataResultChartTahapan = dataPerencanaanRkpdNasional.data.dashboard_perencanaan_2_komposisi_rkpd.length > 0 ? [dataPerencanaanRkpdNasional.data.dashboard_perencanaan_2_komposisi_rkpd[0].eksekutif, dataPerencanaanRkpdNasional.data.dashboard_perencanaan_2_komposisi_rkpd[0].legislatif, dataPerencanaanRkpdNasional.data.dashboard_perencanaan_2_komposisi_rkpd[0].masyarakat] : []
 
           console.log(dataResultChartTahapan, "ini");
   
