@@ -785,7 +785,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           handleScroll(e, "filter_daerah", "daerah")
                         }
                       >
-                        {filteredData['daerah']?.slice(0, 100).map((item, index) => (
+                        {filteredData['daerah']?.slice(0, 1000).map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
