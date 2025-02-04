@@ -315,15 +315,15 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
     fungsi: filterData(dataFilter?.filter_fungsi, searchTerms.fungsi, ['nama_fungsi']),
     urusan: filterData(dataFilter?.filter_urusan, searchTerms.urusan, ['nama_urusan']),
     bidangUrusan: filterData(dataFilter?.filter_bidang_urusan, searchTerms.bidangUrusan, ['nama_bidang_urusan']),
-    daerah: filterData(displayedData.daerah, searchTerms.daerah, ['nama_daerah']),
-    skpd: filterData(displayedData.skpd, searchTerms.skpd, ['nama_skpd']),
-    provinsi: filterData(displayedData.provinsi, searchTerms.provinsi, ['nama_prov']),
-    program: filterData(displayedData.program, searchTerms.program, ['nama_program']),
-    kegiatan: filterData(displayedData.kegiatan, searchTerms.kegiatan, ['nama_giat']),
-    subKegiatan: filterData(displayedData.subKegiatan, searchTerms.subKegiatan, ['nama_sub_giat']),
-    objek: filterData(displayedData.objek, searchTerms.objek, ['nama_objek']),
-    rincianObjek: filterData(displayedData.rincianObjek, searchTerms.rincianObjek, ['nama_ro']),
-    subRincianObjek: filterData(displayedData.subRincianObjek, searchTerms.subRincianObjek, ['nama_sro']),
+    daerah: filterData(dataFilter?.filter_daerah, searchTerms.daerah, ['nama_daerah']),
+    skpd: filterData(dataFilter?.filter_skpd, searchTerms.skpd, ['nama_skpd']),
+    provinsi: filterData(dataFilter?.filter_provinsi, searchTerms.provinsi, ['nama_prov']),
+    program: filterData(dataFilter?.filter_program, searchTerms.program, ['nama_program']),
+    kegiatan: filterData(dataFilter?.filter_giat, searchTerms.kegiatan, ['nama_giat']),
+    subKegiatan: filterData(dataFilter?.filter_subgiat, searchTerms.subKegiatan, ['nama_sub_giat']),
+    objek: filterData(dataFilter?.filter_objek, searchTerms.objek, ['nama_objek']),
+    rincianObjek: filterData(dataFilter?.filter_ro, searchTerms.rincianObjek, ['nama_ro']),
+    subRincianObjek: filterData(dataFilter?.filter_sro, searchTerms.subRincianObjek, ['nama_sro']),
   };
 
   // Fungsi untuk memuat lebih banyak data berdasarkan kategori
@@ -642,7 +642,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           handleScroll(e, "filter_provinsi", "provinsi")
                         }
                       >
-                        {filteredData['provinsi'].map((item, index) => (
+                        {filteredData['provinsi']?.slice(0, 100).map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
@@ -732,7 +732,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {selectedNames["daerah"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
-                          {selectedNames["daerah"].map((name, index) => {
+                          {selectedNames["daerah"]?.map((name, index) => {
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
@@ -785,7 +785,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           handleScroll(e, "filter_daerah", "daerah")
                         }
                       >
-                        {filteredData['daerah'].map((item, index) => (
+                        {filteredData['daerah']?.slice(0, 100).map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
@@ -875,7 +875,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {selectedNames["skpd"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
-                          {selectedNames["skpd"].map((name, index) => {
+                          {selectedNames["skpd"]?.map((name, index) => {
                             return(
                             <li key={index}  style={{
                               fontSize: "14px",
@@ -927,7 +927,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                         style={{ overflowY: "auto", maxHeight: "300px" }}
                         onScroll={(e) => handleScroll(e, "filter_skpd", "skpd")}
                       >
-                        {filteredData['skpd'].map((item, index) => (
+                        {filteredData['skpd']?.slice(0, 100).map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) => handleCheckboxChange(e, "skpd", item.nama_skpd)}
@@ -1015,7 +1015,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {selectedNames["fungsi"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
-                          {selectedNames["fungsi"].map((name, index) => {
+                          {selectedNames["fungsi"]?.map((name, index) => {
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
@@ -1063,7 +1063,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
-                        {filteredData['fungsi']?.map((item, index) => (
+                        {filteredData['fungsi']?.slice(0, 100).map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
@@ -1154,7 +1154,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {selectedNames["spm"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
-                          {selectedNames["spm"].map((name, index) => {
+                          {selectedNames["spm"]?.map((name, index) => {
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
@@ -1201,7 +1201,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
-                        {filteredData['spm']?.map((item, index) => (
+                        {filteredData['spm']?.slice(0, 100).map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) => handleCheckboxChange(e, "spm", item.spm_teks)}
@@ -1288,7 +1288,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       </div>
                      {selectedNames["urusan"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
-                          {selectedNames["urusan"].map((name, index) => {
+                          {selectedNames["urusan"]?.map((name, index) => {
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
@@ -1335,7 +1335,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
-                        {filteredData['urusan']?.map((item, index) => (
+                        {filteredData['urusan']?.slice(0, 100).map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
@@ -1426,7 +1426,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {selectedNames["bidangUrusan"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
-                          {selectedNames["bidangUrusan"].map((name, index) => {
+                          {selectedNames["bidangUrusan"]?.map((name, index) => {
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
@@ -1472,7 +1472,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {isLoadingList ? (<><Spinner size="lg" color="primary" className="me-2">
                         Loading...
                       </Spinner></>) : (<><div style={{ overflowY: "auto", maxHeight: "300px" }}>
-                        {filteredData['bidangUrusan']?.map(
+                        {filteredData['bidangUrusan']?.slice(0, 100).map(
                           (item, index) => (
                             <div key={index} class="form-check mb-2">
                               <input
@@ -1563,7 +1563,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {selectedNames["program"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
-                          {selectedNames["program"].map((name, index) => {
+                          {selectedNames["program"]?.map((name, index) => {
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
@@ -1616,7 +1616,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           handleScroll(e, "filter_program", "program")
                         }
                       >
-                        {filteredData['program'].map((item, index) => (
+                        {filteredData['program']?.slice(0, 100).map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
@@ -1712,7 +1712,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {selectedNames["kegiatan"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
-                          {selectedNames["kegiatan"].map((name, index) => {
+                          {selectedNames["kegiatan"]?.map((name, index) => {
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
@@ -1764,7 +1764,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           handleScroll(e, "filter_giat", "kegiatan")
                         }
                       >
-                        {filteredData['kegiatan'].map((item, index) => (
+                        {filteredData['kegiatan']?.slice(0, 100).map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
@@ -1853,7 +1853,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {selectedNames["subKegiatan"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
-                          {selectedNames["subKegiatan"].map((name, index) => {
+                          {selectedNames["subKegiatan"]?.map((name, index) => {
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
@@ -1905,7 +1905,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           handleScroll(e, "filter_subgiat", "subKegiatan")
                         }
                       >
-                        {filteredData['subKegiatan'].map((item, index) => (
+                        {filteredData['subKegiatan']?.slice(0, 100).map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
@@ -1996,7 +1996,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {selectedNames["objek"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
-                          {selectedNames["objek"].map((name, index) => {
+                          {selectedNames["objek"]?.map((name, index) => {
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
@@ -2049,7 +2049,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           handleScroll(e, "filter_objek", "objek")
                         }
                       >
-                        {filteredData['objek'].map((item, index) => (
+                        {filteredData['objek']?.slice(0, 100).map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) => handleCheckboxChange(e, "objek", item.nama_objek)}
@@ -2136,7 +2136,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {selectedNames["rincianObjek"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
-                          {selectedNames["rincianObjek"].map((name, index) => {
+                          {selectedNames["rincianObjek"]?.map((name, index) => {
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
@@ -2190,7 +2190,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           handleScroll(e, "filter_ro", "rincianObjek")
                         }
                       >
-                        {filteredData['rincianObjek'].map((item, index) => (
+                        {filteredData['rincianObjek']?.slice(0, 100).map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
@@ -2282,7 +2282,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                       {selectedNames["subRincianObjek"]?.length > 0 ? (
                         <ul style={{ padding: "0", marginBottom: "20px" }}>
                           <div style={{ fontSize: "14px", color: "gray" }}>Filter yang dipilih:</div>
-                          {selectedNames["subRincianObjek"].map((name, index) => {
+                          {selectedNames["subRincianObjek"]?.map((name, index) => {
                             return(<li key={index}  style={{
                               fontSize: "14px",
                               color: "green",
@@ -2336,7 +2336,7 @@ const FilterRightSide = ({ dataFilter = [], onSelectFilter, isLoadingList }) => 
                           handleScroll(e, "filter_sro", "subRincianObjek")
                         }
                       >                        
-                        {filteredData['subRincianObjek'].map((item, index) => (
+                        {filteredData['subRincianObjek']?.slice(0, 100).map((item, index) => (
                           <div key={index} class="form-check mb-2">
                             <input
                               onChange={(e) =>
