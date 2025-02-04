@@ -949,6 +949,7 @@ const ContentMiskinEkstremV2 = () => {
   };
 
   const [dataDetailAnggaranSubSub, setDataDetailAnggaranSubSub] = useState([]);
+  const [totalSebelumPembobotan, setTotalSebelumPembobotan] = useState(0)
   const [loadingDetailAnggaranSub, setLoadingDetailAnggaranSub] = useState([]);
   const [errorDetailAnggaranSub, setErrorDetailAnggaranSub] = useState([]);
 
@@ -980,6 +981,8 @@ const ContentMiskinEkstremV2 = () => {
         const dataDetailAnggaranSub = await response.json();
         setDataDetailAnggaranSubSub(dataDetailAnggaranSub?.data)
         setDataDetailAnggaranSubSubFiltered(dataDetailAnggaranSub?.data)
+        const total = dataDetailAnggaranSub?.data.reduce((acc, item) => acc + (item.volume * item.harga_satuan), 0);
+        setTotalSebelumPembobotan(total)
       } catch (errorDetailAnggaran) {
         setErrorDetailAnggaran(errorDetailAnggaran);
       } finally {
@@ -4411,13 +4414,13 @@ const ContentMiskinEkstremV2 = () => {
         </ModalHeader>
         <ModalBody>
         <Row>
-            <Col md={4}><Card className="card-animate card-height-100">
+        <Col md={4}><Card className="card-animate card-height-100">
                         <CardBody>
                           <div
                             className="d-flex flex-column title-custom-card"                            
                           >
                             <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                              <span>Total Anggaran Sub Rincian Objek</span>
+                              <span>Total Anggaran Sub Rincian Objek Setelah Pembobotan</span>
                             </div>
                             <div className="d-flex">
                               {/* <div className="avatar-xs-half flex-shrink-0">
@@ -4432,6 +4435,39 @@ const ContentMiskinEkstremV2 = () => {
                                     end={
                                       // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
                                       dataRincianDetailSubSub
+                                    }
+                                    separator="."
+                                    prefix="Rp "
+                                    suffix=""
+                                    duration={1}
+                                  />
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </CardBody>
+                      </Card></Col>
+            <Col md={4}><Card className="card-animate card-height-100">
+                        <CardBody>
+                          <div
+                            className="d-flex flex-column title-custom-card"                            
+                          >
+                            <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                              <span>Total Anggaran Sub Rincian Objek Sebelum Pembobotan</span>
+                            </div>
+                            <div className="d-flex">
+                              {/* <div className="avatar-xs-half flex-shrink-0">
+                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                          <i className=" ri-women-line text-danger"></i>
+                        </span>
+                      </div> */}
+                              <div className="d-flex justify-content-center align-items-center title-body">
+                                <span>
+                                  <CountUp
+                                    start={0}
+                                    end={
+                                      // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                                      totalSebelumPembobotan
                                     }
                                     separator="."
                                     prefix="Rp "
@@ -4513,50 +4549,60 @@ const ContentMiskinEkstremV2 = () => {
                   // style={{ width: "100%" }}
                 >
                   <thead className="table-light" style={{ position: "sticky", top: 0, zIndex: 2 }}>
-                    <tr>
-                    <th style={{ verticalAlign: "middle", textAlign: "center" }}>
+                  <tr>
+                    <th rowSpan="3" style={{ verticalAlign: "middle", textAlign: "center" }}>
                         NO
                       </th>                      
-                      <th                        
+                      <th  rowSpan="3"           
                         onClick={() => requestSort("kode_standar_harga")}
                         style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
                           wordWrap: "break-word", maxWidth:"100px" }}
                       >
                         Kode Standar Harga {getSortIcon("kode_standar_harga")}
                       </th>                                                                  
-                      <th                        
+                      <th  rowSpan="3"                      
                         onClick={() => requestSort("nama_standar_harga")}
                         style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
                           wordWrap: "break-word", maxWidth:"100px" }}
                       >
                         Nama Standar Harga {getSortIcon("nama_standar_harga")}
                       </th>                                                                  
-                      <th                        
+                      <th  rowSpan="3"                      
                         onClick={() => requestSort("satuan")}
                         style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
                           wordWrap: "break-word", maxWidth:"100px" }}
                       >
                         Satuan {getSortIcon("satuan")}
                       </th>                                                                  
-                      <th onClick={() => requestSort("volume")}
+                      <th rowSpan="3" onClick={() => requestSort("volume")}
                         style={{ cursor: "pointer", textAlign: "center", whiteSpace: "normal",
                           wordWrap: "break-word", maxWidth:"100px" }}>
                         Volume {getSortIcon("volume")}
                       </th>  
-                      <th onClick={() => requestSort("harga_satuan")}
+                      <th rowSpan="3" onClick={() => requestSort("harga_satuan")}
                         style={{ cursor: "pointer", textAlign: "center" }}>
                         Harga Satuan (Rp) {getSortIcon("harga_satuan")}
                       </th>
-                      <th onClick={() => requestSort("total_rinciansro")}
+                    </tr>
+                    <tr>
+                      <th colSpan="2" onClick={() => requestSort("total_rinciansro")}
                         style={{ cursor: "pointer", textAlign: "center" }}>
-                        Total Rincian Sub sro {getSortIcon("total_rinciansro")}
+                        Total Rincian {getSortIcon("total_rinciansro")}
                       </th>
-                      <th onClick={() => requestSort("persentase")}
+                      <th rowSpan="2" onClick={() => requestSort("persentase")}
                         style={{ cursor: "pointer", textAlign: "center",whiteSpace: "normal",
                           wordWrap: "break-word" }}>
-                        Persentase {getSortIcon("persentase")}
-                      </th>                                                                     
-                    </tr>                  
+                        Persentase Setelah Pembobotan {getSortIcon("persentase")}
+                      </th>                                                                   
+                    </tr>
+                    <tr>
+                      <th>
+                        Sebelum Pembobotan
+                      </th>
+                      <th>
+                        Setelah Pembobotan
+                      </th>
+                    </tr>                
                   </thead>
                   <tbody style={{ minHeight: "500px" }}>
                     {currentItemDetailSubSub.map((item, index) => (
@@ -4582,12 +4628,16 @@ const ContentMiskinEkstremV2 = () => {
                       </td>     
                       <td>
                       <span style={{float: "right"}}>{item.volume ? item.volume.toLocaleString("id-ID")
-                          : "-"}</span>
+                          : "-"}</span>                          
                       </td>         
                       <td>
                       <span style={{float: "right"}}>{item.harga_satuan ? parseInt(item.harga_satuan).toLocaleString("id-ID")
                           : "-"}</span>                          
-                      </td>                                                                    
+                      </td>      
+                      <td>
+                      <span style={{float: "right"}}>{item.harga_satuan ? parseInt(item.harga_satuan*item.volume).toLocaleString("id-ID")
+                          : "-"}</span>  
+                      </td>                                                             
                       <td>
                       <span style={{float: "right"}}>{item.total_rinciansro ? parseInt(item.total_rinciansro).toLocaleString("id-ID")
                           : "-"}</span>                          
