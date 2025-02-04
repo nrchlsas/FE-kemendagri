@@ -4648,11 +4648,13 @@ const ContentStunting = () => {
                       </th>                                                                   
                     </tr>
                     <tr>
-                      <th>
+                      <th onClick={() => requestSort("total_rinciansro")}
+                        style={{ cursor: "pointer", textAlign: "center" }}>
                         Sebelum Pembobotan
                       </th>
-                      <th>
-                        Setelah Pembobotan
+                      <th onClick={() => requestSort("total_rinciansro")}
+                        style={{ cursor: "pointer", textAlign: "center" }}>
+                        Setelah Pembobotan {getSortIcon("total_rinciansro")}
                       </th>
                     </tr>
                   </thead>

@@ -4585,9 +4585,9 @@ const ContentMiskinEkstremV2 = () => {
                       </th>
                     </tr>
                     <tr>
-                      <th colSpan="2" onClick={() => requestSort("total_rinciansro")}
+                      <th colSpan="2"
                         style={{ cursor: "pointer", textAlign: "center" }}>
-                        Total Rincian {getSortIcon("total_rinciansro")}
+                        Total Rincian 
                       </th>
                       <th rowSpan="2" onClick={() => requestSort("persentase")}
                         style={{ cursor: "pointer", textAlign: "center",whiteSpace: "normal",
@@ -4596,11 +4596,13 @@ const ContentMiskinEkstremV2 = () => {
                       </th>                                                                   
                     </tr>
                     <tr>
-                      <th>
+                      <th onClick={() => requestSort("total_rinciansro")}
+                        style={{ cursor: "pointer", textAlign: "center" }}>
                         Sebelum Pembobotan
                       </th>
-                      <th>
-                        Setelah Pembobotan
+                      <th onClick={() => requestSort("total_rinciansro")}
+                        style={{ cursor: "pointer", textAlign: "center" }}>
+                        Setelah Pembobotan {getSortIcon("total_rinciansro")}
                       </th>
                     </tr>                
                   </thead>
