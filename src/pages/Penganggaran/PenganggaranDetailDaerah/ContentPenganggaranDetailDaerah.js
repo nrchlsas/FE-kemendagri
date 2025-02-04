@@ -344,8 +344,8 @@ const ContentPenganggaranDetailDaerah = () => {
   
           const dataDetailUnitSkpdSubSro = await response.json();
   
-          setDataDetailUnitSkpdSubSro(dataDetailUnitSkpdSubSro.data.penganggaran_level_3_sro)
-          setDataDetailAnggaranSubSubFiltered(dataDetailUnitSkpdSubSro.data.penganggaran_level_3_sro)
+          setDataDetailUnitSkpdSubSro(dataDetailUnitSkpdSubSro.data)
+          setDataDetailAnggaranSubSubFiltered(dataDetailUnitSkpdSubSro.data)
 
           setCurrentPageDetail(1);     
           setModalSub(true)     
