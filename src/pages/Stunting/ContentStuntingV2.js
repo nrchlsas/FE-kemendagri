@@ -4637,9 +4637,9 @@ const ContentStunting = () => {
                       </th>
                     </tr>
                     <tr>
-                      <th colSpan="2" onClick={() => requestSort("total_rinciansro")}
+                      <th colSpan="2"
                         style={{ cursor: "pointer", textAlign: "center" }}>
-                        Total Rincian {getSortIcon("total_rinciansro")}
+                        Total Rincian
                       </th>
                       <th rowSpan="2" onClick={() => requestSort("persentase")}
                         style={{ cursor: "pointer", textAlign: "center",whiteSpace: "normal",
