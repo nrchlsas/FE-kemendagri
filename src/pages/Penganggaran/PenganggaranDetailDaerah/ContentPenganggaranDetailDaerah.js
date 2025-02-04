@@ -291,10 +291,9 @@ const ContentPenganggaranDetailDaerah = () => {
   
           const dataDetailUnitSkpdSro = await response.json();
   
-          setDataDetailUnitSkpdSro(dataDetailUnitSkpdSro.data.penganggaran_level_3_sro)
-
-          setModall(true);            
+          setDataDetailUnitSkpdSro(dataDetailUnitSkpdSro?.data?.penganggaran_level_3_sro)
           setCurrentPageDetail(1);     
+          setModal(true);
           // Open the modal only after data is successfully fetched
         } catch (errorDetailUnitSkpdSro) {
           setErrorDetailUnitSkpdSro(errorDetailUnitSkpdSro);
@@ -313,7 +312,8 @@ const ContentPenganggaranDetailDaerah = () => {
       kodeDdn=_id,
       idTahap=selectedSingleTahapan,
       kodeSubGiat="",
-      kodeUnitSkpd=""
+      kodeUnitSkpd="",
+      kodeSro=""
     }      
     ) => {
       const fetchData = async () => {
@@ -328,7 +328,8 @@ const ContentPenganggaranDetailDaerah = () => {
               kode_sub_giat: kodeSubGiat,
               tahun : tahun,
               id_tahap: idTahap,
-              kode_unit_skpd: kodeUnitSkpd
+              kode_unit_skpd: kodeUnitSkpd,
+              kode_sro:kodeSro
             }),
           };
   
@@ -346,8 +347,8 @@ const ContentPenganggaranDetailDaerah = () => {
           setDataDetailUnitSkpdSubSro(dataDetailUnitSkpdSubSro.data.penganggaran_level_3_sro)
           setDataDetailAnggaranSubSubFiltered(dataDetailUnitSkpdSubSro.data.penganggaran_level_3_sro)
 
-          setModall(true);            
           setCurrentPageDetail(1);     
+          setModalSub(true)     
           // Open the modal only after data is successfully fetched
         } catch (errorDetailUnitSkpdSro) {
           setErrorDetailUnitSkpdSro(errorDetailUnitSkpdSro);
@@ -591,11 +592,10 @@ const ContentPenganggaranDetailDaerah = () => {
       setModal(false);
     };
 
-    const handleOpenNextModalSub = ({kodeDdn, kodeSubGiat, kodeSro,tahun, rincianDetail, namaSro}) => {
-      getDataDetailUnitSkpdSubSro({kodeDdn:kodeDdn, kodeSubGiat:kodeSubGiat, kodeSro:kodeSro, tahun:tahun})
+    const handleOpenNextModalSub = ({kodeDdn, kodeSubGiat, kodeSro,tahun, rincianDetail, namaSro, kodeUnitSkpd}) => {
+      getDataDetailUnitSkpdSubSro({kodeDdn:kodeDdn, kodeSubGiat:kodeSubGiat, kodeSro:kodeSro, tahun:tahun, kodeUnitSkpd:kodeUnitSkpd})
       setNamaSro(namaSro)
       setDataRincianDetailSubSub(rincianDetail)
-      setModalSub(true)
     }
     
     const handleCloseNextModalSub = () => {
@@ -1362,7 +1362,7 @@ const ContentPenganggaranDetailDaerah = () => {
                           padding: "5px 10px",                      
                           cursor: "pointer",
                           fontSize: "30px"
-                        }} onClick={()=>handleOpenNextModalSub({kodeDdn: item.kode_ddn, kodeSubGiat: item.kode_sub_giat, kodeSro: item.kode_sro, tahun: selectedSingleTahun, rincianDetail:item.total_rinciansro, namaSro: item.nama_sro})} className="bx bx-list-ul text-primary"></i>
+                        }} onClick={()=>handleOpenNextModalSub({kodeDdn: item.kode_ddn, kodeSubGiat: item.kode_sub_giat, kodeSro: item.kode_sro, tahun: selectedSingleTahun, kodeUnitSkpd:item.kode_unit_skpd, rincianDetail:tahapData[selectedSingleTahapan], namaSro: item.nama_sro})} className="bx bx-list-ul text-primary"></i>
                       </td>                                     
                     </tr>
                     )                    
@@ -1474,34 +1474,34 @@ const ContentPenganggaranDetailDaerah = () => {
                         NO
                       </th>                      
                       <th                        
-                        onClick={() => requestSort("kode_sro")}
+                        onClick={() => requestSort("kode_standar_harga")}
                         style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
                           wordWrap: "break-word", maxWidth:"100px" }}
                       >
-                        Kode Standar Harga {getSortIcon("kode_sro")}
+                        Kode Standar Harga {getSortIcon("kode_standar_harga")}
                       </th>                                                                  
                       <th                        
-                        onClick={() => requestSort("kode_sro")}
+                        onClick={() => requestSort("nama_standar_harga")}
                         style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
                           wordWrap: "break-word", maxWidth:"100px" }}
                       >
-                        Nama Standar Harga {getSortIcon("kode_sro")}
+                        Nama Standar Harga {getSortIcon("nama_standar_harga")}
                       </th>                                                                  
                       <th                        
-                        onClick={() => requestSort("kode_sro")}
+                        onClick={() => requestSort("satuan")}
                         style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
                           wordWrap: "break-word", maxWidth:"100px" }}
                       >
-                        Satuan {getSortIcon("kode_sro")}
+                        Satuan {getSortIcon("satuan")}
                       </th>                                                                  
-                      <th onClick={() => requestSort("nama_sro")}
+                      <th onClick={() => requestSort("volume")}
                         style={{ cursor: "pointer", textAlign: "center", whiteSpace: "normal",
                           wordWrap: "break-word", maxWidth:"100px" }}>
-                        Volume {getSortIcon("nam_sro")}
+                        Volume {getSortIcon("volume")}
                       </th>  
-                      <th onClick={() => requestSort("total_rinciansro")}
+                      <th onClick={() => requestSort("harga_satuan")}
                         style={{ cursor: "pointer", textAlign: "center" }}>
-                        Harga Satuan (Rp) {getSortIcon("total_rinciansro")}
+                        Harga Satuan (Rp) {getSortIcon("harga_satuan")}
                       </th>
                       <th onClick={() => requestSort("total_rinciansro")}
                         style={{ cursor: "pointer", textAlign: "center" }}>

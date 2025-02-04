@@ -4434,15 +4434,6 @@ const ContentStunting = () => {
                         </span>
                       </td>
                       <td style={{verticalAlign: "middle", textAlign: "center" }}>            
-                        {/* <button style={{
-                      backgroundColor: "#28a745",
-                      color: "white",
-                      padding: "5px 10px",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                      fontSize: "16px"
-                    }} onClick={()=>dataJenisPemda=="prov" ? handleOpenNextModal("", item.kode_sub_giat, item.kode_ddn, "") : (dataJenisPemda=="kab" || dataJenisPemda=="kota") ? handleOpenNextModal("", item.kode_sub_giat, "", item.kode_ddn) : handleOpenNextModal(item.kode_prov, item.kode_sub_giat, "", "")}>Lihat Detail</button> */}
                     <i style={{                                            
                       padding: "5px 10px",                      
                       cursor: "pointer",
@@ -4573,38 +4564,38 @@ const ContentStunting = () => {
                 >
                   <thead className="table-light" style={{ position: "sticky", top: 0, zIndex: 2 }}>
                     <tr>
-                      <th style={{ verticalAlign: "middle", textAlign: "center" }}>
+                    <th style={{ verticalAlign: "middle", textAlign: "center" }}>
                         NO
                       </th>                      
                       <th                        
-                        onClick={() => requestSort("kode_sro")}
+                        onClick={() => requestSort("kode_standar_harga")}
                         style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
                           wordWrap: "break-word", maxWidth:"100px" }}
                       >
-                        Kode Standar Harga {getSortIcon("kode_sro")}
+                        Kode Standar Harga {getSortIcon("kode_standar_harga")}
                       </th>                                                                  
                       <th                        
-                        onClick={() => requestSort("kode_sro")}
+                        onClick={() => requestSort("nama_standar_harga")}
                         style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
                           wordWrap: "break-word", maxWidth:"100px" }}
                       >
-                        Nama Standar Harga {getSortIcon("kode_sro")}
+                        Nama Standar Harga {getSortIcon("nama_standar_harga")}
                       </th>                                                                  
                       <th                        
-                        onClick={() => requestSort("kode_sro")}
+                        onClick={() => requestSort("satuan")}
                         style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
                           wordWrap: "break-word", maxWidth:"100px" }}
                       >
-                        Satuan {getSortIcon("kode_sro")}
+                        Satuan {getSortIcon("satuan")}
                       </th>                                                                  
-                      <th onClick={() => requestSort("nama_sro")}
+                      <th onClick={() => requestSort("volume")}
                         style={{ cursor: "pointer", textAlign: "center", whiteSpace: "normal",
                           wordWrap: "break-word", maxWidth:"100px" }}>
-                        Volume {getSortIcon("nam_sro")}
+                        Volume {getSortIcon("volume")}
                       </th>  
-                      <th onClick={() => requestSort("total_rinciansro")}
+                      <th onClick={() => requestSort("harga_satuan")}
                         style={{ cursor: "pointer", textAlign: "center" }}>
-                        Harga Satuan (Rp) {getSortIcon("total_rinciansro")}
+                        Harga Satuan (Rp) {getSortIcon("harga_satuan")}
                       </th>
                       <th onClick={() => requestSort("total_rinciansro")}
                         style={{ cursor: "pointer", textAlign: "center" }}>
@@ -4614,7 +4605,7 @@ const ContentStunting = () => {
                         style={{ cursor: "pointer", textAlign: "center",whiteSpace: "normal",
                           wordWrap: "break-word" }}>
                         Persentase {getSortIcon("persentase")}
-                      </th>                                                                
+                      </th>                                                                   
                     </tr>                  
                   </thead>
                   <tbody style={{ minHeight: "500px" }}>
@@ -4640,7 +4631,7 @@ const ContentStunting = () => {
                         {item.satuan || "-"}
                       </td>     
                       <td>
-                      <span style={{float: "right"}}>{item.volume ? parseInt(item.volume).toLocaleString("id-ID")
+                      <span style={{float: "right"}}>{item.volume ? item.volume.toLocaleString("id-ID")
                           : "-"}</span>                          
                       </td>         
                       <td>
