@@ -739,7 +739,7 @@ const ContentDapodikV2 = () => {
 
   useEffect(() => {
     getDataDapodik({kodeDdn: "", tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
-    getDataAnakSekolah({kodeWilayah: "", tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
+    getDataAnakSekolah({kodeWilayah: "", tahun_data:selectedSingleTahunData});
     getDataTabelDapodikSeProv({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
     getDataTabelDapodikProv({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
     getDataTabelDapodikKab({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
@@ -1333,7 +1333,7 @@ const ContentDapodikV2 = () => {
   const [clickNamaDaerah, setClickNamaDaerah] = useState("")
   const handleRegionClick = (kodeProv, namaProv) => {
     getDataDapodik({kodeDdn: kodeProv})
-    getDataAnakSekolah({kodeWilayah: kodeProv})
+    getDataAnakSekolah({kodeWilayah: kodeProv, tahun_data:selectedSingleTahunData})
     setClickNamaDaerah(namaProv)
     setClickDaerah(true)
   };
