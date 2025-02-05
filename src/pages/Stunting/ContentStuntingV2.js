@@ -129,7 +129,11 @@ const ContentStunting = () => {
   const [dataCategoryChartKabupaten, setDataCategoryChartKabupaten] = useState(
     []
   );
+  const [dataCategoryChartKabupatenKesejahteraan, setDataCategoryChartKabupatenKesejahteraan] = useState(
+    []
+  );
   const [dataBeresikoKabupaten, setDataBeresikoKabupaten] = useState([]);
+  const [dataKabupatenKesejahteraan, setDataKabupatenKesejahteraan] = useState([]);
   const [dataTidakBeresikoKabupaten, setDataTidakBeresikoKabupaten] = useState(
     []
   );
@@ -325,9 +329,13 @@ const ContentStunting = () => {
 
         // chart kesejahteraan
         try {
-          const provinsiKesejahteraan =
-            dataStunting.data.stunting_peringkat_kesejahteraan.map(
-              (item) => item.nama_provinsi
+          const provinsiKesejahteraan = dataStunting.data.stunting_peringkat_kesejahteraan.reduce(
+              (acc, item) => {                
+                acc[0].push(item.nama_provinsi);
+                acc[1].push(item.kode_prov);
+                return acc;
+              },
+              [[], []]
             );
           const peringkatKesejahteraan1 =
             dataStunting.data.stunting_peringkat_kesejahteraan.map(
@@ -628,7 +636,6 @@ const ContentStunting = () => {
               }))
             : [],
         };
-        console.log(desilData, 'ini isi desil data')
         setDataDesil(desilData); // Simpan semua desil ke dalam state
         setValueMap(desilData?.desil1);
         
@@ -1358,10 +1365,66 @@ const ContentStunting = () => {
             return acc
           }, [[],[]]
         )            
+        console.log(categoryNamesKab, 'ini')
+        console.log(resultChartStackedKab, "kkab perbandingan")
           setDataCategoryChartKabupaten(categoryNamesKab);
           setDataBeresikoKabupaten(resultChartStackedKab);
 
           setDataShowStackKab(true)
+      } catch (errorStunting) {
+        setErrorStunting(errorStunting);
+      } finally {
+        setLoadingStunting(false);
+      }
+    };
+    fetchData();
+  };
+
+  const [dataShowKesejahteraanStackKab, setDataShowKesejahteraanStackKab] = useState(false)
+  const getDataStackPerProvKesejahteraan = ({kodeProv = ""}) => {
+    const fetchData = async () => {
+      try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+          body: JSON.stringify({
+            kode_prov: kodeProv,
+          }),
+        };
+
+        const response = await fetch(
+          `${API_URI_RBAC}/v2/dashboard_stunting_peringkat_kesejahteraan_kabkota`,
+          requestOptions
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const dataStuntingStackProvKesejahteraan = await response.json();
+        setDataShowKesejahteraanStackKab(true)
+              
+        const categoryNamesKab = dataStuntingStackProvKesejahteraan.data.reduce((acc, item) => {                
+            acc[0].push(item.nama_kabupaten);
+            return acc;
+          },
+          [[]]
+        );
+        console.log(categoryNamesKab, 'ini isi kesejahteran acada')
+        setDataCategoryChartKabupatenKesejahteraan(categoryNamesKab);
+
+        const resultChartStackedKab = dataStuntingStackProvKesejahteraan.data.reduce((acc, item) => {
+          acc[0].push(item.peringkat_kesejahteraan_1)
+          acc[1].push(item.peringkat_kesejahteraan_2)                  
+          acc[2].push(item.peringkat_kesejahteraan_3)                  
+          acc[3].push(item.peringkat_kesejahteraan_4)                      
+          return acc
+          }, [[],[],[],[]]
+        )
+        console.log(resultChartStackedKab, 'kab kesejahteraan')
+          setDataKabupatenKesejahteraan(resultChartStackedKab);
+
       } catch (errorStunting) {
         setErrorStunting(errorStunting);
       } finally {
@@ -1380,9 +1443,15 @@ const ContentStunting = () => {
   };
 
   const [titleStack, setTitleStack] = useState("")
+  const [titleStackKesejahteraan, setTitleStackKesejahteraan] = useState("")
   const handleBarClickStackProv = (data) => {     
     setTitleStack(data.category)
     getDataStackPerProv({kodeProv: data.id})
+  }
+
+  const handleBarClickStackKesejahteraanProv = (data) => {     
+    setTitleStackKesejahteraan(data.category)
+    getDataStackPerProvKesejahteraan({kodeProv: data.id})
   }
 
   const handleBack = () => {
@@ -3255,21 +3324,54 @@ const ContentStunting = () => {
                     <h4 className="card-title mb-0">
                       KELUARGA SASARAN MENURUT PERINGKAT KESEJAHTERAAN
                     </h4>
-                  </div>                  
-                  <StackedBarChart
-                    dataTotal={10}
-                    dataZoom={true}
-                    breakWord={true}
-                    dataColors='["#695FF3", "#63A9ED", "#5BE9F3", "#99FFE7"]'
-                    valueCharts={dataChartKesejahteraanStacked}
-                    categoryChart={dataChartCategoryKesejahteraan}
-                    legendNames={[
-                      "Kesejahteraan 1",
-                      "Kesejahteraan 2",
-                      "Kesejahteraan 3",
-                      "Kesejahteraan 4",
-                    ]}
-                  />
+                  </div>                 
+                  {/* <TabPane tabId="1" id="provinsi"> */}
+                  {dataShowKesejahteraanStackKab ? (<>
+                        <button
+                        style={{
+                          backgroundColor: "#007bff",
+                          color: "white",
+                          padding: "10px 20px",
+                          border: "none",
+                          borderRadius: "5px",
+                          cursor: "pointer",
+                          fontSize: "16px",
+                          margin: "8px 0px",
+                        }}
+                        onClick={() => {setDataShowKesejahteraanStackKab(false); setTitleStack("")}}
+                      >
+                        Kembali
+                      </button>
+                      <StackedBarChart
+                        dataTotal={10}
+                        dataZoom={true}
+                        breakWord={true}
+                        dataColors='["#695FF3", "#63A9ED", "#5BE9F3", "#99FFE7"]'
+                        valueCharts={dataKabupatenKesejahteraan}
+                        categoryChart={dataCategoryChartKabupatenKesejahteraan[0]}
+                        legendNames={[
+                          "Kesejahteraan 1",
+                          "Kesejahteraan 2",
+                          "Kesejahteraan 3",
+                          "Kesejahteraan 4",
+                        ]}
+                      />
+                      </>) : (<><StackedBarChart
+                      dataTotal={10}
+                      dataZoom={true}
+                      breakWord={true}
+                      dataColors='["#695FF3", "#63A9ED", "#5BE9F3", "#99FFE7"]'
+                      valueCharts={dataChartKesejahteraanStacked}
+                      onBarClickProv={handleBarClickStackKesejahteraanProv}
+                      categoryChart={dataChartCategoryKesejahteraan[0]}
+                      idParam={dataChartCategoryKesejahteraan[1]}
+                      legendNames={[
+                        "Kesejahteraan 1",
+                        "Kesejahteraan 2",
+                        "Kesejahteraan 3",
+                        "Kesejahteraan 4",
+                      ]}
+                  /></>)} 
                 </TabPane>
                 <TabPane tabId="6">
                   <div className="separator">

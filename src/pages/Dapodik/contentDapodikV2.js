@@ -111,11 +111,11 @@ const ContentDapodikV2 = () => {
 
   const [selectedSingleTahunAnggaran, setSelectedSingleTahunAnggaran] = useState('2025'); // Set default value
   const [selectedSingleTahunData, setselectedSingleTahunData] = useState('2024'); // Set default value
-
+  const [kodeWilayahPeta, setKodeWilayahPeta]=useState("")
   const handleSelectChangeAnggaran = (e) => {
     const { name, value } = e.target;
     setSelectedSingleTahunAnggaran(value); // Misalnya, untuk dropdown tahun
-    getDataAnakSekolah({kodeWilayah: "", tahun: value, tahun_data: selectedSingleTahunData});
+    getDataAnakSekolah({kodeWilayah: kodeWilayahPeta, tahun: value, tahun_data: selectedSingleTahunData});
     getDataDapodik({kodeDdn: "", tahun: value, tahun_data: selectedSingleTahunData});
     getDataTabelDapodikSeProv({tahun:value, tahun_data: selectedSingleTahunData});
     getDataTabelDapodikProv({tahun:value, tahun_data: selectedSingleTahunData});
@@ -126,7 +126,7 @@ const ContentDapodikV2 = () => {
   const handleSelectChangeDataPokok = (e) => {
     const { name, value } = e.target;
     setselectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
-    getDataAnakSekolah({kodeWilayah: "", tahun: selectedSingleTahunAnggaran, tahun_data: value});
+    // getDataAnakSekolah({kodeWilayah: "", tahun: selectedSingleTahunAnggaran, tahun_data: value});
     getDataDapodik({kodeDdn: "", tahun: selectedSingleTahunAnggaran, tahun_data: value});
     getDataTabelDapodikSeProv({tahun:selectedSingleTahunAnggaran, tahun_data: value});
     getDataTabelDapodikProv({tahun:selectedSingleTahunAnggaran, tahun_data: value});
@@ -1332,6 +1332,7 @@ const ContentDapodikV2 = () => {
   const [clickDaerah, setClickDaerah] = useState(false)
   const [clickNamaDaerah, setClickNamaDaerah] = useState("")
   const handleRegionClick = (kodeProv, namaProv) => {
+    setKodeWilayahPeta(kodeProv)
     getDataDapodik({kodeDdn: kodeProv})
     getDataAnakSekolah({kodeWilayah: kodeProv, tahun_data:selectedSingleTahunData})
     setClickNamaDaerah(namaProv)
@@ -1340,7 +1341,7 @@ const ContentDapodikV2 = () => {
 
   const resetRegionClick = () => {
     getDataDapodik({kodeDdn: "", tahun: "2024"});
-    getDataAnakSekolah({kodeWilayah: ""});
+    getDataAnakSekolah({kodeWilayah: "", tahun_data:selectedSingleTahunData});
     setClickDaerah(false)
   }
 
