@@ -115,7 +115,7 @@ const ContentDapodikV2 = () => {
   const handleSelectChangeAnggaran = (e) => {
     const { name, value } = e.target;
     setSelectedSingleTahunAnggaran(value); // Misalnya, untuk dropdown tahun
-    getDataAnakSekolah({kodeWilayah: kodeWilayahPeta, tahun: value, tahun_data: selectedSingleTahunData});
+    // getDataAnakSekolah({kodeWilayah: kodeWilayahPeta, tahun: value, tahun_data: selectedSingleTahunData});
     getDataDapodik({kodeDdn: "", tahun: value, tahun_data: selectedSingleTahunData});
     getDataTabelDapodikSeProv({tahun:value, tahun_data: selectedSingleTahunData});
     getDataTabelDapodikProv({tahun:value, tahun_data: selectedSingleTahunData});
@@ -126,7 +126,7 @@ const ContentDapodikV2 = () => {
   const handleSelectChangeDataPokok = (e) => {
     const { name, value } = e.target;
     setselectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
-    // getDataAnakSekolah({kodeWilayah: "", tahun: selectedSingleTahunAnggaran, tahun_data: value});
+    getDataAnakSekolah({kodeWilayah: "", tahun_data: value});
     getDataDapodik({kodeDdn: "", tahun: selectedSingleTahunAnggaran, tahun_data: value});
     getDataTabelDapodikSeProv({tahun:selectedSingleTahunAnggaran, tahun_data: value});
     getDataTabelDapodikProv({tahun:selectedSingleTahunAnggaran, tahun_data: value});
