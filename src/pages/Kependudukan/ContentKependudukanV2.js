@@ -530,7 +530,7 @@ const ContentKependudukanV2 = () => {
                 <span>Data Kependudukan</span>
               </div>
             </div>
-            <div className="d-flex nav-beranda">
+            {/* <div className="d-flex nav-beranda">
             <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
                     Tahun Data:
                   </div>
@@ -572,7 +572,7 @@ const ContentKependudukanV2 = () => {
               <option value="1">Semester 1</option>
               <option value="2">Semester 2</option>
             </select>
-                </div>
+                </div> */}
             </div>
           </Card>
         </Col>
