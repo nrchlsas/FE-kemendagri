@@ -476,6 +476,7 @@ const ContentRealisasiDetailDaerah = () => {
           );
           setDataRealisasiFiltered(filtered)
         }
+        setCurrentPage(1);
       };
   
       const handleClearSearch = () => {
@@ -496,6 +497,7 @@ const ContentRealisasiDetailDaerah = () => {
           );
           setDataDetailUnitSkpdFiltered(filtered)
         }
+        setCurrentPageDetail(1);
       };
   
       const handleClearSearchDetail = () => {
@@ -516,6 +518,7 @@ const ContentRealisasiDetailDaerah = () => {
           );
           setDataDetailUnitSkpdSroFiltered(filtered)
         }
+        setCurrentPageDetailSub(1);
       };
   
       const handleClearSearchDetailSub = () => {
@@ -523,6 +526,20 @@ const ContentRealisasiDetailDaerah = () => {
         setSearchTermDetailSub(""); // Kosongkan isi input
         setDataDetailUnitSkpdSroFiltered(dataDetailUnitSkpdSro)
       };
+
+       useEffect(() => {
+          const handleEscKey = (event) => {
+            if (event.key === "Escape") {
+              handleCloseNextModal()
+              handleClose()
+            }
+          };
+        
+          window.addEventListener("keydown", handleEscKey);
+          return () => {
+            window.removeEventListener("keydown", handleEscKey);
+          };
+        }, []);
       
       return (
       <React.Fragment>

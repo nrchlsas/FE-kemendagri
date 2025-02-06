@@ -497,6 +497,7 @@ const ContentUhcV2 = () => {
           );
           showNextData ? setFilteredDataUhcTabelKabupaten(filtered) : setFilteredDataUhcTabel(filtered)
         }
+        setCurrentPage(1)
       };
     
       const handleButtonClick = (area) => {
@@ -523,6 +524,7 @@ const ContentUhcV2 = () => {
           );
           setDataDetailAnggaranFiltered(filtered)
         }
+        setCurrentPageDetail(1);
       };
       
       const handleClearSearchDetail = (area = "") => {
@@ -545,6 +547,7 @@ const ContentUhcV2 = () => {
           );
           setDataDetailAnggaranSubFiltered(filtered)
         }
+        setCurrentPageDetail(1);
       };
       
       const handleClearSearchDetailSub = (area = "") => {
@@ -597,6 +600,20 @@ const ContentUhcV2 = () => {
     getDataTabelBpjsSeprov({tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
     // getDataTabelBpjsKabupaten()
   }, []);
+
+   useEffect(() => {
+      const handleEscKey = (event) => {
+        if (event.key === "Escape") {
+          handleCloseNextModal()
+          handleClose()
+        }
+      };
+    
+      window.addEventListener("keydown", handleEscKey);
+      return () => {
+        window.removeEventListener("keydown", handleEscKey);
+      };
+    }, []);
 
   return (
     <React.Fragment>

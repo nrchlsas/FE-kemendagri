@@ -1156,11 +1156,12 @@ const ContentStunting = () => {
         }
       }
       );
-      showNextData ? setFilteredDataStuntingTabelKabupaten(filtered) : setFilteredDataStuntingTabel(filtered)
+      showNextData ? (setFilteredDataStuntingTabelKabupaten(filtered), setCurrentPageKabupaten(1)): (setFilteredDataStuntingTabel(filtered), setCurrentPage(1));
     }
+    
   };
 
-  const handleClearSearch = (area = "") => {
+  const handleClearSearch = () => {
     showNextData ? setFilteredDataStuntingTabelKabupaten(dataStuntingTabel) : setFilteredDataStuntingTabel(dataStuntingTabel)
     setCurrentPage(1);
     setCurrentPageKabupaten(1);
@@ -1180,6 +1181,7 @@ const ContentStunting = () => {
       );
       setDataDetailAnggaranFiltered(filtered)
     }
+    setCurrentPageDetail(1);
   };
   
   const handleClearSearchDetail = (area = "") => {
@@ -1202,6 +1204,7 @@ const ContentStunting = () => {
       );
       setDataDetailAnggaranSubFiltered(filtered)
     }
+    setCurrentPageDetail(1);
   };
   
   const handleClearSearchDetailSub = (area = "") => {
@@ -1223,6 +1226,7 @@ const ContentStunting = () => {
       );
       setDataDetailAnggaranSubSubFiltered(filtered)
     }
+    setCurrentPageDetailSubSub(1);
   };
 
   const handleClearSearchDetailSubSub = () => {

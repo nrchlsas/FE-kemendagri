@@ -623,6 +623,7 @@ const ContentPenganggaranDetailDaerah = () => {
         );
         setDataDetailAnggaranSubSubFiltered(filtered)
       }
+      setCurrentPageDetailSubSub(1);
     };
   
     const handleClearSearchDetailSubSub = () => {
@@ -648,6 +649,7 @@ const ContentPenganggaranDetailDaerah = () => {
         );
         setDataPenganggaranPersentaseFiltered(filtered)
       }
+      setCurrentPage(1);
     };
 
     const handleClearSearch = () => {
@@ -668,6 +670,7 @@ const ContentPenganggaranDetailDaerah = () => {
         );
         setDataDetailUnitSkpdFiltered(filtered)
       }
+      setCurrentPageDetailSub(1);
     };
 
     const handleClearSearchDetail = () => {
@@ -688,6 +691,7 @@ const ContentPenganggaranDetailDaerah = () => {
         );
         setDataDetailUnitSkpdSroFiltered(filtered)
       }
+      setCurrentPageDetailSub(1);
     };
 
     const handleClearSearchDetailSub = () => {

@@ -417,6 +417,7 @@ const ContentPerencanaanDetailDaerah = () => {
             );
             setDataPerencanaanPersentaseFiltered(filtered)
           }
+          setCurrentPage(1);
         };
     
         const handleClearSearch = () => {
@@ -437,6 +438,7 @@ const ContentPerencanaanDetailDaerah = () => {
             );
             setDataDetailUnitSkpdFiltered(filtered)
           }
+          setCurrentPageDetail(1);
         };
     
         const handleClearSearchDetail = () => {

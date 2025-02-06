@@ -1103,7 +1103,7 @@ const ContentDapodikV2 = () => {
       );
       setDataDapodikTabelSeProvinsiFiltered(filtered)
     }
-
+    setCurrentPage(1);
   };
 
   const handleSearchInputProvinsi = (e) => {
@@ -1118,7 +1118,7 @@ const ContentDapodikV2 = () => {
       );
      setDataDapodikTabelProvinsiFiltered(filtered)
     }
-
+    setCurrentPageProvinsi(1);
   };
 
   const handleSearchInputKabupaten = (e) => {
@@ -1133,33 +1133,8 @@ const ContentDapodikV2 = () => {
       );
       setDataDapodikTabelKabupatenFiltered(filtered)
     }
-
+    setCurrentPageKabupaten(1);
   };
-
-  // const handleKeyDown = (e, area) => {
-  //   if (e.key === "Enter") {
-  //     if (area === "kabupaten") {
-  //       getDataTabelDapodikKab(e.target.value);
-  //     } else if (area === "provinsi") {
-  //       getDataTabelDapodikProv(e.target.value);
-  //     } else {
-  //       getDataTabelDapodikSeProv(e.target.value);
-  //     }
-  //     setCurrentPage(1);
-  //   }
-  // };
-
-  // // Fungsi untuk memanggil API ketika tombol ditekan
-  // const handleButtonClick = (area) => {
-  //   if (area === "kabupaten") {
-  //     getDataTabelDapodikKab(searchTerm);
-  //   } else if (area === "provinsi") {
-  //     getDataTabelDapodikProv({searchTerm, tahun:selectedSingleTahunAnggaran});
-  //   } else {
-  //     getDataTabelDapodikSeProv({searchTerm, tahun:selectedSingleTahunAnggaran});
-  //   }
-  //   setCurrentPage(1);
-  // };
 
   const handleClearSearch = (area = "") => {
     // area === "kabupaten" ? (setCurrentPageKabupaten(1), setSearchTermKab(""), setDataDapodikTabelKabupatenFiltered(dataDapodikTabelKabupaten)) : area ==="provinsi" ? (setSearchTerm(""), setCurrentPageProvinsi(1), setDataDapodikTabelProvinsiFiltered(dataDapodikTabelProvinsi)) : (setCurrentPage(1), setSearchTerm(""), setDataDapodikTabelSeProvinsiFiltered(dataDapodikTabelSeProvinsi))
@@ -1190,6 +1165,7 @@ const ContentDapodikV2 = () => {
       );
       setDataDetailAnggaranFiltered(filtered)
     }
+    setCurrentPageDetail(1);
   };
 
   const handleClearSearchDetail = (area = "") => {
@@ -1210,6 +1186,7 @@ const ContentDapodikV2 = () => {
       );
       setDataDetailAnggaranSubFiltered(filtered)
     }
+    setCurrentPageDetailSub(1);
   };
 
   const handleClearSearchDetailSub = () => {
@@ -1230,6 +1207,7 @@ const ContentDapodikV2 = () => {
       );
       setDataDetailAnggaranSubSubFiltered(filtered)
     }
+    setCurrentPageDetailSubSub(1);
   };
 
   const handleClearSearchDetailSubSub = () => {

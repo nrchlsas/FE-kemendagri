@@ -1273,6 +1273,7 @@ const ContentMiskinEkstremV2 = () => {
         );
         showNextData ? setFilteredDataMiskinEkstremTabelKabupaten(filtered) : setFilteredDataMiskinEkstremTabel(filtered)
       }
+      setCurrentPage(1)
     };
   
     const handleButtonClick = (area) => {
@@ -1299,6 +1300,7 @@ const ContentMiskinEkstremV2 = () => {
         );
         setDataDetailAnggaranFiltered(filtered)
       }
+      setCurrentPageDetail(1);
     };
     
     const handleClearSearchDetail = (area = "") => {
@@ -1321,6 +1323,7 @@ const ContentMiskinEkstremV2 = () => {
         );
         setDataDetailAnggaranSubFiltered(filtered)
       }
+      etCurrentPageDetailSub(1);
     };
     
     const handleClearSearchDetailSub = (area = "") => {
@@ -1342,6 +1345,7 @@ const ContentMiskinEkstremV2 = () => {
         );
         setDataDetailAnggaranSubSubFiltered(filtered)
       }
+      setCurrentPageDetailSubSub(1);
     };
 
     const handleClearSearchDetailSubSub = () => {
