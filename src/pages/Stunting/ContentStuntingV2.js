@@ -1381,7 +1381,7 @@ const ContentStunting = () => {
   };
 
   const [dataShowKesejahteraanStackKab, setDataShowKesejahteraanStackKab] = useState(false)
-  const getDataStackPerProvKesejahteraan = ({kodeProv = ""}) => {
+  const getDataStackPerProvKesejahteraan = ({kodeProv = "", tahunData}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -1390,6 +1390,7 @@ const ContentStunting = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_prov: kodeProv,
+            tahun_data: tahunData
           }),
         };
 
@@ -1451,7 +1452,7 @@ const ContentStunting = () => {
 
   const handleBarClickStackKesejahteraanProv = (data) => {     
     setTitleStackKesejahteraan(data.category)
-    getDataStackPerProvKesejahteraan({kodeProv: data.id})
+    getDataStackPerProvKesejahteraan({kodeProv: data.id, tahunData: selectedSingleTahunData})
   }
 
   const handleBack = () => {
