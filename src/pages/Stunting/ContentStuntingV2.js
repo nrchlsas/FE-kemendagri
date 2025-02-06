@@ -1476,6 +1476,9 @@ const ContentStunting = () => {
       setselectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
       getDataStunting({tahun:selectedSingleTahunAnggaran, tahun_data: value});
       getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: value});
+      if(dataShowKesejahteraanStackKab){
+        getDataStackPerProvKesejahteraan({tahunData: value})
+      }
     };
 
     const handleRegionClick = (kodeProv, namaProv) => {
