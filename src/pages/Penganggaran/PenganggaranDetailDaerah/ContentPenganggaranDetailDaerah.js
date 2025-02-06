@@ -39,6 +39,9 @@ const ContentPenganggaranDetailDaerah = () => {
     const [dataPenganggaranPersentase, setDataPenganggaranPersentase] = useState(
       []
     );
+    const [dataPenganggaranPersentaseFiltered, setDataPenganggaranPersentaseFiltered] = useState(
+      []
+    );
     const [loadingPenganggaran, setLoadingPenganggaran] = useState([]);
     const [errorPenganggaran, setErrorPenganggaran] = useState([]);
   
@@ -177,6 +180,8 @@ const ContentPenganggaranDetailDaerah = () => {
             dataPenganggaranNasionalPersentase?.data?.penganggaran_level_3
           );
 
+          setDataPenganggaranPersentaseFiltered(dataPenganggaranNasionalPersentase?.data?.penganggaran_level_3)
+
           setDataDetailHighlight(dataPenganggaranNasionalPersentase?.data?.data_penganggaran_highlight)
         } catch (errorPenganggaran) {
           setErrorPenganggaran(errorPenganggaran);
@@ -201,6 +206,7 @@ const ContentPenganggaranDetailDaerah = () => {
     }, []);
 
     const [dataDetailUnitSkpd, setDataDetailUnitSkpd] = useState([]);    
+    const [dataDetailUnitSkpdFiltered, setDataDetailUnitSkpdFiltered] = useState([]);    
     const [loadingDetailUnitSkpd, setLoadingDetailUnitSkpd] = useState([]);
     const [errorDetailUnitSkpd, setErrorDetailUnitSkpd] = useState([]);    
   
@@ -238,6 +244,7 @@ const ContentPenganggaranDetailDaerah = () => {
           const dataDetailUnitSkpd = await response.json();
   
           setDataDetailUnitSkpd(dataDetailUnitSkpd.data.penganggaran_level_3_subgiat)    
+          setDataDetailUnitSkpdFiltered(dataDetailUnitSkpd.data.penganggaran_level_3_subgiat)    
 
           setModall(true);            
           setCurrentPageDetail(1);        
@@ -253,6 +260,7 @@ const ContentPenganggaranDetailDaerah = () => {
     };
 
     const [dataDetailUnitSkpdSro, setDataDetailUnitSkpdSro] = useState([]);    
+    const [dataDetailUnitSkpdSroFiltered, setDataDetailUnitSkpdSroFiltered] = useState([]);    
     const [loadingDetailUnitSkpdSro, setLoadingDetailUnitSkpdSro] = useState([]);
     const [errorDetailUnitSkpdSro, setErrorDetailUnitSkpdSro] = useState([]);    
   
@@ -292,6 +300,7 @@ const ContentPenganggaranDetailDaerah = () => {
           const dataDetailUnitSkpdSro = await response.json();
   
           setDataDetailUnitSkpdSro(dataDetailUnitSkpdSro?.data?.penganggaran_level_3_sro)
+          setDataDetailUnitSkpdSroFiltered(dataDetailUnitSkpdSro?.data?.penganggaran_level_3_sro)
           setCurrentPageDetail(1);     
           setModal(true);
           // Open the modal only after data is successfully fetched
@@ -413,7 +422,7 @@ const ContentPenganggaranDetailDaerah = () => {
     const indexOfFirstItemDetailSubSub = indexOfLastItemDetailSubSub - itemsPerPage;
     
     const sortedItems = React.useMemo(() => {
-      let sortableItems = [...(dataPenganggaranPersentase || [])];
+      let sortableItems = [...(dataPenganggaranPersentaseFiltered || [])];
       if (sortConfig.key !== null) {
         sortableItems.sort((a, b) => {
           const aValue = a[sortConfig.key] || 0;
@@ -429,10 +438,10 @@ const ContentPenganggaranDetailDaerah = () => {
         });
       }
       return sortableItems;
-    }, [dataPenganggaranPersentase, sortConfig]);
+    }, [dataPenganggaranPersentaseFiltered, sortConfig]);
 
     const sortedItemsDetail = React.useMemo(() => {
-      let sortableItems = [...(dataDetailUnitSkpd || [])];
+      let sortableItems = [...(dataDetailUnitSkpdFiltered || [])];
       if (sortConfigDetail.key !== null) {
         sortableItems.sort((a, b) => {
           const aValue = a[sortConfigDetail.key] || 0;
@@ -448,10 +457,10 @@ const ContentPenganggaranDetailDaerah = () => {
         });
       }
       return sortableItems;
-    }, [dataDetailUnitSkpd, sortConfigDetail]);
+    }, [dataDetailUnitSkpdFiltered, sortConfigDetail]);
 
     const sortedItemsDetailSub = React.useMemo(() => {
-      let sortableItems = [...(dataDetailUnitSkpdSro || [])];
+      let sortableItems = [...(dataDetailUnitSkpdSroFiltered || [])];
       if (sortConfig.key !== null) {
         sortableItems.sort((a, b) => {
           const aValue = a[sortConfig.key] || 0;
@@ -467,7 +476,7 @@ const ContentPenganggaranDetailDaerah = () => {
         });
       }
       return sortableItems;
-    }, [dataDetailUnitSkpdSro, sortConfig]);
+    }, [dataDetailUnitSkpdSroFiltered, sortConfig]);
 
     const sortedItemsDetailSubSub = React.useMemo(() => {
         let sortableItems = [...(dataDetailAnggaranSubSubFiltered || [])];
@@ -504,13 +513,13 @@ const ContentPenganggaranDetailDaerah = () => {
     );
     
     const totalPages = Math.ceil(
-      (dataPenganggaranPersentase?.length || 0) / itemsPerPage
+      (dataPenganggaranPersentaseFiltered?.length || 0) / itemsPerPage
     );
     const totalPagesDetail = Math.ceil(
-      (dataDetailUnitSkpd?.length || 0) / itemsPerPage
+      (dataDetailUnitSkpdFiltered?.length || 0) / itemsPerPage
     );
     const totalPagesDetailSub = Math.ceil(
-      (dataDetailUnitSkpdSro?.length || 0) / itemsPerPage
+      (dataDetailUnitSkpdSroFiltered?.length || 0) / itemsPerPage
     );
     const totalPagesDetailSubSub = Math.ceil(
       (dataDetailAnggaranSubSubFiltered?.length || 0) / itemsPerPage
@@ -620,6 +629,71 @@ const ContentPenganggaranDetailDaerah = () => {
       setCurrentPageDetailSubSub(1);
       setSearchTermDetailSubSub(""); // Kosongkan isi input
       setDataDetailAnggaranSubSubFiltered(dataDetailUnitSkpdSubSro)
+    };
+
+    const [searchTerm, setSearchTerm] = useState("");
+    const [searchTermDetail, setSearchTermDetail] = useState(""); 
+    const [searchTermDetailSub, setSearchTermDetailSub] = useState(""); 
+  
+    // Fungsi untuk menangani perubahan pada input
+    const handleSearchInput = (e) => {
+      const value = e.target.value.toLowerCase()
+      setSearchTerm(e.target.value);
+      if(value===""){
+        setDataPenganggaranPersentaseFiltered(dataPenganggaranPersentase)
+      }else{
+        const filtered = dataPenganggaranPersentase.filter((item) => 
+          item.nama_skpd.toLowerCase().includes(value) || 
+          item.nama_unit_skpd.toLowerCase().includes(value)
+        );
+        setDataPenganggaranPersentaseFiltered(filtered)
+      }
+    };
+
+    const handleClearSearch = () => {
+      setCurrentPage(1);
+      setSearchTerm("");
+      setDataPenganggaranPersentaseFiltered(dataPenganggaranPersentase)
+    };
+
+    const handleSearchInputDetail = (e) => {
+      const value = e.target.value.toLowerCase();
+      setSearchTermDetail(value);
+      if (value === "") {
+        setDataDetailUnitSkpdFiltered(dataDetailUnitSkpd)
+      } else {
+        const filtered = dataDetailUnitSkpd.filter((item) => {
+            return item.nama_sub_giat.toLowerCase().includes(value)
+        }
+        );
+        setDataDetailUnitSkpdFiltered(filtered)
+      }
+    };
+
+    const handleClearSearchDetail = () => {
+      setCurrentPageDetailSub(1);
+      setSearchTermDetail("");
+      setDataDetailUnitSkpdFiltered(dataDetailUnitSkpd)
+    };
+
+    const handleSearchInputDetailSub = (e) => {
+      const value = e.target.value.toLowerCase();
+      setSearchTermDetailSub(value);
+      if (value === "") {
+        setDataDetailUnitSkpdSroFiltered(dataDetailUnitSkpdSro)
+      } else {
+        const filtered = dataDetailUnitSkpdSro.filter((item) => {
+            return item.nama_sro.toLowerCase().includes(value)
+        }
+        );
+        setDataDetailUnitSkpdSroFiltered(filtered)
+      }
+    };
+
+    const handleClearSearchDetailSub = () => {
+      setCurrentPageDetailSub(1);
+      setSearchTermDetailSub(""); // Kosongkan isi input
+      setDataDetailUnitSkpdSroFiltered(dataDetailUnitSkpdSro)
     };
       
       return (
@@ -851,7 +925,51 @@ const ContentPenganggaranDetailDaerah = () => {
                   </h4>                  
                 </div>                
                 <Row>
-                  <Col>                
+                  <Col>
+                  <div className='d-flex'>
+                  <div
+              className="mx-2"
+              style={{
+                // position: "relative",
+                width: "100%",
+                maxWidth: "300px",
+                marginLeft: "10px",
+                marginTop: "16px",
+                marginBottom: "30px",
+              }}
+            >
+             <input
+                  style={{
+                    padding: "10px 30px 10px 10px",
+                    border: "1px solid #ccc",
+                    borderRadius: "5px",
+                    width:"100%",
+                    fontSize: "16px",
+                  }}
+                  type="text"
+                  value={searchTerm}
+                  onChange={handleSearchInput}
+                  placeholder="Cari SKPD / Unit SKPD"
+                />
+                {searchTerm && (
+                <button
+                  onClick={() => handleClearSearch()}
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    color: "#999",
+                  }}
+                >
+                  &#10006;
+                </button>
+              )}
+            </div> 
                     <select
                     name="tahun"
                           style={{
@@ -878,9 +996,11 @@ const ContentPenganggaranDetailDaerah = () => {
                           fontSize: "16px",
                           borderRadius: "5px",
                           border: "1px solid #ccc",
-                          backgroundColor: "#ffffff",                          
-                          cursor: "pointer",                          
-                          marginLeft: "10px"
+                          backgroundColor: "#ffffff",
+                          cursor: "pointer",                 
+                          marginLeft: "10px",
+                          marginTop: "16px",
+                          marginBottom: "30px",
                         }}
                         value={selectedSingleTahapan}
                         onChange={handleSelectChange}
@@ -910,6 +1030,7 @@ const ContentPenganggaranDetailDaerah = () => {
                           }
                         })()}
                       </select>
+                  </div>
                     <div className="table-responsive table-card" style={{ overflowX: "auto" }}>                    
                       <table className="table table-nowrap mb-2 " style={{width:"100%"}} >
                         <thead className="table-light">
@@ -1122,7 +1243,51 @@ const ContentPenganggaranDetailDaerah = () => {
                 </Card>
               </Col>
             </Row>
+            <div className="mb-2 d-flex">
+            <div
+              className="mx-2"
+              style={{
+                position: "relative",
+                width: "100%",
+                maxWidth: "300px",
+                marginBottom: "20px",
+              }}
+            >
+              <input
+                style={{
+                  padding: "10px 30px 10px 10px",
+                  width: "100%",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  fontSize: "16px",
+                }}
+                type="text"
+                value={searchTermDetail}
+                onChange={handleSearchInputDetail}
+                placeholder="Cari Sub Giat"
+              />
 
+              {/* Tombol "X" di dalam input */}
+              {searchTermDetail && (
+                <button
+                  onClick={() => handleClearSearchDetail()}
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    color: "#999",
+                  }}
+                >
+                  &#10006;
+                </button>
+              )}
+            </div>
+          </div>
             {/* <div style={{ overflowY: "scroll", maxHeight: "500px" }}> */}
               <table
                 className="table table-bordered table-nowrap align-middle mb-0"
@@ -1277,7 +1442,51 @@ const ContentPenganggaranDetailDaerah = () => {
                 </Card>
               </Col>              
             </Row>
+            <div className="mb-2 d-flex">
+            <div
+              className="mx-2"
+              style={{
+                position: "relative",
+                width: "100%",
+                maxWidth: "300px",
+                marginBottom: "20px",
+              }}
+            >
+              <input
+                style={{
+                  padding: "10px 30px 10px 10px",
+                  width: "100%",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  fontSize: "16px",
+                }}
+                type="text"
+                value={searchTermDetailSub}
+                onChange={handleSearchInputDetailSub}
+                placeholder="Cari Sub Rincian Objek"
+              />
 
+              {/* Tombol "X" di dalam input */}
+              {searchTermDetailSub && (
+                <button
+                  onClick={() => handleClearSearchDetailSub()}
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    color: "#999",
+                  }}
+                >
+                  &#10006;
+                </button>
+              )}
+            </div>
+          </div>
             <div style={{ overflowY: "scroll", maxHeight: "500px" }}>
               <table
                 className="table table-bordered table-nowrap align-middle mb-0"

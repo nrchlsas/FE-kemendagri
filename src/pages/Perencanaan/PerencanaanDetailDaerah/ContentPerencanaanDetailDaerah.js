@@ -80,6 +80,9 @@ const ContentPerencanaanDetailDaerah = () => {
     const [dataPerencanaanPersentase, setDataPerencanaanPersentase] = useState(
       []
     );
+    const [dataPerencanaanPersentaseFiltered, setDataPerencanaanPersentaseFiltered] = useState(
+      []
+    );
     const [loadingPerencanaan, setLoadingPerencanaan] = useState([]);
     const [errorPerencanaan, setErrorPerencanaan] = useState([]);
   
@@ -164,6 +167,9 @@ const ContentPerencanaanDetailDaerah = () => {
           setDataPerencanaanPersentase(
             dataPerencanaanRkpdNasionalPersentase.data
           );
+          setDataPerencanaanPersentaseFiltered(
+            dataPerencanaanRkpdNasionalPersentase.data
+          );
         } catch (errorPerencanaan) {
           setErrorPerencanaan(errorPerencanaan);
         } finally {
@@ -195,6 +201,7 @@ const ContentPerencanaanDetailDaerah = () => {
     }, []);
 
     const [dataDetailUnitSkpd, setDataDetailUnitSkpd] = useState([]);    
+    const [dataDetailUnitSkpdFiltered, setDataDetailUnitSkpdFiltered] = useState([]);    
     const [loadingDetailUnitSkpd, setLoadingDetailUnitSkpd] = useState([]);
     const [errorDetailUnitSkpd, setErrorDetailUnitSkpd] = useState([]);    
   
@@ -233,6 +240,7 @@ const ContentPerencanaanDetailDaerah = () => {
           const dataDetailUnitSkpd = await response.json();
   
           setDataDetailUnitSkpd(dataDetailUnitSkpd.data)    
+          setDataDetailUnitSkpdFiltered(dataDetailUnitSkpd.data)    
 
           setModall(true);            
           setCurrentPageDetail(1);        
@@ -290,7 +298,7 @@ const ContentPerencanaanDetailDaerah = () => {
     const indexOfFirstItemDetail = indexOfLastItemDetail - itemsPerPageDetail;
     
     const sortedItems = React.useMemo(() => {
-      let sortableItems = [...(dataPerencanaanPersentase || [])];
+      let sortableItems = [...(dataPerencanaanPersentaseFiltered || [])];
       if (sortConfig.key !== null) {
         sortableItems.sort((a, b) => {
           const aValue = a[sortConfig.key] || 0;
@@ -306,10 +314,10 @@ const ContentPerencanaanDetailDaerah = () => {
         });
       }
       return sortableItems;
-    }, [dataPerencanaanPersentase, sortConfig]);
+    }, [dataPerencanaanPersentaseFiltered, sortConfig]);
 
     const sortedItemsDetail = React.useMemo(() => {
-      let sortableItems = [...(dataDetailUnitSkpd || [])];
+      let sortableItems = [...(dataDetailUnitSkpdFiltered || [])];
       if (sortConfigDetail.key !== null) {
         sortableItems.sort((a, b) => {
           const aValue = a[sortConfigDetail.key] || 0;
@@ -325,7 +333,7 @@ const ContentPerencanaanDetailDaerah = () => {
         });
       }
       return sortableItems;
-    }, [dataDetailUnitSkpd, sortConfigDetail]);
+    }, [dataDetailUnitSkpdFiltered, sortConfigDetail]);
   
     const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);
     const currentItemsDetail = sortedItemsDetail.slice(
@@ -334,10 +342,10 @@ const ContentPerencanaanDetailDaerah = () => {
     );
     
     const totalPages = Math.ceil(
-      (dataPerencanaanPersentase?.length || 0) / itemsPerPage
+      (dataPerencanaanPersentaseFiltered?.length || 0) / itemsPerPage
     );
     const totalPagesDetail = Math.ceil(
-      (dataDetailUnitSkpd?.length || 0) / itemsPerPage
+      (dataDetailUnitSkpdFiltered?.length || 0) / itemsPerPage
     );
   
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -391,6 +399,51 @@ const ContentPerencanaanDetailDaerah = () => {
       }
       return "↕"; // Default icon for unsorted
     };     
+
+      const [searchTerm, setSearchTerm] = useState("");
+      const [searchTermDetail, setSearchTermDetail] = useState(""); 
+      const [searchTermDetailSub, setSearchTermDetailSub] = useState(""); 
+      
+        // Fungsi untuk menangani perubahan pada input
+        const handleSearchInput = (e) => {
+          const value = e.target.value.toLowerCase()
+          setSearchTerm(e.target.value);
+          if(value===""){
+            setDataPerencanaanPersentaseFiltered(dataPerencanaanPersentase)
+          }else{
+            const filtered = dataPerencanaanPersentase.filter((item) => 
+              item.nama_skpd.toLowerCase().includes(value) || 
+              item.nama_unit_skpd.toLowerCase().includes(value)
+            );
+            setDataPerencanaanPersentaseFiltered(filtered)
+          }
+        };
+    
+        const handleClearSearch = () => {
+          setCurrentPage(1);
+          setSearchTerm("");
+          setDataPerencanaanPersentaseFiltered(dataPerencanaanPersentase)
+        };
+
+        const handleSearchInputDetail = (e) => {
+          const value = e.target.value.toLowerCase();
+          setSearchTermDetail(value);
+          if (value === "") {
+            setDataDetailUnitSkpdFiltered(dataDetailUnitSkpd)
+          } else {
+            const filtered = dataDetailUnitSkpd.filter((item) => {
+                return item.nama_sub_giat.toLowerCase().includes(value)
+            }
+            );
+            setDataDetailUnitSkpdFiltered(filtered)
+          }
+        };
+    
+        const handleClearSearchDetail = () => {
+          setCurrentPageDetail(1);
+          setSearchTermDetail("");
+          setDataDetailUnitSkpdFiltered(dataDetailUnitSkpd)
+        };
       
       return (
       <React.Fragment>
@@ -534,43 +587,90 @@ const ContentPerencanaanDetailDaerah = () => {
                   </h4>                  
                 </div>                
                 <Row>
-                  <Col>                
-                    <select
-                    name="tahun"
-                          style={{
-                            padding: "10px 30px 10px 10px",
-                            fontSize: "16px",
-                            borderRadius: "5px",
-                            border: "1px solid #ccc",
-                            backgroundColor: "#ffffff",
-                            cursor: "pointer",                 
-                            marginLeft: "10px",
-                            marginTop: "16px",
-                            marginBottom: "30px",
-                          }}
-                          value={selectedSingleTahun}
-                          onChange={handleSelectChange}
-                        >                        
-                          <option value="2024">2024</option>
-                          <option value="2025">2025</option>
-                        </select>
-                        <select
-                        name="tahap"
-                          style={{
-                            padding: "10px 30px 10px 10px",
-                            fontSize: "16px",
-                            borderRadius: "5px",
-                            border: "1px solid #ccc",
-                            backgroundColor: "#ffffff",                          
-                            cursor: "pointer",                          
-                            marginLeft: "10px"
-                          }}
-                          value={selectedSingleTahapan}
-                          onChange={handleSelectChange}
-                        >                        
-                          <option value="1">RKPD</option>
-                          <option value="3">RKPD Perubahan</option>
-                        </select>
+                  <Col>       
+                  <div className='d-flex'>
+                  <div
+              className="mx-2"
+              style={{
+                // position: "relative",
+                width: "100%",
+                maxWidth: "300px",
+                marginLeft: "10px",
+                marginTop: "16px",
+                marginBottom: "30px",
+              }}
+            >
+             <input
+                  style={{
+                    padding: "10px 30px 10px 10px",
+                    border: "1px solid #ccc",
+                    borderRadius: "5px",
+                    width:"100%",
+                    fontSize: "16px",
+                  }}
+                  type="text"
+                  value={searchTerm}
+                  onChange={handleSearchInput}
+                  placeholder="Cari SKPD / Unit SKPD"
+                />
+                {searchTerm && (
+                <button
+                  onClick={() => handleClearSearch()}
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    color: "#999",
+                  }}
+                >
+                  &#10006;
+                </button>
+              )}
+            </div> 
+            <select
+                  name="tahun"
+                  style={{
+                    padding: "10px 30px 10px 10px",
+                    fontSize: "16px",
+                    borderRadius: "5px",
+                    border: "1px solid #ccc",
+                    backgroundColor: "#ffffff",
+                    cursor: "pointer",                 
+                    marginLeft: "10px",
+                    marginTop: "16px",
+                    marginBottom: "30px",
+                  }}
+                  value={selectedSingleTahun}
+                  onChange={handleSelectChange}
+                >                        
+                  <option value="2024">2024</option>
+                  <option value="2025">2025</option>
+                </select>
+                <select
+                name="tahap"
+                style={{
+                  padding: "10px 30px 10px 10px",
+                  fontSize: "16px",
+                  borderRadius: "5px",
+                  border: "1px solid #ccc",
+                  backgroundColor: "#ffffff",
+                  cursor: "pointer",                 
+                  marginLeft: "10px",
+                  marginTop: "16px",
+                  marginBottom: "30px",
+                }}
+                  value={selectedSingleTahapan}
+                  onChange={handleSelectChange}
+                >                        
+                  <option value="1">RKPD</option>
+                  <option value="3">RKPD Perubahan</option>
+                </select>
+            </div>         
                     <div className="table-responsive table-card" style={{ overflowX: "auto" }}>                    
                       <table className="table table-nowrap mb-2 " style={{width:"1000px"}} >
                         <thead className="table-light">
@@ -778,7 +878,52 @@ const ContentPerencanaanDetailDaerah = () => {
                 </Card>
               </Col>
             </Row>
+            <div className="mb-2 d-flex">
+            <div
+              className="mx-2"
+              style={{
+                position: "relative",
+                width: "100%",
+                maxWidth: "300px",
+                marginBottom: "20px",
+              }}
+            >
+              <input
+                style={{
+                  padding: "10px 30px 10px 10px",
+                  width: "100%",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  fontSize: "16px",
+                }}
+                type="text"
+                value={searchTermDetail}
+                onChange={handleSearchInputDetail}
+                // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                placeholder="Cari Sub Sub Rincian Objek"
+              />
 
+              {/* Tombol "X" di dalam input */}
+              {searchTermDetail && (
+                <button
+                  onClick={() => handleClearSearchDetail()}
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    color: "#999",
+                  }}
+                >
+                  &#10006;
+                </button>
+              )}
+            </div>
+          </div>
             {/* <div style={{ overflowY: "scroll", maxHeight: "500px" }}> */}
               <table
                 className="table table-bordered table-nowrap align-middle mb-0"

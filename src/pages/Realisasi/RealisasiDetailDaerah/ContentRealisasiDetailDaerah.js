@@ -77,6 +77,7 @@ const ContentRealisasiDetailDaerah = () => {
     const [selectedSingleTahapan, setSelectedSingleTahapan] = useState('1');
     const [selectedSingleSubTahapan, setSelectedSingleSubTahapan] = useState('6');
     const [dataRealisasi, setDataRealisasi] = useState([]);
+    const [dataRealisasiFiltered, setDataRealisasiFiltered] = useState([]);
     const [loadingRealisasi, setLoadingRealisasi] = useState([]);
     const [errorRealisasi, setErrorRealisasi] = useState([]);
     const [totalPagu, setTotalPagu] = useState(0)
@@ -119,6 +120,9 @@ const ContentRealisasiDetailDaerah = () => {
           setDataRealisasi(
             dataRealisasiNasional.data.realisasi_level_3
           );
+          setDataRealisasiFiltered(
+            dataRealisasiNasional.data.realisasi_level_3
+          );
         } catch (errorRealisasi) {
           setErrorRealisasi(errorRealisasi);
         } finally {
@@ -143,6 +147,7 @@ const ContentRealisasiDetailDaerah = () => {
     }, []);
 
     const [dataDetailUnitSkpd, setDataDetailUnitSkpd] = useState([]);    
+    const [dataDetailUnitSkpdFiltered, setDataDetailUnitSkpdFiltered] = useState([]);    
     const [loadingDetailUnitSkpd, setLoadingDetailUnitSkpd] = useState([]);
     const [errorDetailUnitSkpd, setErrorDetailUnitSkpd] = useState([]);    
   
@@ -178,6 +183,7 @@ const ContentRealisasiDetailDaerah = () => {
           const dataDetailUnitSkpd = await response.json();
   
           setDataDetailUnitSkpd(dataDetailUnitSkpd.data.realisasi_level_3_subgiat)
+          setDataDetailUnitSkpdFiltered(dataDetailUnitSkpd.data.realisasi_level_3_subgiat)
 
           setModall(true);            
           setCurrentPageDetail(1);     
@@ -193,6 +199,7 @@ const ContentRealisasiDetailDaerah = () => {
     };
 
     const [dataDetailUnitSkpdSro, setDataDetailUnitSkpdSro] = useState([]);    
+    const [dataDetailUnitSkpdSroFiltered, setDataDetailUnitSkpdSroFiltered] = useState([]);    
     const [loadingDetailUnitSkpdSro, setLoadingDetailUnitSkpdSro] = useState([]);
     const [errorDetailUnitSkpdSro, setErrorDetailUnitSkpdSro] = useState([]);    
   
@@ -230,6 +237,7 @@ const ContentRealisasiDetailDaerah = () => {
           const dataDetailUnitSkpdSro = await response.json();
   
           setDataDetailUnitSkpdSro(dataDetailUnitSkpdSro.data.realisasi_level_3_sro)
+          setDataDetailUnitSkpdSroFiltered(dataDetailUnitSkpdSro.data.realisasi_level_3_sro)
 
           setModall(true);            
           setCurrentPageDetail(1);     
@@ -294,7 +302,7 @@ const ContentRealisasiDetailDaerah = () => {
     const indexOfFirstItemDetailSub = indexOfLastItemDetailSub - itemsPerPageDetailSub;
     
     const sortedItems = React.useMemo(() => {
-      let sortableItems = [...(dataRealisasi || [])];
+      let sortableItems = [...(dataRealisasiFiltered || [])];
       if (sortConfig.key !== null) {
         sortableItems.sort((a, b) => {
           const aValue = a[sortConfig.key] || 0;
@@ -310,10 +318,10 @@ const ContentRealisasiDetailDaerah = () => {
         });
       }
       return sortableItems;
-    }, [dataRealisasi, sortConfig]);
+    }, [dataRealisasiFiltered, sortConfig]);
 
     const sortedItemsDetail = React.useMemo(() => {
-      let sortableItems = [...(dataDetailUnitSkpd || [])];
+      let sortableItems = [...(dataDetailUnitSkpdFiltered || [])];
       if (sortConfigDetail.key !== null) {
         sortableItems.sort((a, b) => {
           const aValue = a[sortConfigDetail.key] || 0;
@@ -329,10 +337,10 @@ const ContentRealisasiDetailDaerah = () => {
         });
       }
       return sortableItems;
-    }, [dataDetailUnitSkpd, sortConfigDetail]);
+    }, [dataDetailUnitSkpdFiltered, sortConfigDetail]);
 
     const sortedItemsDetailSub = React.useMemo(() => {
-      let sortableItems = [...(dataDetailUnitSkpdSro || [])];
+      let sortableItems = [...(dataDetailUnitSkpdSroFiltered || [])];
       if (sortConfig.key !== null) {
         sortableItems.sort((a, b) => {
           const aValue = a[sortConfig.key] || 0;
@@ -348,7 +356,7 @@ const ContentRealisasiDetailDaerah = () => {
         });
       }
       return sortableItems;
-    }, [dataDetailUnitSkpdSro, sortConfig]);
+    }, [dataDetailUnitSkpdSroFiltered, sortConfig]);
 
 
   
@@ -363,14 +371,14 @@ const ContentRealisasiDetailDaerah = () => {
     );    
     
     const totalPages = Math.ceil(
-      (dataRealisasi?.length || 0) / itemsPerPage
+      (dataRealisasiFiltered?.length || 0) / itemsPerPage
     );
     const totalPagesDetail = Math.ceil(
-      (dataDetailUnitSkpd?.length || 0) / itemsPerPage
+      (dataDetailUnitSkpdFiltered?.length || 0) / itemsPerPage
     );
 
     const totalPagesDetailSub = Math.ceil(
-      (dataDetailUnitSkpdSro?.length || 0) / itemsPerPage
+      (dataDetailUnitSkpdSroFiltered?.length || 0) / itemsPerPage
     );
   
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -450,6 +458,71 @@ const ContentRealisasiDetailDaerah = () => {
     const handleCloseNextModal = () => {
       setModal(false);
     };
+
+    const [searchTerm, setSearchTerm] = useState("");
+    const [searchTermDetail, setSearchTermDetail] = useState(""); 
+    const [searchTermDetailSub, setSearchTermDetailSub] = useState(""); 
+    
+      // Fungsi untuk menangani perubahan pada input
+      const handleSearchInput = (e) => {
+        const value = e.target.value.toLowerCase()
+        setSearchTerm(e.target.value);
+        if(value===""){
+          setDataRealisasiFiltered(dataRealisasi)
+        }else{
+          const filtered = dataRealisasi.filter((item) => 
+            item.nama_skpd.toLowerCase().includes(value) || 
+            item.nama_unit_skpd.toLowerCase().includes(value)
+          );
+          setDataRealisasiFiltered(filtered)
+        }
+      };
+  
+      const handleClearSearch = () => {
+        setCurrentPage(1);
+        setSearchTerm("");
+        setDataRealisasiFiltered(dataRealisasi)
+      };
+
+      const handleSearchInputDetail = (e) => {
+        const value = e.target.value.toLowerCase();
+        setSearchTermDetail(value);
+        if (value === "") {
+          setDataDetailUnitSkpdFiltered(dataDetailUnitSkpd)
+        } else {
+          const filtered = dataDetailUnitSkpd.filter((item) => {
+              return item.nama_sub_giat.toLowerCase().includes(value)
+          }
+          );
+          setDataDetailUnitSkpdFiltered(filtered)
+        }
+      };
+  
+      const handleClearSearchDetail = () => {
+        setCurrentPageDetail(1);
+        setSearchTermDetail("");
+        setDataDetailUnitSkpdFiltered(dataDetailUnitSkpd)
+      };
+
+      const handleSearchInputDetailSub = (e) => {
+        const value = e.target.value.toLowerCase();
+        setSearchTermDetailSub(value);
+        if (value === "") {
+          setDataDetailUnitSkpdSroFiltered(dataDetailUnitSkpdSro)
+        } else {
+          const filtered = dataDetailUnitSkpdSro.filter((item) => {
+              return item.nama_sro.toLowerCase().includes(value)
+          }
+          );
+          setDataDetailUnitSkpdSroFiltered(filtered)
+        }
+      };
+  
+      const handleClearSearchDetailSub = () => {
+        setCurrentPageDetailSub(1);
+        setSearchTermDetailSub(""); // Kosongkan isi input
+        setDataDetailUnitSkpdSroFiltered(dataDetailUnitSkpdSro)
+      };
       
       return (
       <React.Fragment>
@@ -557,7 +630,52 @@ const ContentRealisasiDetailDaerah = () => {
                   </h4>                  
                 </div>                
                 <Row>
-                  <Col>                
+                  <Col>
+                  <div className='d-flex'>
+                  <div
+              className="mx-2"
+              style={{
+                // position: "relative",
+                width: "100%",
+                maxWidth: "300px",
+                marginLeft: "10px",
+                marginTop: "16px",
+                marginBottom: "30px",
+              }}
+            >
+             <input
+                  style={{
+                    padding: "10px 30px 10px 10px",
+                    border: "1px solid #ccc",
+                    borderRadius: "5px",
+                    width:"100%",
+                    fontSize: "16px",
+                  }}
+                  type="text"
+                  value={searchTerm}
+                  onChange={handleSearchInput}
+                  placeholder="Cari SKPD / Unit SKPD"
+                />
+                {searchTerm && (
+                <button
+                  onClick={() => handleClearSearch()}
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    color: "#999",
+                  }}
+                >
+                  &#10006;
+                </button>
+              )}
+            </div> 
+            </div>
                     {/* <select
                     name="tahun"
                           style={{
@@ -847,7 +965,51 @@ const ContentRealisasiDetailDaerah = () => {
                 </Card>
               </Col>
             </Row>
+            <div className="mb-2 d-flex">
+            <div
+              className="mx-2"
+              style={{
+                position: "relative",
+                width: "100%",
+                maxWidth: "300px",
+                marginBottom: "20px",
+              }}
+            >
+              <input
+                style={{
+                  padding: "10px 30px 10px 10px",
+                  width: "100%",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  fontSize: "16px",
+                }}
+                type="text"
+                value={searchTermDetail}
+                onChange={handleSearchInputDetail}
+                placeholder="Cari Sub Giat"
+              />
 
+              {/* Tombol "X" di dalam input */}
+              {searchTermDetail && (
+                <button
+                  onClick={() => handleClearSearchDetail()}
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    color: "#999",
+                  }}
+                >
+                  &#10006;
+                </button>
+              )}
+            </div>
+          </div>
             {/* <div style={{ overflowY: "scroll", maxHeight: "500px" }}> */}
               <table
                 className="table table-bordered table-nowrap align-middle mb-0"
@@ -1041,7 +1203,51 @@ const ContentRealisasiDetailDaerah = () => {
                 </Card>
               </Col>
             </Row>
+            <div className="mb-2 d-flex">
+            <div
+              className="mx-2"
+              style={{
+                position: "relative",
+                width: "100%",
+                maxWidth: "300px",
+                marginBottom: "20px",
+              }}
+            >
+              <input
+                style={{
+                  padding: "10px 30px 10px 10px",
+                  width: "100%",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  fontSize: "16px",
+                }}
+                type="text"
+                value={searchTermDetailSub}
+                onChange={handleSearchInputDetailSub}
+                placeholder="Cari Sub Rincian Objek"
+              />
 
+              {/* Tombol "X" di dalam input */}
+              {searchTermDetailSub && (
+                <button
+                  onClick={() => handleClearSearchDetailSub()}
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    color: "#999",
+                  }}
+                >
+                  &#10006;
+                </button>
+              )}
+            </div>
+          </div>
             <div style={{ overflowY: "scroll", maxHeight: "500px" }}>
               <table
                 className="table table-bordered table-nowrap align-middle mb-0"
