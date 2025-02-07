@@ -699,6 +699,21 @@ const ContentPenganggaranDetailDaerah = () => {
       setSearchTermDetailSub(""); // Kosongkan isi input
       setDataDetailUnitSkpdSroFiltered(dataDetailUnitSkpdSro)
     };
+
+     useEffect(() => {
+        const handleEscKey = (event) => {
+          if (event.key === "Escape") {
+            handleCloseNextModalSub();
+            handleCloseNextModal()
+            handleClose()
+          }
+        };
+      
+        window.addEventListener("keydown", handleEscKey);
+        return () => {
+          window.removeEventListener("keydown", handleEscKey);
+        };
+      }, []);
       
       return (
       <React.Fragment>
@@ -1728,7 +1743,18 @@ const ContentPenganggaranDetailDaerah = () => {
                     </tr>                  
                   </thead>
                   <tbody style={{ minHeight: "500px" }}>
-                    {currentItemDetailSubSub.map((item, index) => (
+                    {currentItemDetailSubSub.map((item, index) => {
+                      const tahapData = {
+                        5: item?.total_ssrorapbd,
+                        40: item?.total_ssrokuappas,
+                        30: item?.total_ssrogeser,
+                        41: item?.total_ssrokupa,
+                        8: item?.total_ssrorapbdubah,
+                        29: item?.total_ssroapbdubah,
+                        28: item?.total_ssroapbd,
+                        32: item?.total_ssrogeserpasca,
+                      };
+                      return (
                       <tr key={index}>                        
                       <td style={{textAlign: "center",
                       verticalAlign: "middle"}}>
@@ -1758,7 +1784,7 @@ const ContentPenganggaranDetailDaerah = () => {
                           : "-"}</span>                          
                       </td>                                                                    
                       <td>
-                      <span style={{float: "right"}}>{item.total_rinciansro ? parseInt(item.total_rinciansro).toLocaleString("id-ID")
+                      <span style={{float: "right"}}>{tahapData[selectedSingleTahapan] ? parseInt(tahapData[selectedSingleTahapan]).toLocaleString("id-ID")
                           : "-"}</span>                          
                       </td>                                      
                       <td>
@@ -1777,7 +1803,8 @@ const ContentPenganggaranDetailDaerah = () => {
                       </span>   
                       </td>
                     </tr>
-                    ))}
+                      )
+                  })}
                     {/* {placeholders} */}
                   </tbody>
                 </table>
