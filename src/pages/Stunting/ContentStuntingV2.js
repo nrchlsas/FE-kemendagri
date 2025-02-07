@@ -1470,9 +1470,9 @@ const ContentStunting = () => {
      useEffect(() => {
         const handleEscKey = (event) => {
           if (event.key === "Escape") {
-            handleCloseNextModalSub();
-            handleCloseNextModal()
             handleClose()
+            handleCloseNextModal()
+            handleCloseNextModalSub();
           }
         };
       

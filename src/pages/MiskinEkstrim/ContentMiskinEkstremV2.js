@@ -1391,6 +1391,21 @@ const ContentMiskinEkstremV2 = () => {
     // setClickDaerah(true)
   };
 
+   useEffect(() => {
+      const handleEscKey = (event) => {
+        if (event.key === "Escape") {
+          handleClose()
+          handleCloseNextModal()
+          handleCloseNextModalSub();
+        }
+      };
+    
+      window.addEventListener("keydown", handleEscKey);
+      return () => {
+        window.removeEventListener("keydown", handleEscKey);
+      };
+    }, []);
+
   return (
     <React.Fragment>
       <Row>
