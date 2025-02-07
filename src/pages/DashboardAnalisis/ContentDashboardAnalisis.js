@@ -46,7 +46,7 @@ const ContentDashboardAnalisis = () => {
   const [executeDate, setExcecuteDate] = useState('')
   const [labelTahun, setLabelTahun] = useState("2024")
   const getDataDashboardAnalisis = ({
-    tahun,
+    tahun=selectedTahun,
     kodeDdn,
     kodeProv,
     namaDaerah,
@@ -225,13 +225,7 @@ const [selectedTahun, setSelectedTahun] = useState("2024");
   const handleSelectChangeTahun = (e) => {
     const { name, value } = e.target;
     setSelectedTahun(value)
-
-  
-    // Bersihkan payload sebelum dikirim ke parent
-    // const cleanedFilters = cleanPayload(value);
-    getDataDashboardAnalisis({
-      tahun: value,
-    });
+    getDataDashboardAnalisis({tahun: value});
   };
 
 const [titleBerubah, setTitleBerubah] = useState("Nasional")

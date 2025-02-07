@@ -1000,9 +1000,9 @@ const ContentStunting = () => {
 
   // Calculate total number of pages
   const totalPages = Math.ceil(((showNextData ? filteredDataStuntingTabelKabupaten?.length : filteredDataStuntingTabel?.length) || 0) / itemsPerPage);
-  const totalPagesKabupaten = Math.ceil(
-    (filteredDataStuntingTabelKabupaten?.length || 0) / itemsPerPage
-  );
+  // const totalPagesKabupaten = Math.ceil(
+  //   (filteredDataStuntingTabelKabupaten?.length || 0) / itemsPerPage
+  // );
   const totalPagesDetail = Math.ceil(
     (dataDetailAnggaranFiltered?.length || 0) / itemsPerPage
   );
@@ -1015,36 +1015,9 @@ const ContentStunting = () => {
 
   // Pagination change handler
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
-  const paginateKabupaten = (pageNumber) => setCurrentPageKabupaten(pageNumber);
   const paginateDetail = (pageNumber) => setCurrentPageDetail(pageNumber);
   const paginateDetailSub = (pageNumber) => setCurrentPageDetailSub(pageNumber);
   const paginateDetailSubSub = (pageNumber) => setCurrentPageDetailSubSub(pageNumber);
-  // const paginateProvinsi = (pageNumber) => setCurrentPageProvinsi(pageNumber);
-
-  // Placeholder for empty rows if data is less than items per page
-  const placeholders = Array.from(
-    { length: itemsPerPage - currentItems.length },
-    (_, index) => (
-      <tr key={`placeholder-${index}`}>
-        <td
-          colSpan="13"
-          style={{ height: "44px", backgroundColor: "#f9f9f9" }}
-        ></td>
-      </tr>
-    )
-  );
-
-  const placeholdersKab = Array.from(
-    { length: itemsPerPage - currentItemsKabupaten.length },
-    (_, index) => (
-      <tr key={`placeholder-${index}`}>
-        <td
-          colSpan="12"
-          style={{ height: "44px", backgroundColor: "#f9f9f9" }}
-        ></td>
-      </tr>
-    )
-  );
 
   // Determine which icon to show for sorting using Unicode
   const getSortIcon = (key) => {
@@ -1150,13 +1123,15 @@ const ContentStunting = () => {
       // Filter data berdasarkan input
       const filtered = dataStuntingTabel.filter((item) => {
         if(showNextData){
+          setCurrentPageKabupaten(1)
           return item.nama_kabupaten.toLowerCase().includes(value)
         }else{
+          setCurrentPage(1)
           return item.nama_prov.toLowerCase().includes(value)
         }
       }
       );
-      showNextData ? (setFilteredDataStuntingTabelKabupaten(filtered), setCurrentPageKabupaten(1)): (setFilteredDataStuntingTabel(filtered), setCurrentPage(1));
+      showNextData ? (setFilteredDataStuntingTabelKabupaten(filtered)): (setFilteredDataStuntingTabel(filtered));
     }
     
   };
@@ -1176,12 +1151,12 @@ const ContentStunting = () => {
     } else {
       // Filter data berdasarkan input
       const filtered = dataDetailAnggaran.filter((item) => {
+        // setCurrentPageDetail(1);
         return item.nama_sub_giat.toLowerCase().includes(value)
       }
       );
       setDataDetailAnggaranFiltered(filtered)
     }
-    setCurrentPageDetail(1);
   };
   
   const handleClearSearchDetail = (area = "") => {
@@ -1199,12 +1174,12 @@ const ContentStunting = () => {
     } else {
       // Filter data berdasarkan input
       const filtered = dataDetailAnggaranSub.filter((item) => {
+        // setCurrentPageDetail(1);
         return item.nama_sro.toLowerCase().includes(value)
       }
       );
       setDataDetailAnggaranSubFiltered(filtered)
     }
-    setCurrentPageDetail(1);
   };
   
   const handleClearSearchDetailSub = (area = "") => {
@@ -1491,6 +1466,21 @@ const ContentStunting = () => {
       // setClickNamaDaerah(namaProv)
       // setClickDaerah(true)
     };
+
+     useEffect(() => {
+        const handleEscKey = (event) => {
+          if (event.key === "Escape") {
+            handleCloseNextModalSub();
+            handleCloseNextModal()
+            handleClose()
+          }
+        };
+      
+        window.addEventListener("keydown", handleEscKey);
+        return () => {
+          window.removeEventListener("keydown", handleEscKey);
+        };
+      }, []);
 
   return (
     <React.Fragment>
@@ -4107,7 +4097,7 @@ const ContentStunting = () => {
                         type="text"
                         value={searchTermDetail}
                         onChange={handleSearchInputDetail}
-                        onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                        // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
                         placeholder={"Cari Nama Sub Giat"} 
                       />
 
@@ -4333,7 +4323,7 @@ const ContentStunting = () => {
               </table>
             </div>
             <Pagination
-              currentPage={currentPageDetailSub}
+              currentPage={currentPageDetail}
               totalPages={totalPagesDetail}
               onPageChange={paginateDetail}
             />
