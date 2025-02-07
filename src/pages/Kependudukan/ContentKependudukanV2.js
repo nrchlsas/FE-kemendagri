@@ -514,6 +514,21 @@ const ContentKependudukanV2 = () => {
   const [dataWidth, setDataWidth] = useState(6)  
   const [roam, setRoam] = useState(false)
 
+    useEffect(() => {
+      const handleEscKey = (event) => {
+        if (event.key === "Escape") {
+          handleCloseNextModalSub();
+          handleCloseNextModal()
+          handleClose()
+        }
+      };
+    
+      window.addEventListener("keydown", handleEscKey);
+      return () => {
+        window.removeEventListener("keydown", handleEscKey);
+      };
+    }, []);
+
   return (
     <React.Fragment>
       <Row>
