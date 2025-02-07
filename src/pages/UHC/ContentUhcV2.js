@@ -604,8 +604,8 @@ const ContentUhcV2 = () => {
    useEffect(() => {
       const handleEscKey = (event) => {
         if (event.key === "Escape") {
-          handleCloseNextModal()
           handleClose()
+          handleCloseNextModal()
         }
       };
     

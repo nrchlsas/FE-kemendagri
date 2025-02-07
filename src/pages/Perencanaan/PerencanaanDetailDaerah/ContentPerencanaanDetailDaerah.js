@@ -450,9 +450,9 @@ const ContentPerencanaanDetailDaerah = () => {
          useEffect(() => {
             const handleEscKey = (event) => {
               if (event.key === "Escape") {
-                handleCloseNextModalSub();
-                handleCloseNextModal()
                 handleClose()
+                handleCloseNextModal()
+                handleCloseNextModalSub();
               }
             };
           
@@ -623,7 +623,7 @@ const ContentPerencanaanDetailDaerah = () => {
                     borderRadius: "5px",
                     // width:"100%",
                     fontSize: "16px",
-                  }}
+                  }}  
                   type="text"
                   value={searchTerm}
                   onChange={handleSearchInput}
