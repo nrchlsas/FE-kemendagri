@@ -417,7 +417,7 @@ const ContentPenganggaran = () => {
   };
 
   const [modall, setModall] = useState(false);
-  const [dataDetailNamaTahap, setDataDetailNamaTahap] = useState("Penetapan APBD Perubahan");
+  const [dataDetailNamaTahap, setDataDetailNamaTahap] = useState("Penetapan APBD");
   const [dataDetailIdTahap, setDataDetailIdTahap] = useState(28);
   const [dataRincianDetail, setDataRincianDetail] = useState(0);
   const [dataDetailNamaUnitSkpd, setDataDetailNamaUnitSkpd] = useState("");
