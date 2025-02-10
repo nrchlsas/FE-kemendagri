@@ -1754,6 +1754,16 @@ const ContentPenganggaranDetailDaerah = () => {
                         28: item?.total_ssroapbd,
                         32: item?.total_ssrogeserpasca,
                       };
+                      const tahapDataPersen = {
+                        5: item?.persenrapbd,
+                        40: item?.persenkuappas,
+                        30: item?.persengeser,
+                        41: item?.persenkupa,
+                        8: item?.persenrapbdubah,
+                        29: item?.persenapbdubah,
+                        28: item?.persenapbd,
+                        32: item?.persengeserpasca,
+                      };
                       return (
                       <tr key={index}>                        
                       <td style={{textAlign: "center",
@@ -1789,13 +1799,13 @@ const ContentPenganggaranDetailDaerah = () => {
                       </td>                                      
                       <td>
                       <span style={{float: "right"}}>
-                      {item.persentase
-                        ? (item.persentase >= 1
-                            ? `${Number(item.persentase).toLocaleString("id-ID", {
+                      {tahapDataPersen[selectedSingleTahapan]
+                        ? (tahapDataPersen[selectedSingleTahapan] >= 1
+                            ? `${Number(tahapDataPersen[selectedSingleTahapan]).toLocaleString("id-ID", {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2,
                               })}%`
-                            : `${Number(item.persentase).toLocaleString("id-ID", {
+                            : `${Number(tahapDataPersen[selectedSingleTahapan]).toLocaleString("id-ID", {
                                 minimumFractionDigits: 4,
                               })}%`
                           )
