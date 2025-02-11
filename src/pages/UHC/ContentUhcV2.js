@@ -579,7 +579,7 @@ const ContentUhcV2 = () => {
   };
   
   const [selectedSingleTahunAnggaran, setSelectedSingleTahunAnggaran] = useState('2025'); // Set default value
-  const [selectedSingleTahunData, setselectedSingleTahunData] = useState('2024'); // Set default value
+  const [selectedSingleTahunData, setSelectedSingleTahunData] = useState('2024'); // Set default value
 
   const handleSelectChangeAnggaran = (e) => {
     const { value } = e.target;
@@ -611,7 +611,7 @@ const ContentUhcV2 = () => {
 
   // const handleSelectChangeDataPokok = (e) => {
   //   const { name, value } = e.target;
-  //   setselectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
+  //   setSelectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
   //   getDataUhc({tahun: selectedSingleTahunAnggaran, tahun_data:value})
   //   getDataTabelBpjsSeprov({tahun: selectedSingleTahunAnggaran, tahun_data:value})
   // };

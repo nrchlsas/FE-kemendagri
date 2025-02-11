@@ -1441,7 +1441,7 @@ const ContentStunting = () => {
   const [showChartBerisiko, setShowChartBerisiko] = useState(false)
 
     const [selectedSingleTahunAnggaran, setSelectedSingleTahunAnggaran] = useState('2025'); // Set default value
-    const [selectedSingleTahunData, setselectedSingleTahunData] = useState('2024'); // Set default value
+    const [selectedSingleTahunData, setSelectedSingleTahunData] = useState('2024'); // Set default value
     
     const handleSelectChangeAnggaran = (e) => {
       const { value } = e.target;
@@ -1475,7 +1475,7 @@ const ContentStunting = () => {
 
     // const handleSelectChangeDataPokok = (e) => {
     //   const { name, value } = e.target;
-    //   setselectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
+    //   setSelectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
     //   getDataStunting({tahun:selectedSingleTahunAnggaran, tahun_data: value});
     //   getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: value});
     //   if(dataShowKesejahteraanStackKab){
