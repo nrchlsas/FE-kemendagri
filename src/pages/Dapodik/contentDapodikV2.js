@@ -1489,6 +1489,7 @@ const ContentDapodikV2 = () => {
                   </div>
                   {clickDaerah ? <><button onClick={()=>{
                     resetRegionClick()
+                    setTitleMap("Total Anak Sekolah")
                     }} style={{
                       backgroundColor: "#007bff",
                       color: "white",
