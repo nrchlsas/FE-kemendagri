@@ -639,10 +639,11 @@ const ContentStunting = () => {
         setDataDesil(desilData); // Simpan semua desil ke dalam state
         setValueMap(desilData?.desil1);
         
-        const maxDesil1 = Math.max(
-          ...(Array.isArray(desilData.desil1) ? desilData.desil1.map(item => item.value) : [])
-        );
-        setmaxValueMap(maxDesil1);
+        const maxValue = Array.isArray(desilData.desil1) && desilData.desil1.length > 0
+          ? Math.max(...desilData.desil1.map(item => item.value || 0))
+          : 0;
+
+        setmaxValueMap(maxValue);
 
       } catch (errorStunting) {
         setErrorStunting(errorStunting);
