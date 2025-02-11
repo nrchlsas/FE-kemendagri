@@ -580,20 +580,41 @@ const ContentUhcV2 = () => {
   
   const [selectedSingleTahunAnggaran, setSelectedSingleTahunAnggaran] = useState('2025'); // Set default value
   const [selectedSingleTahunData, setselectedSingleTahunData] = useState('2024'); // Set default value
-  
-  const handleSelectChangeAnggaran = (e) => {
-    const { name, value } = e.target;
-    setSelectedSingleTahunAnggaran(value); // Misalnya, untuk dropdown tahun
-    getDataUhc({tahun: value, tahun_data: selectedSingleTahunData})
-    getDataTabelBpjsSeprov({tahun: value, tahun_data: selectedSingleTahunData})
-  };
 
-  const handleSelectChangeDataPokok = (e) => {
-    const { name, value } = e.target;
-    setselectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
-    getDataUhc({tahun: selectedSingleTahunAnggaran, tahun_data:value})
-    getDataTabelBpjsSeprov({tahun: selectedSingleTahunAnggaran, tahun_data:value})
+  const handleSelectChangeAnggaran = (e) => {
+    const { value } = e.target;
+    const newTahunData = (parseInt(value) - 1).toString();
+    setSelectedSingleTahunAnggaran(value);
+    setSelectedSingleTahunData(newTahunData);
+  
+    getDataUhc({ tahun: value, tahun_data: newTahunData });
+    getDataTabelBpjsSeprov({ tahun: value, tahun_data: newTahunData });
   };
+  
+  const handleSelectChangeDataPokok = (e) => {
+    const { value } = e.target;
+    const newTahunAnggaran = (parseInt(value) + 1).toString();
+    setSelectedSingleTahunData(value);
+    setSelectedSingleTahunAnggaran(newTahunAnggaran);
+  
+    getDataUhc({ tahun: newTahunAnggaran, tahun_data: value });
+    getDataTabelBpjsSeprov({ tahun: newTahunAnggaran, tahun_data: value });
+  };
+  
+  
+  // const handleSelectChangeAnggaran = (e) => {
+  //   const { name, value } = e.target;
+  //   setSelectedSingleTahunAnggaran(value); // Misalnya, untuk dropdown tahun
+  //   getDataUhc({tahun: value, tahun_data: selectedSingleTahunData})
+  //   getDataTabelBpjsSeprov({tahun: value, tahun_data: selectedSingleTahunData})
+  // };
+
+  // const handleSelectChangeDataPokok = (e) => {
+  //   const { name, value } = e.target;
+  //   setselectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
+  //   getDataUhc({tahun: selectedSingleTahunAnggaran, tahun_data:value})
+  //   getDataTabelBpjsSeprov({tahun: selectedSingleTahunAnggaran, tahun_data:value})
+  // };
 
   useEffect(() => {
     getDataUhc({tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});

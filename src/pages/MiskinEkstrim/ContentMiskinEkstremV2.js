@@ -1371,18 +1371,38 @@ const ContentMiskinEkstremV2 = () => {
   const [selectedSingleTahunData, setselectedSingleTahunData] = useState('2024'); // Set default value
   
   const handleSelectChangeAnggaran = (e) => {
-    const { name, value } = e.target;
-    setSelectedSingleTahunAnggaran(value); // Misalnya, untuk dropdown tahun
-    getDataKemiskinanEkstrem({tahun: value, tahun_data:selectedSingleTahunData})
-    getDataMiskinEkstremTabel({tahun: value, tahun_data:selectedSingleTahunData});
+    const { value } = e.target;
+    const newTahunData = (parseInt(value) - 1).toString();
+    setSelectedSingleTahunAnggaran(value);
+    setSelectedSingleTahunData(newTahunData);
+  
+    getDataKemiskinanEkstrem({ tahun: value, tahun_data: newTahunData });
+    getDataMiskinEkstremTabel({ tahun: value, tahun_data: newTahunData });
+  };
+  
+  const handleSelectChangeDataPokok = (e) => {
+    const { value } = e.target;
+    const newTahunAnggaran = (parseInt(value) + 1).toString();
+    setSelectedSingleTahunData(value);
+    setSelectedSingleTahunAnggaran(newTahunAnggaran);
+  
+    getDataKemiskinanEkstrem({ tahun: newTahunAnggaran, tahun_data: value });
+    getDataMiskinEkstremTabel({ tahun: newTahunAnggaran, tahun_data: value });
   };
 
-  const handleSelectChangeDataPokok = (e) => {
-    const { name, value } = e.target;
-    setselectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
-    getDataKemiskinanEkstrem({tahun: selectedSingleTahunAnggaran, tahun_data: value})
-    getDataMiskinEkstremTabel({tahun: selectedSingleTahunAnggaran, tahun_data: value});
-  };
+  // const handleSelectChangeAnggaran = (e) => {
+  //   const { name, value } = e.target;
+  //   setSelectedSingleTahunAnggaran(value); // Misalnya, untuk dropdown tahun
+  //   getDataKemiskinanEkstrem({tahun: value, tahun_data:selectedSingleTahunData})
+  //   getDataMiskinEkstremTabel({tahun: value, tahun_data:selectedSingleTahunData});
+  // };
+
+  // const handleSelectChangeDataPokok = (e) => {
+  //   const { name, value } = e.target;
+  //   setselectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
+  //   getDataKemiskinanEkstrem({tahun: selectedSingleTahunAnggaran, tahun_data: value})
+  //   getDataMiskinEkstremTabel({tahun: selectedSingleTahunAnggaran, tahun_data: value});
+  // };
 
   const handleRegionClick = (kodeProv, namaProv) => {
     // getDataDapodik({kodeDdn: kodeProv})

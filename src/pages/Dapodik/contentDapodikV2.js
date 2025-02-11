@@ -110,29 +110,58 @@ const ContentDapodikV2 = () => {
   ] = useState([[], []]);
 
   const [selectedSingleTahunAnggaran, setSelectedSingleTahunAnggaran] = useState('2025'); // Set default value
-  const [selectedSingleTahunData, setselectedSingleTahunData] = useState('2024'); // Set default value
+  const [selectedSingleTahunData, setSelectedSingleTahunData] = useState('2024'); // Set default value
   const [kodeWilayahPeta, setKodeWilayahPeta]=useState("")
   const handleSelectChangeAnggaran = (e) => {
-    const { name, value } = e.target;
-    setSelectedSingleTahunAnggaran(value); // Misalnya, untuk dropdown tahun
-    // getDataAnakSekolah({kodeWilayah: kodeWilayahPeta, tahun: value, tahun_data: selectedSingleTahunData});
-    getDataDapodik({kodeDdn: "", tahun: value, tahun_data: selectedSingleTahunData});
-    getDataTabelDapodikSeProv({tahun:value, tahun_data: selectedSingleTahunData});
-    getDataTabelDapodikProv({tahun:value, tahun_data: selectedSingleTahunData});
-    getDataTabelDapodikKab({tahun:value, tahun_data: selectedSingleTahunData});
-    getDataCrossAnalisis({tahun:value, tahun_data: selectedSingleTahunData});
-  };  
-
-  const handleSelectChangeDataPokok = (e) => {
-    const { name, value } = e.target;
-    setselectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
-    getDataAnakSekolah({kodeWilayah: "", tahun_data: value});
-    getDataDapodik({kodeDdn: "", tahun: selectedSingleTahunAnggaran, tahun_data: value});
-    getDataTabelDapodikSeProv({tahun:selectedSingleTahunAnggaran, tahun_data: value});
-    getDataTabelDapodikProv({tahun:selectedSingleTahunAnggaran, tahun_data: value});
-    getDataTabelDapodikKab({tahun:selectedSingleTahunAnggaran, tahun_data: value});
-    getDataCrossAnalisis({tahun:selectedSingleTahunAnggaran, tahun_data: value});
+    const { value } = e.target;
+    const newTahunData = (parseInt(value) - 1).toString();
+    setSelectedSingleTahunAnggaran(value);
+    setSelectedSingleTahunData(newTahunData);
+  
+    getDataDapodik({ kodeDdn: "", tahun: value, tahun_data: newTahunData });
+    getDataTabelDapodikSeProv({ tahun: value, tahun_data: newTahunData });
+    getDataTabelDapodikProv({ tahun: value, tahun_data: newTahunData });
+    getDataTabelDapodikKab({ tahun: value, tahun_data: newTahunData });
+    getDataCrossAnalisis({ tahun: value, tahun_data: newTahunData });
   };
+  
+  const handleSelectChangeDataPokok = (e) => {
+    const { value } = e.target;
+    const newTahunAnggaran = (parseInt(value) + 1).toString();
+    setSelectedSingleTahunData(value);
+    setSelectedSingleTahunAnggaran(newTahunAnggaran);
+  
+    getDataAnakSekolah({ kodeWilayah: "", tahun_data: value });
+    getDataDapodik({ kodeDdn: "", tahun: newTahunAnggaran, tahun_data: value });
+    getDataTabelDapodikSeProv({ tahun: newTahunAnggaran, tahun_data: value });
+    getDataTabelDapodikProv({ tahun: newTahunAnggaran, tahun_data: value });
+    getDataTabelDapodikKab({ tahun: newTahunAnggaran, tahun_data: value });
+    getDataCrossAnalisis({ tahun: newTahunAnggaran, tahun_data: value });
+  };
+
+  //set old change
+  // const handleSelectChangeAnggaran = (e) => {
+  //   const { name, value } = e.target;
+  //   setSelectedSingleTahunAnggaran(value); // Misalnya, untuk dropdown tahun
+  //   // getDataAnakSekolah({kodeWilayah: kodeWilayahPeta, tahun: value, tahun_data: selectedSingleTahunData});
+  //   getDataDapodik({kodeDdn: "", tahun: value, tahun_data: selectedSingleTahunData});
+  //   getDataTabelDapodikSeProv({tahun:value, tahun_data: selectedSingleTahunData});
+  //   getDataTabelDapodikProv({tahun:value, tahun_data: selectedSingleTahunData});
+  //   getDataTabelDapodikKab({tahun:value, tahun_data: selectedSingleTahunData});
+  //   getDataCrossAnalisis({tahun:value, tahun_data: selectedSingleTahunData});
+  // };  
+
+  // const handleSelectChangeDataPokok = (e) => {
+  //   const { name, value } = e.target;
+  //   setselectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
+  //   getDataAnakSekolah({kodeWilayah: "", tahun_data: value});
+  //   getDataDapodik({kodeDdn: "", tahun: selectedSingleTahunAnggaran, tahun_data: value});
+  //   getDataTabelDapodikSeProv({tahun:selectedSingleTahunAnggaran, tahun_data: value});
+  //   getDataTabelDapodikProv({tahun:selectedSingleTahunAnggaran, tahun_data: value});
+  //   getDataTabelDapodikKab({tahun:selectedSingleTahunAnggaran, tahun_data: value});
+  //   getDataCrossAnalisis({tahun:selectedSingleTahunAnggaran, tahun_data: value});
+  // };
+  
 
   const [dataSdMap, setDataSdMap] = useState([])
   const getDataDapodik = ({kodeDdn="", tahun="", tahun_data=""}) => {

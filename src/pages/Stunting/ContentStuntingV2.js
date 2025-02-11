@@ -1444,21 +1444,44 @@ const ContentStunting = () => {
     const [selectedSingleTahunData, setselectedSingleTahunData] = useState('2024'); // Set default value
     
     const handleSelectChangeAnggaran = (e) => {
-      const { name, value } = e.target;
-      setSelectedSingleTahunAnggaran(value); // Misalnya, untuk dropdown tahun
-      getDataStunting({tahun:value, tahun_data: selectedSingleTahunData});
-      getDataStuntingTabel({tahun:value, tahun_data: selectedSingleTahunData});
+      const { value } = e.target;
+      const newTahunData = (parseInt(value) - 1).toString();
+      setSelectedSingleTahunAnggaran(value);
+      setSelectedSingleTahunData(newTahunData);
+    
+      getDataStunting({ tahun: value, tahun_data: newTahunData });
+      getDataStuntingTabel({ tahun: value, tahun_data: newTahunData });
     };
-
+    
     const handleSelectChangeDataPokok = (e) => {
-      const { name, value } = e.target;
-      setselectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
-      getDataStunting({tahun:selectedSingleTahunAnggaran, tahun_data: value});
-      getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: value});
-      if(dataShowKesejahteraanStackKab){
-        getDataStackPerProvKesejahteraan({tahunData: value})
+      const { value } = e.target;
+      const newTahunAnggaran = (parseInt(value) + 1).toString();
+      setSelectedSingleTahunData(value);
+      setSelectedSingleTahunAnggaran(newTahunAnggaran);
+    
+      getDataStunting({ tahun: newTahunAnggaran, tahun_data: value });
+      getDataStuntingTabel({ tahun: newTahunAnggaran, tahun_data: value });
+      if (dataShowKesejahteraanStackKab) {
+        getDataStackPerProvKesejahteraan({ tahunData: value });
       }
     };
+
+    // const handleSelectChangeAnggaran = (e) => {
+    //   const { name, value } = e.target;
+    //   setSelectedSingleTahunAnggaran(value); // Misalnya, untuk dropdown tahun
+    //   getDataStunting({tahun:value, tahun_data: selectedSingleTahunData});
+    //   getDataStuntingTabel({tahun:value, tahun_data: selectedSingleTahunData});
+    // };
+
+    // const handleSelectChangeDataPokok = (e) => {
+    //   const { name, value } = e.target;
+    //   setselectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
+    //   getDataStunting({tahun:selectedSingleTahunAnggaran, tahun_data: value});
+    //   getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: value});
+    //   if(dataShowKesejahteraanStackKab){
+    //     getDataStackPerProvKesejahteraan({tahunData: value})
+    //   }
+    // };
 
     const handleRegionClick = (kodeProv, namaProv) => {
       // getDataDapodik({kodeDdn: kodeProv})
