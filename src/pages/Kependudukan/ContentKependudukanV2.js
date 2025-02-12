@@ -580,7 +580,7 @@ const ContentKependudukanV2 = () => {
               <option value="2025">2025</option>
             </select>
             <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
-                   Semester:
+                   Tahun Anggaran:
                   </div>
                  <select
               name="tahun"
@@ -983,12 +983,24 @@ const ContentKependudukanV2 = () => {
                               textAlign: "center",
                               verticalAlign: "middle",
                               cursor: "pointer",}} onClick={() => requestSort("jumlahperempuan")}>Jumlah Penduduk Perempuan (Jiwa) {getSortIcon("jumlahperempuan")}</th>
-            {/* <th style={{ whiteSpace: "normal",
+            <th style={{ whiteSpace: "normal",
                               overflowWrap: "break-word",
                               maxWidth: "150px",
                               textAlign: "center",
                               verticalAlign: "middle",
-                              cursor: "pointer",}}>Action</th> */}
+                              cursor: "pointer",}}>Jumlah Anggaran (Rp)</th>
+            <th style={{ whiteSpace: "normal",
+                              overflowWrap: "break-word",
+                              maxWidth: "150px",
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",}}>Total Anggaran Kependudukan (Rp)</th>
+            <th style={{ whiteSpace: "normal",
+                              overflowWrap: "break-word",
+                              maxWidth: "150px",
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",}}>Persentase Anggaran</th>
           </tr>
         </thead>
         <tbody style={{ minHeight: '500px' }}>
@@ -1002,6 +1014,9 @@ const ContentKependudukanV2 = () => {
               <td>{item.kepadatan.toLocaleString("id-ID")}</td>
               <td>{item.jumlahlakilaki.toLocaleString("id-ID")}</td>
               <td>{item.jumlahperempuan.toLocaleString("id-ID")}</td>
+              <td>{item.total_anggaran ? parseInt(item.total_anggaran).toLocaleString("id-ID") : "-"}</td>
+              <td>{item.total_anggaran_kependudukan ? parseInt(item.total_anggaran_kependudukan).toLocaleString("id-ID") : "-"}</td>
+              <td><span style={{ float: "right" }}>{`${item.persentase_anggaran? parseInt(item.persentase_anggaran*100).toLocaleString("id-ID"): "-"}%`}</span></td>
               {/* <i
                 style={{
                   padding: "5px 10px",
