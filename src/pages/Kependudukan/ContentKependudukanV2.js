@@ -450,8 +450,8 @@ const ContentKependudukanV2 = () => {
   };
 
   useEffect(() => {
-    getDataKependudukan({tahunData: selectedSingleTahunData, tahun:selectedSingleTahunAnggaran});
-    getDataTabelKependudukanProv({tahunData: selectedSingleTahunData, tahun:selectedSingleTahunAnggaran});
+    getDataKependudukan({tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran});
+    getDataTabelKependudukanProv({tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran});
   }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -931,7 +931,7 @@ const ContentKependudukanV2 = () => {
                         cursor: "pointer",
                         fontSize: "16px",
                         marginBottom: "8px"
-                      }} onClick={()=>getDataTabelKependudukanProv({tahunData: selectedSingleTahunData, tahun:selectedSingleTahunAnggaran})}>Kembali ke Provinsi</button></>) : (<></>)}  
+                      }} onClick={()=>getDataTabelKependudukanProv({tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran})}>Kembali ke Provinsi</button></>) : (<></>)}  
     <div style={{ overflowX: "auto" }}>
       {/* Render Table */}
       <table
