@@ -1014,8 +1014,8 @@ const ContentKependudukanV2 = () => {
               <td>{item.kepadatan.toLocaleString("id-ID")}</td>
               <td>{item.jumlahlakilaki.toLocaleString("id-ID")}</td>
               <td>{item.jumlahperempuan.toLocaleString("id-ID")}</td>
-              <td>{item.total_anggaran ? parseInt(item.total_anggaran).toLocaleString("id-ID") : "-"}</td>
-              <td>{item.total_anggaran_kependudukan ? parseInt(item.total_anggaran_kependudukan).toLocaleString("id-ID") : "-"}</td>
+              <td><span style={{ float: "right" }}>{item.total_anggaran ? parseInt(item.total_anggaran).toLocaleString("id-ID") : "-"}</span></td>
+              <td><span style={{ float: "right" }}>{item.total_anggaran_kependudukan ? parseInt(item.total_anggaran_kependudukan).toLocaleString("id-ID") : "-"}</span></td>
               <td><span style={{ float: "right" }}>{`${item.persentase_anggaran? parseInt(item.persentase_anggaran*100).toLocaleString("id-ID"): "-"}%`}</span></td>
               {/* <i
                 style={{
