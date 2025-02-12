@@ -638,6 +638,9 @@ const BerandaV2 = () => {
                 
             </CardBody>
             <CardFooter>
+            <div className="d-flex justify-content-end align-items-end mb-3" style={{color:"#929FB1"}}>
+                *angka tematik di akumulasi dari pagu sub kegiatan yang sudah tercluster dalam tematik terkait, tanpa melakukan pembobotan dalam rek belanja
+              </div> 
                 <div className="d-flex justify-content-end align-items-end" style={{color:"#929FB1"}}>
                   *update date: {dataBerandaPerencanaan?.execute_time ? dataBerandaPerencanaan?.execute_time : "-"}
                 </div>                                                               
