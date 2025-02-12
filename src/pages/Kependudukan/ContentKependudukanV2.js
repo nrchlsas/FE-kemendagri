@@ -931,7 +931,7 @@ const ContentKependudukanV2 = () => {
                         cursor: "pointer",
                         fontSize: "16px",
                         marginBottom: "8px"
-                      }} onClick={()=>getDataTabelKependudukanProv()}>Kembali ke Provinsi</button></>) : (<></>)}  
+                      }} onClick={()=>getDataTabelKependudukanProv({tahunData: selectedSingleTahunData, tahun:selectedSingleTahunAnggaran})}>Kembali ke Provinsi</button></>) : (<></>)}  
     <div style={{ overflowX: "auto" }}>
       {/* Render Table */}
       <table
