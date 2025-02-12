@@ -78,7 +78,7 @@ const ContentKependudukanV2 = () => {
   const [dataChartLakiLaki, setDataChartLakiLaki] = useState([[], []]);
   const [dataChartPerempuan, setDataChartPerempuan] = useState([[], []]);
 
-  const getDataKependudukan = ({tahun}) => {
+  const getDataKependudukan = ({tahunData, tahunAnggaran}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -86,7 +86,8 @@ const ContentKependudukanV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
-            tahun: tahun,
+            tahun_data: tahunData,
+            tahun: tahunAnggaran
         }),
         };
         const response = await fetch(`${API_URI_RBAC}/v2/dashboard_dukcapil`, requestOptions);
@@ -268,19 +269,22 @@ const ContentKependudukanV2 = () => {
   const handleSelectChangeAnggaran = (e) => {
     const { name, value } = e.target;
     setSelectedSingleTahunAnggaran(value); 
+    getDataKependudukan({tahunData: selectedSingleTahunData, tahunAnggaran:value});
+    getDataTabelKependudukanProv({tahunData: selectedSingleTahunData, tahunAnggaran:value});
    
   };
 
   const handleSelectChangeDataPokok = (e) => {
     const { name, value } = e.target;
     setselectedSingleTahunData(value); 
-    getDataKependudukan({tahun: value});
+    getDataKependudukan({tahunData: value, tahunAnggaran:selectedSingleTahunAnggaran});
+    getDataTabelKependudukanProv({tahunData: value, tahunAnggaran:selectedSingleTahunAnggaran});
   };
 
-  const handleSelectChangeSemester = (e) => {
-    const { name, value } = e.target;
-    setSelectedSingleTahunSemester(value); 
-  };
+  // const handleSelectChangeSemester = (e) => {
+  //   const { name, value } = e.target;
+  //   setSelectedSingleTahunSemester(value); 
+  // };
 
   const [handleCardClick, setHandleCardClick] = useState(() => () => {});
   const [dataKependudukanTabel, setDataKependudukanTabel] = useState([]);
@@ -296,10 +300,10 @@ const ContentKependudukanV2 = () => {
         const requestOptions = {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
-          // body: JSON.stringify({
-          //   query:
-          //     "select sum(total_rincian)/1000000000000 TotalPembiayaanK from konsolidasi_apbd where kode_kelompok = '6.2'",
-          // }),
+          body: JSON.stringify({
+            tahun_data: tahunData,
+            tahun: tahunAnggaran
+        }),
         };
         // /table_Kependudukan_provinsi
         // /table_Kependudukan_kabupaten
@@ -403,7 +407,7 @@ const ContentKependudukanV2 = () => {
   };
 
   const [showNextData, setShowNextData] = useState(false);
-  const getDataTabelKependudukanKabKota = ({kodeProvinsi}) => {
+  const getDataTabelKependudukanKabKota = ({kodeProvinsi, tahunData, tahunAnggaran}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -411,7 +415,9 @@ const ContentKependudukanV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
-            kode_provinsi: kodeProvinsi
+            kode_provinsi: kodeProvinsi,
+            tahun: tahunAnggaran,
+            tahun_data: tahunData
           }),
         };        
         const response = await fetch(
@@ -438,8 +444,8 @@ const ContentKependudukanV2 = () => {
   };
 
   useEffect(() => {
-    getDataKependudukan({tahun: selectedSingleTahunData});
-    getDataTabelKependudukanProv();
+    getDataKependudukan({tahunData: selectedSingleTahunData, tahun:selectedSingleTahunAnggaran});
+    getDataTabelKependudukanProv({tahunData: selectedSingleTahunData, tahun:selectedSingleTahunAnggaran});
   }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -545,7 +551,7 @@ const ContentKependudukanV2 = () => {
                 <span>Data Kependudukan</span>
               </div>
             </div>
-            {/* <div className="d-flex nav-beranda">
+            <div className="d-flex nav-beranda">
             <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
                     Tahun Data:
                   </div>
@@ -581,13 +587,13 @@ const ContentKependudukanV2 = () => {
                 cursor: "pointer",                          
                 margin: "15px 15px 15px 5px",
               }}
-              value={selectedSingleTahunSemester}
-              onChange={handleSelectChangeSemester}
-            >                        
-              <option value="1">Semester 1</option>
-              <option value="2">Semester 2</option>
+              value={selectedSingleTahunAnggaran}
+              onChange={handleSelectChangeAnggaran}
+            >
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
             </select>
-                </div> */}
+                </div>
             </div>
           </Card>
         </Col>
@@ -983,7 +989,7 @@ const ContentKependudukanV2 = () => {
           {currentItems.map((item, index) => (
             <tr key={index}>
               {/* <td>{item.kode_daerah}</td> */}
-              <td className={showNextData ? "" : "click-data"} onClick={() =>{showNextData ? "" : getDataTabelKependudukanKabKota({kodeProvinsi: item.kode_daerah}) }}>{item.nama_daerah}</td>
+              <td className={showNextData ? "" : "click-data"} onClick={() =>{showNextData ? "" : getDataTabelKependudukanKabKota({kodeProvinsi: item.kode_daerah, tahunAnggaran:selectedSingleTahunAnggaran, tahunData:selectedSingleTahunData}) }}>{item.nama_daerah}</td>
               <td>{item.jumlahpenduduk.toLocaleString("id-ID")}</td>
               <td>{item.jmlkk.toLocaleString("id-ID")}</td>            
               <td>{item.luas_wilayah.toLocaleString("id-ID")}</td>
