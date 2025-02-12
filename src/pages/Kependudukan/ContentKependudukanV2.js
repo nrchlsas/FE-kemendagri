@@ -293,7 +293,7 @@ const ContentKependudukanV2 = () => {
   const [titleMap, setTitleMap] = useState("Total Penduduk")
   const [valueMap, setValueMap] = useState([]);
   const [maxValueMap, setmaxValueMap] = useState(0)
-  const getDataTabelKependudukanProv = () => {
+  const getDataTabelKependudukanProv = ({tahunData, tahunAnggaran}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -351,12 +351,18 @@ const ContentKependudukanV2 = () => {
           value: item.luas_wilayah
         }));
 
-        const maxPenduduk = Math.max(...valueTotalPenduduk.map(item => item.value));
-        const maxKK = Math.max(...valueTotalKK.map(item => item.value));
-        const maxLakiLaki = Math.max(...valueTotalLakiLaki.map(item => item.value));
-        const maxPerempuan = Math.max(...valueTotalPerempuan.map(item => item.value));
-        const maxKepadatan = Math.max(...valueTotalKepadatan.map(item => item.value));
-        const maxLuasWilayah = Math.max(...valueTotalLuasWilayah.map(item => item.value));
+        const maxPenduduk = valueTotalPenduduk?.reduce((max, item) => Math.max(max, item.value || 0), 0);
+        const maxKK = valueTotalKK?.reduce((max, item) => Math.max(max, item.value || 0), 0);
+        const maxLakiLaki = valueTotalLakiLaki?.reduce((max, item) => Math.max(max, item.value || 0), 0);
+        const maxPerempuan = valueTotalPerempuan?.reduce((max, item) => Math.max(max, item.value || 0), 0);
+        const maxKepadatan = valueTotalKepadatan?.reduce((max, item) => Math.max(max, item.value || 0), 0);
+        const maxLuasWilayah = valueTotalLuasWilayah?.reduce((max, item) => Math.max(max, item.value || 0), 0);
+        // const maxPenduduk = Math.max(...valueTotalPenduduk.map(item => item.value));
+        // const maxKK = Math.max(...valueTotalKK.map(item => item.value));
+        // const maxLakiLaki = Math.max(...valueTotalLakiLaki.map(item => item.value));
+        // const maxPerempuan = Math.max(...valueTotalPerempuan.map(item => item.value));
+        // const maxKepadatan = Math.max(...valueTotalKepadatan.map(item => item.value));
+        // const maxLuasWilayah = Math.max(...valueTotalLuasWilayah.map(item => item.value));
 
         setValueMap(valueTotalPenduduk);
         setmaxValueMap(maxPenduduk)
