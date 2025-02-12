@@ -263,22 +263,26 @@ const ContentKependudukanV2 = () => {
   };
 
   const [selectedSingleTahunAnggaran, setSelectedSingleTahunAnggaran] = useState('2025'); // Set default value
-  const [selectedSingleTahunData, setselectedSingleTahunData] = useState('2024'); // Set default value
+  const [selectedSingleTahunData, setSelectedSingleTahunData] = useState('2024'); // Set default value
   const [selectedSingleTahunSemester, setSelectedSingleTahunSemester] = useState('2025'); // Set default value
   
   const handleSelectChangeAnggaran = (e) => {
     const { name, value } = e.target;
+    const newTahunData = (parseInt(value) - 1).toString();
     setSelectedSingleTahunAnggaran(value); 
-    getDataKependudukan({tahunData: selectedSingleTahunData, tahunAnggaran:value});
-    getDataTabelKependudukanProv({tahunData: selectedSingleTahunData, tahunAnggaran:value});
+    setSelectedSingleTahunData(newTahunData);
+    getDataKependudukan({tahunData: newTahunData, tahunAnggaran:value});
+    getDataTabelKependudukanProv({tahunData: newTahunData, tahunAnggaran:value});
    
   };
 
   const handleSelectChangeDataPokok = (e) => {
     const { name, value } = e.target;
-    setselectedSingleTahunData(value); 
-    getDataKependudukan({tahunData: value, tahunAnggaran:selectedSingleTahunAnggaran});
-    getDataTabelKependudukanProv({tahunData: value, tahunAnggaran:selectedSingleTahunAnggaran});
+    const newTahunAnggaran = (parseInt(value) + 1).toString();
+    setSelectedSingleTahunData(value); 
+    setSelectedSingleTahunAnggaran(newTahunAnggaran);
+    getDataKependudukan({tahunData: value, tahunAnggaran:newTahunAnggaran});
+    getDataTabelKependudukanProv({tahunData: value, tahunAnggaran:newTahunAnggaran});
   };
 
   // const handleSelectChangeSemester = (e) => {
