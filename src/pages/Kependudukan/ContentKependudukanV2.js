@@ -292,6 +292,7 @@ const ContentKependudukanV2 = () => {
 
   const [handleCardClick, setHandleCardClick] = useState(() => () => {});
   const [dataKependudukanTabel, setDataKependudukanTabel] = useState([]);
+  const [dataKependudukanTabelFiltered, setDataKependudukanTabelFiltered] = useState([]);
   const [loadingKependudukanTabel, setLoadingKependudukanTabel] = useState([]);
   const [errorKependudukanTabel, setErrorKependudukanTabel] = useState([]);
   const [titleMap, setTitleMap] = useState("Total Penduduk")
@@ -323,6 +324,7 @@ const ContentKependudukanV2 = () => {
 
         const dataKependudukanTabel = await response.json();
         setDataKependudukanTabel(dataKependudukanTabel.data)
+        setDataKependudukanTabelFiltered(dataKependudukanTabel.data)
         setShowNextData(false)
 
         const valueTotalPenduduk = dataKependudukanTabel.data.map(item => ({
@@ -479,7 +481,7 @@ const ContentKependudukanV2 = () => {
   };
 
   const sortedItems = React.useMemo(() => {
-    let sortableItems = [...(dataKependudukanTabel || [])];
+    let sortableItems = [...(dataKependudukanTabelFiltered || [])];
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key] || 0;
@@ -495,13 +497,13 @@ const ContentKependudukanV2 = () => {
       });
     }
     return sortableItems;
-  }, [dataKependudukanTabel, sortConfig]);
+  }, [dataKependudukanTabelFiltered, sortConfig]);
 
   // Slice the sorted data for the current page
   const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);
 
   // Calculate total number of pages
-  const totalPages = Math.ceil((dataKependudukanTabel?.length || 0) / itemsPerPage);
+  const totalPages = Math.ceil((dataKependudukanTabelFiltered?.length || 0) / itemsPerPage);
 
   // Pagination change handler
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
@@ -544,6 +546,28 @@ const ContentKependudukanV2 = () => {
         window.removeEventListener("keydown", handleEscKey);
       };
     }, []);
+
+    const [searchTerm, setSearchTerm] = useState("");
+    const handleSearchInput= (e) => {
+      const value = e.target.value.toLowerCase();
+      setSearchTerm(value);
+      if (value === "") {
+        setDataKependudukanTabelFiltered(dataKependudukanTabel) 
+      } else {
+        const filtered = dataKependudukanTabel.filter((item) => {
+            return item.nama_daerah.toLowerCase().includes(value)
+        }
+        );
+        setDataKependudukanTabelFiltered(filtered)  
+      }
+      setCurrentPage(1);
+    };
+
+    const handleClearSearch= () => {
+      setCurrentPage(1);
+      setSearchTerm(""); // Kosongkan isi input
+      setDataKependudukanTabelFiltered(dataKependudukanTabel)
+    };
 
   return (
     <React.Fragment>
@@ -894,7 +918,68 @@ const ContentKependudukanV2 = () => {
         <Col>
         <Card className="card-animate">
           <CardBody>
-          
+          <div className="mb-2 d-flex">
+                    <div
+                      className="mx-2"
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        maxWidth: "300px",
+                        marginBottom: "20px",
+                      }}
+                    >
+                      <input
+                        style={{
+                          padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                          width: "100%",
+                          border: "1px solid #ccc",
+                          borderRadius: "5px",
+                          fontSize: "16px",
+                        }}
+                        type="text"
+                        value={searchTerm}
+                        onChange={handleSearchInput}
+                        // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                        placeholder="Cari Provinsi"
+                      />
+
+                      {/* Tombol "X" di dalam input */}
+                      {searchTerm && (
+                        <button
+                          onClick={() => handleClearSearch("seprovinsi")}
+                          style={{
+                            position: "absolute",
+                            right: "10px",
+                            top: "50%",
+                            transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                            background: "transparent",
+                            border: "none",
+                            fontSize: "16px",
+                            cursor: "pointer",
+                            color: "#999",
+                          }}
+                        >
+                          &#10006;
+                        </button>
+                      )}
+                    </div>
+                    {/* <div>
+                      <button
+                        style={{
+                          backgroundColor: "#007bff",
+                          color: "white",
+                          padding: "10px 20px",
+                          border: "none",
+                          borderRadius: "5px",
+                          cursor: "pointer",
+                          fontSize: "16px",
+                        }}
+                        onClick={() => handleButtonClick("seprovinsi")}
+                      >
+                        search
+                      </button>
+                    </div> */}
+                  </div>
           {/* <table class="table table-nowrap align-middle mb-0">
           <thead class="table-light">
         <tr>
@@ -1031,7 +1116,7 @@ const ContentKependudukanV2 = () => {
               ></i> */}
             </tr>
           ))}
-          {placeholders}
+          {/* {placeholders} */}
         </tbody>
       </table>
       </div>
