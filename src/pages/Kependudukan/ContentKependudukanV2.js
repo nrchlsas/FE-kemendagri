@@ -444,6 +444,7 @@ const ContentKependudukanV2 = () => {
         const dataKependudukanTabel = await response.json();
 
         setDataKependudukanTabel(dataKependudukanTabel.data) 
+        setDataKependudukanTabelFiltered(dataKependudukanTabel.data) 
         setCurrentPage(1)
         setShowNextData(true);     
       } catch (errorKependudukanTabel) {
