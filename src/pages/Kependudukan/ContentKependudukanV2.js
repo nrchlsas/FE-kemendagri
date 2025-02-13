@@ -822,15 +822,15 @@ const ContentKependudukanV2 = () => {
     const [namaSubGiat, setNamaSubGiat] = useState("")
       const [namaSro, setNamaSro] = useState("")
       const handleOpenNextModalSub = ({
-        namaDaerah = "",
+        namaSubGiat = "",
         kodeDdn,
         kodeSubGiat,
         rincianDetail = 0
       }
       ) => {
         getDataDetailAnggaranSub({kodeDdn:kodeDdn, kodeSubGiat:kodeSubGiat, tahun:selectedSingleTahunAnggaran, tahunData:selectedSingleTahunData});      
-        setDataDetailNamaDaerah(namaDaerah);
-        setDataRincianDetail(rincianDetail);
+        setNamaSubGiat(namaSubGiat);
+        setDataRincianDetailSub(rincianDetail);
       };
     
       const handleOpenNextModalSubSub = ({kodeDdn, kodeSubGiat, kodeSro, tahun, rincianDetail, namaSro}) => {
@@ -1689,9 +1689,7 @@ const ContentKependudukanV2 = () => {
       >
         <div className="modal-content border-0">
           <ModalHeader className=" p-3 bg-info-subtle" toggle={handleClose}>
-            Detail Anggaran Kependudukan
-            {/* {dataJenisPemda == "kab" ? "Kabupaten/Kota" : "Provinsi"} */}
-            {dataDetailNamaDaerah == "Aceh"? "Provinsi Aceh" : dataDetailNamaDaerah}
+            Detail Anggaran Kependudukan {dataDetailNamaDaerah == "Aceh"? "Provinsi Aceh" : dataDetailNamaDaerah}
           </ModalHeader>
           <ModalBody>
             <Row>
@@ -1909,7 +1907,7 @@ const ContentKependudukanV2 = () => {
                       padding: "5px 10px",                      
                       cursor: "pointer",
                       fontSize: "30px"
-                    }} onClick={()=>handleOpenNextModalSub({kodeDdn: item.kode_ddn, kodeSubGiat: item.kode_sub_giat, rincianDetail: item.total_rinciansro, namaDaerah:""})} className="bx bx-list-ul text-primary"></i>
+                    }} onClick={()=>handleOpenNextModalSub({kodeDdn: item.kode_ddn, kodeSubGiat: item.kode_sub_giat, rincianDetail: item.total_rinciansub, namaSubGiat:item.nama_sub_giat})} className="bx bx-list-ul text-primary"></i>
                       </td>
                     </tr>
                   ))}
@@ -1997,7 +1995,7 @@ const ContentKependudukanV2 = () => {
                         type="text"
                         value={searchTermDetailSub}
                         onChange={handleSearchInputDetailSub}
-                        onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                        
                         placeholder={"Cari Sub Rincian Objek"} 
                       />
 
@@ -2138,7 +2136,7 @@ const ContentKependudukanV2 = () => {
                       padding: "5px 10px",                      
                       cursor: "pointer",
                       fontSize: "30px"
-                    }} onClick={()=>handleOpenNextModalSubSub({kodeDdn: item.kode_ddn, kodeSubGiat: item.kode_sub_giat, rincianDetail: item.total_rinciansro, namaDaerah:""})} className="bx bx-list-ul text-primary"></i>
+                    }} onClick={()=>handleOpenNextModalSubSub({kodeDdn: item.kode_ddn, kodeSubGiat: item.kode_sub_giat, rincianDetail: item.total_rinciansro, namaSro: item.nama_sro})} className="bx bx-list-ul text-primary"></i>
                         </td> 
                     </tr>
                   ))}
@@ -2212,9 +2210,9 @@ const ContentKependudukanV2 = () => {
                                 <span>
                                   <CountUp
                                     start={0}
-                                    end={
+                                    end={0
                                       // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
-                                      totalSebelumPembobotan
+                                      // totalSebelumPembobotan
                                     }
                                     separator="."
                                     prefix="Rp "
