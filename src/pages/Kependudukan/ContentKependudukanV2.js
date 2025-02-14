@@ -2165,7 +2165,7 @@ const ContentKependudukanV2 = () => {
                             className="d-flex flex-column title-custom-card"                            
                           >
                             <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                              <span>Total Anggaran Sub Rincian Objek Setelah Pembobotan</span>
+                              <span>Total Anggaran Sub Rincian Objek</span>
                             </div>
                             <div className="d-flex">
                               {/* <div className="avatar-xs-half flex-shrink-0">
@@ -2180,39 +2180,6 @@ const ContentKependudukanV2 = () => {
                                     end={
                                       // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
                                       dataRincianDetailSubSub
-                                    }
-                                    separator="."
-                                    prefix="Rp "
-                                    suffix=""
-                                    duration={1}
-                                  />
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </CardBody>
-                      </Card></Col>
-            <Col md={4}><Card className="card-animate card-height-100">
-                        <CardBody>
-                          <div
-                            className="d-flex flex-column title-custom-card"                            
-                          >
-                            <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                              <span>Total Anggaran Sub Rincian Objek Sebelum Pembobotan</span>
-                            </div>
-                            <div className="d-flex">
-                              {/* <div className="avatar-xs-half flex-shrink-0">
-                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
-                          <i className=" ri-women-line text-danger"></i>
-                        </span>
-                      </div> */}
-                              <div className="d-flex justify-content-center align-items-center title-body">
-                                <span>
-                                  <CountUp
-                                    start={0}
-                                    end={0
-                                      // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
-                                      // totalSebelumPembobotan
                                     }
                                     separator="."
                                     prefix="Rp "
@@ -2294,117 +2261,101 @@ const ContentKependudukanV2 = () => {
                   // style={{ width: "100%" }}
                 >
                   <thead className="table-light" style={{ position: "sticky", top: 0, zIndex: 2 }}>
-                    <tr>
-                    <th rowSpan="3" style={{ verticalAlign: "middle", textAlign: "center" }}>
+                  <tr>
+                    <th style={{ verticalAlign: "middle", textAlign: "center" }}>
                         NO
                       </th>                      
-                      <th  rowSpan="3"           
+                      <th                        
                         onClick={() => requestSort("kode_standar_harga")}
                         style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
                           wordWrap: "break-word", maxWidth:"100px" }}
                       >
                         Kode Standar Harga {getSortIcon("kode_standar_harga")}
                       </th>                                                                  
-                      <th  rowSpan="3"                      
+                      <th                        
                         onClick={() => requestSort("nama_standar_harga")}
                         style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
                           wordWrap: "break-word", maxWidth:"100px" }}
                       >
                         Nama Standar Harga {getSortIcon("nama_standar_harga")}
                       </th>                                                                  
-                      <th  rowSpan="3"                      
+                      <th                        
                         onClick={() => requestSort("satuan")}
                         style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
                           wordWrap: "break-word", maxWidth:"100px" }}
                       >
                         Satuan {getSortIcon("satuan")}
                       </th>                                                                  
-                      <th rowSpan="3" onClick={() => requestSort("volume")}
+                      <th onClick={() => requestSort("volume")}
                         style={{ cursor: "pointer", textAlign: "center", whiteSpace: "normal",
                           wordWrap: "break-word", maxWidth:"100px" }}>
                         Volume {getSortIcon("volume")}
                       </th>  
-                      <th rowSpan="3" onClick={() => requestSort("harga_satuan")}
+                      <th onClick={() => requestSort("harga_satuan")}
                         style={{ cursor: "pointer", textAlign: "center" }}>
                         Harga Satuan (Rp) {getSortIcon("harga_satuan")}
                       </th>
-                    </tr>
-                    <tr>
-                      <th colSpan="2"
+                      <th onClick={() => requestSort("total_rinciansro")}
                         style={{ cursor: "pointer", textAlign: "center" }}>
-                        Total Rincian
+                        Total Rincian Sub sro {getSortIcon("total_rinciansro")}
                       </th>
-                      <th rowSpan="2" onClick={() => requestSort("persentase")}
+                      <th onClick={() => requestSort("persentase")}
                         style={{ cursor: "pointer", textAlign: "center",whiteSpace: "normal",
                           wordWrap: "break-word" }}>
-                        Persentase Setelah Pembobotan {getSortIcon("persentase")}
+                        Persentase {getSortIcon("persentase")}
                       </th>                                                                   
-                    </tr>
-                    <tr>
-                      <th onClick={() => requestSort("total_rinciansro")}
-                        style={{ cursor: "pointer", textAlign: "center" }}>
-                        Sebelum Pembobotan
-                      </th>
-                      <th onClick={() => requestSort("total_rinciansro")}
-                        style={{ cursor: "pointer", textAlign: "center" }}>
-                        Setelah Pembobotan {getSortIcon("total_rinciansro")}
-                      </th>
-                    </tr>
+                    </tr>  
                   </thead>
                   <tbody style={{ minHeight: "500px" }}>
-                    {currentItemDetailSubSub.map((item, index) => (
+                  {currentItemDetailSubSub.map((item, index) => (
                       <tr key={index}>                        
-                      <td style={{textAlign: "center",
-                      verticalAlign: "middle"}}>
-                        {/* { index + 1} */}
-                        {indexOfFirstItemDetailSubSub + index + 1}
-                      </td>
-                      <td>
-                        {item.kode_standar_harga}
-                      </td>
-                      <td>
-                        {item.nama_standar_harga}
-                      </td>
-                      <td style={{
-                          whiteSpace: "normal",  // Membolehkan teks turun ke baris berikutnya
-                          wordWrap: "break-word",  // Memastikan teks panjang terpotong dan turun ke bawah
-                          maxWidth: "200px"  // Menetapkan lebar maksimum sel (sesuaikan dengan kebutuhan)
-                        }}>
-                        {" "}
-                        {item.satuan || "-"}
-                      </td>     
-                      <td>
-                      <span style={{float: "right"}}>{item.volume ? item.volume.toLocaleString("id-ID")
+                        <td style={{textAlign: "center",
+                        verticalAlign: "middle"}}>
+                          {/* { index + 1} */}
+                          {indexOfFirstItemDetailSubSub + index + 1}
+                        </td>
+                        <td>
+                          {item.kode_standar_harga}
+                        </td>
+                        <td>
+                          {item.nama_standar_harga}
+                        </td>
+                        <td style={{
+                            whiteSpace: "normal",  // Membolehkan teks turun ke baris berikutnya
+                            wordWrap: "break-word",  // Memastikan teks panjang terpotong dan turun ke bawah
+                            maxWidth: "200px"  // Menetapkan lebar maksimum sel (sesuaikan dengan kebutuhan)
+                          }}>
+                          {" "}
+                          {item.satuan || "-"}
+                        </td>     
+                        <td>
+                        <span style={{float: "right"}}>{item.volume ? item.volume.toLocaleString("id-ID")
                           : "-"}</span>                          
-                      </td>         
-                      <td>
-                      <span style={{float: "right"}}>{item.harga_satuan ? parseInt(item.harga_satuan).toLocaleString("id-ID")
-                          : "-"}</span>                          
-                      </td>      
-                      <td>
-                      <span style={{float: "right"}}>{item.harga_satuan ? parseInt(item.harga_satuan*item.volume).toLocaleString("id-ID")
-                          : "-"}</span>  
-                      </td>                                                             
-                      <td>
-                      <span style={{float: "right"}}>{item.total_rinciansro ? parseInt(item.total_rinciansro).toLocaleString("id-ID")
-                          : "-"}</span>                          
-                      </td>                                      
-                      <td>
-                      <span style={{float: "right"}}>
-                      {item.persentase
-                        ? (item.persentase >= 1
-                            ? `${Number(item.persentase).toLocaleString("id-ID", {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })}%`
-                            : `${Number(item.persentase).toLocaleString("id-ID", {
-                                minimumFractionDigits: 4,
-                              })}%`
-                          )
-                        : "-"}
-                      </span>   
-                      </td>
-                    </tr>
+                        </td>         
+                        <td>
+                        <span style={{float: "right"}}>{item.harga_satuan ? parseInt(item.harga_satuan).toLocaleString("id-ID")
+                            : "-"}</span>                          
+                        </td>                                                                    
+                        <td>
+                        <span style={{float: "right"}}>{item.total_rinciansro ? parseInt(item.total_rinciansro).toLocaleString("id-ID")
+                          : "-"}</span>                         
+                        </td>                                      
+                        <td>
+                        <span style={{float: "right"}}>
+                        {item.persentase
+                          ? (item.persentase >= 1
+                              ? `${Number(item.persentase).toLocaleString("id-ID", {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                })}%`
+                              : `${Number(item.persentase).toLocaleString("id-ID", {
+                                  minimumFractionDigits: 4,
+                                })}%`
+                            )
+                          : "-"}
+                        </span>   
+                        </td>
+                      </tr>
                     ))}
                     {/* {placeholders} */}
                   </tbody>
