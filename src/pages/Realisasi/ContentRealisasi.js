@@ -52,6 +52,9 @@ const ContentRealisasi = () => {
   const [dataRealisasiPersentase, setDataRealisasiPersentase] = useState(
     []
   );
+  const [dataRealisasiPersentaseFiltered, setDataRealisasiPersentaseFiltered] = useState(
+    []
+  );
   const [loadingRealisasi, setLoadingRealisasi] = useState([]);
   const [errorRealisasi, setErrorRealisasi] = useState([]);
 
@@ -81,6 +84,9 @@ const ContentRealisasi = () => {
 
         const dataRealisasiNasionalPersentase = await response.json();
         setDataRealisasiPersentase(
+          dataRealisasiNasionalPersentase.data.realisasi_level_1
+        );
+        setDataRealisasiPersentaseFiltered(
           dataRealisasiNasionalPersentase.data.realisasi_level_1
         );
 
@@ -131,7 +137,7 @@ const ContentRealisasi = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
   const sortedItems = React.useMemo(() => {
-    let sortableItems = [...(dataRealisasiPersentase || [])];
+    let sortableItems = [...(dataRealisasiPersentaseFiltered || [])];
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key] || 0;
@@ -147,7 +153,7 @@ const ContentRealisasi = () => {
       });
     }
     return sortableItems;
-  }, [dataRealisasiPersentase, sortConfig]);
+  }, [dataRealisasiPersentaseFiltered, sortConfig]);
 
   const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(
@@ -182,6 +188,28 @@ const ContentRealisasi = () => {
     navigate(`/realisasi/realisasi-detail/${_id}?namaDaerah=${encodedNamaDaerah}`);
   };
 
+  const [searchTerm, setSearchTerm] = useState("");
+      // Fungsi untuk menangani perubahan pada input
+      const handleSearchInput = (e) => {
+        const value = e.target.value.toLowerCase()
+        setSearchTerm(e.target.value);
+        if(value===""){
+          setDataRealisasiPersentaseFiltered(dataRealisasiPersentase)
+        }else{
+          const filtered = dataRealisasiPersentase.filter((item) => 
+            item.nama_prov.toLowerCase().includes(value)
+          );
+          setDataRealisasiPersentaseFiltered(filtered)
+        }
+        setCurrentPage(1);
+      };
+  
+      const handleClearSearch = () => {
+        setCurrentPage(1);
+        setSearchTerm("");
+        setDataRealisasiPersentaseFiltered(dataRealisasiPersentase)
+      };
+  
 
   return (
     <React.Fragment>
@@ -200,99 +228,6 @@ const ContentRealisasi = () => {
                 </div>
               </div>
               </div>
-          {/* <Card className="card-custom">
-              <div className="d-flex justify-content-center align-items-center">
-                <div className="nav-beranda d-flex justify-content-center align-items-center">
-                  <Nav tabs className="nav nav-tabs nav-success nav-justified">
-                    <NavItem>
-                      <NavLink
-                        style={{ cursor: "pointer" }}
-                        className={classnames({
-                          active: customActiveTab === "1",
-                        })}
-                        onClick={() => {
-                          toggleCustom("1");
-                          setNamaTahapan("Persiapan")
-                        }}
-                      >
-                        Persiapan
-                      </NavLink>
-                    </NavItem>
-                    <NavItem>
-                      <NavLink
-                        style={{ cursor: "pointer" }}
-                        className={classnames({
-                          active: customActiveTab === "2",
-                        })}
-                        onClick={() => {
-                          toggleCustom("2");
-                          setNamaTahapan("Rancangan Awal")
-                        }}
-                      >
-                        Ranwal
-                      </NavLink>
-                    </NavItem>
-                    <NavItem>
-                      <NavLink
-                        style={{ cursor: "pointer" }}
-                        className={classnames({
-                          active: customActiveTab === "3",
-                        })}
-                        onClick={() => {
-                          toggleCustom("3");
-                          setNamaTahapan("Rancangan")
-                        }}
-                      >
-                        Rancangan
-                      </NavLink>
-                    </NavItem>
-                    <NavItem>
-                      <NavLink
-                        style={{ cursor: "pointer" }}
-                        className={classnames({
-                          active: customActiveTab === "4",
-                        })}
-                        onClick={() => {
-                          toggleCustom("4");
-                          setNamaTahapan("Musrenbang")
-                        }}
-                      >
-                        Musrenbang
-                      </NavLink>
-                    </NavItem>
-                    <NavItem>
-                      <NavLink
-                        style={{ cursor: "pointer" }}
-                        className={classnames({
-                          active: customActiveTab === "5",
-                        })}
-                        onClick={() => {
-                          toggleCustom("5");
-                          setNamaTahapan("Rancangan Akhir")
-                        }}
-                      >
-                        Rankhir
-                      </NavLink>
-                    </NavItem>
-                    <NavItem>
-                      <NavLink
-                        style={{ cursor: "pointer" }}
-                        className={classnames({
-                          active: customActiveTab === "6",
-                        })}
-                        onClick={() => {
-                          toggleCustom("6");
-                          setNamaTahapan("Penetapan")
-                        }}
-                      >
-                        Penetapan
-                      </NavLink>
-                    </NavItem>
-                  </Nav>
-                </div>
-              </div>
-            
-          </Card> */}
         </Col>        
     </Row>    
       <Row>
@@ -376,57 +311,51 @@ const ContentRealisasi = () => {
               </div>
               <Row>
                 <Col>
-                  {/* <input
-                    style={{
-                      padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
-                      border: "1px solid #ccc",
-                      borderRadius: "5px",
-                      fontSize: "16px",
-                      marginTop: "16px",
-                      marginBottom: "30px",
-                    }}
-                    type="text"
-                    // value={searchTerm}
-                    // onChange={handleSearchInput}
-                    // onKeyDown={(e) => handleKeyDown(e, "provinsi")}
-                    placeholder="Cari Daerah"
-                  /> */}
-                  {/* <select
-                  name="tahun"
-                        style={{
-                          padding: "10px 30px 10px 10px",
-                          fontSize: "16px",
-                          borderRadius: "5px",
-                          border: "1px solid #ccc",
-                          backgroundColor: "#ffffff",                          
-                          cursor: "pointer",                          
-                          marginLeft: "10px",
-                          marginTop: "16px",
-                          marginBottom: "30px",
-                        }}
-                        value={selectedSingleTahun}
-                        onChange={handleSelectChange}
-                      >                        
-                        <option value="2024">2024</option>
-                        <option value="2025">2025</option>
-                      </select> */}
-                      {/* <select
-                      name="tahap"
-                        style={{
-                          padding: "10px 30px 10px 10px",
-                          fontSize: "16px",
-                          borderRadius: "5px",
-                          border: "1px solid #ccc",
-                          backgroundColor: "#ffffff",                          
-                          cursor: "pointer",                          
-                          marginLeft: "10px"
-                        }}
-                        value={selectedSingleTahapan}
-                        onChange={handleSelectChange}
-                      >                        
-                        <option value="1">RKPD</option>
-                        <option value="3">RKPD Perubahan</option>
-                      </select> */}
+                <div className='d-flex'>
+                  <div className="mb-2 d-flex">
+                  <div
+                      className="mx-2 mt-3"
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        maxWidth: "300px",
+                        marginBottom: "20px",
+                      }}
+                    >
+             <input
+                  style={{
+                    padding: "10px 30px 10px 10px",
+                    border: "1px solid #ccc",
+                    borderRadius: "5px",
+                    // width:"100%",
+                    fontSize: "16px",
+                  }}
+                  type="text"
+                  value={searchTerm}
+                  onChange={handleSearchInput}
+                  placeholder="Cari Daerah"
+                />
+                {searchTerm && (
+                <button
+                  onClick={() => handleClearSearch()}
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    color: "#999",
+                  }}
+                >
+                  &#10006;
+                </button>
+              )}
+            </div> 
+            </div>
+                  </div>
                 </Col>
               </Row>
               <Row>

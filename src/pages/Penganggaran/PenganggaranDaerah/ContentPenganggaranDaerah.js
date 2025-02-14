@@ -32,6 +32,9 @@ const ContentPenganggaranDaerah = () => {
   const [dataPenganggaranPersentase, setDataPenganggaranPersentase] = useState(
     []
   );
+  const [dataPenganggaranPersentaseFiltered, setDataPenganggaranPersentaseFiltered] = useState(
+    []
+  );
   const [dataPenganggaranSudahDanBelum, setDataPenganggaranSudahDanBelum] = useState(
     []
   );
@@ -119,6 +122,9 @@ const ContentPenganggaranDaerah = () => {
         setDataPenganggaranPersentase(
           dataPenganggaranNasionalPersentase.data.penganggaran_level_2
         );
+        setDataPenganggaranPersentaseFiltered(
+          dataPenganggaranNasionalPersentase.data.penganggaran_level_2
+        );
 
         setDataPenganggaranSudahDanBelum(
           dataPenganggaranNasionalPersentase.data.penganggaran_level_2
@@ -167,7 +173,7 @@ const ContentPenganggaranDaerah = () => {
   const indexOfFirstItemSudahDanBelum = indexOfLastItemSudahDanBelum - itemsPerPageSudahDanBelum;
 
   const sortedItems = React.useMemo(() => {
-    let sortableItems = [...(dataPenganggaranPersentase || [])];
+    let sortableItems = [...(dataPenganggaranPersentaseFiltered || [])];
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key] || 0;
@@ -183,7 +189,7 @@ const ContentPenganggaranDaerah = () => {
       });
     }
     return sortableItems;
-  }, [dataPenganggaranPersentase, sortConfig]);
+  }, [dataPenganggaranPersentaseFiltered, sortConfig]);
 
   const sortedItemsSudahDanBelum = React.useMemo(() => {
     let sortableItems = [...(dataPenganggaranSudahDanBelum || [])];
@@ -270,6 +276,29 @@ const ContentPenganggaranDaerah = () => {
     return "↕"; // Default icon for unsorted
   };     
 
+  const [searchTerm, setSearchTerm] = useState("");
+        
+      // Fungsi untuk menangani perubahan pada input
+      const handleSearchInput = (e) => {
+        const value = e.target.value.toLowerCase()
+        setSearchTerm(e.target.value);
+        if(value===""){
+          setDataPenganggaranPersentaseFiltered(dataPenganggaranPersentase)
+        }else{
+          const filtered = dataPenganggaranPersentase.filter((item) => 
+            item.nama_daerah.toLowerCase().includes(value)
+          );
+          setDataPenganggaranPersentaseFiltered(filtered)
+        }
+        setCurrentPage(1);
+      };
+  
+      const handleClearSearch = () => {
+        setCurrentPage(1);
+        setSearchTerm("");
+        setDataPenganggaranPersentaseFiltered(dataPenganggaranPersentase)
+      };
+
     return (
     <React.Fragment>
         <Row>
@@ -287,338 +316,11 @@ const ContentPenganggaranDaerah = () => {
                 </div>
               </div>
               <div className="d-flex justify-content-center align-items-center">
-                {/* <div className="nav-beranda d-flex justify-content-center align-items-center">
-                  <Nav tabs className="nav nav-tabs nav-success nav-justified">
-                    <NavItem>
-                      <NavLink
-                        style={{ cursor: "pointer" }}
-                        className={classnames({
-                          active: customActiveTab === "1",
-                        })}
-                        onClick={() => {
-                          toggleCustom("1");
-                          setNamaTahapan("Persiapan")
-                        }}
-                      >
-                        Persiapan
-                      </NavLink>
-                    </NavItem>
-                    <NavItem>
-                      <NavLink
-                        style={{ cursor: "pointer" }}
-                        className={classnames({
-                          active: customActiveTab === "2",
-                        })}
-                        onClick={() => {
-                          toggleCustom("2");
-                          setNamaTahapan("Rancangan Awal")
-                        }}
-                      >
-                        Ranwal
-                      </NavLink>
-                    </NavItem>
-                    <NavItem>
-                      <NavLink
-                        style={{ cursor: "pointer" }}
-                        className={classnames({
-                          active: customActiveTab === "3",
-                        })}
-                        onClick={() => {
-                          toggleCustom("3");
-                          setNamaTahapan("Rancangan")
-                        }}
-                      >
-                        Rancangan
-                      </NavLink>
-                    </NavItem>
-                    <NavItem>
-                      <NavLink
-                        style={{ cursor: "pointer" }}
-                        className={classnames({
-                          active: customActiveTab === "4",
-                        })}
-                        onClick={() => {
-                          toggleCustom("4");
-                          setNamaTahapan("Musrenbang")
-                        }}
-                      >
-                        Musrenbang
-                      </NavLink>
-                    </NavItem>
-                    <NavItem>
-                      <NavLink
-                        style={{ cursor: "pointer" }}
-                        className={classnames({
-                          active: customActiveTab === "5",
-                        })}
-                        onClick={() => {
-                          toggleCustom("5");
-                          setNamaTahapan("Rancangan Akhir")
-                        }}
-                      >
-                        Rankhir
-                      </NavLink>
-                    </NavItem>
-                    <NavItem>
-                      <NavLink
-                        style={{ cursor: "pointer" }}
-                        className={classnames({
-                          active: customActiveTab === "6",
-                        })}
-                        onClick={() => {
-                          toggleCustom("6");
-                          setNamaTahapan("Penetapan")
-                        }}
-                      >
-                        Penetapan
-                      </NavLink>
-                    </NavItem>
-                  </Nav>
-                </div> */}
               </div>
             </div>
           </Card>
         </Col>
-      </Row>
-      {/* <Row>
-        <Col md={6} xl={6}>
-          <Card className="card-height-100">
-            <CardBody>
-              {dataShowSumberUsulan ? (
-                <>
-                  <div className="separator mb-2">
-                    <h4 className="card-title mb-0">Penganggaran Nasional</h4>
-                    <h4 className="card-title mb-0">Republik Indonesia</h4>
-                  </div>
-                  <PieChartNew 
-                  dataChart={dataPenganggaran}
-                  categoryName={['Eksekutif', 'Legislatif', 'Masyarakat']}
-                  dataColors='["#57E7B4", "#FCAD24", "#2DAED4"]'
-                  />
-                  <VerticalBarChart
-                    valueChart={dataPenganggaran[0]}
-                    categoryChart={dataPenganggaran[1]}
-                    dataColors='["#57E7B4"]'
-                    background={true}
-                  />
-                  <div className="mt-4">
-                    <span
-                      onClick={() => handleShowDataSumberUsulan(false)}
-                      style={{ cursor: "pointer", color: "#2DAED4" }}
-                    >
-                      Lihat Peta
-                    </span>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="separator">
-                    <h4 className="card-title mb-0">Penganggaran Nasional</h4>
-                    <h4 className="card-title mb-0">Republik Indonesia</h4>
-                  </div>
-                  <PolygonMaps />
-                  <div className="d-flex justify-content-between">
-                    <div className="d-flex flex-column justify-content-evenly">
-                    <div className="d-flex align-items-center mb-2">
-                        <div style={{ height: "10px", width: "10px", backgroundColor: "#57E7B4", marginRight: "8px" }}></div>
-                        <span style={{fontStyle:"poppins", color:"#929FB1"}}>Ketika 100% Pemda</span>
-                    </div>                
-                    <div className="d-flex align-items-center mb-2">
-                        <div style={{ height: "10px", width: "10px", backgroundColor: "#FCAD24", marginRight: "8px" }}></div>
-                        <span style={{fontStyle:"poppins", color:"#929FB1"}}>Ketika 6%-99% Pemda</span>
-                    </div>                    
-                    <div className="d-flex align-items-center">
-                        <div style={{ height: "10px", width: "10px", backgroundColor: "#F35F52", marginRight: "8px" }}></div>
-                        <span style={{fontStyle:"poppins", color:"#929FB1"}}>Ketika 0% Pemda</span>
-                    </div>
-                    </div>
-                    <div className="d-flex mt-4 align-items-end">
-                        <span
-                        onClick={() => handleShowDataSumberUsulan(true)}
-                        style={{ cursor: "pointer", color: "#2DAED4" }}
-                        >
-                        Lihat Sumber Usulan
-                        </span>
-                    </div>
-                  </div>
-                  
-                </>
-              )}
-            </CardBody>
-          </Card>
-        </Col>
-        <Col md={6} xl={6}>
-        <Card>
-          <CardBody>
-          <div className="separator">
-                <h4 className="card-title mb-1">
-                  List Progress Penganggaran 
-                </h4>
-                <h4 className="card-title">
-                    {namaTahapan}
-                </h4>                
-              </div>
-        <input
-            style={{
-              padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
-              border: "1px solid #ccc",
-              borderRadius: "5px",
-              fontSize: "16px",
-              marginTop: "16px",
-              marginBottom: "30px",
-            }}
-            type="text"
-            // value={searchTerm}
-            // onChange={handleSearchInput}
-            // onKeyDown={(e) => handleKeyDown(e, "provinsi")}
-            placeholder="Cari Daerah"
-          />
-          <select
-          name="tahun"
-                style={{
-                  padding: "10px 30px 10px 10px",
-                  fontSize: "16px",
-                  borderRadius: "5px",
-                  border: "1px solid #ccc",
-                  backgroundColor: "#ffffff",                          
-                  cursor: "pointer",                          
-                  marginLeft: "10px",
-                  marginTop: "16px",
-                  marginBottom: "30px",
-                }}
-                value={selectedSingleTahun}
-                onChange={handleSelectChange}
-              >                        
-                <option value="2024">2024</option>
-                <option value="2025">2025</option>
-              </select>
-              <select
-              name="tahap"
-                style={{
-                  padding: "10px 30px 10px 10px",
-                  fontSize: "16px",
-                  borderRadius: "5px",
-                  border: "1px solid #ccc",
-                  backgroundColor: "#ffffff",                          
-                  cursor: "pointer",                          
-                  marginLeft: "10px"
-                }}
-                value={selectedSingleTahapan}
-                onChange={handleSelectChange}
-              >                        
-                <option value="1"></option>
-                <option value="3"> Perubahan</option>
-              </select>
-          <div className="table-responsive table-card">
-            <table className="table table-nowrap mb-2 ">
-              <thead className="table-light">
-                <tr>
-                  <th
-                    style={{
-                      textAlign: "center",
-                      verticalAlign: "middle",
-                      cursor: "pointer",
-                      whiteSpace: "normal",
-                      overflowWrap: "break-word",
-                    }}
-                    scope="col"
-                  >
-                    KODE
-                  </th>
-                  <th
-                    style={{
-                      textAlign: "center",
-                      verticalAlign: "middle",
-                      cursor: "pointer",
-                      whiteSpace: "normal",
-                      overflowWrap: "break-word",
-                    }}
-                    scope="col"
-                  >
-                    NAMA DAERAH
-                  </th>
-                  <th
-                    style={{
-                      textAlign: "center",
-                      verticalAlign: "middle",
-                      cursor: "pointer",
-                      whiteSpace: "normal",
-                      overflowWrap: "break-word",
-                      width: "600px"
-                    }}
-                    scope="col"
-                  >
-                    STATUS
-                  </th>
-                  <th
-                    style={{
-                      textAlign: "center",
-                      verticalAlign: "middle",
-                      cursor: "pointer",
-                      whiteSpace: "normal",
-                      overflowWrap: "break-word",
-                    }}
-                    scope="col"
-                  >
-                    ACTION
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentItems.map((item, index) => {
-                  const tahapData = {
-                    1: item.persiapan,
-                    2: item.rancangan_awal,
-                    3: item.rancangan,
-                    4: item.musrenbang,
-                    5: item.rancangan_akhir,
-                    6: item.penetapan,
-                  };
-
-                  return (
-                    <tr key={index}>                        
-                      <td >{item.kode_ddn}</td>
-                      <td>{item.nama_daerah}</td>
-                      <td className='d-flex justify-content-center align-items-center' style={{ verticalAlign: "middle", textAlign: "center" }}>                               
-                        
-                          <div className="step-container">
-                            <div className={`step-item ${item.persiapan=='SUDAH'? 'persiapan':''}`}>Persiapan</div>
-                            <div className={`step-item ${item.rancangan_awal=='SUDAH'? 'ranwal':''}`}>Ranwal</div>
-                            <div className={`step-item ${item.rancangan=='SUDAH'? 'rancangan':''}`}>Rancangan</div>
-                            <div className={`step-item ${item.musrenbang=='SUDAH'? 'musrenbang':''}`}>Musrenbang</div>
-                            <div className={`step-item ${item.rancangan_akhir=='SUDAH'? 'rankhir':''}`}>Rankhir</div>
-                            <div className={`step-item ${item.penetapan=='SUDAH'? 'penetapan':''}`}>Penetapan</div>
-                          </div>                                
-                      </td>
-                      <td
-                        style={{
-                          textAlign: "center",
-                          verticalAlign: "middle",
-                          cursor: "pointer",
-                          whiteSpace: "normal",
-                          overflowWrap: "break-word",
-                        }}
-                      >
-                        <i
-                          style={{
-                            padding: "5px 10px",
-                            cursor: "pointer",
-                            fontSize: "20px",
-                          }}
-                          className="bx bx-list-ul text-primary"
-                        ></i>
-                        
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-          </CardBody>
-        </Card>       
-        </Col>
-      </Row> */}      
+      </Row>    
       <Row>
         <Col>
         <div className="d-sm-flex align-items-center justify-content-between">            
@@ -646,22 +348,51 @@ const ContentPenganggaranDaerah = () => {
               </div>
               <Row>
                 <Col>
-                {/* <input
-                    style={{
-                      padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
-                      border: "1px solid #ccc",
-                      borderRadius: "5px",
-                      fontSize: "16px",
-                      marginTop: "16px",
-                      marginBottom: "30px",
-                    }}
-                    type="text"
-                    // value={searchTerm}
-                    // onChange={handleSearchInput}
-                    // onKeyDown={(e) => handleKeyDown(e, "provinsi")}
-                    placeholder="Cari Daerah"
-                  /> */}
-                  <select
+                <div className='d-flex'>
+                  <div className="mb-2 d-flex">
+                  <div
+                      className="mx-2 mt-3"
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        maxWidth: "300px",
+                        marginBottom: "20px",
+                      }}
+                    >
+             <input
+                  style={{
+                    padding: "10px 30px 10px 10px",
+                    border: "1px solid #ccc",
+                    borderRadius: "5px",
+                    // width:"100%",
+                    fontSize: "16px",
+                  }}
+                  type="text"
+                  value={searchTerm}
+                  onChange={handleSearchInput}
+                  placeholder="Cari Daerah"
+                />
+                {searchTerm && (
+                <button
+                  onClick={() => handleClearSearch()}
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    color: "#999",
+                  }}
+                >
+                  &#10006;
+                </button>
+              )}
+            </div> 
+            </div>
+            <select
                   name="tahun"
                         style={{
                           padding: "10px 30px 10px 10px",
@@ -689,7 +420,9 @@ const ContentPenganggaranDaerah = () => {
                           border: "1px solid #ccc",
                           backgroundColor: "#ffffff",                          
                           cursor: "pointer",                          
-                          marginLeft: "10px"
+                          marginLeft: "10px",
+                          marginTop: "16px",
+                          marginBottom: "30px",
                         }}
                         value={selectedSingleTahapan}
                         onChange={handleSelectChange}
@@ -699,6 +432,8 @@ const ContentPenganggaranDaerah = () => {
                         <option value="3">Perubahan</option>
                         <option value="4">Pergeseran Setelah Perubahan</option>
                       </select>
+                  </div>
+                  
                   <div className="table-responsive table-card mt-2">
                     <table className="table table-nowrap mb-2 ">
                       <thead className="table-light">
