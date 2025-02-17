@@ -81,7 +81,7 @@ const ContentKependudukanV2 = () => {
   const [dataChartLakiLaki, setDataChartLakiLaki] = useState([[], []]);
   const [dataChartPerempuan, setDataChartPerempuan] = useState([[], []]);
 
-  const getDataKependudukan = ({tahunData, tahunAnggaran, wilayah, kodeDdn, semester}) => {
+  const getDataKependudukan = ({tahunData, tahunAnggaran, wilayah="INDONESIA", kodeDdn, semester}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -90,7 +90,7 @@ const ContentKependudukanV2 = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}`},
           body: JSON.stringify({
             kode_ddn: kodeDdn,
-            wilayah: "INDONESIA",
+            wilayah: wilayah,
             tahun_data: tahunData,
             tahun: tahunAnggaran,
             semester: semester,
@@ -935,7 +935,7 @@ const ContentKependudukanV2 = () => {
     const handleRegionClick = (kodeProv, namaProv) => {
       setKodeWilayahPeta(kodeProv)
       setClickNamaDaerah(namaProv)
-      getDataKependudukan({kodeDdn: kodeProv, tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: selectedSingleTahunSemester});
+      getDataKependudukan({kodeDdn: kodeProv, wilayah:"", tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: selectedSingleTahunSemester});
       setClickDaerah(true)
     };
   
