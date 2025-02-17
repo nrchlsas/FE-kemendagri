@@ -81,7 +81,7 @@ const ContentKependudukanV2 = () => {
   const [dataChartLakiLaki, setDataChartLakiLaki] = useState([[], []]);
   const [dataChartPerempuan, setDataChartPerempuan] = useState([[], []]);
 
-  const getDataKependudukan = ({tahunData, tahunAnggaran, wilayah="INDONESIA", kodeDdn, semester}) => {
+  const getDataKependudukan = ({tahunData, tahunAnggaran, wilayah="INDONESIA", kodeDdn, semester, kodeProv}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -89,6 +89,7 @@ const ContentKependudukanV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}`},
           body: JSON.stringify({
+            kode_prov: kodeProv,
             kode_ddn: kodeDdn,
             wilayah: wilayah,
             tahun_data: tahunData,
@@ -277,7 +278,7 @@ const ContentKependudukanV2 = () => {
     const newTahunData = (parseInt(value) - 1).toString();
     setSelectedSingleTahunAnggaran(value); 
     setSelectedSingleTahunData(newTahunData);
-    getDataKependudukan({kodeDdn: kodeWilayahPeta, tahunData: newTahunData, tahunAnggaran:value, semester: selectedSingleTahunSemester});
+    getDataKependudukan({kodeDdn: kodeWilayahPeta, kodeProv: kodeWilayahPeta, tahunData: newTahunData, tahunAnggaran:value, semester: selectedSingleTahunSemester});
     getDataTabelKependudukanProv({tahunData: newTahunData, tahunAnggaran:value, semester: selectedSingleTahunSemester});
    
   };
@@ -287,14 +288,14 @@ const ContentKependudukanV2 = () => {
     const newTahunAnggaran = (parseInt(value) + 1).toString();
     setSelectedSingleTahunData(value); 
     setSelectedSingleTahunAnggaran(newTahunAnggaran);
-    getDataKependudukan({kodeDdn: kodeWilayahPeta, tahunData: value, tahunAnggaran:newTahunAnggaran, semester: selectedSingleTahunSemester});
+    getDataKependudukan({kodeDdn: kodeWilayahPeta, kodeProv: kodeWilayahPeta, tahunData: value, tahunAnggaran:newTahunAnggaran, semester: selectedSingleTahunSemester});
     getDataTabelKependudukanProv({tahunData: value, tahunAnggaran:newTahunAnggaran, semester: selectedSingleTahunSemester});
   };
 
   const handleSelectChangeSemester = (e) => {
     const { name, value } = e.target;
     setSelectedSingleTahunSemester(value);
-    getDataKependudukan({kodeDdn: kodeWilayahPeta, tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: value});
+    getDataKependudukan({kodeDdn: kodeWilayahPeta, kodeProv: kodeWilayahPeta, tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: value});
     getDataTabelKependudukanProv({tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: value});
   };
 
@@ -599,7 +600,7 @@ const ContentKependudukanV2 = () => {
     };
 
   useEffect(() => {
-    getDataKependudukan({kodeDdn: kodeWilayahPeta, tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: selectedSingleTahunSemester});
+    getDataKependudukan({kodeDdn: kodeWilayahPeta, kodeProv: kodeWilayahPeta, tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: selectedSingleTahunSemester});
     getDataTabelKependudukanProv({tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: selectedSingleTahunSemester});
   }, []);
 
@@ -935,12 +936,12 @@ const ContentKependudukanV2 = () => {
     const handleRegionClick = (kodeProv, namaProv) => {
       setKodeWilayahPeta(kodeProv)
       setClickNamaDaerah(namaProv)
-      getDataKependudukan({kodeDdn: kodeProv, wilayah:"", tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: selectedSingleTahunSemester});
+      getDataKependudukan({kodeDdn: kodeProv, wilayah:"", kodeProv: kodeWilayahPeta, tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: selectedSingleTahunSemester});
       setClickDaerah(true)
     };
   
     const resetRegionClick = () => {
-      getDataKependudukan({kodeDdn: "", tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: selectedSingleTahunSemester});
+      getDataKependudukan({kodeDdn: "", kodeProv: "", tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: selectedSingleTahunSemester});
       setClickDaerah(false)
     }
 
