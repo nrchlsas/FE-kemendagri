@@ -1069,7 +1069,7 @@ const ContentKependudukanV2 = () => {
                   </div>
                   {clickDaerah ? <><button onClick={()=>{
                     resetRegionClick()
-                    setTitleMap("Total Anak Sekolah")
+                    setTitleMap("Total Penduduk")
                     }} style={{
                       backgroundColor: "#007bff",
                       color: "white",
