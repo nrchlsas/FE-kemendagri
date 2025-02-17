@@ -936,7 +936,7 @@ const ContentKependudukanV2 = () => {
     const handleRegionClick = (kodeProv, namaProv) => {
       setKodeWilayahPeta(kodeProv)
       setClickNamaDaerah(namaProv)
-      getDataKependudukan({kodeDdn: kodeProv, wilayah:"", kodeProv: kodeProv, tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: selectedSingleTahunSemester});
+      getDataKependudukan({wilayah:"", kodeProv: kodeProv, tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: selectedSingleTahunSemester});
       setClickDaerah(true)
     };
   
