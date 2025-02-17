@@ -599,6 +599,41 @@ const ContentKependudukanV2 = () => {
       fetchData();
     };
 
+    const getDataHighlight = ({kodeDdn, tahun, tahunAnggaran}) => {
+      const fetchData = async () => {
+        try {
+          const token = JSON.parse(sessionStorage.getItem("authUser"))
+          const requestOptions = {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+            body: JSON.stringify({
+              kode_ddn: kodeDdn,
+              tahun : tahun,  
+              tahun_anggaran : tahunAnggaran,  
+            }),
+          };
+  
+          const response = await fetch(
+            `${API_URI_RBAC}/v2/dukcapil_mamin`,
+            requestOptions
+          );
+  
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+  
+          const dataHighlight = await response.json();
+          setDataDetailHighlight(dataHighlight?.data)
+        } catch (errorDetailUnitSkpd) {
+          
+        } finally {
+          
+        }
+      };
+  
+      fetchData();
+    };
+
   useEffect(() => {
     getDataKependudukan({kodeDdn: kodeWilayahPeta, kodeProv: kodeWilayahPeta, tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: selectedSingleTahunSemester});
     getDataTabelKependudukanProv({tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: selectedSingleTahunSemester});
@@ -822,6 +857,7 @@ const ContentKependudukanV2 = () => {
     }
     ) => {
       getDataDetailAnggaran({kodeDdn:kodeDdn, tahun:selectedSingleTahunAnggaran, tahunData:selectedSingleTahunData});      
+      getDataHighlight({kodeDdn:kodeDdn, tahun:selectedSingleTahunAnggaran, tahunData:selectedSingleTahunData})
       setDataDetailNamaDaerah(namaDaerah);
       setDataRincianDetail(rincianDetail);
     };
@@ -1797,6 +1833,56 @@ const ContentKependudukanV2 = () => {
                     </div>
                   </CardBody>
                 </Card>
+                
+              </Col>
+              <Col md={8}>
+              {dataDetailHighlight.map((item, index)=>(
+                <div className="d-flex mb-3" key={index}>
+                  <div style={{ flexBasis: "350px", color:"#929FB1" }}>{item.nama_rekening}</div>
+                  <div>:&nbsp;</div>
+                  <div style={{ fontWeight: 650 }}>
+                  <CountUp
+                      start={0}
+                      end={item.anggaran}
+                      // decimal=","
+                      // decimals={2}
+                      separator="."
+                      prefix="Rp "
+                      // suffix=" T"
+                      duration={1}
+                    /> 
+                    &nbsp;
+                  </div>
+                  {((item.anggaran/dataRincianDetail)*100)>=1 ? <>
+                    <div>
+                    (<CountUp
+                      start={0}
+                      end={(item.anggaran/dataRincianDetail)*100}
+                      decimal=","
+                      decimals={2}
+                      separator="."
+                      // prefix="Rp "
+                      suffix="%"
+                      duration={1}
+                    />)
+                  </div>
+                  </> : <>
+                  <div>
+                    (<CountUp
+                      start={0}
+                      end={(item.anggaran/dataRincianDetail)*100}
+                      decimal=","
+                      decimals={6}
+                      separator="."
+                      // prefix="Rp "
+                      suffix="%"
+                      duration={1}
+                    />)
+                  </div>
+                  </>}
+                  
+                </div>
+              ))}
               </Col>
             </Row>
             <div className="mb-2 d-flex">
