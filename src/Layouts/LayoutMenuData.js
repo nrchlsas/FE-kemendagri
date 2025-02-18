@@ -269,16 +269,16 @@ const Navdata = () => {
         setIscurrentState("Kependudukan");
       },
     },
-    {
-      id: "jkn",
-      label: "JKN",
-      icon: "ri-hand-heart-line", 
-      link: "/jkn",
-      click: function (e) {
-        e.preventDefault();
-        setIscurrentState("JKN");
-      },
-    },
+    // {
+    //   id: "jkn",
+    //   label: "JKN",
+    //   icon: "ri-hand-heart-line", 
+    //   link: "/jkn",
+    //   click: function (e) {
+    //     e.preventDefault();
+    //     setIscurrentState("JKN");
+    //   },
+    // },
     {
       id: "integrasi",
       label: "Integrasi",
