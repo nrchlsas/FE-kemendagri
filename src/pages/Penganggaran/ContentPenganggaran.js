@@ -46,6 +46,9 @@ const ContentPenganggaran = () => {
   const [dataPenganggaranPersentase, setDataPenganggaranPersentase] = useState(
     []
   );
+  const [dataPenganggaranPersentaseFiltered, setDataPenganggaranPersentaseFiltered] = useState(
+    []
+  );
   const [loadingPenganggaran, setLoadingPenganggaran] = useState([]);
   const [errorPenganggaran, setErrorPenganggaran] = useState([]);
 
@@ -209,6 +212,9 @@ const ContentPenganggaran = () => {
         setDataPenganggaranPersentase(
           dataPenganggaranNasionalPersentase.data.penganggaran_level_1
         );
+        setDataPenganggaranPersentaseFiltered(
+          dataPenganggaranNasionalPersentase.data.penganggaran_level_1
+        );
         const dataPersentasePenganggaran = {
           tahap40: Array.isArray(dataPenganggaranNasionalPersentase?.data?.penganggaran_level_1)
             ? dataPenganggaranNasionalPersentase.data.penganggaran_level_1.map(item => ({
@@ -316,7 +322,7 @@ const ContentPenganggaran = () => {
   const indexOfFirstItemSudahDanBelum = indexOfLastItemSudahDanBelum - itemsPerPageSudahDanBelum;
 
   const sortedItems = React.useMemo(() => {
-    let sortableItems = [...(dataPenganggaranPersentase || [])];
+    let sortableItems = [...(dataPenganggaranPersentaseFiltered || [])];
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key] || 0;
@@ -332,7 +338,7 @@ const ContentPenganggaran = () => {
       });
     }
     return sortableItems;
-  }, [dataPenganggaranPersentase, sortConfig]);
+  }, [dataPenganggaranPersentaseFiltered, sortConfig]);
 
   const sortedItemsSudahDanBelum = React.useMemo(() => {
     let sortableItems = [...(dataPenganggaranSudahDanBelum || [])];
@@ -490,6 +496,29 @@ const ContentPenganggaran = () => {
     while (itemsBelum.length < maxLength) {
       itemsBelum.push({ kode_ddn: "", nama_daerah: "" });
     }
+
+    const [searchTerm, setSearchTerm] = useState("");
+      
+    // Fungsi untuk menangani perubahan pada input
+    const handleSearchInput = (e) => {
+      const value = e.target.value.toLowerCase()
+      setSearchTerm(e.target.value);
+      if(value===""){
+        setDataPenganggaranPersentaseFiltered(dataPenganggaranPersentase)
+      }else{
+        const filtered = dataPenganggaranPersentase.filter((item) => 
+          item.nama_prov.toLowerCase().includes(value)
+        );
+        setDataPenganggaranPersentaseFiltered(filtered)
+      }
+      setCurrentPage(1);
+    };
+
+    const handleClearSearch = () => {
+      setCurrentPage(1);
+      setSearchTerm("");
+      setDataPenganggaranPersentaseFiltered(dataPenganggaranPersentase)
+    };
 
   return (
     <React.Fragment>
@@ -656,22 +685,51 @@ const ContentPenganggaran = () => {
               </div>
               <Row>
                 <Col>
-                  {/* <input
-                    style={{
-                      padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
-                      border: "1px solid #ccc",
-                      borderRadius: "5px",
-                      fontSize: "16px",
-                      marginTop: "16px",
-                      marginBottom: "30px",
-                    }}
-                    type="text"
-                    // value={searchTerm}
-                    // onChange={handleSearchInput}
-                    // onKeyDown={(e) => handleKeyDown(e, "provinsi")}
-                    placeholder="Cari Daerah"
-                  /> */}
-                  <select
+                <div className='d-flex'>
+                  <div className="mb-2 d-flex">
+                  <div
+                      className="mx-2 mt-3"
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        maxWidth: "300px",
+                        marginBottom: "20px",
+                      }}
+                    >
+             <input
+                  style={{
+                    padding: "10px 30px 10px 10px",
+                    border: "1px solid #ccc",
+                    borderRadius: "5px",
+                    // width:"100%",
+                    fontSize: "16px",
+                  }}
+                  type="text"
+                  value={searchTerm}
+                  onChange={handleSearchInput}
+                  placeholder="Cari Daerah"
+                />
+                {searchTerm && (
+                <button
+                  onClick={() => handleClearSearch()}
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    color: "#999",
+                  }}
+                >
+                  &#10006;
+                </button>
+              )}
+            </div> 
+            </div>
+            <select
                   name="tahun"                 
                         style={{
                           padding: "10px 30px 10px 10px",
@@ -700,7 +758,9 @@ const ContentPenganggaran = () => {
                           border: "1px solid #ccc",
                           backgroundColor: "#ffffff",                          
                           cursor: "pointer",                          
-                          marginLeft: "10px"
+                          marginLeft: "10px",
+                          marginTop: "16px",
+                          marginBottom: "30px",
                         }}
                         value={selectedSingleTahapan}
                         onChange={handleSelectChange}
@@ -730,6 +790,7 @@ const ContentPenganggaran = () => {
                           }
                         })()}
                       </select>
+                  </div>
                 </Col>
               </Row>
               <Row>

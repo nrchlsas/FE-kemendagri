@@ -71,6 +71,9 @@ const ContentPerencanaan = () => {
   const [dataPerencanaanPersentase, setDataPerencanaanPersentase] = useState(
     []
   );
+  const [dataPerencanaanPersentaseFiltered, setDataPerencanaanPersentaseFiltered] = useState(
+    []
+  );
   const [loadingPerencanaan, setLoadingPerencanaan] = useState([]);
   const [errorPerencanaan, setErrorPerencanaan] = useState([]);
 
@@ -159,6 +162,9 @@ const ContentPerencanaan = () => {
         const dataPerencanaanRkpdNasionalPersentase = await response.json();
 
         setDataPerencanaanPersentase(
+          dataPerencanaanRkpdNasionalPersentase?.data
+        );
+        setDataPerencanaanPersentaseFiltered(
           dataPerencanaanRkpdNasionalPersentase?.data
         );
 
@@ -303,7 +309,7 @@ const ContentPerencanaan = () => {
   const indexOfFirstItemSudahDanBelum = indexOfLastItemSudahDanBelum - itemsPerPageSudahDanBelum;
 
   const sortedItems = React.useMemo(() => {
-    let sortableItems = [...(dataPerencanaanPersentase || [])];
+    let sortableItems = [...(dataPerencanaanPersentaseFiltered || [])];
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         const aValue = a[sortConfig.key] || 0;
@@ -319,7 +325,7 @@ const ContentPerencanaan = () => {
       });
     }
     return sortableItems;
-  }, [dataPerencanaanPersentase, sortConfig]);
+  }, [dataPerencanaanPersentaseFiltered, sortConfig]);
 
   const sortedItemsSudahDanBelum = React.useMemo(() => {
     let sortableItems = [...(dataPerencanaanSudahDanBelum || [])];
@@ -343,7 +349,7 @@ const ContentPerencanaan = () => {
   const currentItems = sortedItems.slice(indexOfFirstItem, indexOfLastItem);
   const currentItemsSudahDanBelum = sortedItemsSudahDanBelum
   const totalPages = Math.ceil(
-    (dataPerencanaanPersentase?.length || 0) / itemsPerPage
+    (dataPerencanaanPersentaseFiltered?.length || 0) / itemsPerPage
   );
   const totalPagesSudahDanBelum = Math.ceil(
     (dataPerencanaanSudahDanBelum?.length || 0) / itemsPerPage
@@ -451,6 +457,28 @@ const ContentPerencanaan = () => {
   while (itemsBelum.length < maxLength) {
     itemsBelum.push({ kode_ddn: "", nama_daerah: "" });
   }
+
+  const [searchTerm, setSearchTerm] = useState("");
+    // Fungsi untuk menangani perubahan pada input
+    const handleSearchInput = (e) => {
+      const value = e.target.value.toLowerCase()
+      setSearchTerm(e.target.value);
+      if(value===""){
+        setDataPerencanaanPersentaseFiltered(dataPerencanaanPersentase)
+      }else{
+        const filtered = dataPerencanaanPersentase.filter((item) => 
+          item.nama_daerah.toLowerCase().includes(value)
+        );
+        setDataPerencanaanPersentaseFiltered(filtered)
+      }
+      setCurrentPage(1);
+    };
+
+    const handleClearSearch = () => {
+      setCurrentPage(1);
+      setSearchTerm("");
+      setDataPerencanaanPersentaseFiltered(dataPerencanaanPersentase)
+    };
 
 
   return (
@@ -714,57 +742,89 @@ const ContentPerencanaan = () => {
               </div>
               <Row>
                 <Col>
-                  {/* <input
-                    style={{
-                      padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
-                      border: "1px solid #ccc",
-                      borderRadius: "5px",
-                      fontSize: "16px",
-                      marginTop: "16px",
-                      marginBottom: "30px",
-                    }}
-                    type="text"
-                    // value={searchTerm}
-                    // onChange={handleSearchInput}
-                    // onKeyDown={(e) => handleKeyDown(e, "provinsi")}
-                    placeholder="Cari Daerah"
-                  /> */}
-                  <select
-                  name="tahun"
-                        style={{
-                          padding: "10px 30px 10px 10px",
-                          fontSize: "16px",
-                          borderRadius: "5px",
-                          border: "1px solid #ccc",
-                          backgroundColor: "#ffffff",                          
-                          cursor: "pointer",                          
-                          marginLeft: "10px",
-                          marginTop: "16px",
-                          marginBottom: "30px",
-                        }}
-                        value={selectedSingleTahun}
-                        onChange={handleSelectChange}
-                      >                        
-                        <option value="2024">2024</option>
-                        <option value="2025">2025</option>
-                      </select>
-                      <select
-                      name="tahap"
-                        style={{
-                          padding: "10px 30px 10px 10px",
-                          fontSize: "16px",
-                          borderRadius: "5px",
-                          border: "1px solid #ccc",
-                          backgroundColor: "#ffffff",                          
-                          cursor: "pointer",                          
-                          marginLeft: "10px"
-                        }}
-                        value={selectedSingleTahapan}
-                        onChange={handleSelectChange}
-                      >                        
-                        <option value="1">RKPD</option>
-                        <option value="3">RKPD Perubahan</option>
-                      </select>
+                <div className='d-flex'>
+                  <div className="mb-2 d-flex">
+                  <div
+                      className="mx-2 mt-3"
+                      style={{
+                        position: "relative",
+                        width: "100%",
+                        maxWidth: "300px",
+                        marginBottom: "20px",
+                      }}
+                    >
+             <input
+                  style={{
+                    padding: "10px 30px 10px 10px",
+                    border: "1px solid #ccc",
+                    borderRadius: "5px",
+                    // width:"100%",
+                    fontSize: "16px",
+                  }}  
+                  type="text"
+                  value={searchTerm}
+                  onChange={handleSearchInput}
+                  placeholder="Cari Daerah"
+                />
+                {searchTerm && (
+                <button
+                  onClick={() => handleClearSearch()}
+                  style={{
+                    position: "absolute",
+                    right: "10px",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    background: "transparent",
+                    border: "none",
+                    fontSize: "16px",
+                    cursor: "pointer",
+                    color: "#999",
+                  }}
+                >
+                  &#10006;
+                </button>
+              )}
+            </div> 
+            </div> 
+            <select
+            name="tahun"
+                  style={{
+                    padding: "10px 30px 10px 10px",
+                    fontSize: "16px",
+                    borderRadius: "5px",
+                    border: "1px solid #ccc",
+                    backgroundColor: "#ffffff",                          
+                    cursor: "pointer",                          
+                    marginLeft: "10px",
+                    marginTop: "16px",
+                    marginBottom: "30px",
+                  }}
+                  value={selectedSingleTahun}
+                  onChange={handleSelectChange}
+                >                        
+                  <option value="2024">2024</option>
+                  <option value="2025">2025</option>
+                </select>
+                <select
+                name="tahap"
+                  style={{
+                    padding: "10px 30px 10px 10px",
+                    fontSize: "16px",
+                    borderRadius: "5px",
+                    border: "1px solid #ccc",
+                    backgroundColor: "#ffffff",                          
+                    cursor: "pointer",                          
+                    marginLeft: "10px",
+                    marginTop: "16px",
+                    marginBottom: "30px",
+                  }}
+                  value={selectedSingleTahapan}
+                  onChange={handleSelectChange}
+                >                        
+                  <option value="1">RKPD</option>
+                  <option value="3">RKPD Perubahan</option>
+                </select>
+            </div>
                 </Col>
               </Row>
               <Row>
