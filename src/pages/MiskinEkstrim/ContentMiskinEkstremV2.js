@@ -257,7 +257,7 @@ const ContentMiskinEkstremV2 = () => {
 
   const [dataPieChartSpm, setDataPieChartSpm] = useState([],[])
 
-  const getDataKemiskinanEkstrem = ({tahun, tahun_data}) => {
+  const getDataKemiskinanEkstrem = ({tahun, tahun_data, kodeDdn="", kodeProv=""}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -265,6 +265,8 @@ const ContentMiskinEkstremV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
+            kode_ddn:kodeDdn,
+            kode_prov:kodeProv,
             tahun : tahun,
             tahun_data: tahun_data
           }),
