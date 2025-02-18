@@ -1129,6 +1129,9 @@ const ContentKependudukanV2 = () => {
         <Col md={dataWidth}>
           <Card className="card-height-100">
             <CardBody>
+              <div className="d-flex justify-content-center align-items-center title-page">
+                  {clickDaerah ? clickNamaDaerah : "Nasional"}
+              </div>
               <Row>
                 <Col xl={6}>
                   <Row>
