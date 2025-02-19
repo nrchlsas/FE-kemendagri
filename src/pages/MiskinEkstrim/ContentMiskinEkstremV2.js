@@ -1599,7 +1599,7 @@ const ContentMiskinEkstremV2 = () => {
                     </select>
                 </div>
               </div>
-              <MapIndoChart roam={roam} maxValue={maxValueMap} valueSeries={valueMap} onRegionClick={handleRegionClick} colorData={["#D1ED87","#B9D676","#A1BF66","#89A855","#719145","#597A34"]} />
+              <MapIndoChart roam={roam} daerah={clickDaerah} maxValue={maxValueMap} onRegionClick={handleRegionClick} valueSeries={valueMap} colorData={["#D1ED87","#B9D676","#A1BF66","#89A855","#719145","#597A34"]} />
             </CardBody>
           </Card>
         </Col>

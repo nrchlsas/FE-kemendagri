@@ -661,7 +661,7 @@ const ContentStunting = () => {
   const [dataKolomNamaDaerah, setDataKolomNamaDaerah] = useState("Se-Provinsi");
   const [showNextData, setShowNextData] = useState(false);
 
-  const getDataStuntingTabelKabupaten = (kodeDdn = "", e, tahun, tahun_data) => {
+  const getDataStuntingTabelKabupaten = ({kodeDdn = "", tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -685,13 +685,55 @@ const ContentStunting = () => {
         }
 
         const dataStuntingTabelKabupaten = await response.json();
-        e.stopPropagation(); 
+        // e.stopPropagation(); 
         setShowNextData(true);
         
         setDataKolomNamaDaerah("Nama Daerah");
         setCurrentPage(1);
         setDataStuntingTabel(dataStuntingTabelKabupaten?.data);
         setFilteredDataStuntingTabelKabupaten(dataStuntingTabelKabupaten?.data);
+
+        const desilData = {
+          desil1: Array.isArray(dataStuntingTabelKabupaten?.data)
+            ? dataStuntingTabelKabupaten?.data?.map(item => ({
+                name: item.nama_kabupaten,
+                value: parseInt(item.peringkat_kesejahteraan_1),
+              })).slice(1)
+            : [],
+          desil2: Array.isArray(dataStuntingTabelKabupaten?.data)
+            ? dataStuntingTabelKabupaten?.data?.map(item => ({
+                name: item.nama_kabupaten,
+                value: parseInt(item.peringkat_kesejahteraan_2),
+              })).slice(1)
+            : [],
+          desil3: Array.isArray(dataStuntingTabelKabupaten?.data)
+            ? dataStuntingTabelKabupaten?.data?.map(item => ({
+                name: item.nama_kabupaten,
+                value: parseInt(item.peringkat_kesejahteraan_3),
+              })).slice(1)
+            : [],
+          desil4: Array.isArray(dataStuntingTabelKabupaten?.data)
+            ? dataStuntingTabelKabupaten?.data?.map(item => ({
+                name: item.nama_kabupaten,
+                value: parseInt(item.peringkat_kesejahteraan_4),
+              })).slice(1)
+            : [],
+          desil5: Array.isArray(dataStuntingTabelKabupaten?.data)
+            ? dataStuntingTabelKabupaten?.data?.map(item => ({
+                name: item.nama_kabupaten,
+                value: parseInt(item.peringkat_kesejahteraan_diatas_4),
+              })).slice(1)
+            : [],
+        };
+        setDataDesil(desilData); // Simpan semua desil ke dalam state
+        console.log(desilData, 'ini data desil')
+        setValueMap(desilData?.desil1);
+        
+        const maxValue = Array.isArray(desilData.desil1) && desilData.desil1.length > 0
+          ? Math.max(...desilData.desil1.map(item => item.value || 0))
+          : 0;
+
+        setmaxValueMap(maxValue);
       } catch (errorStunting) {
         setErrorStunting(errorStunting);
       } finally {
@@ -1470,33 +1512,19 @@ const ContentStunting = () => {
       }
     };
 
-    // const handleSelectChangeAnggaran = (e) => {
-    //   const { name, value } = e.target;
-    //   setSelectedSingleTahunAnggaran(value); // Misalnya, untuk dropdown tahun
-    //   getDataStunting({tahun:value, tahun_data: selectedSingleTahunData});
-    //   getDataStuntingTabel({tahun:value, tahun_data: selectedSingleTahunData});
-    // };
-
-    // const handleSelectChangeDataPokok = (e) => {
-    //   const { name, value } = e.target;
-    //   setSelectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
-    //   getDataStunting({tahun:selectedSingleTahunAnggaran, tahun_data: value});
-    //   getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: value});
-    //   if(dataShowKesejahteraanStackKab){
-    //     getDataStackPerProvKesejahteraan({tahunData: value})
-    //   }
-    // };
     const [clickDaerah, setClickDaerah] = useState(false)
     const [clickNamaDaerah, setClickNamaDaerah] = useState("")
     const [kodeWilayahPeta, setKodeWilayahPeta]=useState("")  
     const handleRegionClick = (kodeProv, namaProv) => {
       getDataStunting({kodeDdn:"", kodeProv:kodeProv, tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
+      getDataStuntingTabelKabupaten({kodeDdn:kodeProv, tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
       setClickNamaDaerah(namaProv)
       setClickDaerah(true)
     };
 
     const resetRegionClick = () => {
       getDataStunting({kodeDdn:"", kodeProv:"", tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
+      getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData})
       setClickDaerah(false)
     }
 
@@ -1657,7 +1685,7 @@ const ContentStunting = () => {
                     </select>
                 </div>
               </div>
-              <MapIndoChart roam={roam} maxValue={maxValueMap} onRegionClick={handleRegionClick} valueSeries={valueMap} colorData={["#FFCDD2", "#FF9EA7", "#FF7380", "#FF4B5C", "#FF2438", "#FF0017"]} />
+              <MapIndoChart roam={roam} daerah={clickDaerah} maxValue={maxValueMap} onRegionClick={handleRegionClick} valueSeries={valueMap} colorData={["#FFCDD2", "#FF9EA7", "#FF7380", "#FF4B5C", "#FF2438", "#FF0017"]} />
             </CardBody>
           </Card>
         </Col>
@@ -2477,12 +2505,11 @@ const ContentStunting = () => {
                               style={{ minWidth: "270px" }}
                               onClick={(e) =>{item.nama_kabupaten
                                 ? ""
-                                : getDataStuntingTabelKabupaten(
-                                    item.kode_prov,
-                                    e,
-                                    selectedSingleTahunAnggaran,
-                                    selectedSingleTahunData
-                                  ), dataKolomNamaDaerah == "Se-Provinsi" ? setNamaDaerahDetail(item.nama_prov) : ""; setSearchTerm("")}                                
+                                : getDataStuntingTabelKabupaten({
+                                    kode_ddn1:item.kode_prov,
+                                    tahun:selectedSingleTahunAnggaran,
+                                    tahun_data:selectedSingleTahunData
+                                }), dataKolomNamaDaerah == "Se-Provinsi" ? setNamaDaerahDetail(item.nama_prov) : ""; setSearchTerm("")}                                
                               }
                             >
                               {item.nama_kabupaten? item.nama_kabupaten.replace("Provinsi ", "") || "-"
@@ -3354,287 +3381,6 @@ const ContentStunting = () => {
           </Card>
         </Col>
       </Row>
-
-      {/* <Row>
-        <Col xl={6}>
-          <Card>
-            <CardBody>
-              {dataShowAkunBelanja ? (
-                <>
-                  <div className="separator">
-                    <h4 className="card-title mb-0">
-                      Top 5 Akun Belanja Terbesar Untuk Penurunan dan Pencegahan
-                      Stunting
-                    </h4>
-                  </div>
-                  <HorizontalBarChart
-                    dataColors='["#FCAD24"]'
-                    valueChart={dataChartTop5AkunBelanja[0]}
-                    categoryChart={dataChartTop5AkunBelanja[1]}
-                  />                  
-                  <span
-                    onClick={() => handleShowDataAkun(false)}
-                    style={{ cursor: "pointer", color: "#2DAED4" }}
-                  >
-                    Lihat Grafik
-                  </span>
-                </>
-              ) : (
-                <>
-                  <div className="separator">
-                    <h4 className="card-title mb-0">
-                      Perbandingan Total Anggaran Pencegahan dan Penurunan
-                      Stunting Berdasarkan Total Belanja Nasional
-                    </h4>
-                  </div>
-                  <div className="nav-beranda">
-                    <Nav
-                      tabs
-                      className="nav nav-tabs nav-success nav-justified mb-3"
-                    >
-                      <NavItem>
-                        <NavLink
-                          style={{ cursor: "pointer" }}
-                          className={classnames("h-100",{
-                            active:
-                              customActiveTabPerbandinganAnggaranKesehatan ===
-                              "1",
-                          })}
-                          onClick={() => {
-                            toggleCustomPerbandinganAnggaranKesehatan("1");
-                          }}
-                        >
-                          KESEHATAN
-                        </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink 
-                          style={{ cursor: "pointer" }}
-                          className={classnames("h-100", {
-                            active:
-                              customActiveTabPerbandinganAnggaranKesehatan ===
-                              "2",
-                          })}
-                          onClick={() => {
-                            toggleCustomPerbandinganAnggaranKesehatan("2");
-                          }}
-                        >
-                          PENCEGAHAN DAN PENURUNAN STUNTING
-                        </NavLink>
-                      </NavItem>
-                    </Nav>
-                  </div>
-                  <TabContent
-                    activeTab={customActiveTabPerbandinganAnggaranKesehatan}
-                    className="text-muted"
-                  >
-                    <TabPane tabId="1" id="provinsi">
-                      <PieChartNew
-                        dataChart={dataChartPerbandinganAnggaranKesehatan}
-                        dataColors={'["#57E7B4", "#2DAED4"]'}
-                        categoryName={[
-                          "Bidang Urusan di Luar Kesehatan",
-                          "Bidang Urusan Kesehatan",
-                        ]}
-                      />
-                    </TabPane>
-                    <TabPane tabId="2" id="kabupaten">
-                      <PieChartNew
-                        dataChart={dataChartPerbandinganAnggaranStunting}
-                        dataColors={'["#57E7B4", "#2DAED4"]'}
-                        categoryName={[
-                          "Anggaran Untuk Lainnya",
-                          "Anggaran Penurunan dan Pencegahan Stunting",
-                        ]}
-                      />
-                      <div className="d-flex justify-content-center align-items-center mt-4">
-                        <span
-                          onClick={() => handleShowDataAkun(true)}
-                          style={{ cursor: "pointer", color: "#2DAED4" }}
-                        >
-                          Lihat Akun Belanja
-                        </span>
-                      </div>
-                    </TabPane>
-                  </TabContent>
-                </>
-              )}
-            </CardBody>
-          </Card>
-        </Col>
-        <Col xl={6}>
-          <Card className="card-height-100">
-            <CardBody>
-              <div className="separator mb-5">
-                <h4 className="card-title ">
-                  Perbandingan Total Keluarga Beresiko Stunting Berdasarkan
-                  Total Keluarga Sasaran
-                </h4>
-              </div>
-              <PieChartNew
-                dataChart={dataChartPerbandinganKeluargaStunting}
-                categoryName={[
-                  "Keluarga Tidak Beresiko Stunting",
-                  "Keluarga Beresiko Stunting",
-                ]}
-                dataColors={'["#57E7B4", "#2DAED4"]'}
-              />
-            </CardBody>
-          </Card>
-        </Col>
-      </Row> */}
-
-      {/* <Row>
-        <Col>
-          <Card className="card-height-100">
-            <CardBody>
-              <div className="separator">
-                <h4 className="card-title">
-                  Perbandingan Keluarga Sasaran yang Berisiko dan Tidak Berisiko
-                  Stunting
-                </h4>
-              </div>
-              <div className="nav-beranda">
-                <Nav
-                  tabs
-                  className="nav nav-tabs nav-success nav-justified mb-3"
-                >
-                  <NavItem>
-                    <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames({
-                        active: customActiveTab === "1",
-                      })}
-                      onClick={() => {
-                        toggleCustom("1");
-                      }}
-                    >
-                      PROVINSI
-                    </NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames({
-                        active: customActiveTab === "2",
-                      })}
-                      onClick={() => {
-                        toggleCustom("2");
-                      }}
-                    >
-                      KABUPATEN
-                    </NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames({
-                        active: customActiveTab === "3",
-                      })}
-                      onClick={() => {
-                        toggleCustom("3");
-                      }}
-                    >
-                      KECAMATAN
-                    </NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames({
-                        active: customActiveTab === "4",
-                      })}
-                      onClick={() => {
-                        toggleCustom("4");
-                      }}
-                    >
-                      KELURAHAN
-                    </NavLink>
-                  </NavItem>
-                </Nav>
-              </div>
-              <TabContent activeTab={customActiveTab} className="text-muted">
-                <TabPane tabId="1" id="provinsi">
-                  <StackedBarChart
-                    dataColors='["#2DAED4", "#57E7B4"]'
-                    valueChart1={dataBeresikoProvinsi}
-                    valueChart2={dataTidakBeresikoProvinsi}
-                    categoryChart={dataCategoryChartProvinsi}
-                  />
-                </TabPane>
-                <TabPane tabId="2" id="kabupaten">
-                  <StackedBarChart
-                    dataColors='["#2DAED4", "#57E7B4"]'
-                    valueChart1={dataBeresikoKabupaten}
-                    valueChart2={dataTidakBeresikoKabupaten}
-                    categoryChart={dataCategoryChartKabupaten}
-                  />
-                </TabPane>
-                <TabPane tabId="3" id="kecamatan">
-                  <StackedBarChart
-                    dataColors='["#2DAED4", "#57E7B4"]'
-                    valueChart1={dataBeresikoKecamatan}
-                    valueChart2={dataTidakBeresikoKecamatan}
-                    categoryChart={dataCategoryChartKecamatan}
-                  />
-                </TabPane>
-                <TabPane tabId="4" id="kelurahan">
-                  <StackedBarChart
-                    dataColors='["#2DAED4", "#57E7B4"]'
-                    valueChart1={dataBeresikoKelurahan}
-                    valueChart2={dataTidakBeresikoKelurahan}
-                    categoryChart={dataCategoryChartKelurahan}
-                  />
-                </TabPane>
-              </TabContent>
-            </CardBody>
-          </Card>
-        </Col>
-      </Row> */}
-
-      {/* <Row>
-        <Col>
-          <Card>
-            <CardBody>
-              <div className="separator">
-                <h4 className="card-title mb-0">
-                  ANGGARAN SPM UNTUK PENURUNAN DAN PENCEGAHAN STUNTING
-                </h4>
-              </div>
-              <HorizontalBarChart
-                dataColors='["#FCAD24"]'
-                valueChart={dataChartSpmStunting[0]}
-                categoryChart={dataChartSpmStunting[1]}
-              />
-            </CardBody>
-          </Card>
-        </Col>
-      </Row> */}
-
-      {/* <Row>
-        <Col>
-          <Card>
-            <CardBody>
-              <div className="separator">
-                <h4 className="card-title mb-0">
-                  KELUARGA SASARAN MENURUT PERINGKAT KESEJAHTERAAN
-                </h4>
-              </div>
-              <ColBarChart
-                valueChart={dataChartKesejahteraan[1]}
-                categoryChart={dataChartKesejahteraan[0]}
-                seriesName={[
-                  "Kesejahteraan 1",
-                  "Kesejahteraan 2",
-                  "Kesejahteraan 3",
-                  "Kesejahteraan 4",
-                ]}
-                dataColors='["#2DAED4","#2DAED4C4","#2DAED47B","#2DAED43B"]'
-              />
-            </CardBody>
-          </Card>
-        </Col>
-      </Row> */}
 
       {/* ini */}      
       <Row>

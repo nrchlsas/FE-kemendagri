@@ -117,8 +117,8 @@ const ContentDapodikV2 = () => {
     const newTahunData = (parseInt(value) - 1).toString();
     setSelectedSingleTahunAnggaran(value);
     setSelectedSingleTahunData(newTahunData);
-  
     getDataDapodik({ kodeDdn: "", tahun: value, tahun_data: newTahunData });
+    getDataAnakSekolah({ kodeWilayah: "", tahun_data: newTahunData });
     getDataTabelDapodikSeProv({ tahun: value, tahun_data: newTahunData });
     getDataTabelDapodikProv({ tahun: value, tahun_data: newTahunData });
     getDataTabelDapodikKab({ tahun: value, tahun_data: newTahunData });
@@ -130,41 +130,17 @@ const ContentDapodikV2 = () => {
     const newTahunAnggaran = (parseInt(value) + 1).toString();
     setSelectedSingleTahunData(value);
     setSelectedSingleTahunAnggaran(newTahunAnggaran);
-  
-    getDataAnakSekolah({ kodeWilayah: "", tahun_data: value });
+    getDataAnakSekolah({kodeWilayah: kodeWilayahPeta, tahun_data:value})
     getDataDapodik({ kodeDdn: "", tahun: newTahunAnggaran, tahun_data: value });
     getDataTabelDapodikSeProv({ tahun: newTahunAnggaran, tahun_data: value });
     getDataTabelDapodikProv({ tahun: newTahunAnggaran, tahun_data: value });
     getDataTabelDapodikKab({ tahun: newTahunAnggaran, tahun_data: value });
     getDataCrossAnalisis({ tahun: newTahunAnggaran, tahun_data: value });
   };
-
-  //set old change
-  // const handleSelectChangeAnggaran = (e) => {
-  //   const { name, value } = e.target;
-  //   setSelectedSingleTahunAnggaran(value); // Misalnya, untuk dropdown tahun
-  //   // getDataAnakSekolah({kodeWilayah: kodeWilayahPeta, tahun: value, tahun_data: selectedSingleTahunData});
-  //   getDataDapodik({kodeDdn: "", tahun: value, tahun_data: selectedSingleTahunData});
-  //   getDataTabelDapodikSeProv({tahun:value, tahun_data: selectedSingleTahunData});
-  //   getDataTabelDapodikProv({tahun:value, tahun_data: selectedSingleTahunData});
-  //   getDataTabelDapodikKab({tahun:value, tahun_data: selectedSingleTahunData});
-  //   getDataCrossAnalisis({tahun:value, tahun_data: selectedSingleTahunData});
-  // };  
-
-  // const handleSelectChangeDataPokok = (e) => {
-  //   const { name, value } = e.target;
-  //   setselectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
-  //   getDataAnakSekolah({kodeWilayah: "", tahun_data: value});
-  //   getDataDapodik({kodeDdn: "", tahun: selectedSingleTahunAnggaran, tahun_data: value});
-  //   getDataTabelDapodikSeProv({tahun:selectedSingleTahunAnggaran, tahun_data: value});
-  //   getDataTabelDapodikProv({tahun:selectedSingleTahunAnggaran, tahun_data: value});
-  //   getDataTabelDapodikKab({tahun:selectedSingleTahunAnggaran, tahun_data: value});
-  //   getDataCrossAnalisis({tahun:selectedSingleTahunAnggaran, tahun_data: value});
-  // };
   
 
   const [dataSdMap, setDataSdMap] = useState([])
-  const getDataDapodik = ({kodeDdn="", kodeProv="", tahun="", tahun_data=""}) => {
+  const getDataDapodik = ({kodeDdn="", tahun="", tahun_data=""}) => {
     const fetchData = async () => {
         try {
             const token = JSON.parse(sessionStorage.getItem("authUser"));
@@ -173,7 +149,6 @@ const ContentDapodikV2 = () => {
                 headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
                 body: JSON.stringify({
                     kode_ddn: kodeDdn,
-                    kode_prov: kodeProv,
                     tahun: tahun,
                     tahun_data:tahun_data
                 }),
@@ -768,7 +743,7 @@ const ContentDapodikV2 = () => {
   };
 
   useEffect(() => {
-    getDataDapodik({kodeDdn: "", kodeProv:"", tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
+    getDataDapodik({kodeDdn: "", tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
     getDataAnakSekolah({kodeWilayah: "", tahun_data:selectedSingleTahunData});
     getDataTabelDapodikSeProv({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
     getDataTabelDapodikProv({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
@@ -1341,14 +1316,14 @@ const ContentDapodikV2 = () => {
   const [clickNamaDaerah, setClickNamaDaerah] = useState("")
   const handleRegionClick = (kodeProv, namaProv) => {
     setKodeWilayahPeta(kodeProv)
-    getDataDapodik({kodeDdn: "", kodeProv:kodeProv, tahun_data:selectedSingleTahunData, tahun:selectedSingleTahunAnggaran})
+    getDataDapodik({kodeDdn: kodeProv, tahun_data:selectedSingleTahunData, tahun:selectedSingleTahunAnggaran})
     getDataAnakSekolah({kodeWilayah: kodeProv, tahun_data:selectedSingleTahunData})
     setClickNamaDaerah(namaProv)
     setClickDaerah(true)
   };
 
   const resetRegionClick = () => {
-    getDataDapodik({kodeDdn: "", kodeProv:"", tahun_data: selectedSingleTahunData, tahun:selectedSingleTahunAnggaran});
+    getDataDapodik({kodeDdn: "", tahun_data: selectedSingleTahunData, tahun:selectedSingleTahunAnggaran});
     getDataAnakSekolah({kodeWilayah: "", tahun_data:selectedSingleTahunData});
     setClickDaerah(false)
   }
@@ -1507,7 +1482,7 @@ const ContentDapodikV2 = () => {
                     <>
                   </>}
                   </div>
-                  <MapIndoChart chartTitle={titleMap} roam={roam} maxValue={maxValueMap} colorData={['#B3E0E5', '#69D6E8', '#0092B3', '#1B8BA6']} onRegionClick={handleRegionClick} valueSeries={valueMap}/>
+                  <MapIndoChart chartTitle={titleMap} roam={roam} daerah={clickDaerah} maxValue={maxValueMap} onRegionClick={handleRegionClick} valueSeries={valueMap} colorData={['#B3E0E5', '#69D6E8', '#0092B3', '#1B8BA6']} />
               {/* <PolygonMaps /> */}
             </CardBody>
           </Card>
