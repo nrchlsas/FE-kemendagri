@@ -201,7 +201,7 @@ const ContentStunting = () => {
   const [loadingStunting, setLoadingStunting] = useState([]);
   const [errorStunting, setErrorStunting] = useState([]);
 
-  const getDataStunting = ({tahun, tahun_data}) => {
+  const getDataStunting = ({tahun, tahun_data, kodeDdn="", kodeProv=""}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -209,7 +209,8 @@ const ContentStunting = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
-          //  kode_ddn: "11"
+            kode_ddn: kodeDdn,
+            kode_prov: kodeProv,
             tahun: tahun,
             tahun_data: tahun_data
         }),
@@ -845,7 +846,7 @@ const ContentStunting = () => {
     };
 
   useEffect(() => {
-    getDataStunting({tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
+    getDataStunting({kodeDdn:"", kodeProv:"", tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
     getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
     // getDataStuntingTabelKabupaten();
   }, []);
@@ -1485,13 +1486,19 @@ const ContentStunting = () => {
     //     getDataStackPerProvKesejahteraan({tahunData: value})
     //   }
     // };
-
+    const [clickDaerah, setClickDaerah] = useState(false)
+    const [clickNamaDaerah, setClickNamaDaerah] = useState("")
+    const [kodeWilayahPeta, setKodeWilayahPeta]=useState("")  
     const handleRegionClick = (kodeProv, namaProv) => {
-      // getDataDapodik({kodeDdn: kodeProv})
-      // getDataAnakSekolah({kodeWilayah: kodeProv})
-      // setClickNamaDaerah(namaProv)
-      // setClickDaerah(true)
+      getDataStunting({kodeDdn:"", kodeProv:kodeProv, tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
+      setClickNamaDaerah(namaProv)
+      setClickDaerah(true)
     };
+
+    const resetRegionClick = () => {
+      getDataStunting({kodeDdn:"", kodeProv:"", tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
+      setClickDaerah(false)
+    }
 
      useEffect(() => {
         const handleEscKey = (event) => {
@@ -1567,25 +1574,6 @@ const ContentStunting = () => {
               <option value="2025">2025</option>
             </select>
                 </div>
-            {/* <select
-              name="tahun"
-              style={{
-                padding: "10px 30px 10px 10px",
-                fontSize: "16px",
-                borderRadius: "5px",
-                border: "1px solid #ccc",
-                backgroundColor: "#ffffff",                          
-                cursor: "pointer",                          
-                marginLeft: "10px",
-                marginTop: "16px",
-                marginBottom: "30px",
-              }}
-              value={selectedSingleTahunAnggaran}
-              onChange={handleSelectChange}
-            >                        
-              <option value="2024">2024</option>
-              <option value="2025">2025</option>
-            </select> */}
             </div>
           </Card>
         </Col>
@@ -1623,6 +1611,24 @@ const ContentStunting = () => {
                   }}>
                     Minimize Map
                   </button></>)}
+                  {clickDaerah ? <><button onClick={()=>{
+                    resetRegionClick()
+                    setTitleMap("Total Penduduk")
+                    }} style={{
+                      backgroundColor: "#007bff",
+                      color: "white",
+                      padding: "5px 10px",
+                      border: "none",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                      fontSize: "16px",
+                      marginLeft: "4px"
+                    }}>
+                      Nasional
+                    </button>
+                    </> : 
+                    <>
+                  </>}
               </div>
               
               <div className="d-flex nav-beranda">
@@ -1658,6 +1664,9 @@ const ContentStunting = () => {
         <Col md={dataWidth}>
           <Card className="card-height-100">
             <CardBody>
+            <div className="d-flex justify-content-center align-items-center title-page">
+                  {clickDaerah ? clickNamaDaerah : "Nasional"}
+              </div>
               <Row>
                 <Col md={6}>
                   <Row>

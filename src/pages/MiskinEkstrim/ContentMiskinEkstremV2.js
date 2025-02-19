@@ -996,7 +996,7 @@ const ContentMiskinEkstremV2 = () => {
   };
 
   useEffect(() => {
-    getDataKemiskinanEkstrem({tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
+    getDataKemiskinanEkstrem({kodeDdn:"", kodeProv:"", tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
     // getDataKemiskinanEkstremTahun("2024");
     getDataMiskinEkstremTabel({tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
     // getDataMiskinEkstremTabelKab()
@@ -1406,12 +1406,20 @@ const ContentMiskinEkstremV2 = () => {
   //   getDataMiskinEkstremTabel({tahun: selectedSingleTahunAnggaran, tahun_data: value});
   // };
 
+  const [clickDaerah, setClickDaerah] = useState(false)
+  const [clickNamaDaerah, setClickNamaDaerah] = useState("")
+  const [kodeWilayahPeta, setKodeWilayahPeta]=useState("")  
   const handleRegionClick = (kodeProv, namaProv) => {
     // getDataDapodik({kodeDdn: kodeProv})
     // getDataAnakSekolah({kodeWilayah: kodeProv})
-    // setClickNamaDaerah(namaProv)
-    // setClickDaerah(true)
+    setClickNamaDaerah(namaProv)
+    setClickDaerah(true)
   };
+
+  const resetRegionClick = () => {
+    getDataKemiskinanEkstrem({kodeDdn:"", kodeProv:"", tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
+    setClickDaerah(false)
+  }
 
    useEffect(() => {
       const handleEscKey = (event) => {
@@ -1543,6 +1551,24 @@ const ContentMiskinEkstremV2 = () => {
                   }}>
                     Minimize Map
                   </button></>)}
+                  {clickDaerah ? <><button onClick={()=>{
+                    resetRegionClick()
+                    setTitleMap("Total Penduduk")
+                    }} style={{
+                      backgroundColor: "#007bff",
+                      color: "white",
+                      padding: "5px 10px",
+                      border: "none",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                      fontSize: "16px",
+                      marginLeft: "4px"
+                    }}>
+                      Nasional
+                    </button>
+                    </> : 
+                    <>
+                  </>}
               </div>
               
               <div className="d-flex nav-beranda">
@@ -1579,70 +1605,11 @@ const ContentMiskinEkstremV2 = () => {
           </Card>
         </Col>
         <Col md={dataWidth}>
-          {/* <Card>
-            <CardBody>
-              <div className="separator">
-                <h4 className="card-title mb-0">
-                  Top 5 Se-Provinsi Dengan Anggaran Untuk Penanganan Kemiskinan
-                  Ekstrem Tertinggi
-                </h4>
-              </div>
-              <div className="nav-beranda">
-                <Nav
-                  tabs
-                  className="nav nav-tabs nav-success nav-justified mb-3"
-                >
-                  <NavItem>
-                    <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames({
-                        active: customActiveTabChartTop === "1",
-                      })}
-                      onClick={() => {
-                        toggleCustomChartTop("1");
-                      }}
-                    >
-                      TOP 5
-                    </NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames({
-                        active: customActiveTabChartTop === "2",
-                      })}
-                      onClick={() => {
-                        toggleCustomChartTop("2");
-                      }}
-                    >
-                      BOTTOM 5
-                    </NavLink>
-                  </NavItem>
-                </Nav>
-              </div>
-              <TabContent
-                activeTab={customActiveTabChartTop}
-                className="text-muted"
-              >
-                <TabPane tabId="1" id="provinsi">
-                  <HorizontalBarChart
-                    valueChart={dataChartTop5AnggaranKemiskinanEkstrem[0]}
-                    categoryChart={dataChartTop5AnggaranKemiskinanEkstrem[1]}
-                    dataColors='["#FBAD25"]'
-                  />
-                </TabPane>
-                <TabPane tabId="2" id="kabupaten">
-                  <HorizontalBarChart
-                    valueChart={dataChartBottom5AnggaranKemiskinanEkstrem[0]}
-                    categoryChart={dataChartBottom5AnggaranKemiskinanEkstrem[1]}
-                    dataColors='["#FBAD25"]'
-                  />
-                </TabPane>
-              </TabContent>
-            </CardBody>
-          </Card> */}
           <Card className="card-height-100">
             <CardBody>
+            <div className="d-flex justify-content-center align-items-center title-page">
+                  {clickDaerah ? clickNamaDaerah : "Nasional"}
+              </div>
               <div className="separator mb-2">
                 <h4 className="card-title">
                   Perbandingan Total Anggaran Untuk Penanganan Miskin Ekstrem
