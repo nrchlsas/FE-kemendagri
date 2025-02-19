@@ -1410,8 +1410,7 @@ const ContentMiskinEkstremV2 = () => {
   const [clickNamaDaerah, setClickNamaDaerah] = useState("")
   const [kodeWilayahPeta, setKodeWilayahPeta]=useState("")  
   const handleRegionClick = (kodeProv, namaProv) => {
-    // getDataDapodik({kodeDdn: kodeProv})
-    // getDataAnakSekolah({kodeWilayah: kodeProv})
+    getDataKemiskinanEkstrem({kodeDdn:"", kodeProv:namaProv, tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
     setClickNamaDaerah(namaProv)
     setClickDaerah(true)
   };
