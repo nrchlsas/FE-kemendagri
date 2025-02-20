@@ -170,7 +170,7 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
   
           if (clickedFeature) {
             onRegionClick(clickedFeature.properties.key, clickedFeature.properties.name); // Kirim `key` ke parent
-            getDataMapSeProv({kodeProv: clickedFeature.properties.key})
+            // getDataMapSeProv({kodeProv: clickedFeature.properties.key})
           } else {
             alert("Data wilayah tidak ditemukan!");
           }
