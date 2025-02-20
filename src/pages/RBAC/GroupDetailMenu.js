@@ -281,6 +281,16 @@ const GroupDetailMenu = () => {
                                                 }}
                                             />
                                         </FormGroup>
+                                        <FormGroup check>
+                                                <Label>
+                                                    <input type="checkbox" name="is_active"
+                                                        onChange={(e) => changeValue(e)}
+                                                        className="form-check-input"
+                                                        checked={formData.is_active}
+                                                    />
+                                                    <span>Status Aktif</span>
+                                                </Label>
+                                        </FormGroup>
                                     </Col>
                                 </Row>
                                 <Row>
@@ -350,6 +360,8 @@ const GroupDetailMenu = () => {
                                         <th style={{ width: "20px" }}>NO</th>
                                         <th style={{ cursor: "pointer", verticalAlign: "middle" }}>Nama Group Menu</th>
                                         <th>Nama Menu</th>
+                                        <th>Aktif</th>
+                                        <th>Deleted</th>
                                         {/* <th style={{ width: "60px" }}>Deleted</th> */}
                                         <th>Aksi</th>
                                     </tr>
@@ -361,16 +373,18 @@ const GroupDetailMenu = () => {
                                                 {
                                                     textAlign: "center",
                                                     verticalAlign: "middle",
-                                                    maxWidth: "50px"
+                                                    maxWidth: "40px"
                                                 }}>
                                                 {(paging.page - 1) * paging.size + index + 1}
                                             </td>
                                             <td style={{ maxWidth: "10%" }} className="text-wrap">
                                                 {item.grp_menu_name}
                                             </td>
-                                            <td style={{ maxWidth: "400px" }} className="text-wrap">
+                                            <td style={{ maxWidth: "20%" }} className="text-wrap">
                                                 {item.menu_name}
                                             </td>
+                                            <td><input type="checkbox" key={'is_active_' + index} checked={item.is_active} readOnly /></td>
+                                            <td><input type="checkbox" key={'is_deleted_' + index} checked={item.is_deleted} readOnly /></td>
                                             {/* <td style={{ width: "60px" }}>{item.is_deleted ? 'Ya' : ''}</td> */}
                                             <td style={{ width: "160px" }}>
                                                 <Button color="danger" style={{ marginRight: "3px" }} onClick={() => { onDelete(item); }}>Hapus</Button>
