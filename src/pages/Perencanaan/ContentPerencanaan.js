@@ -480,6 +480,19 @@ const ContentPerencanaan = () => {
       setDataPerencanaanPersentaseFiltered(dataPerencanaanPersentase)
     };
 
+    const [clickDaerah, setClickDaerah] = useState(false)
+    const [clickNamaDaerah, setClickNamaDaerah] = useState("")
+    const [kodeWilayahPeta, setKodeWilayahPeta]=useState("")  
+    const handleRegionClick = (kodeProv, namaProv) => {
+      setClickNamaDaerah(namaProv)
+      setClickDaerah(true)
+    };
+
+    const resetRegionClick = () => {
+      
+      setClickDaerah(false)
+    }
+
 
   return (
     <React.Fragment>
@@ -698,7 +711,7 @@ const ContentPerencanaan = () => {
                   </button></>)}
               </div>                          
               </div>
-                  <MapIndoChart roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#FCAD24", "#57E7B4"]} />
+                  <MapIndoChart onRegionClick={handleRegionClick} roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#FCAD24", "#57E7B4"]} />
                   <div className="d-flex justify-content-end">
                     {/* <div className="d-flex flex-column justify-content-evenly">
                     <div className="d-flex align-items-center mb-2">

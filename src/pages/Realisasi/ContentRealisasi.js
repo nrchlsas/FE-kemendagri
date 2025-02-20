@@ -209,6 +209,19 @@ const ContentRealisasi = () => {
         setSearchTerm("");
         setDataRealisasiPersentaseFiltered(dataRealisasiPersentase)
       };
+
+      const [clickDaerah, setClickDaerah] = useState(false)
+      const [clickNamaDaerah, setClickNamaDaerah] = useState("")
+      const [kodeWilayahPeta, setKodeWilayahPeta]=useState("")  
+      const handleRegionClick = (kodeProv, namaProv) => {
+        setClickNamaDaerah(namaProv)
+        setClickDaerah(true)
+      };
+  
+      const resetRegionClick = () => {
+        
+        setClickDaerah(false)
+      }
   
 
   return (
@@ -292,7 +305,7 @@ const ContentRealisasi = () => {
                   </button></>)}
               </div>                          
               </div>
-                  <MapIndoChart roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#FCAD24", "#57E7B4"]} />                           
+                  <MapIndoChart onRegionClick={handleRegionClick} roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#FCAD24", "#57E7B4"]} />                           
                 </>
               )}
             </CardBody>
