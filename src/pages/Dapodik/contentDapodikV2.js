@@ -1285,9 +1285,9 @@ const ContentDapodikV2 = () => {
           acc[3].push(item.kode_ddn)
           return acc
         }, [[],[], 0, []]) : dataDapodikTidakLanjut.data.reduce((acc, item) => {
-          acc[0].push(item.tkt_6_ltm)
+          acc[0].push(item.tkt_9_ltm)
           acc[1].push(item.nama_kabkota)
-          acc[2] += item.tkt_6_ltm;
+          acc[2] += item.tkt_9_ltm;
           acc[3].push(item.kode_ddn)
           return acc
         }, [[],[], 0, []]))
