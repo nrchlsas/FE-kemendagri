@@ -610,30 +610,35 @@ const ContentStunting = () => {
         const desilData = {
           desil1: Array.isArray(dataStuntingTabel?.data)
             ? dataStuntingTabel?.data?.map(item => ({
+              id: item.kode_prov,
                 name: item.nama_prov,
                 value: parseInt(item.peringkat_kesejahteraan_1),
               }))
             : [],
           desil2: Array.isArray(dataStuntingTabel?.data)
             ? dataStuntingTabel?.data?.map(item => ({
+              id: item.kode_prov,
                 name: item.nama_prov,
                 value: parseInt(item.peringkat_kesejahteraan_2),
               }))
             : [],
           desil3: Array.isArray(dataStuntingTabel?.data)
             ? dataStuntingTabel?.data?.map(item => ({
+              id: item.kode_prov,
                 name: item.nama_prov,
                 value: parseInt(item.peringkat_kesejahteraan_3),
               }))
             : [],
           desil4: Array.isArray(dataStuntingTabel?.data)
             ? dataStuntingTabel?.data?.map(item => ({
+              id: item.kode_prov,
                 name: item.nama_prov,
                 value: parseInt(item.peringkat_kesejahteraan_4),
               }))
             : [],
           desil5: Array.isArray(dataStuntingTabel?.data)
             ? dataStuntingTabel?.data?.map(item => ({
+              id: item.kode_prov,
                 name: item.nama_prov,
                 value: parseInt(item.peringkat_kesejahteraan_diatas_4),
               }))
@@ -696,30 +701,35 @@ const ContentStunting = () => {
         const desilData = {
           desil1: Array.isArray(dataStuntingTabelKabupaten?.data)
             ? dataStuntingTabelKabupaten?.data?.map(item => ({
+                id: item.kode_ddn1,
                 name: item.nama_kabupaten,
                 value: parseInt(item.peringkat_kesejahteraan_1),
               })).slice(1)
             : [],
           desil2: Array.isArray(dataStuntingTabelKabupaten?.data)
             ? dataStuntingTabelKabupaten?.data?.map(item => ({
+                id: item.kode_ddn1,
                 name: item.nama_kabupaten,
                 value: parseInt(item.peringkat_kesejahteraan_2),
               })).slice(1)
             : [],
           desil3: Array.isArray(dataStuntingTabelKabupaten?.data)
             ? dataStuntingTabelKabupaten?.data?.map(item => ({
+              id: item.kode_ddn1,
                 name: item.nama_kabupaten,
                 value: parseInt(item.peringkat_kesejahteraan_3),
               })).slice(1)
             : [],
           desil4: Array.isArray(dataStuntingTabelKabupaten?.data)
             ? dataStuntingTabelKabupaten?.data?.map(item => ({
+              id: item.kode_ddn1,
                 name: item.nama_kabupaten,
                 value: parseInt(item.peringkat_kesejahteraan_4),
               })).slice(1)
             : [],
           desil5: Array.isArray(dataStuntingTabelKabupaten?.data)
             ? dataStuntingTabelKabupaten?.data?.map(item => ({
+              id: item.kode_ddn1,
                 name: item.nama_kabupaten,
                 value: parseInt(item.peringkat_kesejahteraan_diatas_4),
               })).slice(1)
