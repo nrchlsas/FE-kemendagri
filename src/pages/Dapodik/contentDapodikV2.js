@@ -423,7 +423,7 @@ const ContentDapodikV2 = () => {
     fetchData();
   };
   
-  const getDataCrossAnalisis = ({tahun, tahun_data}) => {
+  const getDataCrossAnalisis = ({tahun, tahun_data, kodeProv}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -431,6 +431,7 @@ const ContentDapodikV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
+            kode_prov: kodeProv,
             tahun:tahun,
             tahun_data: tahun_data
           }),
@@ -1319,6 +1320,7 @@ const ContentDapodikV2 = () => {
     setKodeWilayahPeta(kodeProv)
     getDataDapodik({kodeDdn: "",  kodeProv: kodeProv, tahun_data:selectedSingleTahunData, tahun:selectedSingleTahunAnggaran})
     getDataAnakSekolah({kodeWilayah: kodeProv, tahun_data:selectedSingleTahunData})
+    getDataCrossAnalisis({kodeProv: kodeProv, tahun_data:selectedSingleTahunData, tahun:selectedSingleTahunAnggaran})
     setClickNamaDaerah(namaProv)
     setClickDaerah(true)
   };
@@ -1326,6 +1328,7 @@ const ContentDapodikV2 = () => {
   const resetRegionClick = () => {
     getDataDapodik({kodeDdn: "", kodeProv:"", tahun_data: selectedSingleTahunData, tahun:selectedSingleTahunAnggaran});
     getDataAnakSekolah({kodeWilayah: "", tahun_data:selectedSingleTahunData});
+    getDataCrossAnalisis({kodeProv: "", tahun_data:selectedSingleTahunData, tahun:selectedSingleTahunAnggaran})
     setClickDaerah(false)
   }
 
