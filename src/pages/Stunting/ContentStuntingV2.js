@@ -1311,7 +1311,7 @@ const ContentStunting = () => {
   };
 
   const [dataJambanTidakLayakPemda, setDataJambanTidakLayakPemda] = useState([])
-  const getDataFasilitasKesehatanPerProv = ({kodeProvinsi = "", url="", tahun}) => {
+  const getDataFasilitasKesehatanPerProv = ({kodeProvinsi = "", url="", tahun, tahunData}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -1320,7 +1320,8 @@ const ContentStunting = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_provinsi: kodeProvinsi,
-            tahun: tahun
+            tahun: tahun,
+            tahun_data: tahunData
           }),
         };
 
@@ -1472,9 +1473,9 @@ const ContentStunting = () => {
 
   const handleBarClickProv = (data) => {
     if (fasilitasShow == "Jamban Tidak Layak") {
-      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_jamban_kabkota", tahun: selectedSingleTahunAnggaran})
+      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_jamban_kabkota", tahun: selectedSingleTahunAnggaran, tahunData: selectedSingleTahunData})
     } else {
-      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_air_kabkota", tahun: selectedSingleTahunAnggaran})
+      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_air_kabkota", tahun: selectedSingleTahunAnggaran, tahunData: selectedSingleTahunData})
     }
   };
 

@@ -54,7 +54,7 @@ const ContentUhcV2 = () => {
   const [loadingUhc, setLoadingUhc] = useState([]);
   const [errorUhc, setErrorUhc] = useState([]);
 
-  const getDataUhc = ({tahun, tahun_data}) => {
+  const getDataUhc = ({tahun, tahun_data, kodeProv, kodeDdn}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -62,6 +62,8 @@ const ContentUhcV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
+            kode_ddn: kodeDdn,
+            kode_prov: kodeProv,
             tahun: tahun,
             tahun_data: tahun_data
           }),
@@ -177,7 +179,7 @@ const ContentUhcV2 = () => {
   const [errorBpjsTabelKabupaten, setErrorBpjsTabelKabupaten] = useState([]);
   
 
-  const getDataTabelBpjsKabupaten = ({kodeDdn = "", e, tahun, tahun_data}) => {
+  const getDataTabelBpjsKabupaten = ({kodeDdn = "", tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -204,10 +206,39 @@ const ContentUhcV2 = () => {
         }
 
         const dataBpjsTabelKabupaten = await response.json();
-        setShowNextData(true)
-        e.stopPropagation(); // Mencegah event bubbling jika dibutuhkan        
+        setShowNextData(true)   
         setDataBpjsTabelSeprov(dataBpjsTabelKabupaten?.data);
         setFilteredDataUhcTabelKabupaten(dataBpjsTabelKabupaten?.data);
+
+        // Proses data
+        const dataPeserta = {
+          bpjs1: Array.isArray(dataBpjsTabelKabupaten?.data)
+            ? dataBpjsTabelKabupaten.data.map(item => ({
+              id:item.kode_ddn,
+                name: item?.nama || "Unknown",
+                value: item?.total_bpjs || 0,
+              }))
+            : [],
+          bpjs2: Array.isArray(dataBpjsTabelKabupaten?.data)
+            ? dataBpjsTabelKabupaten.data.map(item => ({
+              id:item.kode_ddn,
+                name: item?.nama || "Unknown",
+                value: item?.jumlah_non_aktif || 0,
+              }))
+            : [],
+        };
+      
+        // Simpan data peserta dan set map value
+        setDataPeserta(dataPeserta);
+        setValueMap(dataPeserta.bpjs1);
+      
+        // Hitung nilai maksimum
+        const maxValue = Array.isArray(dataPeserta.bpjs1) && dataPeserta.bpjs1.length > 0
+          ? Math.max(...dataPeserta.bpjs1.map(item => item.value || 0))
+          : 0;
+        setmaxValueMap(maxValue);
+      
+        // Ubah state lain
       } catch (errorBpjsTabelKabupaten) {
         setErrorBpjsTabelKabupaten(errorBpjsTabelKabupaten);
       } finally {
@@ -558,16 +589,7 @@ const ContentUhcV2 = () => {
       };
   
       const handleKeyDown = (e, area) => {
-        // if (e.key === "Enter") {
-        //   if (area === "kabupaten") {
-        //     getDataTabelDapodikKab(e.target.value); // Panggil API ketika tombol ditekan
-        //   } else if (area === "provinsi") {
-        //     getDataTabelDapodikProv(e.target.value);
-        //   } else {
-        //     getDataTabelDapodikSeProv(e.target.value);
-        //   }
-        //   setCurrentPage(1);
-        // }
+
       };
 
   const [dataShowChartAnggaran, setDataShowChartAnggaran] = useState(false);
@@ -602,22 +624,25 @@ const ContentUhcV2 = () => {
   };
   
   
-  // const handleSelectChangeAnggaran = (e) => {
-  //   const { name, value } = e.target;
-  //   setSelectedSingleTahunAnggaran(value); // Misalnya, untuk dropdown tahun
-  //   getDataUhc({tahun: value, tahun_data: selectedSingleTahunData})
-  //   getDataTabelBpjsSeprov({tahun: value, tahun_data: selectedSingleTahunData})
-  // };
-
-  // const handleSelectChangeDataPokok = (e) => {
-  //   const { name, value } = e.target;
-  //   setSelectedSingleTahunData(value); // Misalnya, untuk dropdown tahun
-  //   getDataUhc({tahun: selectedSingleTahunAnggaran, tahun_data:value})
-  //   getDataTabelBpjsSeprov({tahun: selectedSingleTahunAnggaran, tahun_data:value})
-  // };
+    const [clickDaerah, setClickDaerah] = useState(false)
+    const [clickNamaDaerah, setClickNamaDaerah] = useState("")
+    const [kodeWilayahPeta, setKodeWilayahPeta]=useState("")  
+    const handleRegionClick = (kodeProv, namaProv) => {
+      getDataUhc({kodeDdn:"", kodeProv:kodeProv, tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
+      getDataTabelBpjsKabupaten({kodeDdn: kodeProv, tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
+      setClickNamaDaerah(namaProv)
+      setClickDaerah(true)
+    };
+  
+    const resetRegionClick = () => {
+      getDataUhc({kodeDdn:"", kodeProv:"", tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
+      getDataTabelBpjsSeprov({tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
+      setClickDaerah(false)
+    }
+  
 
   useEffect(() => {
-    getDataUhc({tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
+    getDataUhc({kodeDdn:"", kodeProv:"", tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
     getDataTabelBpjsSeprov({tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
     // getDataTabelBpjsKabupaten()
   }, []);
@@ -731,8 +756,25 @@ const ContentUhcV2 = () => {
                   }}>
                     Minimize Map
                   </button></>)}
+                  {clickDaerah ? <><button onClick={()=>{
+                    resetRegionClick()
+                    setTitleMap("Total Penduduk")
+                    }} style={{
+                      backgroundColor: "#007bff",
+                      color: "white",
+                      padding: "5px 10px",
+                      border: "none",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                      fontSize: "16px",
+                      marginLeft: "4px"
+                    }}>
+                      Nasional
+                    </button>
+                    </> : 
+                    <>
+                  </>}
               </div>
-              
               <div className="d-flex nav-beranda">
               <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
                 TOTAL PESERTA:
@@ -756,7 +798,7 @@ const ContentUhcV2 = () => {
                     </select>
                 </div>
               </div>        
-              <MapIndoChart roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#D1ED87","#B9D676","#A1BF66","#89A855","#719145","#597A34"]} />
+              <MapIndoChart daerah={clickDaerah} roam={roam} maxValue={maxValueMap} onRegionClick={handleRegionClick} valueSeries={valueMap} colorData={["#D1ED87","#B9D676","#A1BF66","#89A855","#719145","#597A34"]} />
             </CardBody>
           </Card>
         </Col>
@@ -1467,7 +1509,7 @@ const ContentUhcV2 = () => {
                   {currentItems.map((item, index) =>(
                     <tr key={index}>
                         <td>{indexOfFirstItem+index+1}</td>                        
-                        <td className={showNextData ? "" : "click-data" } style={{ minWidth: "270px" }} onClick={(e)=> {showNextData ? "" : getDataTabelBpjsKabupaten({kodeDdn: item.kode, e:e, tahun:selectedSingleTahunAnggaran}); setSearchTerm("")}}>{showNextData ? item.nama_daerah : item.nama}</td>
+                        <td className={showNextData ? "" : "click-data" } style={{ minWidth: "270px" }} onClick={(e)=> {showNextData ? "" : getDataTabelBpjsKabupaten({kodeDdn: item.kode, tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData}); setSearchTerm("")}}>{showNextData ? item.nama_daerah : item.nama}</td>
                         <td>{item.jumlah_bp_pn? parseInt(item.jumlah_bp_pn).toLocaleString("id-ID") : "-"}</td>
                         <td>{item.jumlah_bp_swasta? parseInt(item.jumlah_bp_swasta).toLocaleString("id-ID") : "-"}</td>
                         <td>{item.jumlah_pbi_jk? parseInt(item.jumlah_pbi_jk).toLocaleString("id-ID")

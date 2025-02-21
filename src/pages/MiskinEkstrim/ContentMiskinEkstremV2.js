@@ -835,7 +835,7 @@ const ContentMiskinEkstremV2 = () => {
   const [dataKolomNamaDaerah, setDataKolomNamaDaerah] = useState("Se-Provinsi");
   const [showNextData, setShowNextData] = useState(false);
   
-  const getDataMiskinEkstremTabelKab = (kodeDdn="", e, tahun, tahun_data) => {
+  const getDataMiskinEkstremTabelKab = ({kodeDdn="", tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -859,8 +859,6 @@ const ContentMiskinEkstremV2 = () => {
         } 
 
         const dataMiskinEkstremTabelKab = await response.json();
-        
-        e.stopPropagation(); // Mencegah event bubbling jika dibutuhkan
         setShowNextData(true); // Mengatur state agar class 'test' dihilangkan dari semua elemen
 
         setDataKolomNamaDaerah("Nama Daerah")
@@ -868,6 +866,75 @@ const ContentMiskinEkstremV2 = () => {
 
         setDataMiskinEkstremTabel(dataMiskinEkstremTabelKab?.data);
         setFilteredDataMiskinEkstremTabelKabupaten(dataMiskinEkstremTabelKab?.data)
+
+        const dataDesil = {
+          desil1: Array.isArray(dataMiskinEkstremTabelKab?.data)
+            ? dataMiskinEkstremTabelKab.data.map(item => ({
+              id:item.kode_ddn,
+                name: item.nama_daerah || "Unknown",
+                value: parseInt(item.jumlah_keluarga_desil_1) || 0,
+              }))
+            : [],
+          desil2: Array.isArray(dataMiskinEkstremTabelKab?.data)
+            ? dataMiskinEkstremTabelKab.data.map(item => ({
+              id:item.kode_ddn,
+                name: item.nama_daerah || "Unknown",
+                value: parseInt(item.jumlah_keluarga_desil_2) || 0,
+              }))
+            : [],
+          desil3: Array.isArray(dataMiskinEkstremTabelKab?.data)
+            ? dataMiskinEkstremTabelKab.data.map(item => ({
+              id:item.kode_ddn,
+                name: item.nama_daerah || "Unknown",
+                value: parseInt(item.jumlah_keluarga_desil_3) || 0,
+              }))
+            : [],
+          desil4: Array.isArray(dataMiskinEkstremTabelKab?.data)
+            ? dataMiskinEkstremTabelKab.data.map(item => ({
+              id:item.kode_ddn,
+                name: item.nama_daerah || "Unknown",
+                value: parseInt(item.jumlah_keluarga_desil_4) || 0,
+              }))
+            : [],
+          desil5: Array.isArray(dataMiskinEkstremTabelKab?.data)
+            ? dataMiskinEkstremTabelKab.data.map(item => ({
+              id:item.kode_ddn,
+                name: item.nama_daerah || "Unknown",
+                value: parseInt(item.jumlah_individu_desil_1) || 0,
+              }))
+            : [],
+          desil6: Array.isArray(dataMiskinEkstremTabelKab?.data)
+            ? dataMiskinEkstremTabelKab.data.map(item => ({
+              id:item.kode_ddn,
+                name: item.nama_daerah || "Unknown",
+                value: parseInt(item.jumlah_individu_desil_2) || 0,
+              }))
+            : [],
+          desil7: Array.isArray(dataMiskinEkstremTabelKab?.data)
+            ? dataMiskinEkstremTabelKab.data.map(item => ({
+              id:item.kode_ddn,
+                name: item.nama_daerah || "Unknown",
+                value: parseInt(item.jumlah_individu_desil_3) || 0,
+              }))
+            : [],
+          desil8: Array.isArray(dataMiskinEkstremTabelKab?.data)
+            ? dataMiskinEkstremTabelKab.data.map(item => ({
+              id:item.kode_ddn,
+                name: item.nama_daerah || "Unknown",
+                value: parseInt(item.jumlah_individu_desil_4) || 0,
+              }))
+            : [],
+        };
+        console.log(dataDesil, 'ini data desil')
+        // Simpan data ke state
+        setDataDesil(dataDesil);
+        
+        // Setel data awal untuk peta berdasarkan desil pertama
+        setValueMap(dataDesil?.desil1);
+        
+        // Cari nilai maksimum pada desil pertama
+        const maxValueDesil1 = dataDesil?.desil1.reduce((max, item) => Math.max(max, item.value || 0), 0);
+        setmaxValueMap(maxValueDesil1 || 0);
         
       } catch (errorKemiskinanEkstrem) {
         setErrorKemiskinanEkstrem(errorKemiskinanEkstrem);
@@ -1411,12 +1478,14 @@ const ContentMiskinEkstremV2 = () => {
   const [kodeWilayahPeta, setKodeWilayahPeta]=useState("")  
   const handleRegionClick = (kodeProv, namaProv) => {
     getDataKemiskinanEkstrem({kodeDdn:"", kodeProv:kodeProv, tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
+    getDataMiskinEkstremTabelKab({kodeDdn:kodeProv, tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData})
     setClickNamaDaerah(namaProv)
     setClickDaerah(true)
   };
 
   const resetRegionClick = () => {
     getDataKemiskinanEkstrem({kodeDdn:"", kodeProv:"", tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
+    getDataMiskinEkstremTabel({tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData})
     setClickDaerah(false)
   }
 
@@ -2397,7 +2466,7 @@ const ContentMiskinEkstremV2 = () => {
                         verticalAlign: "middle"}}>
                       {indexOfFirstItem + index + 1}
                     </td>
-                    <td className={showNextData ? "" : "click-data"} style={{ minWidth: "270px" }} onClick={(e)=> {!showNextData ?  getDataMiskinEkstremTabelKab(item.kode_prov, e, selectedSingleTahunAnggaran, selectedSingleTahunData) : "", !showNextData ? setNamaDaerahDetail(item.nama_prov) : ""; setSearchTerm("")}}>
+                    <td className={showNextData ? "" : "click-data"} style={{ minWidth: "270px" }} onClick={(e)=> {!showNextData ?  getDataMiskinEkstremTabelKab({kodeDdn:item.kode_prov, tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData}) : "", !showNextData ? setNamaDaerahDetail(item.nama_prov) : ""; setSearchTerm("")}}>
                       {item.nama_prov ? item.nama_prov.replace("Provinsi ", "") : item.nama_daerah.replace("Provinsi ", "")}
                     </td>
                     <td>
