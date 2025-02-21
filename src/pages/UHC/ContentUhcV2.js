@@ -805,6 +805,9 @@ const ContentUhcV2 = () => {
         <Col md={dataWidth}>
           <Card className="card-height-100">
             <CardBody>
+            <div className="d-flex justify-content-center align-items-center title-page">
+                  {clickDaerah ? clickNamaDaerah : "Nasional"}
+              </div>
               <Row>
                 <Col md={6}>
                   <Row>
