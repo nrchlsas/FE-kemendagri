@@ -609,7 +609,7 @@ const ContentUhcV2 = () => {
     setSelectedSingleTahunAnggaran(value);
     setSelectedSingleTahunData(newTahunData);
   
-    getDataUhc({ tahun: value, tahun_data: newTahunData });
+    getDataUhc({ kodeDdn:"", kodeProv:kodeWilayahPeta, tahun: value, tahun_data: newTahunData });
     getDataTabelBpjsSeprov({ tahun: value, tahun_data: newTahunData });
   };
   
@@ -619,7 +619,7 @@ const ContentUhcV2 = () => {
     setSelectedSingleTahunData(value);
     setSelectedSingleTahunAnggaran(newTahunAnggaran);
   
-    getDataUhc({ tahun: newTahunAnggaran, tahun_data: value });
+    getDataUhc({ kodeDdn:"", kodeProv:kodeWilayahPeta, tahun: newTahunAnggaran, tahun_data: value });
     getDataTabelBpjsSeprov({ tahun: newTahunAnggaran, tahun_data: value });
   };
   
@@ -630,6 +630,7 @@ const ContentUhcV2 = () => {
     const handleRegionClick = (kodeProv, namaProv) => {
       getDataUhc({kodeDdn:"", kodeProv:kodeProv, tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
       getDataTabelBpjsKabupaten({kodeDdn: kodeProv, tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
+      setKodeWilayahPeta(kodeProv)
       setClickNamaDaerah(namaProv)
       setClickDaerah(true)
     };

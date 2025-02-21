@@ -1445,7 +1445,7 @@ const ContentMiskinEkstremV2 = () => {
     setSelectedSingleTahunAnggaran(value);
     setSelectedSingleTahunData(newTahunData);
   
-    getDataKemiskinanEkstrem({ tahun: value, tahun_data: newTahunData });
+    getDataKemiskinanEkstrem({ kodeDdn:"", kodeProv:kodeWilayahPeta, tahun: value, tahun_data: newTahunData });
     getDataMiskinEkstremTabel({ tahun: value, tahun_data: newTahunData });
   };
   
@@ -1455,7 +1455,7 @@ const ContentMiskinEkstremV2 = () => {
     setSelectedSingleTahunData(value);
     setSelectedSingleTahunAnggaran(newTahunAnggaran);
   
-    getDataKemiskinanEkstrem({ tahun: newTahunAnggaran, tahun_data: value });
+    getDataKemiskinanEkstrem({ kodeDdn:"", kodeProv:kodeWilayahPeta, tahun: newTahunAnggaran, tahun_data: value });
     getDataMiskinEkstremTabel({ tahun: newTahunAnggaran, tahun_data: value });
   };
 
@@ -1479,6 +1479,7 @@ const ContentMiskinEkstremV2 = () => {
   const handleRegionClick = (kodeProv, namaProv) => {
     getDataKemiskinanEkstrem({kodeDdn:"", kodeProv:kodeProv, tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
     getDataMiskinEkstremTabelKab({kodeDdn:kodeProv, tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData})
+    setKodeWilayahPeta(kodeProv)
     setClickNamaDaerah(namaProv)
     setClickDaerah(true)
   };
