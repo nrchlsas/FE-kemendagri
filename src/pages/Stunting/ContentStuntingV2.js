@@ -1311,7 +1311,7 @@ const ContentStunting = () => {
   };
 
   const [dataJambanTidakLayakPemda, setDataJambanTidakLayakPemda] = useState([])
-  const getDataFasilitasKesehatanPerProv = ({kodeProvinsi = "", url="", tahun}) => {
+  const getDataFasilitasKesehatanPerProv = ({kodeProvinsi = "", kodeDdn="", url="", tahun, tahunData}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -1320,7 +1320,8 @@ const ContentStunting = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             kode_provinsi: kodeProvinsi,
-            tahun: tahun
+            tahun: tahun,
+            tahun_data: tahunData
           }),
         };
 
@@ -1472,9 +1473,9 @@ const ContentStunting = () => {
 
   const handleBarClickProv = (data) => {
     if (fasilitasShow == "Jamban Tidak Layak") {
-      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_jamban_kabkota", tahun: selectedSingleTahunAnggaran})
+      getDataFasilitasKesehatanPerProv({kodeDdn:"", kodeProvinsi: data.id, url: "/dashboard_stunting_jamban_kabkota", tahun: selectedSingleTahunAnggaran, tahunData: selectedSingleTahunData})
     } else {
-      getDataFasilitasKesehatanPerProv({kodeProvinsi: data.id, url: "/dashboard_stunting_air_kabkota", tahun: selectedSingleTahunAnggaran})
+      getDataFasilitasKesehatanPerProv({kodeDdn:"", kodeProvinsi: data.id, url: "/dashboard_stunting_air_kabkota", tahun: selectedSingleTahunAnggaran, tahunData: selectedSingleTahunData})
     }
   };
 
@@ -1505,7 +1506,7 @@ const ContentStunting = () => {
       setSelectedSingleTahunAnggaran(value);
       setSelectedSingleTahunData(newTahunData);
     
-      getDataStunting({ tahun: value, tahun_data: newTahunData });
+      getDataStunting({ kodeDdn:"", kodeProv: kodeWilayahPeta, tahun: value, tahun_data: newTahunData });
       getDataStuntingTabel({ tahun: value, tahun_data: newTahunData });
     };
     
@@ -1515,7 +1516,7 @@ const ContentStunting = () => {
       setSelectedSingleTahunData(value);
       setSelectedSingleTahunAnggaran(newTahunAnggaran);
     
-      getDataStunting({ tahun: newTahunAnggaran, tahun_data: value });
+      getDataStunting({kodeDdn:"", kodeProv: kodeWilayahPeta, tahun: newTahunAnggaran, tahun_data: value });
       getDataStuntingTabel({ tahun: newTahunAnggaran, tahun_data: value });
       if (dataShowKesejahteraanStackKab) {
         getDataStackPerProvKesejahteraan({ tahunData: value });
@@ -1528,6 +1529,7 @@ const ContentStunting = () => {
     const handleRegionClick = (kodeProv, namaProv) => {
       getDataStunting({kodeDdn:"", kodeProv:kodeProv, tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
       getDataStuntingTabelKabupaten({kodeDdn:kodeProv, tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
+      setKodeWilayahPeta(kodeProv)
       setClickNamaDaerah(namaProv)
       setClickDaerah(true)
     };

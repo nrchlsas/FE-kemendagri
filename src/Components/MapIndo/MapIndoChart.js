@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import ReactEcharts from 'echarts-for-react';
 import * as echarts from 'echarts';
 import { MapChart } from 'echarts/charts';
@@ -10,7 +10,16 @@ echarts.use([MapChart, GeoComponent]);
 const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 
 const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, colorData=[], onRegionClick, daerah=false}) => {  
-  console.log(valueSeries, 'ini value series')
+  console.log(valueSeries, 'ini isi value series 1')
+  const matchValueSeriesWithGeoJson = (valueSeries, geoJson) => {
+    return valueSeries.map(item => {
+        const matchedFeature = geoJson.features.find(feature => feature.properties.key === item.id);
+        return {
+            ...item,
+            name: matchedFeature ? matchedFeature.properties.name : item.name // Gunakan nama dari geoJSON jika cocok
+        };
+    });
+};
   const [namaMap, setNamaMap] = useState("Indonesia")
   const [dataMapSeProv, setDataMapSeProv] = useState([])
   const [errorSeProv, setErrorSeProv] = useState(false)
@@ -38,10 +47,10 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
         }
 
         const dataMapSeProv = await response.json();
-
+        // const updatedGeoJSON = matchValueSeriesWithGeoJson(valueSeries, dataMapSeProv?.data[0]?.geojson);
+        setDataMapSeProv(dataMapSeProv?.data[0]?.geojson)
         setNamaMap('Daerah')
-        echarts.registerMap('Daerah', dataMapSeProv?.data[0].geojson);
-        console.log(namaMap)
+        echarts.registerMap('Daerah', dataMapSeProv?.data[0]?.geojson);
       } catch (errorTabel) {
         setErrorSeProv(errorTabel);
       } finally {
@@ -93,18 +102,48 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
     "Provinsi Papua Tengah": "PAPUA TENGAH",
     "Provinsi Papua Pegunungan": "PAPUA PEGUNUNGAN",
     "Provinsi Papua Barat Daya": "PAPUA BARAT DAYA",
-};
+  };
+
 
   const adjustedSeries = (valueSeries || []).map((item) => {
-      return {
-          ...item,
-          name: nameMap[item.name] || item.name || "N/A" // Jika tidak ada di nameMap, tetap gunakan nama asli 
-      };
-      
-  });
+    console.log(dataMapSeProv.features)
+    if(daerah){
+      const matchedFeature = dataMapSeProv?.features?.find(feature => feature.properties.key === item.id);
 
-  console.log(adjustedSeries, 'ini isi adjustseries')
-  console.log(namaMap, 'ini nama')
+      return {
+        ...item,
+        name: matchedFeature ? matchedFeature.properties.name : item.name || "N/A" // Ambil name dari geoJSON jika ada
+    };
+    }else{
+      return {
+        ...item,
+        name: nameMap[item.name] || item.name || "N/A" // Jika tidak ada di nameMap, tetap gunakan nama asli 
+    };
+    }
+  });
+ 
+
+// Contoh pemanggilan fungsi
+
+  const updateGeoJSONWithValues = (geojson, values) => {
+    return {
+        ...geojson,
+        features: geojson.features.map(feature => {
+            const matchedValue = values.find(item => item.id === feature.properties.key);
+                        console.log("Feature Key:", feature.properties.key);
+            console.log("Matched Value:", matchedValue);
+            return {
+                ...feature,
+                properties: {
+                    ...feature.properties,
+                    value: matchedValue ? matchedValue.value : 0, // Set default 0 jika tidak ditemukan
+                    name: matchedValue ? feature.properties.name : feature.properties.name // Ganti nama dari geoJSON
+                },
+            };
+        }),
+    };
+};
+ 
 
   useEffect(() => {
     if (geoJsonIndo && geoJsonIndo.type === 'FeatureCollection' && daerah==false) {
@@ -160,7 +199,6 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
       }
     ]});
 
-    console.log(getOption())
     const onEvents = {
       click: (params) => {
         if (params?.data?.name) {
@@ -170,7 +208,7 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
   
           if (clickedFeature) {
             onRegionClick(clickedFeature.properties.key, clickedFeature.properties.name); // Kirim `key` ke parent
-            // getDataMapSeProv({kodeProv: clickedFeature.properties.key})
+            getDataMapSeProv({kodeProv: clickedFeature.properties.key})
           } else {
             alert("Data wilayah tidak ditemukan!");
           }

@@ -118,7 +118,7 @@ const ContentDapodikV2 = () => {
     setSelectedSingleTahunAnggaran(value);
     setSelectedSingleTahunData(newTahunData);
     getDataDapodik({ kodeDdn: "", tahun: value, tahun_data: newTahunData });
-    getDataAnakSekolah({ kodeWilayah: "", tahun_data: newTahunData });
+    getDataAnakSekolah({ kodeWilayah: kodeWilayahPeta, tahun_data: newTahunData });
     getDataTabelDapodikSeProv({ tahun: value, tahun_data: newTahunData });
     getDataTabelDapodikProv({ tahun: value, tahun_data: newTahunData });
     getDataTabelDapodikKab({ tahun: value, tahun_data: newTahunData });
