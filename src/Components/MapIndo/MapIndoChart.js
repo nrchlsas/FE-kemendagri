@@ -210,7 +210,7 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
             onRegionClick(clickedFeature.properties.key, clickedFeature.properties.name); // Kirim `key` ke parent
             getDataMapSeProv({kodeProv: clickedFeature.properties.key})
           } else {
-            alert("Data wilayah tidak ditemukan!");
+            console.log("Data wilayah tidak ditemukan!");
           }
         }
       }
