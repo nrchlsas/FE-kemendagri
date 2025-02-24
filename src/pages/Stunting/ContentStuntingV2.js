@@ -2216,7 +2216,7 @@ const ContentStunting = () => {
                         fontSize: "16px",
                         marginBottom: "8px",
                       }}
-                      onClick={() => {getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData}); setSearchTerm("")}}
+                      onClick={() => {getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData}); setSearchTerm(""); resetRegionClick()}}
                     >
                       Kembali ke Provinsi
                     </button>

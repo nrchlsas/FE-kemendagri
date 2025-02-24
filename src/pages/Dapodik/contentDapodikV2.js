@@ -2372,7 +2372,7 @@ const ContentDapodikV2 = () => {
                       fontSize: "16px",
                       marginBottom: "8px",
                     }}
-                    onClick={() => getDataTabelDapodikProv({searchTerm, tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData})}
+                    onClick={() => {getDataTabelDapodikProv({searchTerm, tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData}); resetRegionClick()}}
                   >
                     Kembali ke Provinsi
                   </button></>

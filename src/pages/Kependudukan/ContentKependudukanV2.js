@@ -1456,7 +1456,7 @@ const ContentKependudukanV2 = () => {
                         cursor: "pointer",
                         fontSize: "16px",
                         marginBottom: "8px"
-                      }} onClick={()=>getDataTabelKependudukanProv({tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester:selectedSingleTahunSemester})}>Kembali ke Provinsi</button></>) : (<></>)}  
+                      }} onClick={()=>{getDataTabelKependudukanProv({tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester:selectedSingleTahunSemester}); resetRegionClick()}}>Kembali ke Provinsi</button></>) : (<></>)}  
     <div style={{ overflowX: "auto" }}>
       {/* Render Table */}
       <table
@@ -1545,7 +1545,7 @@ const ContentKependudukanV2 = () => {
           {currentItems.map((item, index) => (
             <tr key={index}>
               {/* <td>{item.kode_daerah}</td> */}
-              <td className={showNextData ? "" : "click-data"} onClick={() =>{showNextData ? "" : getDataTabelKependudukanKabKota({kodeProvinsi: item.kode_daerah, tahunAnggaran:selectedSingleTahunAnggaran, tahunData:selectedSingleTahunData}) }}>{item.nama_daerah}</td>
+              <td className={showNextData ? "" : "click-data"} onClick={() =>{showNextData ? "" : getDataTabelKependudukanKabKota({kodeProvinsi: item.kode_daerah, tahunAnggaran:selectedSingleTahunAnggaran, tahunData:selectedSingleTahunData})}}>{item.nama_daerah}</td>
               <td>{item.jumlahpenduduk.toLocaleString("id-ID")}</td>
               <td>{item.jmlkk.toLocaleString("id-ID")}</td>            
               <td>{item.luas_wilayah.toLocaleString("id-ID")}</td>

@@ -2316,7 +2316,7 @@ const ContentMiskinEkstremV2 = () => {
                         cursor: "pointer",
                         fontSize: "16px",
                         marginBottom: "8px"
-                      }} onClick={()=> {getDataMiskinEkstremTabel({tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData}); setSearchTerm("")}}>Kembali ke Provinsi</button></>) : (<></>)}         
+                      }} onClick={()=> {getDataMiskinEkstremTabel({tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData}); setSearchTerm(""); resetRegionClick()}}>Kembali ke Provinsi</button></>) : (<></>)}         
                     <div style={{ overflowX: "auto" }}>
                     <table
                       className="table table-bordered table-nowrap align-middle mb-0 custom-table"
