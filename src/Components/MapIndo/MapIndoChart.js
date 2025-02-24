@@ -9,7 +9,7 @@ echarts.use([MapChart, GeoComponent]);
 
 const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 
-const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, colorData=[], onRegionClick, daerah=false}) => {  
+const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, colorData=[], onRegionClick,  onKabKotaClick, daerah=false}) => {  
   console.log(valueSeries, 'ini isi value series 1')
   const matchValueSeriesWithGeoJson = (valueSeries, geoJson) => {
     return valueSeries.map(item => {
@@ -55,6 +55,45 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
         setErrorSeProv(errorTabel);
       } finally {
         setLoadingSeProv(false);
+      }
+    };
+    fetchData();
+  };
+
+  const [dataMapKabKota, setDataMapKabKota] = useState([])
+  const [errorKabKota, setErrorKabKota] = useState(false)
+  const [loadingKabKota, setLoadingKabKota] = useState(false)
+
+  const getDataMapKabKota = ({kodeDdn}) => {
+    const fetchData = async () => {
+      try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+          body: JSON.stringify({
+            kode_ddn: kodeDdn
+          }),
+        };
+
+        const response = await fetch(
+          `${API_URI_RBAC}/v2/peta_kabkota`,
+          requestOptions
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const dataMapKabKota = await response.json();
+        // const updatedGeoJSON = matchValueSeriesWithGeoJson(valueSeries, dataMapKabKota?.data[0]?.geojson);
+        setDataMapKabKota(dataMapKabKota?.data[0]?.geojson)
+        setNamaMap('Daerah')
+        echarts.registerMap('Daerah', dataMapKabKota?.data[0]?.geojson);
+      } catch (errorTabel) {
+        setErrorKabKota(errorTabel);
+      } finally {
+        setLoadingKabKota(false);
       }
     };
     fetchData();
@@ -186,7 +225,7 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
         type: 'map',
         map: namaMap,
         layoutCenter: roam ? "" : ['50%', '35%'],
-        layoutSize: "100%",
+        layoutSize: daerah? "60%" : "100%",
         zoom: roam ? "" : 0,
         roam: roam,       
         data: adjustedSeries,
@@ -202,16 +241,27 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
     const onEvents = {
       click: (params) => {
         if (params?.data?.name) {
-          const clickedFeature = geoJsonIndo.features.find(
+          const clickedFeature = geoJsonIndo?.features?.find(
             (feature) => feature.properties.name === params.data.name
+          );
+
+          const clickedFeatureSeprov = dataMapSeProv?.features?.find(
+          (feature) => feature.properties.name === params.data.name
           );
   
           if (clickedFeature) {
-            onRegionClick(clickedFeature.properties.key, clickedFeature.properties.name); // Kirim `key` ke parent
+            onRegionClick(clickedFeature.properties.key, clickedFeature.properties.name)
             getDataMapSeProv({kodeProv: clickedFeature.properties.key})
-          } else {
+          } else if (clickedFeatureSeprov) {
+            onKabKotaClick(clickedFeatureSeprov.properties.key, clickedFeatureSeprov.properties.name)
+          } else  {
             console.log("Data wilayah tidak ditemukan!");
           }
+
+        
+          //  else {
+          //   console.log("Data wilayah tidak ditemukan!");
+          // }
         }
       }
     };

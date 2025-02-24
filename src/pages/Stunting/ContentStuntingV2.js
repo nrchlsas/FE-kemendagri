@@ -895,7 +895,7 @@ const ContentStunting = () => {
       };
     
       fetchData();
-    };
+    }; 
 
   useEffect(() => {
     getDataStunting({kodeDdn:"", kodeProv:"", tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
@@ -1534,6 +1534,13 @@ const ContentStunting = () => {
       setClickDaerah(true)
     };
 
+    const handleKabKotaClick = (kodeProv, namaProv) => {
+      getDataStunting({kodeDdn:kodeProv, kodeProv:"", tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
+      // getDataStuntingTabelKabupaten({kodeDdn:kodeProv, tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
+      setKodeWilayahPeta(kodeProv)
+      setClickNamaDaerah(namaProv)
+    };
+
     const resetRegionClick = () => {
       getDataStunting({kodeDdn:"", kodeProv:"", tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
       getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData})
@@ -1697,7 +1704,7 @@ const ContentStunting = () => {
                     </select>
                 </div>
               </div>
-              <MapIndoChart roam={roam} daerah={clickDaerah} maxValue={maxValueMap} onRegionClick={handleRegionClick} valueSeries={valueMap} colorData={["#FFCDD2", "#FF9EA7", "#FF7380", "#FF4B5C", "#FF2438", "#FF0017"]} />
+              <MapIndoChart roam={roam} daerah={clickDaerah} onKabKotaClick={handleKabKotaClick} maxValue={maxValueMap} onRegionClick={handleRegionClick} valueSeries={valueMap} colorData={["#FFCDD2", "#FF9EA7", "#FF7380", "#FF4B5C", "#FF2438", "#FF0017"]} />
             </CardBody>
           </Card>
         </Col>

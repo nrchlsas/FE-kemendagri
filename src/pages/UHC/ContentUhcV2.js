@@ -634,6 +634,13 @@ const ContentUhcV2 = () => {
       setClickNamaDaerah(namaProv)
       setClickDaerah(true)
     };
+
+    const handleKabKotaClick = (kodeProv, namaProv) => {
+      getDataUhc({kodeDdn:kodeProv, kodeProv:"", tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
+      setKodeWilayahPeta(kodeProv)
+      setClickNamaDaerah(namaProv)
+    };
+  
   
     const resetRegionClick = () => {
       getDataUhc({kodeDdn:"", kodeProv:"", tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
@@ -799,7 +806,7 @@ const ContentUhcV2 = () => {
                     </select>
                 </div>
               </div>        
-              <MapIndoChart daerah={clickDaerah} roam={roam} maxValue={maxValueMap} onRegionClick={handleRegionClick} valueSeries={valueMap} colorData={["#D1ED87","#B9D676","#A1BF66","#89A855","#719145","#597A34"]} />
+              <MapIndoChart daerah={clickDaerah} onKabKotaClick={handleKabKotaClick} roam={roam} maxValue={maxValueMap} onRegionClick={handleRegionClick} valueSeries={valueMap} colorData={["#D1ED87","#B9D676","#A1BF66","#89A855","#719145","#597A34"]} />
             </CardBody>
           </Card>
         </Col>

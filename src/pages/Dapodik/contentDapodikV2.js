@@ -1325,6 +1325,13 @@ const ContentDapodikV2 = () => {
     setClickDaerah(true)
   };
 
+  const handleKabKotaClick = (kodeProv, namaProv) => {
+    getDataDapodik({kodeDdn: kodeProv,  kodeProv: "", tahun_data:selectedSingleTahunData, tahun:selectedSingleTahunAnggaran})
+    setKodeWilayahPeta(kodeProv)
+    setClickNamaDaerah(namaProv)
+  };
+
+
   const resetRegionClick = () => {
     getDataDapodik({kodeDdn: "", kodeProv:"", tahun_data: selectedSingleTahunData, tahun:selectedSingleTahunAnggaran});
     getDataAnakSekolah({kodeWilayah: "", tahun_data:selectedSingleTahunData});
@@ -1486,7 +1493,7 @@ const ContentDapodikV2 = () => {
                     <>
                   </>}
                   </div>
-                  <MapIndoChart chartTitle={titleMap} roam={roam} daerah={clickDaerah} maxValue={maxValueMap} onRegionClick={handleRegionClick} valueSeries={valueMap} colorData={['#B3E0E5', '#69D6E8', '#0092B3', '#1B8BA6']} />
+                  <MapIndoChart chartTitle={titleMap} roam={roam} onKabKotaClick={handleKabKotaClick} daerah={clickDaerah} maxValue={maxValueMap} onRegionClick={handleRegionClick} valueSeries={valueMap} colorData={['#B3E0E5', '#69D6E8', '#0092B3', '#1B8BA6']} />
               {/* <PolygonMaps /> */}
             </CardBody>
           </Card>

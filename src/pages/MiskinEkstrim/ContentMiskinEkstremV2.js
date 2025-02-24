@@ -1484,6 +1484,12 @@ const ContentMiskinEkstremV2 = () => {
     setClickDaerah(true)
   };
 
+  const handleKabKotaClick = (kodeProv, namaProv) => {
+    getDataKemiskinanEkstrem({kodeDdn:kodeProv, kodeProv:"", tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
+    setKodeWilayahPeta(kodeProv)
+    setClickNamaDaerah(namaProv)
+  };
+
   const resetRegionClick = () => {
     getDataKemiskinanEkstrem({kodeDdn:"", kodeProv:"", tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
     getDataMiskinEkstremTabel({tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData})
@@ -1669,7 +1675,7 @@ const ContentMiskinEkstremV2 = () => {
                     </select>
                 </div>
               </div>
-              <MapIndoChart roam={roam} daerah={clickDaerah} maxValue={maxValueMap} onRegionClick={handleRegionClick} valueSeries={valueMap} colorData={["#D1ED87","#B9D676","#A1BF66","#89A855","#719145","#597A34"]} />
+              <MapIndoChart roam={roam} daerah={clickDaerah} onKabKotaClick={handleKabKotaClick} maxValue={maxValueMap} onRegionClick={handleRegionClick} valueSeries={valueMap} colorData={["#D1ED87","#B9D676","#A1BF66","#89A855","#719145","#597A34"]} />
             </CardBody>
           </Card>
         </Col>
