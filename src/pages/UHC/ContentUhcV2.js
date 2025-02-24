@@ -608,9 +608,14 @@ const ContentUhcV2 = () => {
     const newTahunData = (parseInt(value) - 1).toString();
     setSelectedSingleTahunAnggaran(value);
     setSelectedSingleTahunData(newTahunData);
-  
     getDataUhc({ kodeDdn:"", kodeProv:kodeWilayahPeta, tahun: value, tahun_data: newTahunData });
-    getDataTabelBpjsSeprov({ tahun: value, tahun_data: newTahunData });
+    // getDataTabelBpjsSeprov({ tahun: value, tahun_data: newTahunData });
+
+    if(clickDaerah){
+      getDataTabelBpjsKabupaten({kodeDdn:kodeWilayahPeta, tahun: selectedSingleTahunAnggaran, tahun_data:newTahunData})
+    }else{
+      getDataTabelBpjsSeprov({ tahun: value, tahun_data: newTahunData });
+    }
   };
   
   const handleSelectChangeDataPokok = (e) => {
@@ -618,9 +623,13 @@ const ContentUhcV2 = () => {
     const newTahunAnggaran = (parseInt(value) + 1).toString();
     setSelectedSingleTahunData(value);
     setSelectedSingleTahunAnggaran(newTahunAnggaran);
-  
     getDataUhc({ kodeDdn:"", kodeProv:kodeWilayahPeta, tahun: newTahunAnggaran, tahun_data: value });
-    getDataTabelBpjsSeprov({ tahun: newTahunAnggaran, tahun_data: value });
+    // getDataTabelBpjsSeprov({ tahun: newTahunAnggaran, tahun_data: value });
+    if(clickDaerah){
+      getDataTabelBpjsKabupaten({kodeDdn:kodeWilayahPeta, tahun: newTahunAnggaran, tahun_data:selectedSingleTahunData})
+    }else{
+      getDataTabelBpjsSeprov({ tahun: value, tahun: newTahunAnggaran });
+    }
   };
   
   

@@ -1505,9 +1505,12 @@ const ContentStunting = () => {
       const newTahunData = (parseInt(value) - 1).toString();
       setSelectedSingleTahunAnggaran(value);
       setSelectedSingleTahunData(newTahunData);
-    
       getDataStunting({ kodeDdn:"", kodeProv: kodeWilayahPeta, tahun: value, tahun_data: newTahunData });
-      getDataStuntingTabel({ tahun: value, tahun_data: newTahunData });
+      if(clickDaerah){
+        getDataStuntingTabelKabupaten({kodeDdn:kodeWilayahPeta, tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData})
+      }else{
+        getDataStuntingTabel({ tahun: value, tahun_data: newTahunData });
+      }
     };
     
     const handleSelectChangeDataPokok = (e) => {
@@ -1515,9 +1518,13 @@ const ContentStunting = () => {
       const newTahunAnggaran = (parseInt(value) + 1).toString();
       setSelectedSingleTahunData(value);
       setSelectedSingleTahunAnggaran(newTahunAnggaran);
-    
       getDataStunting({kodeDdn:"", kodeProv: kodeWilayahPeta, tahun: newTahunAnggaran, tahun_data: value });
-      getDataStuntingTabel({ tahun: newTahunAnggaran, tahun_data: value });
+      // getDataStuntingTabel({ tahun: newTahunAnggaran, tahun_data: value });
+      if(clickDaerah){
+        getDataStuntingTabelKabupaten({kodeDdn:kodeWilayahPeta, tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData})
+      }else{
+        getDataStuntingTabel({ tahun: newTahunAnggaran, tahun_data: newTahunData });
+      }
       if (dataShowKesejahteraanStackKab) {
         getDataStackPerProvKesejahteraan({ tahunData: value });
       }
@@ -1537,7 +1544,6 @@ const ContentStunting = () => {
 
     const handleKabKotaClick = (kodeProv, namaProv) => {
       getDataStunting({kodeDdn:kodeProv, kodeProv:"", tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
-      // getDataStuntingTabelKabupaten({kodeDdn:kodeProv, tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
       setKodeWilayahPeta(kodeProv)
       setClickNamaDaerah(namaProv)
     };
