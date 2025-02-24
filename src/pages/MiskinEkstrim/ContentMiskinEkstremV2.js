@@ -1494,6 +1494,7 @@ const ContentMiskinEkstremV2 = () => {
   const resetRegionClick = () => {
     getDataKemiskinanEkstrem({kodeDdn:"", kodeProv:"", tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
     getDataMiskinEkstremTabel({tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData})
+    setKodeWilayahPeta("")
     setClickDaerah(false)
   }
 

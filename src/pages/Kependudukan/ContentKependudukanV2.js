@@ -984,6 +984,7 @@ const ContentKependudukanV2 = () => {
     const resetRegionClick = () => {
       getDataKependudukan({kodeDdn: "", kodeProv: "", tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: selectedSingleTahunSemester});
       setClickDaerah(false)
+      setKodeWilayahPeta("")
     }
 
   return (

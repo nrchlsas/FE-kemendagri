@@ -647,6 +647,7 @@ const ContentUhcV2 = () => {
       getDataUhc({kodeDdn:"", kodeProv:"", tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
       getDataTabelBpjsSeprov({tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
       setClickDaerah(false)
+      setKodeWilayahPeta("")
     }
   
 

@@ -1545,6 +1545,7 @@ const ContentStunting = () => {
     const resetRegionClick = () => {
       getDataStunting({kodeDdn:"", kodeProv:"", tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
       getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData})
+      setKodeWilayahPeta("")
       setClickDaerah(false)
     }
 
