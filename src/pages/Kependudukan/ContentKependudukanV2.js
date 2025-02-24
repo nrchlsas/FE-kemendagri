@@ -975,6 +975,11 @@ const ContentKependudukanV2 = () => {
       getDataKependudukan({wilayah:"", kodeProv: kodeProv, tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: selectedSingleTahunSemester});
       setClickDaerah(true)
     };
+
+    const handleKabKotaClick = (kodeProv, namaProv) => {
+      setClickNamaDaerah(namaProv)
+      setClickDaerah(true)
+    };
   
     const resetRegionClick = () => {
       getDataKependudukan({kodeDdn: "", kodeProv: "", tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: selectedSingleTahunSemester});
@@ -1122,7 +1127,7 @@ const ContentKependudukanV2 = () => {
                     <>
                   </>}
                   </div>
-              <MapIndoChart chartTitle={titleMap} roam={roam} maxValue={maxValueMap} colorData={["#FFD47A", "#FFC04D", "#FCAD24", "#E69B20", "#CC891C", "#B27717"]} onRegionClick={handleRegionClick} valueSeries={valueMap}/>
+              <MapIndoChart onKabKotaClick={handleKabKotaClick} chartTitle={titleMap} roam={roam} maxValue={maxValueMap} colorData={["#FFD47A", "#FFC04D", "#FCAD24", "#E69B20", "#CC891C", "#B27717"]} onRegionClick={handleRegionClick} valueSeries={valueMap}/>
             </CardBody>
           </Card>
         </Col>

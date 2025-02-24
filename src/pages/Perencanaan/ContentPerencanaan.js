@@ -488,6 +488,11 @@ const ContentPerencanaan = () => {
       setClickDaerah(true)
     };
 
+    const handleKabKotaClick = (kodeProv, namaProv) => {
+      setClickNamaDaerah(namaProv)
+      setClickDaerah(true)
+    };
+
     const resetRegionClick = () => {
       
       setClickDaerah(false)
@@ -711,7 +716,7 @@ const ContentPerencanaan = () => {
                   </button></>)}
               </div>                          
               </div>
-                  <MapIndoChart onRegionClick={handleRegionClick} roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#FCAD24", "#57E7B4"]} />
+                  <MapIndoChart onKabKotaClick={handleKabKotaClick} onRegionClick={handleRegionClick} roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#FCAD24", "#57E7B4"]} />
                   <div className="d-flex justify-content-end">
                     {/* <div className="d-flex flex-column justify-content-evenly">
                     <div className="d-flex align-items-center mb-2">

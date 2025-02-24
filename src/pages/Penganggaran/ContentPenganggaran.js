@@ -528,6 +528,11 @@ const ContentPenganggaran = () => {
       setClickDaerah(true)
     };
 
+    const handleKabKotaClick = (kodeProv, namaProv) => {
+      setClickNamaDaerah(namaProv)
+      setClickDaerah(true)
+    };
+
     const resetRegionClick = () => {
       
       setClickDaerah(false)
@@ -682,7 +687,7 @@ const ContentPenganggaran = () => {
                   </button></>)}
               </div>                          
               </div>
-                  <MapIndoChart onRegionClick={handleRegionClick} roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#FCAD24", "#57E7B4"]} />                  
+                  <MapIndoChart onKabKotaClick={handleKabKotaClick} onRegionClick={handleRegionClick} roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#FCAD24", "#57E7B4"]} />                  
                 </>
               )}
             </CardBody>
