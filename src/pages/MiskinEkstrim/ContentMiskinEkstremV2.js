@@ -1481,6 +1481,7 @@ const ContentMiskinEkstremV2 = () => {
     getDataMiskinEkstremTabelKab({kodeDdn:kodeProv, tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData})
     setKodeWilayahPeta(kodeProv)
     setClickNamaDaerah(namaProv)
+    setNamaDaerahDetail(namaProv)
     setClickDaerah(true)
   };
 

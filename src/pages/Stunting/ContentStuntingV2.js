@@ -1530,6 +1530,7 @@ const ContentStunting = () => {
       getDataStunting({kodeDdn:"", kodeProv:kodeProv, tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
       getDataStuntingTabelKabupaten({kodeDdn:kodeProv, tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
       setKodeWilayahPeta(kodeProv)
+      setNamaDaerahDetail(namaProv)
       setClickNamaDaerah(namaProv)
       setClickDaerah(true)
     };
