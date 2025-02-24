@@ -221,6 +221,7 @@ const PermissionMenus = () => {
                 uuid: delete_data.uuid,
                 is_deleted: !delete_data.is_deleted
             }
+            console.log(json);
             let response = api.put(`${API_9007_URI}/rbac/delete-permission-menu`, json);
             let data = await response;
             if (data.code === 200) {
@@ -281,6 +282,16 @@ const PermissionMenus = () => {
                                                     </option>
                                                 ))}
                                             </select>
+                                        </FormGroup>
+                                        <FormGroup check>
+                                                <Label>
+                                                    <input type="checkbox" name="is_active"
+                                                        onChange={(e) => changeValue(e)}
+                                                        className="form-check-input"
+                                                        checked={formData.is_active}
+                                                    />
+                                                    <span>Status Aktif</span>
+                                                </Label>
                                         </FormGroup>
                                     </Col>
                                 </Row>
@@ -399,12 +410,12 @@ const PermissionMenus = () => {
                 centered
             >
                 <ModalHeader className="p-3 bg-info-subtle" toggle={tog_center}>
-                    Hapus Data Group Detail Menu
+                    Hapus Data Permission by Group Menu
                 </ModalHeader>
                 <ModalBody>
                     <Row>
                         <Col>
-                            <Label>Anda yakin hapus group detail menu ?</Label>
+                            <Label>Anda yakin hapus permission by group menu ?</Label>
                         </Col>
                     </Row>
                     <Row>

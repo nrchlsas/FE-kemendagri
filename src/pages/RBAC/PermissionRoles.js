@@ -218,7 +218,7 @@ const PermissionRoles = () => {
     async function do_delete() {
         try {
             const json = Object.assign({}, delete_data, { is_deleted: !delete_data.is_deleted });
-            let response = api.put(`${API_9007_URI}/rbac/delete-group-menu-dtl`, json);
+            let response = api.put(`${API_9007_URI}/rbac/delete-permission-group`, json);
             let data = await response;
             if (data.code === 200) {
                 populate_data();
@@ -406,12 +406,12 @@ const PermissionRoles = () => {
                 centered
             >
                 <ModalHeader className="p-3 bg-info-subtle" toggle={tog_center}>
-                    Hapus Data Group Detail Menu
+                    Hapus Data Permission By Group Roles
                 </ModalHeader>
                 <ModalBody>
                     <Row>
                         <Col>
-                            <Label>Anda yakin hapus group detail menu ?</Label>
+                            <Label>Anda yakin hapus permission by group role ?</Label>
                         </Col>
                     </Row>
                     <Row>
