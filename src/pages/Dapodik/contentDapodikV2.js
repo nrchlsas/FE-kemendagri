@@ -121,7 +121,7 @@ const ContentDapodikV2 = () => {
     getDataAnakSekolah({ kodeWilayah: kodeWilayahPeta, tahun_data: newTahunData });
     getDataTabelDapodikSeProv({ tahun: value, tahun_data: newTahunData });
     getDataTabelDapodikProv({ tahun: value, tahun_data: newTahunData });
-    getDataTabelDapodikKab({ tahun: value, tahun_data: newTahunData });
+    getDataTabelDapodikKab({ kodeProv:kodeWilayahPeta, tahun: value, tahun_data: newTahunData });
     getDataCrossAnalisis({ tahun: value, tahun_data: newTahunData });
   };
   
@@ -134,7 +134,7 @@ const ContentDapodikV2 = () => {
     getDataDapodik({ kodeDdn: "", tahun: newTahunAnggaran, tahun_data: value });
     getDataTabelDapodikSeProv({ tahun: newTahunAnggaran, tahun_data: value });
     getDataTabelDapodikProv({ tahun: newTahunAnggaran, tahun_data: value });
-    getDataTabelDapodikKab({ tahun: newTahunAnggaran, tahun_data: value });
+    getDataTabelDapodikKab({ kodeProv:kodeWilayahPeta, tahun: newTahunAnggaran, tahun_data: value });
     getDataCrossAnalisis({ tahun: newTahunAnggaran, tahun_data: value });
   };
   
@@ -384,7 +384,7 @@ const ContentDapodikV2 = () => {
     fetchData();
   };
 
-  const getDataTabelDapodikKab = ({searchTerm, tahun, tahun_data}) => {
+  const getDataTabelDapodikKab = ({searchTerm, tahun, tahun_data, kodeProv=""}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -392,15 +392,13 @@ const ContentDapodikV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
-            // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
+            kode_prov:kodeProv,
             nama_kabkota: searchTerm ? searchTerm : "",
             tahun: tahun,
             tahun_data:tahun_data
           }),
         };
-        // /table_dapodik_provinsi
-        // /table_dapodik_kabupaten
-        // /table_stunting_provinsi
+        
         const response = await fetch(
           `${API_URI_RBAC}/v2/tabel_dapodik_kabupaten`,
           requestOptions
@@ -414,6 +412,109 @@ const ContentDapodikV2 = () => {
 
         setDataDapodikTabelKabupaten(dataDapodikTabelKabupaten?.data);
         setDataDapodikTabelKabupatenFiltered(dataDapodikTabelKabupaten?.data);
+
+        if(kodeProv!=""){
+          const valueTotalAnakSekolah = Array.isArray(dataDapodikTabelKabupaten?.data) 
+          ? dataDapodikTabelKabupaten?.data?.map(item => {
+              const total = 
+                parseInt(item.sd || 0) + 
+                parseInt(item.smp || 0) + 
+                parseInt(item.sma || 0) + 
+                parseInt(item.smk || 0);
+              return {
+                id:item.kode_ddn,
+                name: item.nama_kabkota || "Unknown",
+                value: total
+              };
+            }) 
+          : [];
+  
+          const valueTotalSd = Array.isArray(dataDapodikTabelKabupaten?.data)
+          ? dataDapodikTabelKabupaten?.data?.map(item => ({
+              id:item.kode_ddn,
+              name: item.nama_kabkota || "Unknown",
+              value: parseInt(item.sd) || 0,
+            }))
+          : [];
+  
+          const valueTotalSmp = Array.isArray(dataDapodikTabelKabupaten?.data)
+          ? dataDapodikTabelKabupaten?.data?.map(item => ({
+            id:item.kode_ddn,
+              name: item.nama_kabkota || "Unknown",
+              value: parseInt(item.smp) || 0,
+            }))
+          : [];
+  
+          const valueTotalSma = Array.isArray(dataDapodikTabelKabupaten?.data)
+          ? dataDapodikTabelKabupaten?.data?.map(item => ({
+            id:item.kode_ddn,
+              name: item.nama_kabkota || "Unknown",
+              value: parseInt(item.sma) || 0,
+            }))
+          : [];
+  
+          const valueTotalSmk = Array.isArray(dataDapodikTabelKabupaten?.data)
+          ? dataDapodikTabelKabupaten?.data?.map(item => ({
+            id:item.kode_ddn,
+              name: item.nama_kabkota || "Unknown",
+              value: parseInt(item.smk) || 0,
+            }))
+          : [];
+  
+          const maxAnakSekolah = Array.isArray(valueTotalAnakSekolah) && valueTotalAnakSekolah.length > 0 
+          ? Math.max(...valueTotalAnakSekolah?.map(item => item.value || 0)) 
+          : 0;
+        
+        const maxSd = Array.isArray(valueTotalSd) && valueTotalSd.length > 0 
+          ? Math.max(...valueTotalSd?.map(item => item.value || 0)) 
+          : 0;
+        
+        const maxSmp = Array.isArray(valueTotalSmp) && valueTotalSmp.length > 0 
+          ? Math.max(...valueTotalSmp?.map(item => item.value || 0)) 
+          : 0;
+        
+        const maxSma = Array.isArray(valueTotalSma) && valueTotalSma.length > 0 
+          ? Math.max(...valueTotalSma?.map(item => item.value || 0)) 
+          : 0;
+        
+        const maxSmk = Array.isArray(valueTotalSmk) && valueTotalSmk.length > 0 
+          ? Math.max(...valueTotalSmk?.map(item => item.value || 0)) 
+          : 0;
+
+          setValueMap(valueTotalAnakSekolah);
+          setmaxValueMap(maxAnakSekolah)
+  
+          const handleCardClick = (valueType) => {
+            switch(valueType) {
+              case 'totalAnakSekolah':
+                setValueMap(valueTotalAnakSekolah);
+                setmaxValueMap(maxAnakSekolah)
+                break;
+              case 'totalSD':
+                setValueMap(valueTotalSd);
+                setmaxValueMap(maxSd)
+                break;
+              case 'totalSMP':
+                setValueMap(valueTotalSmp);
+                setmaxValueMap(maxSmp)
+                break;
+              case 'totalSMA':
+                setValueMap(valueTotalSma);
+                setmaxValueMap(maxSma)
+                break;
+              case 'totalSMK':
+                setValueMap(valueTotalSmk);
+                setmaxValueMap(maxSmk)
+                break;            
+              default:
+                break;
+            }
+          };
+    
+          // Simpan `handleCardClick` di dalam state atau panggil langsung pada setiap card
+          setHandleCardClick(() => handleCardClick);
+        }
+
       } catch (errorDapodikTabel) {
         setErrorDapodikTabel(errorDapodikTabel);
       } finally {
@@ -749,7 +850,7 @@ const ContentDapodikV2 = () => {
     getDataAnakSekolah({kodeWilayah: "", tahun_data:selectedSingleTahunData});
     getDataTabelDapodikSeProv({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
     getDataTabelDapodikProv({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
-    getDataTabelDapodikKab({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
+    getDataTabelDapodikKab({kodeProv:"", tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
     getDataCrossAnalisis({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
   }, []);
 
@@ -1321,6 +1422,7 @@ const ContentDapodikV2 = () => {
     getDataDapodik({kodeDdn: "",  kodeProv: kodeProv, tahun_data:selectedSingleTahunData, tahun:selectedSingleTahunAnggaran})
     getDataAnakSekolah({kodeWilayah: kodeProv, tahun_data:selectedSingleTahunData})
     getDataCrossAnalisis({kodeProv: kodeProv, tahun_data:selectedSingleTahunData, tahun:selectedSingleTahunAnggaran})
+    getDataTabelDapodikKab({kodeProv: kodeProv, tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
     setClickNamaDaerah(namaProv)
     setClickDaerah(true)
   };
@@ -1336,7 +1438,10 @@ const ContentDapodikV2 = () => {
     getDataDapodik({kodeDdn: "", kodeProv:"", tahun_data: selectedSingleTahunData, tahun:selectedSingleTahunAnggaran});
     getDataAnakSekolah({kodeWilayah: "", tahun_data:selectedSingleTahunData});
     getDataCrossAnalisis({kodeProv: "", tahun_data:selectedSingleTahunData, tahun:selectedSingleTahunAnggaran})
+    getDataTabelDapodikKab({kodeProv: "", tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
+    getDataTabelDapodikSeProv({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
     setClickDaerah(false)
+    
   }
 
   useEffect(() => {

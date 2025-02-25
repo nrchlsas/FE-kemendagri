@@ -10,7 +10,7 @@ echarts.use([MapChart, GeoComponent]);
 const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 
 const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, colorData=[], onRegionClick,  onKabKotaClick, daerah=false}) => {  
-  console.log(valueSeries, 'ini isi value series 1')
+  // console.log(valueSeries, 'ini isi value series 1')
   const matchValueSeriesWithGeoJson = (valueSeries, geoJson) => {
     return valueSeries.map(item => {
         const matchedFeature = geoJson.features.find(feature => feature.properties.key === item.id);
@@ -145,7 +145,6 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
 
 
   const adjustedSeries = (valueSeries || []).map((item) => {
-    console.log(dataMapSeProv.features)
     if(daerah){
       const matchedFeature = dataMapSeProv?.features?.find(feature => feature.properties.key === item.id);
 
@@ -169,8 +168,6 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
         ...geojson,
         features: geojson.features.map(feature => {
             const matchedValue = values.find(item => item.id === feature.properties.key);
-                        console.log("Feature Key:", feature.properties.key);
-            console.log("Matched Value:", matchedValue);
             return {
                 ...feature,
                 properties: {
