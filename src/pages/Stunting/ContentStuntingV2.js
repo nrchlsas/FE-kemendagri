@@ -1507,7 +1507,7 @@ const ContentStunting = () => {
       setSelectedSingleTahunData(newTahunData);
       getDataStunting({ kodeDdn:"", kodeProv: kodeWilayahPeta, tahun: value, tahun_data: newTahunData });
       if(clickDaerah){
-        getDataStuntingTabelKabupaten({kodeDdn:kodeWilayahPeta, tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData})
+        getDataStuntingTabelKabupaten({kodeDdn:kodeWilayahPeta, tahun: value, tahun_data:newTahunData})
       }else{
         getDataStuntingTabel({ tahun: value, tahun_data: newTahunData });
       }
@@ -1521,9 +1521,9 @@ const ContentStunting = () => {
       getDataStunting({kodeDdn:"", kodeProv: kodeWilayahPeta, tahun: newTahunAnggaran, tahun_data: value });
       // getDataStuntingTabel({ tahun: newTahunAnggaran, tahun_data: value });
       if(clickDaerah){
-        getDataStuntingTabelKabupaten({kodeDdn:kodeWilayahPeta, tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData})
+        getDataStuntingTabelKabupaten({kodeDdn:kodeWilayahPeta, tahun: selectedSingleTahunAnggaran, tahun_data:value})
       }else{
-        getDataStuntingTabel({ tahun: newTahunAnggaran, tahun_data: newTahunData });
+        getDataStuntingTabel({ tahun: newTahunAnggaran, tahun_data: value });
       }
       if (dataShowKesejahteraanStackKab) {
         getDataStackPerProvKesejahteraan({ tahunData: value });
