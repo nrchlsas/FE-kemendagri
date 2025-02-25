@@ -1026,26 +1026,6 @@ const ContentKependudukanV2 = () => {
               <option value="2025">2025</option>
             </select>
             <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
-                   Tahun Anggaran:
-                  </div>
-                 <select
-              name="tahun"
-              style={{
-                padding: "10px 30px 10px 10px",
-                fontSize: "16px",
-                borderRadius: "5px",
-                border: "1px solid #ccc",
-                backgroundColor: "#ffffff",                          
-                cursor: "pointer",                          
-                margin: "15px 15px 15px 5px",
-              }}
-              value={selectedSingleTahunAnggaran}
-              onChange={handleSelectChangeAnggaran}
-            >
-              <option value="2024">2024</option>
-              <option value="2025">2025</option>
-            </select>
-            <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
                    Semester:
                   </div>
                  <select
@@ -1065,6 +1045,27 @@ const ContentKependudukanV2 = () => {
               <option value="1">1</option>
               <option value="2">2</option>
             </select>
+            <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
+                   Tahun Anggaran:
+                  </div>
+                 <select
+              name="tahun"
+              style={{
+                padding: "10px 30px 10px 10px",
+                fontSize: "16px",
+                borderRadius: "5px",
+                border: "1px solid #ccc",
+                backgroundColor: "#ffffff",                          
+                cursor: "pointer",                          
+                margin: "15px 15px 15px 5px",
+              }}
+              value={selectedSingleTahunAnggaran}
+              onChange={handleSelectChangeAnggaran}
+            >
+              <option value="2024">2024</option>
+              <option value="2025">2025</option>
+            </select>
+            
                 </div>
             </div>
           </Card>
