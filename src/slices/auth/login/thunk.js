@@ -18,6 +18,8 @@ export const loginUser = (user, history) => async (dispatch) => {
     let response;
     dispatch(login_process(''));
 
+    const isUsernameLogin = user.username !== undefined; // Cek apakah login menggunakan username
+
     if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {
       let fireBaseBackend = getFirebaseBackend();
       response = fireBaseBackend.loginUser(
@@ -31,8 +33,17 @@ export const loginUser = (user, history) => async (dispatch) => {
       });
     } else if (API_9007_URI) {
       const formData = new URLSearchParams();
-      formData.append('email', user.email);
-      formData.append('password', user.password);
+      if (user.login_type === "SIPD") {
+        // Jika login SIPD, gunakan parameter ini
+        formData.append('kode_ddn', user.daerah);
+        formData.append('email', user.username);
+        formData.append('password', user.password);
+        formData.append('login_type', 'SIPD');
+      } else {
+        // Jika login SIPD-HUB, hanya gunakan email & password
+        formData.append('email', user.email);
+        formData.append('password', user.password);
+      }
 
       response = fetch(`${API_9007_URI}/login`,
         {

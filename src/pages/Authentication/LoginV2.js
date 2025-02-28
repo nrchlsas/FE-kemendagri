@@ -11,6 +11,15 @@ import {
   FormFeedback,
   Alert,
   Spinner,
+  TabContent,
+  NavItem,
+  Nav,
+  NavLink,
+  TabPane,
+  Dropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
 } from "reactstrap";
 import ParticlesAuth from "../AuthenticationInner/ParticlesAuth";
 import { useSelector, useDispatch } from "react-redux";
@@ -21,6 +30,10 @@ import { loginUser, resetLoginFlag } from "../../slices/thunks";
 import logoSipd from "../../assets/images/logo-kemendagri/logo-sipd-hub-kemendagri.png";
 import logoSdpdn from "../../assets/images/logo-kemendagri/logo-sdpdn.png";
 import imageLogin from "../../assets/images/logo-kemendagri/image-login.png";
+import classnames from "classnames";
+
+
+const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 
 const Login = (props) => {
   const dispatch = useDispatch();
@@ -34,7 +47,7 @@ const Login = (props) => {
 
   // Generate random CAPTCHA text
   const generateCaptchaText = () => {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0123456789";
     const captchaLength = 6;
     return Array.from({ length: captchaLength }, () =>
       chars.charAt(Math.floor(Math.random() * chars.length))
@@ -85,6 +98,7 @@ const Login = (props) => {
 
   useEffect(() => {
     drawCaptcha();
+    getDataListDaerah();
   }, []);
 
   useEffect(() => {
@@ -110,9 +124,87 @@ const Login = (props) => {
         setCaptchaError(true);
         return;
       }
-      dispatch(loginUser(values, props.router.navigate));
+      dispatch(loginUser(values, props.router.navigate, "email"));
     },
   });
+
+  const validationUsername = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      daerah:"",
+      username: "",
+      password: "",
+      login_type:""
+    },
+    validationSchema: Yup.object({
+      daerah: Yup.string().required("Daerah harus dipilih"),
+      username: Yup.string().required("Please Enter Your Username"),
+      password: Yup.string().required("Please Enter Your Password"),
+      login_type: Yup.string().required("Please Enter Your login type"),
+    }),
+    onSubmit: (values) => {
+      if (captchaInput !== captchaText) {
+        setCaptchaError(true);
+        return;
+      }
+      dispatch(loginUser(values, props.router.navigate, "username"));
+    },
+  });
+  
+
+  const [justifyPillsTab, setjustifyPillsTab] = useState("1");
+    const justifyPillsToggle = (tab) => {
+        if (justifyPillsTab !== tab) {
+            setjustifyPillsTab(tab);
+        }
+    };
+
+    const [dataListDaerah, setDataListDaerah] = useState([])
+    const [errorListDaerah, setErrorListDaerah] = useState(false)
+    const [loadingListDaerah, setLoadingListDaerah] = useState(false)
+
+    const getDataListDaerah = () => {
+      const fetchData = async () => {
+        try {
+          // const token = JSON.parse(sessionStorage.getItem("authUser"))
+          const requestOptions = {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            // body: JSON.stringify({
+          
+            // }),
+          };
+  
+          const response = await fetch(
+            `${API_URI_RBAC}/master/daerah`,
+            requestOptions
+          );
+  
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          } 
+  
+          const dataListDaerah = await response.json();
+          
+          setDataListDaerah(dataListDaerah.data)
+        } catch (errorListDaerah) {
+          setErrorListDaerah(errorListDaerah);
+        } finally {
+          setLoadingListDaerah(false);
+        }
+      };
+      fetchData();
+    };
+
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+const [searchTerm, setSearchTerm] = useState("");
+const [selectedDaerah, setSelectedDaerah] = useState("Pilih Daerah");
+
+const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+
+const filteredDaerah = dataListDaerah.filter((item) =>
+  item.nama_daerah.toLowerCase().includes(searchTerm.toLowerCase())
+);
 
   return (
     <React.Fragment>
@@ -130,72 +222,199 @@ const Login = (props) => {
                   <h5 className="text-primary">Welcome Back!</h5>
                   <p className="text-muted">Sign in to continue to SIPD-HUB</p>
                 </div>
+                <Nav pills className="nav-justified mb-2">
+                <NavItem>
+                    <NavLink style={{ cursor: "pointer" }} className={classnames({ active: justifyPillsTab === "1", })} onClick={() => { justifyPillsToggle("1"); }} >
+                        SIPD-HUB
+                    </NavLink>
+                </NavItem>
+                <NavItem>
+                    <NavLink style={{ cursor: "pointer" }} className={classnames({ active: justifyPillsTab === "2", })} onClick={() => { justifyPillsToggle("2"); }} >
+                        SIPD
+                    </NavLink>
+                </NavItem>
+            </Nav>
+            
                 {error && <Alert color="danger">{error}</Alert>}
-                <div className="p-2 mt-4">
-                  <Form
-                    onSubmit={(e) => {
-                      e.preventDefault();
-                      validation.handleSubmit();
-                      return false;
-                    }}
+                <div className="p-2 mt-0">
+                <Form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        if (justifyPillsTab === "1") {
+                          setTimeout(() => validation.handleSubmit(), 100);
+                        } else {
+                          validationUsername.setFieldTouched("daerah", true); // Paksa field tersentuh
+                          validationUsername.validateField("daerah"); // Jalankan validasi manual
+                          validationUsername.setFieldValue("login_type", "SIPD", false);
+                          setTimeout(() => validationUsername.handleSubmit(), 100);
+                        }
+                      }}
                   >
-                    {/* Email Input */}
-                    <div className="mb-3">
-                      <Label htmlFor="email" className="form-label">
-                        Username
-                      </Label>
-                      <Input
-                        name="email"
-                        className="form-control"
-                        placeholder="Enter email"
-                        type="email"
-                        onChange={validation.handleChange}
-                        onBlur={validation.handleBlur}
-                        value={validation.values.email || ""}
-                        invalid={validation.touched.email && validation.errors.email ? true : false}
-                      />
-                      {validation.touched.email && validation.errors.email && (
-                        <FormFeedback type="invalid">
-                          {validation.errors.email}
-                        </FormFeedback>
-                      )}
-                    </div>
-
-                    {/* Password Input */}
-                    <div className="mb-3">
-                      <Label htmlFor="password-input" className="form-label">
-                        Password
-                      </Label>
-                      <div className="position-relative auth-pass-inputgroup mb-3">
+                   <TabContent activeTab={justifyPillsTab} className="text-muted">
+                    {/* Tab pertama: Login dengan Email */}
+                    <TabPane tabId="1" id="pill-justified-home-1">
+                      <div className="mb-3">
+                        <Label htmlFor="email" className="form-label">Email</Label>
                         <Input
-                          name="password"
-                          value={validation.values.password || ""}
-                          type={passwordShow ? "text" : "password"}
-                          className="form-control pe-5"
-                          placeholder="Enter Password"
+                          name="email"
+                          className="form-control"
+                          placeholder="Enter email"
+                          type="email"
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}
-                          invalid={
-                            validation.touched.password && validation.errors.password
-                              ? true
-                              : false
-                          }
+                          value={validation.values.email || ""}
+                          invalid={validation.touched.email && validation.errors.email ? true : false}
                         />
-                        {validation.touched.password && validation.errors.password && (
-                          <FormFeedback type="invalid">
-                            {validation.errors.password}
-                          </FormFeedback>
+                        {validation.touched.email && validation.errors.email && (
+                          <FormFeedback type="invalid">{validation.errors.email}</FormFeedback>
                         )}
-                        <button
-                          className="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted"
-                          type="button"
-                          onClick={() => setPasswordShow(!passwordShow)}
-                        >
-                          <i className="ri-eye-fill align-middle"></i>
-                        </button>
                       </div>
-                    </div>
 
+                      <div className="mb-3">
+                        <Label htmlFor="password-input" className="form-label">Password</Label>
+                        <div className="position-relative auth-pass-inputgroup mb-3">
+                          <Input
+                            name="password"
+                            value={validation.values.password || ""}
+                            type={passwordShow ? "text" : "password"}
+                            className="form-control pe-5"
+                            placeholder="Enter Password"
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            invalid={validation.touched.password && validation.errors.password ? true : false}
+                          />
+                          {validation.touched.password && validation.errors.password && (
+                            <FormFeedback type="invalid">{validation.errors.password}</FormFeedback>
+                          )}
+                          <button
+                            className="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted"
+                            type="button"
+                            onClick={() => setPasswordShow(!passwordShow)}
+                          >
+                            <i className="ri-eye-fill align-middle"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </TabPane>
+
+                    {/* Tab kedua: Login dengan Username */}
+                    <TabPane tabId="2" id="pill-justified-home-2">
+                      <div className="mb-3">
+                        <Label htmlFor="daerah" className="form-label">Daerah</Label>
+                        <Dropdown isOpen={dropdownOpen} toggle={() => {
+                              setDropdownOpen(!dropdownOpen);
+                              if (dropdownOpen) {
+                                validationUsername.setFieldTouched("daerah", true);
+                                validationUsername.validateField("daerah");
+                              }
+                            }}>
+                          <DropdownToggle  caret
+                            style={{
+                              background: "transparent",
+                              color: "black",
+                              border: "1px solid #ccc",
+                              width: "100%",
+                              textAlign: "left",
+                              boxShadow: "none", // Hilangkan efek shadow default
+                            }}>
+                            {selectedDaerah || "Pilih Daerah"}
+                          </DropdownToggle>
+                          <DropdownMenu className="w-100" style={{ maxHeight: "200px", overflowY: "auto" }}>
+                          <div className="px-2">
+                            <Input
+                              type="text"
+                              className="form-control"
+                              placeholder="Cari daerah..."
+                              value={searchTerm}
+                              onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                          </div>
+                            {dataListDaerah
+                              .filter((item) => item.nama_daerah.toLowerCase().includes(searchTerm.toLowerCase()))
+                              .map((item) => (
+                                <DropdownItem
+                                key={item.id_daerah}
+                                onClick={() => {
+                                  validationUsername.setFieldValue("daerah", item.kode_ddn_2, true);
+                                  setSelectedDaerah(item.nama_daerah);
+                              
+                                  // Tambahkan sedikit delay sebelum menutup dropdown
+                                  setTimeout(() => setDropdownOpen(false), 100); 
+                                }}
+                                >
+                                  {item.nama_daerah}
+                                </DropdownItem>
+                              ))}
+                          </DropdownMenu>
+
+                          {validationUsername.touched.daerah && validationUsername.errors.daerah && (
+                            <FormFeedback>{validationUsername.errors.daerah}</FormFeedback>
+                          )}
+                        </Dropdown>
+                        {/* <Input
+                          type="select"
+                          name="daerah"
+                          className="form-control"
+                          onChange={validationUsername.handleChange}
+                          onBlur={validationUsername.handleBlur}
+                          value={validationUsername.values.daerah || ""}
+                          invalid={validationUsername.touched.daerah && validationUsername.errors.daerah ? true : false}
+                        >
+                          <option value="">Pilih Daerah</option>
+                          {dataListDaerah.map((item) => (
+                            <option key={item.id_daerah} value={item.kode_ddn}>
+                              {item.nama_daerah}
+                            </option>
+                          ))}
+                        </Input> */}
+                        {/* {validationUsername.touched.daerah && validationUsername.errors.daerah && (
+                          <FormFeedback type="invalid">{validationUsername.errors.daerah}</FormFeedback>
+                        )} */}
+                      </div>
+                      <div className="mb-3">
+                        <Label htmlFor="username" className="form-label">Username</Label>
+                        <Input
+                          name="username" // Ubah name agar tidak berbagi dengan email
+                          className="form-control"
+                          placeholder="Enter username"
+                          type="text"
+                          onChange={validationUsername.handleChange}
+                          onBlur={validationUsername.handleBlur}
+                          value={validationUsername.values.username || ""}
+                          invalid={validationUsername.touched.username && validationUsername.errors.username ? true : false}
+                        />
+                        {validationUsername.touched.username && validationUsername.errors.username && (
+                          <FormFeedback type="invalid">{validationUsername.errors.username}</FormFeedback>
+                        )}
+                      </div>
+
+                      <div className="mb-3">
+                        <Label htmlFor="password-input" className="form-label">Password</Label>
+                        <div className="position-relative auth-pass-inputgroup mb-3">
+                          <Input
+                            name="password"
+                            value={validationUsername.values.password || ""}
+                            type={passwordShow ? "text" : "password"}
+                            className="form-control pe-5"
+                            placeholder="Enter Password"
+                            onChange={validationUsername.handleChange}
+                            onBlur={validationUsername.handleBlur}
+                            invalid={validationUsername.touched.password && validationUsername.errors.password ? true : false}
+                          />
+                          {validationUsername.touched.password && validationUsername.errors.password && (
+                            <FormFeedback type="invalid">{validationUsername.errors.password}</FormFeedback>
+                          )}
+                          <button
+                            className="btn btn-link position-absolute end-0 top-0 text-decoration-none text-muted"
+                            type="button"
+                            onClick={() => setPasswordShow(!passwordShow)}
+                          >
+                            <i className="ri-eye-fill align-middle"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </TabPane>
+                  </TabContent>
                     {/* CAPTCHA */}
                     <div className="mb-3">
                 {/* <Label>Captcha</Label> */}
@@ -226,7 +445,6 @@ const Login = (props) => {
                   <FormFeedback>Captcha Salah!</FormFeedback>
                 )}                
               </div>
-
                     {/* Submit Button */}
                     <div className="mt-4">
                       <Button
@@ -245,8 +463,10 @@ const Login = (props) => {
                     </div>
                   </Form>
                 </div>
+                
               </CardBody>
             </Card>
+            
           </Col>
 
           {/* Illustration Section */}
