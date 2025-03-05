@@ -152,7 +152,7 @@ const ContentRealisasiDetailDaerah = () => {
     const [errorDetailUnitSkpd, setErrorDetailUnitSkpd] = useState([]);    
   
     const getDataDetailUnitSkpd = ({
-      tahun= "2024",
+      tahun= "",
       kodeDdn=_id,
       kodeUnitSkpd="",
     }      
@@ -204,7 +204,7 @@ const ContentRealisasiDetailDaerah = () => {
     const [errorDetailUnitSkpdSro, setErrorDetailUnitSkpdSro] = useState([]);    
   
     const getDataDetailUnitSkpdSro = ({
-      tahun= "2024",
+      tahun= "",
       kodeDdn=_id,
       kodeSubGiat="",
       kodeUnitSkpd=""
@@ -264,7 +264,7 @@ const ContentRealisasiDetailDaerah = () => {
       anggaran=0
     }
     ) => {
-      getDataDetailUnitSkpd({ kodeUnitSkpd:kodeUnitSkpd })
+      getDataDetailUnitSkpd({ kodeUnitSkpd:kodeUnitSkpd, tahun:selectedSingleTahun })
       setDataDetailNamaUnitSkpd(namaUnitSkpd);    
       setDataRincianDetailAnggaran(anggaran)
       setDataRincianDetailRealisasi(realisasi)
@@ -448,7 +448,7 @@ const ContentRealisasiDetailDaerah = () => {
       kodeUnitSkpd=""
     }
     ) => {
-      getDataDetailUnitSkpdSro( {kodeUnitSkpd: kodeUnitSkpd, kodeSubGiat: kodeSubGiat} )
+      getDataDetailUnitSkpdSro( {kodeUnitSkpd: kodeUnitSkpd, kodeSubGiat: kodeSubGiat, tahun: selectedSingleTahun} )
       setModal(true);
       setDataDetailNamaSubRincinianObjek(namaSubGiat)
       setDataRincianDetailAnggaranSub(anggaran);
@@ -1037,11 +1037,11 @@ const ContentRealisasiDetailDaerah = () => {
                         Rincian Sub Giat
                       </th>                       */}
                     <th
-                      onClick={() => requestSortDetail("pagu_validasi")}
+                      onClick={() => requestSortDetail("anggarangeser")}
                       style={{ cursor: "pointer", textAlign: "center" }}
                     >
                       Anggaran (Rp){" "}
-                      {getSortIconDetail("pagu_validasi")}
+                      {getSortIconDetail("anggarangeser")}
                     </th>             
                     <th
                       onClick={() => requestSortDetail("realisasi")}
@@ -1261,10 +1261,10 @@ const ContentRealisasiDetailDaerah = () => {
                       NO
                     </th>
                     <th
-                      onClick={() => requestSort("nama_daerah")}
+                      onClick={() => requestSort("kode_sro")}
                       style={{ cursor: "pointer", verticalAlign: "middle" }}
                     >
-                      Kode Sub Rincian Objek {getSortIcon("nama_daerah")}
+                      Kode Sub Rincian Objek {getSortIcon("kode_sro")}
                     </th>
                     <th
                       onClick={() => requestSort("nama_sro")}
@@ -1273,16 +1273,16 @@ const ContentRealisasiDetailDaerah = () => {
                       Nama Sub Rincian Objek {getSortIcon("nama_sro")}
                     </th>
                     <th
-                      onClick={() => requestSort("total_rinciansro")}
+                      onClick={() => requestSort("anggarangeser")}
                       style={{ cursor: "pointer", textAlign: "center" }}
                     >
-                      Anggaran (Rp) {getSortIcon("total_rinciansro")}
+                      Anggaran (Rp) {getSortIcon("anggarangeser")}
                     </th>
                     <th
-                      onClick={() => requestSort("total_rinciansro")}
+                      onClick={() => requestSort("realisasi")}
                       style={{ cursor: "pointer", textAlign: "center" }}
                     >
-                      Realisasi {getSortIcon("total_rinciansro")}
+                      Realisasi {getSortIcon("realisasi")}
                     </th>
                     <th
                       onClick={() => requestSort("persentase")}
