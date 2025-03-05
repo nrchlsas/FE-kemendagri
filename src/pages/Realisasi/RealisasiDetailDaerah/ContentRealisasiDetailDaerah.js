@@ -143,7 +143,7 @@ const ContentRealisasiDetailDaerah = () => {
   
     useEffect(() => {
       getDataLogoDaerah()
-      getDataRealisasiNasional();
+      // getDataRealisasiNasional();
     }, []);
 
     const [dataDetailUnitSkpd, setDataDetailUnitSkpd] = useState([]);    
