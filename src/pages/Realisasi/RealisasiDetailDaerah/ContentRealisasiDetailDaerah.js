@@ -82,7 +82,7 @@ const ContentRealisasiDetailDaerah = () => {
     const [errorRealisasi, setErrorRealisasi] = useState([]);
     const [totalPagu, setTotalPagu] = useState(0)
     const getDataRealisasiNasional = ({
-      tahun = "2024",
+      tahun = "",
       tahapan = "1",
       kodeDdn= _id
     } = {}) => {
@@ -136,7 +136,7 @@ const ContentRealisasiDetailDaerah = () => {
       useEffect(() => {
       getDataRealisasiNasional({
           tahun: selectedSingleTahun,
-          tahapan: selectedSingleTahapan,
+          // tahapan: selectedSingleTahapan,
       });
       }, [selectedSingleTahun, selectedSingleTahapan]); // Panggil API jika tahun atau dokumen berubah
     
@@ -692,43 +692,26 @@ const ContentRealisasiDetailDaerah = () => {
                 </button>
               )}
             </div> 
+            <select
+                  name="tahun"                 
+                        style={{
+                          padding: "10px 30px 10px 10px",
+                          fontSize: "16px",
+                          borderRadius: "5px",
+                          border: "1px solid #ccc",
+                          backgroundColor: "#ffffff",                          
+                          cursor: "pointer",                          
+                          marginLeft: "10px",
+                          marginTop: "16px",
+                          marginBottom: "30px",
+                        }}
+                        value={selectedSingleTahun}
+                        onChange={handleSelectChange}
+                      >                        
+                        <option value="2024">2024</option>                      
+                        <option value="2025">2025</option>                      
+                      </select>
             </div>
-                    {/* <select
-                    name="tahun"
-                          style={{
-                            padding: "10px 30px 10px 10px",
-                            fontSize: "16px",
-                            borderRadius: "5px",
-                            border: "1px solid #ccc",
-                            backgroundColor: "#ffffff",
-                            cursor: "pointer",                 
-                            marginLeft: "10px",
-                            marginTop: "16px",
-                            marginBottom: "30px",
-                          }}
-                          value={selectedSingleTahun}
-                          onChange={handleSelectChange}
-                        >                        
-                          <option value="2024">2024</option>
-                          <option value="2025">2025</option>
-                        </select>
-                        <select
-                        name="tahap"
-                          style={{
-                            padding: "10px 30px 10px 10px",
-                            fontSize: "16px",
-                            borderRadius: "5px",
-                            border: "1px solid #ccc",
-                            backgroundColor: "#ffffff",                          
-                            cursor: "pointer",                          
-                            marginLeft: "10px"
-                          }}
-                          value={selectedSingleTahapan}
-                          onChange={handleSelectChange}
-                        >                        
-                          <option value="1">RKPD</option>
-                          <option value="3">RKPD Perubahan</option>
-                        </select> */}
                     <div className="table-responsive table-card" style={{ overflowX: "auto" }}>                    
                       <table className="table table-nowrap mb-2 " style={{width:"100%"}} >
                         <thead className="table-light">

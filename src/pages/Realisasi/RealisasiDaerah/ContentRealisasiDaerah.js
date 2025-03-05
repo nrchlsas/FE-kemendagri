@@ -91,8 +91,7 @@ const ContentRealisasiDaerah = () => {
   };
 
   const getDataRealisasiPersentase = ({
-    // tahun = "2024",
-    // tahapan = "1",
+    tahun = "",
     kodeProv= _id
   } = {}) => {
     const fetchData = async () => {
@@ -103,7 +102,7 @@ const ContentRealisasiDaerah = () => {
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
             // id_tahap: tahapan,
-            // tahun: tahun,
+            tahun: tahun,
             kode_prov: kodeProv
           }),
         };
@@ -145,8 +144,10 @@ const ContentRealisasiDaerah = () => {
 
   useEffect(() => {
     // getDataRealisasiRkpdNasional();
-    getDataRealisasiPersentase();
-  }, []);
+    getDataRealisasiPersentase({
+      tahun:selectedSingleTahun
+    });
+  }, [selectedSingleTahun]);
 
   
   const [currentPage, setCurrentPage] = useState(1);
@@ -321,6 +322,25 @@ const ContentRealisasiDaerah = () => {
               )}
             </div> 
             </div>
+            <select
+                  name="tahun"                 
+                        style={{
+                          padding: "10px 30px 10px 10px",
+                          fontSize: "16px",
+                          borderRadius: "5px",
+                          border: "1px solid #ccc",
+                          backgroundColor: "#ffffff",                          
+                          cursor: "pointer",                          
+                          marginLeft: "10px",
+                          marginTop: "16px",
+                          marginBottom: "30px",
+                        }}
+                        value={selectedSingleTahun}
+                        onChange={handleSelectChange}
+                      >                        
+                        <option value="2024">2024</option>                      
+                        <option value="2025">2025</option>                      
+                      </select>
             </div>            
               <Row>
                 <Col>                

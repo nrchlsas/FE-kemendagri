@@ -121,11 +121,6 @@ const ContentRealisasi = () => {
     });
     }, [selectedSingleTahun, selectedSingleTahapan]); // Panggil API jika tahun atau dokumen berubah
 
-
-    useEffect(() => {      
-      getDataRealisasiNasionalPersentase();
-    }, []);
-
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10); // Set items per page
   const [sortConfig, setSortConfig] = useState({
@@ -373,6 +368,25 @@ const ContentRealisasi = () => {
               )}
             </div> 
             </div>
+            <select
+                  name="tahun"                 
+                        style={{
+                          padding: "10px 30px 10px 10px",
+                          fontSize: "16px",
+                          borderRadius: "5px",
+                          border: "1px solid #ccc",
+                          backgroundColor: "#ffffff",                          
+                          cursor: "pointer",                          
+                          marginLeft: "10px",
+                          marginTop: "16px",
+                          marginBottom: "30px",
+                        }}
+                        value={selectedSingleTahun}
+                        onChange={handleSelectChange}
+                      >                        
+                        <option value="2024">2024</option>                      
+                        <option value="2025">2025</option>                      
+                      </select>
                   </div>
                 </Col>
               </Row>
