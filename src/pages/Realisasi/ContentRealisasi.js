@@ -340,7 +340,7 @@ const ContentRealisasi = () => {
                     padding: "10px 30px 10px 10px",
                     border: "1px solid #ccc",
                     borderRadius: "5px",
-                    // width:"100%",
+                    width:"250px",
                     fontSize: "16px",
                   }}
                   type="text"
