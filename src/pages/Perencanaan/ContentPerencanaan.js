@@ -516,7 +516,7 @@ const ContentPerencanaan = () => {
                   <span>Perencanaan (RKPD)</span>
                 </div>
               </div>
-              <div className="d-flex justify-content-center align-items-center">
+              <div className="d-flex justify-content-center align-items-center p-2">
                 <div className="nav-beranda d-flex justify-content-center align-items-center">
                   <Nav tabs className="nav nav-tabs nav-success nav-justified">
                     {selectedSingleTahapan == "1" ? (<><NavItem>
@@ -760,13 +760,13 @@ const ContentPerencanaan = () => {
               </div>
               <Row>
                 <Col>
-                <div className='d-flex'>
+                <div className='d-flex overflow-hidden'>
                   <div className="mb-2 d-flex">
                   <div
                       className="mx-2 mt-3"
                       style={{
                         position: "relative",
-                        width: "100%",
+                        // width: "100%",
                         maxWidth: "300px",
                         marginBottom: "20px",
                       }}
@@ -776,7 +776,7 @@ const ContentPerencanaan = () => {
                     padding: "10px 30px 10px 10px",
                     border: "1px solid #ccc",
                     borderRadius: "5px",
-                    // width:"100%",
+                    maxWidth: "250px",
                     fontSize: "16px",
                   }}  
                   type="text"

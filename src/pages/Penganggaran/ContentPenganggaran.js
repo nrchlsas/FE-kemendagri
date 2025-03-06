@@ -555,7 +555,7 @@ const ContentPenganggaran = () => {
                   <span>Penganggaran</span>
                 </div>
               </div>
-              <div className="d-flex justify-content-center align-items-center">
+              <div className="d-flex justify-content-center align-items-center p-2">
                 <div className="nav-beranda d-flex justify-content-center align-items-center">
                 <Nav tabs className="nav nav-tabs nav-success nav-justified border-bottom-0">
                     <NavItem>
@@ -703,7 +703,7 @@ const ContentPenganggaran = () => {
               </div>
               <Row>
                 <Col>
-                <div className='d-flex'>
+                <div className='d-flex overflow-hidden'>
                   <div className="mb-2 d-flex">
                   <div
                       className="mx-2 mt-3"
