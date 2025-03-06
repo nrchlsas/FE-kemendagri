@@ -710,7 +710,7 @@ const ContentPenganggaran = () => {
                       style={{
                         position: "relative",
                         width: "100%",
-                        maxWidth: "300px",
+                        // maxWidth: "300px",
                         marginBottom: "20px",
                       }}
                     >
@@ -719,7 +719,7 @@ const ContentPenganggaran = () => {
                     padding: "10px 30px 10px 10px",
                     border: "1px solid #ccc",
                     borderRadius: "5px",
-                    // width:"100%",
+                    maxWidth:"250px",
                     fontSize: "16px",
                   }}
                   type="text"

@@ -354,8 +354,7 @@ const ContentPenganggaranDaerah = () => {
                       className="mx-2 mt-3"
                       style={{
                         position: "relative",
-                        width: "100%",
-                        maxWidth: "300px",
+                        // width: "100%",
                         marginBottom: "20px",
                       }}
                     >
@@ -364,7 +363,7 @@ const ContentPenganggaranDaerah = () => {
                     padding: "10px 30px 10px 10px",
                     border: "1px solid #ccc",
                     borderRadius: "5px",
-                    // width:"100%",
+                    maxWidth: "250px",
                     fontSize: "16px",
                   }}
                   type="text"

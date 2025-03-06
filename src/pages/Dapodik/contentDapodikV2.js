@@ -574,7 +574,7 @@ const ContentDapodikV2 = () => {
   };
 
   const [dataDapodikJumlahAnakSekolah, setDataDapodikJumlahAnakSekolah] = useState([])
-  const getDataAnakSekolah = ({kodeWilayah, tahun, tahun_data}) => {
+  const getDataAnakSekolah = ({kodeDdn, kodeProv, tahun, tahun_data}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -582,7 +582,8 @@ const ContentDapodikV2 = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
-            kode_wilayah: kodeWilayah,
+            kode_prov: kodeProv,
+            kode_ddn: kodeDdn,
             tahun: tahun,
             tahun_data:tahun_data
         }),
@@ -847,7 +848,7 @@ const ContentDapodikV2 = () => {
 
   useEffect(() => {
     getDataDapodik({kodeDdn: "", kodeProv: "", tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
-    getDataAnakSekolah({kodeWilayah: "", tahun_data:selectedSingleTahunData});
+    getDataAnakSekolah({tahun_data:selectedSingleTahunData});
     getDataTabelDapodikSeProv({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
     getDataTabelDapodikProv({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
     getDataTabelDapodikKab({kodeProv:"", tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
@@ -1420,7 +1421,7 @@ const ContentDapodikV2 = () => {
   const handleRegionClick = (kodeProv, namaProv) => {
     setKodeWilayahPeta(kodeProv)
     getDataDapodik({kodeDdn: "",  kodeProv: kodeProv, tahun_data:selectedSingleTahunData, tahun:selectedSingleTahunAnggaran})
-    getDataAnakSekolah({kodeWilayah: kodeProv, tahun_data:selectedSingleTahunData})
+    getDataAnakSekolah({kodeProv: kodeProv, tahun_data:selectedSingleTahunData})
     getDataCrossAnalisis({kodeProv: kodeProv, tahun_data:selectedSingleTahunData, tahun:selectedSingleTahunAnggaran})
     getDataTabelDapodikKab({kodeProv: kodeProv, tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
     setClickNamaDaerah(namaProv)
@@ -1429,6 +1430,7 @@ const ContentDapodikV2 = () => {
 
   const handleKabKotaClick = (kodeProv, namaProv) => {
     getDataDapodik({kodeDdn: kodeProv,  kodeProv: "", tahun_data:selectedSingleTahunData, tahun:selectedSingleTahunAnggaran})
+    getDataAnakSekolah({kodeDdn: kodeProv, tahun_data:selectedSingleTahunData})
     setKodeWilayahPeta(kodeProv)
     setClickNamaDaerah(namaProv)
   };
@@ -1436,7 +1438,7 @@ const ContentDapodikV2 = () => {
 
   const resetRegionClick = () => {
     getDataDapodik({kodeDdn: "", kodeProv:"", tahun_data: selectedSingleTahunData, tahun:selectedSingleTahunAnggaran});
-    getDataAnakSekolah({kodeWilayah: "", tahun_data:selectedSingleTahunData});
+    getDataAnakSekolah({kodeDdn: "", kodeProv:"", tahun_data:selectedSingleTahunData});
     getDataCrossAnalisis({kodeProv: "", tahun_data:selectedSingleTahunData, tahun:selectedSingleTahunAnggaran})
     getDataTabelDapodikKab({kodeProv: "", tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
     getDataTabelDapodikSeProv({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});

@@ -291,7 +291,7 @@ const ContentPerencanaanDaerah = () => {
                       className="mx-2 mt-3"
                       style={{
                         position: "relative",
-                        width: "100%",
+                        // width: "100%",
                         maxWidth: "300px",
                         marginBottom: "20px",
                       }}
@@ -302,6 +302,7 @@ const ContentPerencanaanDaerah = () => {
                     border: "1px solid #ccc",
                     borderRadius: "5px",
                     // width:"100%",
+                    maxWidth: "250px",
                     fontSize: "16px",
                   }}  
                   type="text"
