@@ -429,7 +429,7 @@ const ContentKependudukanV2 = () => {
   };
 
   const [showNextData, setShowNextData] = useState(false);
-  const getDataTabelKependudukanKabKota = ({kodeProvinsi, tahunData, tahunAnggaran}) => {
+  const getDataTabelKependudukanKabKota = ({kodeProvinsi, tahunData, tahunAnggaran, semester}) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -439,7 +439,8 @@ const ContentKependudukanV2 = () => {
           body: JSON.stringify({
             kode_provinsi: kodeProvinsi,
             tahun: tahunAnggaran,
-            tahun_data: tahunData
+            tahun_data: tahunData,
+            semester:semester
           }),
         };        
         const response = await fetch(
@@ -455,6 +456,85 @@ const ContentKependudukanV2 = () => {
 
         setDataKependudukanTabel(dataKependudukanTabel.data) 
         setDataKependudukanTabelFiltered(dataKependudukanTabel.data) 
+        const valueTotalPenduduk = dataKependudukanTabel.data.map(item => ({
+          id: item.kode_daerah,
+          name: item.nama_daerah,
+          value: item.jumlahpenduduk
+        }));
+
+        const valueTotalKK = dataKependudukanTabel.data.map(item => ({
+          id: item.kode_daerah,
+          name: item.nama_daerah,
+          value: item.jmlkk
+        }));
+
+        const valueTotalLakiLaki = dataKependudukanTabel.data.map(item => ({
+          id: item.kode_daerah,
+          name: item.nama_daerah,
+          value: item.jumlahlakilaki
+        }));
+
+        const valueTotalPerempuan = dataKependudukanTabel.data.map(item => ({
+          id: item.kode_daerah,
+          name: item.nama_daerah,
+          value: item.jumlahperempuan
+        }));
+
+        const valueTotalKepadatan = dataKependudukanTabel.data.map(item => ({
+          id: item.kode_daerah,
+          name: item.nama_daerah,
+          value: item.kepadatan
+        }));
+
+        const valueTotalLuasWilayah = dataKependudukanTabel.data.map(item => ({
+          id: item.kode_daerah,
+          name: item.nama_daerah,
+          value: item.luas_wilayah
+        }));
+
+        const maxPenduduk = valueTotalPenduduk?.reduce((max, item) => Math.max(max, item.value || 0), 0);
+        const maxKK = valueTotalKK?.reduce((max, item) => Math.max(max, item.value || 0), 0);
+        const maxLakiLaki = valueTotalLakiLaki?.reduce((max, item) => Math.max(max, item.value || 0), 0);
+        const maxPerempuan = valueTotalPerempuan?.reduce((max, item) => Math.max(max, item.value || 0), 0);
+        const maxKepadatan = valueTotalKepadatan?.reduce((max, item) => Math.max(max, item.value || 0), 0);
+        const maxLuasWilayah = valueTotalLuasWilayah?.reduce((max, item) => Math.max(max, item.value || 0), 0);
+
+        setValueMap(valueTotalPenduduk);
+        setmaxValueMap(maxPenduduk)
+
+        const handleCardClick = (valueType) => {
+          switch(valueType) {
+            case 'totalPenduduk':
+              setValueMap(valueTotalPenduduk);
+              setmaxValueMap(maxPenduduk)
+              break;
+            case 'totalKK':
+              setValueMap(valueTotalKK);
+              setmaxValueMap(maxKK)
+              break;
+            case 'totalLakiLaki':
+              setValueMap(valueTotalLakiLaki);
+              setmaxValueMap(maxLakiLaki)
+              break;
+            case 'totalPerempuan':
+              setValueMap(valueTotalPerempuan);
+              setmaxValueMap(maxPerempuan)
+              break;
+            case 'totalKepadatan':
+              setValueMap(valueTotalKepadatan);
+              setmaxValueMap(maxKepadatan)
+              break;
+            case 'totalLuasWilayah':
+              setValueMap(valueTotalLuasWilayah);
+              setmaxValueMap(maxLuasWilayah)
+              break;
+            default:
+              
+              break;
+          }
+        };
+        
+        setHandleCardClick(() => handleCardClick);
         setCurrentPage(1)
         setShowNextData(true);     
       } catch (errorKependudukanTabel) {
@@ -973,16 +1053,19 @@ const ContentKependudukanV2 = () => {
       setKodeWilayahPeta(kodeProv)
       setClickNamaDaerah(namaProv)
       getDataKependudukan({wilayah:"", kodeProv: kodeProv, tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: selectedSingleTahunSemester});
+      getDataTabelKependudukanKabKota({kodeProvinsi: kodeProv, tahunAnggaran:selectedSingleTahunAnggaran, tahunData:selectedSingleTahunData, semester: selectedSingleTahunSemester})
       setClickDaerah(true)
     };
 
     const handleKabKotaClick = (kodeProv, namaProv) => {
+      getDataKependudukan({wilayah:kodeWilayahPeta, kodeDdn: kodeProv, tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: selectedSingleTahunSemester});
       setClickNamaDaerah(namaProv)
       setClickDaerah(true)
     };
   
     const resetRegionClick = () => {
       getDataKependudukan({kodeDdn: "", kodeProv: "", tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: selectedSingleTahunSemester});
+      getDataTabelKependudukanProv({tahunData: selectedSingleTahunData, tahunAnggaran:selectedSingleTahunAnggaran, semester: selectedSingleTahunSemester});
       setClickDaerah(false)
       setKodeWilayahPeta("")
     }
@@ -1129,7 +1212,7 @@ const ContentKependudukanV2 = () => {
                     <>
                   </>}
                   </div>
-              <MapIndoChart onKabKotaClick={handleKabKotaClick} chartTitle={titleMap} roam={roam} maxValue={maxValueMap} colorData={["#FFD47A", "#FFC04D", "#FCAD24", "#E69B20", "#CC891C", "#B27717"]} onRegionClick={handleRegionClick} valueSeries={valueMap}/>
+              <MapIndoChart onKabKotaClick={handleKabKotaClick} daerah={clickDaerah} chartTitle={titleMap} roam={roam} maxValue={maxValueMap} colorData={["#FFD47A", "#FFC04D", "#FCAD24", "#E69B20", "#CC891C", "#B27717"]} onRegionClick={handleRegionClick} valueSeries={valueMap}/>
             </CardBody>
           </Card>
         </Col>
@@ -1546,7 +1629,7 @@ const ContentKependudukanV2 = () => {
           {currentItems.map((item, index) => (
             <tr key={index}>
               {/* <td>{item.kode_daerah}</td> */}
-              <td className={showNextData ? "" : "click-data"} onClick={() =>{showNextData ? "" : getDataTabelKependudukanKabKota({kodeProvinsi: item.kode_daerah, tahunAnggaran:selectedSingleTahunAnggaran, tahunData:selectedSingleTahunData})}}>{item.nama_daerah}</td>
+              <td className={showNextData ? "" : "click-data"} onClick={() =>{showNextData ? "" : getDataTabelKependudukanKabKota({kodeProvinsi: item.kode_daerah, tahunAnggaran:selectedSingleTahunAnggaran, tahunData:selectedSingleTahunData, semester:selectedSingleTahunSemester})}}>{item.nama_daerah}</td>
               <td>{item.jumlahpenduduk.toLocaleString("id-ID")}</td>
               <td>{item.jmlkk.toLocaleString("id-ID")}</td>            
               <td>{item.luas_wilayah.toLocaleString("id-ID")}</td>
