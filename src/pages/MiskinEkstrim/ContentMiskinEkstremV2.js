@@ -3767,6 +3767,7 @@ const ContentMiskinEkstremV2 = () => {
                                 categoryChart={
                                   dataChartKomposisiBelanjaProvinsi[1]
                                 }
+                                dataZoom={true}
                                 dataColors='["#57E7B4"]'
                                 fullCategory={true}
                                 height="450px"
@@ -3839,6 +3840,7 @@ const ContentMiskinEkstremV2 = () => {
                                 categoryChart={
                                   dataChartKomposisiBelanjaKabupaten[1]
                                 }
+                                dataZoom={true}
                                 dataColors='["#57E7B4"]'
                                 fullCategory={true}
                                 trillion={true}
@@ -3909,6 +3911,7 @@ const ContentMiskinEkstremV2 = () => {
                                 categoryChart={dataChartKomposisiBelanjaKota[1]}
                                 dataColors='["#57E7B4"]'
                                 fullCategory={true}
+                                dataZoom={true}
                                 trillion={true}
                                 breakWord={true}
                                 height="450px"
