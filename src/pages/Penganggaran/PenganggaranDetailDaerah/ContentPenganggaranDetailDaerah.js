@@ -48,7 +48,8 @@ const ContentPenganggaranDetailDaerah = () => {
     const [logoImage, setLogoImage] = useState(null)
     const [dataProfilDaerah, setDataProfilDaerah] = useState([])
     const getDataLogoDaerah = ({
-      kodeDdn=_id
+      kodeDdn=_id,
+      tahun
     } = {}) => {
       const fetchData = async () => {
         try {
@@ -57,7 +58,8 @@ const ContentPenganggaranDetailDaerah = () => {
             method: "POST",
             headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
             body: JSON.stringify({
-              kode_ddn: kodeDdn
+              kode_ddn: kodeDdn,
+              tahun:tahun
             }),
           };
           const response = await fetch(
@@ -198,12 +200,8 @@ const ContentPenganggaranDetailDaerah = () => {
           tahun: selectedSingleTahun,
           tahapan: selectedSingleTahapan,
       });
+      getDataLogoDaerah({tahun:selectedSingleTahun})
       }, [selectedSingleTahun, selectedSingleTahapan]); // Panggil API jika tahun atau dokumen berubah
-    
-  
-    useEffect(() => {
-      getDataLogoDaerah()
-    }, []);
 
     const [dataDetailUnitSkpd, setDataDetailUnitSkpd] = useState([]);    
     const [dataDetailUnitSkpdFiltered, setDataDetailUnitSkpdFiltered] = useState([]);    
