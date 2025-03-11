@@ -112,14 +112,15 @@ const ContentDapodikV2 = () => {
   const [selectedSingleTahunAnggaran, setSelectedSingleTahunAnggaran] = useState('2025'); // Set default value
   const [selectedSingleTahunData, setSelectedSingleTahunData] = useState('2024'); // Set default value
   const [kodeWilayahPeta, setKodeWilayahPeta]=useState("")
+  const [kodeProvDefault, setKodeProvDefault] = useState('00')
   const handleSelectChangeAnggaran = (e) => {
     const { value } = e.target;
     const newTahunData = (parseInt(value) - 1).toString();
     setSelectedSingleTahunAnggaran(value);
     setSelectedSingleTahunData(newTahunData);
-    getDataDapodik({ kodeDdn: "", tahun: value, tahun_data: newTahunData });
-    getDataAnakSekolah({ kodeWilayah: kodeWilayahPeta, tahun_data: newTahunData });
     getDataTabelDapodikSeProv({ tahun: value, tahun_data: newTahunData });
+    getDataAnakSekolah({ kodeProv: kodeProvDefault, tahun_data: newTahunData });
+    getDataDapodik({ kodeDdn: "", tahun: value, tahun_data: newTahunData });
     getDataTabelDapodikProv({ tahun: value, tahun_data: newTahunData });
     getDataTabelDapodikKab({ kodeProv:kodeWilayahPeta, tahun: value, tahun_data: newTahunData });
     getDataCrossAnalisis({ tahun: value, tahun_data: newTahunData });
@@ -130,9 +131,9 @@ const ContentDapodikV2 = () => {
     const newTahunAnggaran = (parseInt(value) + 1).toString();
     setSelectedSingleTahunData(value);
     setSelectedSingleTahunAnggaran(newTahunAnggaran);
-    getDataAnakSekolah({kodeWilayah: kodeWilayahPeta, tahun_data:value})
-    getDataDapodik({ kodeDdn: "", tahun: newTahunAnggaran, tahun_data: value });
+    getDataAnakSekolah({kodeProv: kodeProvDefault, tahun_data:value})
     getDataTabelDapodikSeProv({ tahun: newTahunAnggaran, tahun_data: value });
+    getDataDapodik({ kodeDdn: "", tahun: newTahunAnggaran, tahun_data: value });
     getDataTabelDapodikProv({ tahun: newTahunAnggaran, tahun_data: value });
     getDataTabelDapodikKab({ kodeProv:kodeWilayahPeta, tahun: newTahunAnggaran, tahun_data: value });
     getDataCrossAnalisis({ tahun: newTahunAnggaran, tahun_data: value });
@@ -848,7 +849,7 @@ const ContentDapodikV2 = () => {
 
   useEffect(() => {
     getDataDapodik({kodeDdn: "", kodeProv: "", tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
-    getDataAnakSekolah({tahun_data:selectedSingleTahunData});
+    getDataAnakSekolah({kodeProv:"00", tahun_data:selectedSingleTahunData});
     getDataTabelDapodikSeProv({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
     getDataTabelDapodikProv({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
     getDataTabelDapodikKab({kodeProv:"", tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
@@ -1419,6 +1420,7 @@ const ContentDapodikV2 = () => {
   const [clickDaerah, setClickDaerah] = useState(false)
   const [clickNamaDaerah, setClickNamaDaerah] = useState("")
   const handleRegionClick = (kodeProv, namaProv) => {
+    setKodeProvDefault(kodeProv)
     setKodeWilayahPeta(kodeProv)
     getDataDapodik({kodeDdn: "",  kodeProv: kodeProv, tahun_data:selectedSingleTahunData, tahun:selectedSingleTahunAnggaran})
     getDataAnakSekolah({kodeProv: kodeProv, tahun_data:selectedSingleTahunData})
@@ -1432,13 +1434,14 @@ const ContentDapodikV2 = () => {
     getDataDapodik({kodeDdn: kodeProv,  kodeProv: "", tahun_data:selectedSingleTahunData, tahun:selectedSingleTahunAnggaran})
     getDataAnakSekolah({kodeDdn: kodeProv, tahun_data:selectedSingleTahunData})
     setKodeWilayahPeta(kodeProv)
+    setKodeProvDefault(kodeProv)
     setClickNamaDaerah(namaProv)
   };
 
 
   const resetRegionClick = () => {
     getDataDapodik({kodeDdn: "", kodeProv:"", tahun_data: selectedSingleTahunData, tahun:selectedSingleTahunAnggaran});
-    getDataAnakSekolah({kodeDdn: "", kodeProv:"", tahun_data:selectedSingleTahunData});
+    getDataAnakSekolah({kodeDdn: "", kodeProv:"00", tahun_data:selectedSingleTahunData});
     getDataCrossAnalisis({kodeProv: "", tahun_data:selectedSingleTahunData, tahun:selectedSingleTahunAnggaran})
     getDataTabelDapodikKab({kodeProv: "", tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
     getDataTabelDapodikSeProv({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
