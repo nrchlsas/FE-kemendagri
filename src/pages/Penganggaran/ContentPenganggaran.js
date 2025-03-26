@@ -524,6 +524,7 @@ const ContentPenganggaran = () => {
     const [clickNamaDaerah, setClickNamaDaerah] = useState("")
     const [kodeWilayahPeta, setKodeWilayahPeta]=useState("")  
     const handleRegionClick = (kodeProv, namaProv) => {
+      goToDetail(kodeProv, namaProv)
       setClickNamaDaerah(namaProv)
       setClickDaerah(true)
     };
