@@ -36,7 +36,7 @@ import UiRatings from "../pages/AdvanceUi/UiRatings/UiRatings";
 import UiHighlight from "../pages/AdvanceUi/UiHighlight/UiHighlight";
 
 // Widgets
-import Widgets from '../pages/Widgets/Index';
+import Widgets from "../pages/Widgets/Index";
 
 //Forms
 import BasicElements from "../pages/Forms/BasicElements/BasicElements";
@@ -62,38 +62,38 @@ import LineAwesomeIcons from "../pages/Icons/LineAwesomeIcons/LineAwesomeIcons";
 import CryptoIcons from "../pages/Icons/CryptoIcons/CryptoIcons";
 
 //AuthenticationInner pages
-import BasicSignIn from '../pages/AuthenticationInner/Login/BasicSignIn';
-import CoverSignIn from '../pages/AuthenticationInner/Login/CoverSignIn';
-import BasicSignUp from '../pages/AuthenticationInner/Register/BasicSignUp';
+import BasicSignIn from "../pages/AuthenticationInner/Login/BasicSignIn";
+import CoverSignIn from "../pages/AuthenticationInner/Login/CoverSignIn";
+import BasicSignUp from "../pages/AuthenticationInner/Register/BasicSignUp";
 import CoverSignUp from "../pages/AuthenticationInner/Register/CoverSignUp";
-import BasicPasswReset from '../pages/AuthenticationInner/PasswordReset/BasicPasswReset';
+import BasicPasswReset from "../pages/AuthenticationInner/PasswordReset/BasicPasswReset";
 //pages
-import Starter from '../pages/Pages/Starter/Starter';
-import SimplePage from '../pages/Pages/Profile/SimplePage/SimplePage';
-import Settings from '../pages/Pages/Profile/Settings/Settings';
-import Team from '../pages/Pages/Team/Team';
-import Timeline from '../pages/Pages/Timeline/Timeline';
-import Faqs from '../pages/Pages/Faqs/Faqs';
-import Pricing from '../pages/Pages/Pricing/Pricing';
-import Gallery from '../pages/Pages/Gallery/Gallery';
-import Maintenance from '../pages/Pages/Maintenance/Maintenance';
-import ComingSoon from '../pages/Pages/ComingSoon/ComingSoon';
-import SiteMap from '../pages/Pages/SiteMap/SiteMap';
-import SearchResults from '../pages/Pages/SearchResults/SearchResults';
+import Starter from "../pages/Pages/Starter/Starter";
+import SimplePage from "../pages/Pages/Profile/SimplePage/SimplePage";
+import Settings from "../pages/Pages/Profile/Settings/Settings";
+import Team from "../pages/Pages/Team/Team";
+import Timeline from "../pages/Pages/Timeline/Timeline";
+import Faqs from "../pages/Pages/Faqs/Faqs";
+import Pricing from "../pages/Pages/Pricing/Pricing";
+import Gallery from "../pages/Pages/Gallery/Gallery";
+import Maintenance from "../pages/Pages/Maintenance/Maintenance";
+import ComingSoon from "../pages/Pages/ComingSoon/ComingSoon";
+import SiteMap from "../pages/Pages/SiteMap/SiteMap";
+import SearchResults from "../pages/Pages/SearchResults/SearchResults";
 
-import CoverPasswReset from '../pages/AuthenticationInner/PasswordReset/CoverPasswReset';
-import BasicLockScreen from '../pages/AuthenticationInner/LockScreen/BasicLockScr';
-import CoverLockScreen from '../pages/AuthenticationInner/LockScreen/CoverLockScr';
-import BasicLogout from '../pages/AuthenticationInner/Logout/BasicLogout';
-import CoverLogout from '../pages/AuthenticationInner/Logout/CoverLogout';
-import BasicSuccessMsg from '../pages/AuthenticationInner/SuccessMessage/BasicSuccessMsg';
-import CoverSuccessMsg from '../pages/AuthenticationInner/SuccessMessage/CoverSuccessMsg';
-import BasicTwosVerify from '../pages/AuthenticationInner/TwoStepVerification/BasicTwosVerify';
-import CoverTwosVerify from '../pages/AuthenticationInner/TwoStepVerification/CoverTwosVerify';
-import Basic404 from '../pages/AuthenticationInner/Errors/Basic404';
-import Cover404 from '../pages/AuthenticationInner/Errors/Cover404';
-import Alt404 from '../pages/AuthenticationInner/Errors/Alt404';
-import Error500 from '../pages/AuthenticationInner/Errors/Error500';
+import CoverPasswReset from "../pages/AuthenticationInner/PasswordReset/CoverPasswReset";
+import BasicLockScreen from "../pages/AuthenticationInner/LockScreen/BasicLockScr";
+import CoverLockScreen from "../pages/AuthenticationInner/LockScreen/CoverLockScr";
+import BasicLogout from "../pages/AuthenticationInner/Logout/BasicLogout";
+import CoverLogout from "../pages/AuthenticationInner/Logout/CoverLogout";
+import BasicSuccessMsg from "../pages/AuthenticationInner/SuccessMessage/BasicSuccessMsg";
+import CoverSuccessMsg from "../pages/AuthenticationInner/SuccessMessage/CoverSuccessMsg";
+import BasicTwosVerify from "../pages/AuthenticationInner/TwoStepVerification/BasicTwosVerify";
+import CoverTwosVerify from "../pages/AuthenticationInner/TwoStepVerification/CoverTwosVerify";
+import Basic404 from "../pages/AuthenticationInner/Errors/Basic404";
+import Cover404 from "../pages/AuthenticationInner/Errors/Cover404";
+import Alt404 from "../pages/AuthenticationInner/Errors/Alt404";
+import Error500 from "../pages/AuthenticationInner/Errors/Error500";
 
 import BasicPasswCreate from "../pages/AuthenticationInner/PasswordCreate/BasicPasswCreate";
 import CoverPasswCreate from "../pages/AuthenticationInner/PasswordCreate/CoverPasswCreate";
@@ -112,7 +112,7 @@ import UserProfile from "../pages/Authentication/user-profile";
 import Home from "../pages/Home";
 import Kependudukan from "../pages/Kependudukan";
 import Dapodik from "../pages/Dapodik";
-import Uhc from "../pages/UHC"
+import Uhc from "../pages/UHC";
 import MiskinEkstrim from "../pages/MiskinEkstrim";
 import Stunting from "../pages/Stunting";
 import Development from "../pages/Pages/Development/Development";
@@ -140,30 +140,53 @@ import PenganggaranDetailDaerah from "../pages/Penganggaran/PenganggaranDetailDa
 import DashboardAnalisis from "../pages/DashboardAnalisis";
 import LoginV2 from "../pages/Authentication/LoginV2";
 import JKN from "../pages/JKN";
+import ComponentKementerianDanLembaga from "../pages/KementerianDanLembaga/CardComponentKl";
+import MonitoringTableKl from "../pages/KementerianDanLembaga/tabel-monitoring";
+import TableDuaPage from "../pages/KementerianDanLembaga/detail-log";
+import DetailLogPage from "../pages/KementerianDanLembaga/detail-log";
 //home
 
-
 const authProtectedRoutes = [
-
-  { path: "/beranda", component: <Home />},
-  { path: "/penganggaran", component: <Penganggaran />},
-  { path: "/penganggaran/penganggaran-detail/:_id", component: <PenganggaranDaerah />},
-  { path: "/penganggaran/penganggaran-detail/penganggaran-detail-skpd/:_id", component: <PenganggaranDetailDaerah />},  
-  { path: "/perencanaan", component: <Perencanaan />},
-  { path: "/perencanaan/perencanaan-detail/:_id", component: <PerencanaanDaerah />},
-  { path: "/perencanaan/perencanaan-detail/perencanaan-detail-skpd/:_id", component: <PerencanaanDetailDaerah />},  
-  { path: "/kependudukan", component: <Kependudukan />},
-  { path: "/jkn", component: <JKN />},
-  { path: "/realisasi", component: <Realisasi />},
-  { path: "/realisasi/realisasi-detail/:_id", component: <RealisasiDaerah />},
-  { path: "/realisasi/realisasi-detail/realisasi-detail-skpd/:_id", component: <RealisasiDetailDaerah />},
-  { path: "/dapodik", component: <Dapodik />},
-  { path: "/bpjs-kesehatan", component: <Uhc />},
-  { path: "/miskin-ekstrim", component: <MiskinEkstrim />},
-  { path: "/anggaran-miskin-ekstrim", component: <MiskinEkstrim />},
-  { path: "/keluarga-beresiko-stunting", component: <Stunting />},
-  { path: "/kementerian-dan-lembaga", component: <KementerianDanLembaga />},
-  { path: "/dashboard-analisis", component: <DashboardAnalisis />},
+  { path: "/beranda", component: <Home /> },
+  { path: "/penganggaran", component: <Penganggaran /> },
+  {
+    path: "/penganggaran/penganggaran-detail/:_id",
+    component: <PenganggaranDaerah />,
+  },
+  {
+    path: "/penganggaran/penganggaran-detail/penganggaran-detail-skpd/:_id",
+    component: <PenganggaranDetailDaerah />,
+  },
+  { path: "/perencanaan", component: <Perencanaan /> },
+  {
+    path: "/perencanaan/perencanaan-detail/:_id",
+    component: <PerencanaanDaerah />,
+  },
+  {
+    path: "/perencanaan/perencanaan-detail/perencanaan-detail-skpd/:_id",
+    component: <PerencanaanDetailDaerah />,
+  },
+  { path: "/kependudukan", component: <Kependudukan /> },
+  { path: "/jkn", component: <JKN /> },
+  { path: "/realisasi", component: <Realisasi /> },
+  { path: "/realisasi/realisasi-detail/:_id", component: <RealisasiDaerah /> },
+  {
+    path: "/realisasi/realisasi-detail/realisasi-detail-skpd/:_id",
+    component: <RealisasiDetailDaerah />,
+  },
+  { path: "/dapodik", component: <Dapodik /> },
+  { path: "/bpjs-kesehatan", component: <Uhc /> },
+  { path: "/miskin-ekstrim", component: <MiskinEkstrim /> },
+  { path: "/anggaran-miskin-ekstrim", component: <MiskinEkstrim /> },
+  { path: "/keluarga-beresiko-stunting", component: <Stunting /> },
+  { path: "/kementerian-dan-lembaga", component: <KementerianDanLembaga /> },
+  {
+    path: "/component-kl/:nama_kementerian",
+    component: <ComponentKementerianDanLembaga />,
+  },
+  { path: "/table-satu", component: <MonitoringTableKl /> },
+  { path: "/detail-log", component: <DetailLogPage /> },
+  { path: "/dashboard-analisis", component: <DashboardAnalisis /> },
 
   // Base Ui
   { path: "/ui-alerts", component: <UiAlerts /> },
@@ -250,16 +273,16 @@ const authProtectedRoutes = [
   { path: "*", component: <Navigate to="/beranda" /> },
 
   //RBAC
-  { path: "/menu", component: <Menu />},
-  { path: "/menu-group", component: <GroupMenu />},
-  { path: "/menu-group-detail", component: <GroupDetailMenu />},
-  { path: "/roles", component: <Roles />},
-  { path: "/roles-group", component: <RolesGroup />},
-  { path: "/roles-group-detail", component: <RolesGroupDetail />},
-  { path: "/permission", component: <Permission />},
-  { path: "/permission-roles", component: <PermissionRoles />},
-  { path: "/permission-menus", component: <PermissionMenus />},
-  { path: "/pengguna", component: <Pengguna />},
+  { path: "/menu", component: <Menu /> },
+  { path: "/menu-group", component: <GroupMenu /> },
+  { path: "/menu-group-detail", component: <GroupDetailMenu /> },
+  { path: "/roles", component: <Roles /> },
+  { path: "/roles-group", component: <RolesGroup /> },
+  { path: "/roles-group-detail", component: <RolesGroupDetail /> },
+  { path: "/permission", component: <Permission /> },
+  { path: "/permission-roles", component: <PermissionRoles /> },
+  { path: "/permission-menus", component: <PermissionMenus /> },
+  { path: "/pengguna", component: <Pengguna /> },
 ];
 
 const publicRoutes = [
@@ -296,7 +319,6 @@ const publicRoutes = [
   { path: "/auth-pass-change-basic", component: <BasicPasswCreate /> },
   { path: "/auth-pass-change-cover", component: <CoverPasswCreate /> },
   { path: "/auth-offline", component: <Offlinepage /> },
-
 ];
 
 export { authProtectedRoutes, publicRoutes };

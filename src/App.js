@@ -1,16 +1,17 @@
-import React from 'react';
+import React from "react";
 
 //import Scss
-import './assets/scss/themes.scss';
+import "./assets/scss/themes.scss";
 
 //imoprt Route
-import Route from './Routes';
+import Route from "./Routes";
 
 // Import Firebase Configuration file
 // import { initFirebaseBackend } from "./helpers/firebase_helper";
 
-// Fake Backend 
+// Fake Backend
 import fakeBackend from "./helpers/AuthType/fakeBackend";
+import Providers from "./providers/providers";
 
 // Activating fake backend
 fakeBackend();
@@ -32,7 +33,9 @@ fakeBackend();
 function App() {
   return (
     <React.Fragment>
-      <Route />
+      <Providers>
+        <Route />
+      </Providers>
     </React.Fragment>
   );
 }
