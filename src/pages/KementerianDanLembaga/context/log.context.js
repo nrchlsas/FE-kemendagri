@@ -6,12 +6,26 @@ export function LogProvider({ children }) {
   const [params, setParams] = useState(null);
   const [pagination, setPagination] = useState({
     page: 1,
-    limit: 10,
+    limit: 50,
   });
+  const [kataKunci, setKataKunci] = useState("");
+  const [fisrtPage, setFirstPage] = useState("");
+  const [lastPage, setLastPage] = useState("");
 
   return (
     <LogContext.Provider
-      value={{ params, setParams, pagination, setPagination }}
+      value={{
+        params,
+        setParams,
+        pagination,
+        setPagination,
+        kataKunci,
+        setKataKunci,
+        fisrtPage,
+        setFirstPage,
+        lastPage,
+        setLastPage,
+      }}
     >
       {children}
     </LogContext.Provider>

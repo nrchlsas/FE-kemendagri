@@ -6,7 +6,7 @@ export function LogDetailProvider({ children }) {
   const [params, setParams] = useState(null);
   const [pagination, setPagination] = useState({
     page: 1,
-    limit: 10,
+    limit: 50,
   });
 
   return (

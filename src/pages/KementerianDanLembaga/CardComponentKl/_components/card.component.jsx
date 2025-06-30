@@ -7,7 +7,7 @@ export default function CardMonitoring({
   namaKomponen,
   jumlahAktifitas,
 }) {
-  const { setParams, setPagination } = useLog();
+  const { setParams, setPagination, kataKunci } = useLog();
   const { tanggal_mulai, tanggal_akhir } = useDateRange();
 
   const handleClick = () => {
@@ -17,6 +17,7 @@ export default function CardMonitoring({
       nama_komponen: namaKomponen,
       tanggal_mulai: tanggal_mulai,
       tanggal_akhir: tanggal_akhir,
+      kata_kunci: kataKunci,
     });
     setPagination((prev) => ({ ...prev, page: 1 }));
   };

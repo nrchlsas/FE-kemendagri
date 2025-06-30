@@ -84,17 +84,22 @@ const ContentDapodikV2 = () => {
   const [dataDapodikTabelSeProvinsi, setDataDapodikTabelSeProvinsi] = useState(
     []
   );
-  const [dataDapodikTabelSeProvinsiFiltered, setDataDapodikTabelSeProvinsiFiltered] = useState(
-    []
-  );
+  const [
+    dataDapodikTabelSeProvinsiFiltered,
+    setDataDapodikTabelSeProvinsiFiltered,
+  ] = useState([]);
   const [dataDapodikTabelProvinsi, setDataDapodikTabelProvinsi] = useState([]);
-  const [dataDapodikTabelProvinsiFiltered, setDataDapodikTabelProvinsiFiltered] = useState([]);
+  const [
+    dataDapodikTabelProvinsiFiltered,
+    setDataDapodikTabelProvinsiFiltered,
+  ] = useState([]);
   const [dataDapodikTabelKabupaten, setDataDapodikTabelKabupaten] = useState(
     []
   );
-  const [dataDapodikTabelKabupatenFiltered, setDataDapodikTabelKabupatenFiltered] = useState(
-    []
-  );
+  const [
+    dataDapodikTabelKabupatenFiltered,
+    setDataDapodikTabelKabupatenFiltered,
+  ] = useState([]);
   const [loadingDapodikTabel, setLoadingDapodikTabel] = useState([]);
   const [errorDapodikTabel, setErrorDapodikTabel] = useState([]);
 
@@ -109,10 +114,12 @@ const ContentDapodikV2 = () => {
     setDataChartRincianDapodikKabupaten,
   ] = useState([[], []]);
 
-  const [selectedSingleTahunAnggaran, setSelectedSingleTahunAnggaran] = useState('2025'); // Set default value
-  const [selectedSingleTahunData, setSelectedSingleTahunData] = useState('2024'); // Set default value
-  const [kodeWilayahPeta, setKodeWilayahPeta]=useState("")
-  const [kodeProvDefault, setKodeProvDefault] = useState('00')
+  const [selectedSingleTahunAnggaran, setSelectedSingleTahunAnggaran] =
+    useState("2024"); // Set default value
+  const [selectedSingleTahunData, setSelectedSingleTahunData] =
+    useState("2023"); // Set default value
+  const [kodeWilayahPeta, setKodeWilayahPeta] = useState("");
+  const [kodeProvDefault, setKodeProvDefault] = useState("00");
   const handleSelectChangeAnggaran = (e) => {
     const { value } = e.target;
     const newTahunData = (parseInt(value) - 1).toString();
@@ -122,143 +129,211 @@ const ContentDapodikV2 = () => {
     getDataAnakSekolah({ kodeProv: kodeProvDefault, tahun_data: newTahunData });
     getDataDapodik({ kodeDdn: "", tahun: value, tahun_data: newTahunData });
     getDataTabelDapodikProv({ tahun: value, tahun_data: newTahunData });
-    getDataTabelDapodikKab({ kodeProv:kodeWilayahPeta, tahun: value, tahun_data: newTahunData });
+    getDataTabelDapodikKab({
+      kodeProv: kodeWilayahPeta,
+      tahun: value,
+      tahun_data: newTahunData,
+    });
     getDataCrossAnalisis({ tahun: value, tahun_data: newTahunData });
   };
-  
+
   const handleSelectChangeDataPokok = (e) => {
     const { value } = e.target;
     const newTahunAnggaran = (parseInt(value) + 1).toString();
+    const tahun = newTahunAnggaran === "2025" ? "2024" : newTahunAnggaran;
+    // 👉 Override tahun_data kalau value === 2024
+    const tahunDataYangDikirim = value === "2024" ? "2023" : value;
     setSelectedSingleTahunData(value);
     setSelectedSingleTahunAnggaran(newTahunAnggaran);
-    getDataAnakSekolah({kodeProv: kodeProvDefault, tahun_data:value})
-    getDataTabelDapodikSeProv({ tahun: newTahunAnggaran, tahun_data: value });
-    getDataDapodik({ kodeDdn: "", tahun: newTahunAnggaran, tahun_data: value });
-    getDataTabelDapodikProv({ tahun: newTahunAnggaran, tahun_data: value });
-    getDataTabelDapodikKab({ kodeProv:kodeWilayahPeta, tahun: newTahunAnggaran, tahun_data: value });
-    getDataCrossAnalisis({ tahun: newTahunAnggaran, tahun_data: value });
+    getDataAnakSekolah({
+      kodeProv: kodeProvDefault,
+      tahun_data: tahunDataYangDikirim,
+    });
+    getDataTabelDapodikSeProv({
+      tahun: tahun,
+      tahun_data: tahunDataYangDikirim,
+    });
+    getDataDapodik({
+      kodeDdn: "",
+      tahun: tahun,
+      tahun_data: tahunDataYangDikirim,
+    });
+    getDataTabelDapodikProv({ tahun: tahun, tahun_data: tahunDataYangDikirim });
+    getDataTabelDapodikKab({
+      kodeProv: kodeWilayahPeta,
+      tahun: tahun,
+      tahun_data: tahunDataYangDikirim,
+    });
+    getDataCrossAnalisis({ tahun: tahun, tahun_data: tahunDataYangDikirim });
   };
-  
 
-  const [dataSdMap, setDataSdMap] = useState([])
-  const getDataDapodik = ({kodeDdn="", tahun="", tahun_data="", kodeProv=""}) => {
+  const [dataSdMap, setDataSdMap] = useState([]);
+  const getDataDapodik = ({
+    kodeDdn = "",
+    tahun = "",
+    tahun_data = "",
+    kodeProv = "",
+  }) => {
     const fetchData = async () => {
-        try {
-            const token = JSON.parse(sessionStorage.getItem("authUser"));
-            const requestOptions = {
-                method: "POST",
-                headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
-                body: JSON.stringify({
-                    kode_prov: kodeProv,
-                    kode_ddn: kodeDdn,
-                    tahun: tahun,
-                    tahun_data:tahun_data
-                }),
-            };
-            const response = await fetch(`${API_URI_RBAC}/v2/dashboard_dapodik`, requestOptions);
+      try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"));
+        const requestOptions = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-sipdhub": `${token.token}`,
+          },
+          body: JSON.stringify({
+            kode_prov: kodeProv,
+            kode_ddn: kodeDdn,
+            tahun: tahun,
+            tahun_data: tahun_data,
+          }),
+        };
+        const response = await fetch(
+          `${API_URI_RBAC}/v2/dashboard_dapodik`,
+          requestOptions
+        );
 
-            if (!response.ok) {
-                throw new Error("Network response was not ok");
-            }
-
-            const dataDapodik = await response.json();
-            setDataDapodik(dataDapodik?.data);
-
-            try {
-                const mappedDataSd = Object.values(dataDapodik.data.dapodik_do_sd).filter((value) => typeof value === "number");
-                const totalValueSd = [mappedDataSd, mappedDataSd.reduce((accumulator, value) => accumulator + value, 0)];
-                setDataDropOutSd(totalValueSd);
-            } catch (error) {
-                console.error("Error processing data for SD:", error);
-            }
-
-            try {
-                const mappedDataSmp = Object.values(dataDapodik.data.dapodik_do_smp).filter((value) => typeof value === "number");
-                const totalValueSmp = [mappedDataSmp, mappedDataSmp.reduce((accumulator, value) => accumulator + value, 0)];
-                setDataDropOutSmp(totalValueSmp);
-            } catch (error) {
-                console.error("Error processing data for SMP:", error);
-            }
-
-            try {
-                const mappedDataSma = Object.values(dataDapodik.data.dapodik_do_sma).filter((value) => typeof value === "number");
-                const totalValueSma = [mappedDataSma, mappedDataSma.reduce((accumulator, value) => accumulator + value, 0)];
-                setDataDropOutSma(totalValueSma);
-            } catch (error) {
-                console.error("Error processing data for SMA:", error);
-            }
-
-            try {
-                const mappedDataByUsia = Object.values(dataDapodik.data.dapodik_jumlah_belum_pernah_sekolah_by_usia).filter((value) => typeof value === "number");
-                setDataBelumPernahSekolahByUsia(mappedDataByUsia);
-            } catch (error) {
-                console.error("Error processing data by usia:", error);
-            }
-
-            try {
-                const mappedDataAts = Object.values(dataDapodik.data.dapodik_compare_ats_tidak_lanjut).filter((value) => typeof value === "number");
-                setDataChartAts(mappedDataAts);
-            } catch (error) {
-                console.error("Error processing ATS data:", error);
-            }
-
-            try {
-                const resultChartRincianDapodikProvinsi = dataDapodik.data.cross_analisis_ats_provinsi.reduce((acc, item) => {
-                    acc[0].push(item.nama_daerah);
-                    acc[1].push(item.persenats);
-                    acc[2].push(item.persenblj);
-                    acc[3].push(item.total_rincianall);
-                    acc[4].push(item.total_rincianursbid);
-                    return acc;
-                }, [[], [], [], [], []]);
-
-                setDataChartRincianDapodikProvinsi(resultChartRincianDapodikProvinsi);
-            } catch (error) {
-                console.error("Error processing chart data for provinsi:", error);
-            }
-
-            try {
-                const resultChartRincianDapodikKabupaten = dataDapodik.data.cross_analisis_ats_kabkota.reduce((acc, item) => {
-                    acc[0].push(item.nama_daerah);
-                    acc[1].push(item.persenats);
-                    acc[2].push(item.persenblj);
-                    acc[3].push(item.total_rincianall);
-                    acc[4].push(item.total_rincianursbid);
-                    return acc;
-                }, [[], [], [], [], []]);
-
-                setDataChartRincianDapodikKabupaten(resultChartRincianDapodikKabupaten);
-            } catch (error) {
-                console.error("Error processing chart data for kabupaten:", error);
-            }
-        } catch (errorDapodik) {
-            setErrorDapodik(errorDapodik);
-        } finally {
-            setLoadingDapodik(false);
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
         }
+
+        const dataDapodik = await response.json();
+        setDataDapodik(dataDapodik?.data);
+
+        try {
+          const mappedDataSd = Object.values(
+            dataDapodik.data.dapodik_do_sd
+          ).filter((value) => typeof value === "number");
+          const totalValueSd = [
+            mappedDataSd,
+            mappedDataSd.reduce((accumulator, value) => accumulator + value, 0),
+          ];
+          setDataDropOutSd(totalValueSd);
+        } catch (error) {
+          console.error("Error processing data for SD:", error);
+        }
+
+        try {
+          const mappedDataSmp = Object.values(
+            dataDapodik.data.dapodik_do_smp
+          ).filter((value) => typeof value === "number");
+          const totalValueSmp = [
+            mappedDataSmp,
+            mappedDataSmp.reduce(
+              (accumulator, value) => accumulator + value,
+              0
+            ),
+          ];
+          setDataDropOutSmp(totalValueSmp);
+        } catch (error) {
+          console.error("Error processing data for SMP:", error);
+        }
+
+        try {
+          const mappedDataSma = Object.values(
+            dataDapodik.data.dapodik_do_sma
+          ).filter((value) => typeof value === "number");
+          const totalValueSma = [
+            mappedDataSma,
+            mappedDataSma.reduce(
+              (accumulator, value) => accumulator + value,
+              0
+            ),
+          ];
+          setDataDropOutSma(totalValueSma);
+        } catch (error) {
+          console.error("Error processing data for SMA:", error);
+        }
+
+        try {
+          const mappedDataByUsia = Object.values(
+            dataDapodik.data.dapodik_jumlah_belum_pernah_sekolah_by_usia
+          ).filter((value) => typeof value === "number");
+          setDataBelumPernahSekolahByUsia(mappedDataByUsia);
+        } catch (error) {
+          console.error("Error processing data by usia:", error);
+        }
+
+        try {
+          const mappedDataAts = Object.values(
+            dataDapodik.data.dapodik_compare_ats_tidak_lanjut
+          ).filter((value) => typeof value === "number");
+          setDataChartAts(mappedDataAts);
+        } catch (error) {
+          console.error("Error processing ATS data:", error);
+        }
+
+        try {
+          const resultChartRincianDapodikProvinsi =
+            dataDapodik.data.cross_analisis_ats_provinsi.reduce(
+              (acc, item) => {
+                acc[0].push(item.nama_daerah);
+                acc[1].push(item.persenats);
+                acc[2].push(item.persenblj);
+                acc[3].push(item.total_rincianall);
+                acc[4].push(item.total_rincianursbid);
+                return acc;
+              },
+              [[], [], [], [], []]
+            );
+
+          setDataChartRincianDapodikProvinsi(resultChartRincianDapodikProvinsi);
+        } catch (error) {
+          console.error("Error processing chart data for provinsi:", error);
+        }
+
+        try {
+          const resultChartRincianDapodikKabupaten =
+            dataDapodik.data.cross_analisis_ats_kabkota.reduce(
+              (acc, item) => {
+                acc[0].push(item.nama_daerah);
+                acc[1].push(item.persenats);
+                acc[2].push(item.persenblj);
+                acc[3].push(item.total_rincianall);
+                acc[4].push(item.total_rincianursbid);
+                return acc;
+              },
+              [[], [], [], [], []]
+            );
+
+          setDataChartRincianDapodikKabupaten(
+            resultChartRincianDapodikKabupaten
+          );
+        } catch (error) {
+          console.error("Error processing chart data for kabupaten:", error);
+        }
+      } catch (errorDapodik) {
+        setErrorDapodik(errorDapodik);
+      } finally {
+        setLoadingDapodik(false);
+      }
     };
 
     fetchData();
-};
+  };
 
-
-  const [titleMap, setTitleMap] = useState("Total Anak Sekolah")
+  const [titleMap, setTitleMap] = useState("Total Anak Sekolah");
   const [valueMap, setValueMap] = useState([]);
-  const [maxValueMap, setmaxValueMap] = useState(0)
+  const [maxValueMap, setmaxValueMap] = useState(0);
   const [handleCardClick, setHandleCardClick] = useState(() => () => {});
 
-  const getDataTabelDapodikSeProv = ({searchTerm, tahun, tahun_data}) => {
+  const getDataTabelDapodikSeProv = ({ searchTerm, tahun, tahun_data }) => {
     const fetchData = async () => {
       try {
-        const token = JSON.parse(sessionStorage.getItem("authUser"))
+        const token = JSON.parse(sessionStorage.getItem("authUser"));
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+          headers: {
+            "Content-Type": "application/json",
+            "x-sipdhub": `${token.token}`,
+          },
           body: JSON.stringify({
             // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
             nama_prov: searchTerm ? searchTerm : "",
             tahun: tahun,
-            tahun_data:tahun_data
+            tahun_data: tahun_data,
           }),
         };
         // /table_dapodik_provinsi
@@ -277,105 +352,111 @@ const ContentDapodikV2 = () => {
         setDataDapodikTabelSeProvinsi(dataDapodikTabelSeProvinsi?.data);
         setDataDapodikTabelSeProvinsiFiltered(dataDapodikTabelSeProvinsi?.data);
 
-        const valueTotalAnakSekolah = Array.isArray(dataDapodikTabelSeProvinsi?.data) 
-        ? dataDapodikTabelSeProvinsi.data.map(item => {
-            const total = 
-              parseInt(item.sd || 0) + 
-              parseInt(item.smp || 0) + 
-              parseInt(item.sma || 0) + 
-              parseInt(item.smk || 0);
-            return {
-              name: item.nama_prov || "Unknown",
-              value: total
-            };
-          }) 
-        : [];
-               
-        // const valueTotalAnakDropOutSd = dataDapodikTabelSeProvinsi.data.reduce((accumulate, item) => 
+        const valueTotalAnakSekolah = Array.isArray(
+          dataDapodikTabelSeProvinsi?.data
+        )
+          ? dataDapodikTabelSeProvinsi.data.map((item) => {
+              const total =
+                parseInt(item.sd || 0) +
+                parseInt(item.smp || 0) +
+                parseInt(item.sma || 0) +
+                parseInt(item.smk || 0);
+              return {
+                name: item.nama_prov || "Unknown",
+                value: total,
+              };
+            })
+          : [];
+
+        // const valueTotalAnakDropOutSd = dataDapodikTabelSeProvinsi.data.reduce((accumulate, item) =>
         //   accumulate + parseInt(item.totsd_do), 0
-        // )        
+        // )
 
         const valueTotalSd = Array.isArray(dataDapodikTabelSeProvinsi?.data)
-        ? dataDapodikTabelSeProvinsi.data.map(item => ({
-            name: item.nama_prov || "Unknown",
-            value: parseInt(item.sd) || 0,
-          }))
-        : [];
+          ? dataDapodikTabelSeProvinsi.data.map((item) => ({
+              name: item.nama_prov || "Unknown",
+              value: parseInt(item.sd) || 0,
+            }))
+          : [];
 
         const valueTotalSmp = Array.isArray(dataDapodikTabelSeProvinsi?.data)
-        ? dataDapodikTabelSeProvinsi.data.map(item => ({
-            name: item.nama_prov || "Unknown",
-            value: parseInt(item.smp) || 0,
-          }))
-        : [];
+          ? dataDapodikTabelSeProvinsi.data.map((item) => ({
+              name: item.nama_prov || "Unknown",
+              value: parseInt(item.smp) || 0,
+            }))
+          : [];
 
         const valueTotalSma = Array.isArray(dataDapodikTabelSeProvinsi?.data)
-        ? dataDapodikTabelSeProvinsi.data.map(item => ({
-            name: item.nama_prov || "Unknown",
-            value: parseInt(item.sma) || 0,
-          }))
-        : [];
+          ? dataDapodikTabelSeProvinsi.data.map((item) => ({
+              name: item.nama_prov || "Unknown",
+              value: parseInt(item.sma) || 0,
+            }))
+          : [];
 
         const valueTotalSmk = Array.isArray(dataDapodikTabelSeProvinsi?.data)
-        ? dataDapodikTabelSeProvinsi.data.map(item => ({
-            name: item.nama_prov || "Unknown",
-            value: parseInt(item.smk) || 0,
-          }))
-        : [];
+          ? dataDapodikTabelSeProvinsi.data.map((item) => ({
+              name: item.nama_prov || "Unknown",
+              value: parseInt(item.smk) || 0,
+            }))
+          : [];
 
-        const maxAnakSekolah = Array.isArray(valueTotalAnakSekolah) && valueTotalAnakSekolah.length > 0 
-        ? Math.max(...valueTotalAnakSekolah.map(item => item.value || 0)) 
-        : 0;
-      
-      const maxSd = Array.isArray(valueTotalSd) && valueTotalSd.length > 0 
-        ? Math.max(...valueTotalSd.map(item => item.value || 0)) 
-        : 0;
-      
-      const maxSmp = Array.isArray(valueTotalSmp) && valueTotalSmp.length > 0 
-        ? Math.max(...valueTotalSmp.map(item => item.value || 0)) 
-        : 0;
-      
-      const maxSma = Array.isArray(valueTotalSma) && valueTotalSma.length > 0 
-        ? Math.max(...valueTotalSma.map(item => item.value || 0)) 
-        : 0;
-      
-      const maxSmk = Array.isArray(valueTotalSmk) && valueTotalSmk.length > 0 
-        ? Math.max(...valueTotalSmk.map(item => item.value || 0)) 
-        : 0;
+        const maxAnakSekolah =
+          Array.isArray(valueTotalAnakSekolah) &&
+          valueTotalAnakSekolah.length > 0
+            ? Math.max(...valueTotalAnakSekolah.map((item) => item.value || 0))
+            : 0;
+
+        const maxSd =
+          Array.isArray(valueTotalSd) && valueTotalSd.length > 0
+            ? Math.max(...valueTotalSd.map((item) => item.value || 0))
+            : 0;
+
+        const maxSmp =
+          Array.isArray(valueTotalSmp) && valueTotalSmp.length > 0
+            ? Math.max(...valueTotalSmp.map((item) => item.value || 0))
+            : 0;
+
+        const maxSma =
+          Array.isArray(valueTotalSma) && valueTotalSma.length > 0
+            ? Math.max(...valueTotalSma.map((item) => item.value || 0))
+            : 0;
+
+        const maxSmk =
+          Array.isArray(valueTotalSmk) && valueTotalSmk.length > 0
+            ? Math.max(...valueTotalSmk.map((item) => item.value || 0))
+            : 0;
         setValueMap(valueTotalAnakSekolah);
-        setmaxValueMap(maxAnakSekolah)
+        setmaxValueMap(maxAnakSekolah);
 
         const handleCardClick = (valueType) => {
-          switch(valueType) {
-            case 'totalAnakSekolah':
+          switch (valueType) {
+            case "totalAnakSekolah":
               setValueMap(valueTotalAnakSekolah);
-              setmaxValueMap(maxAnakSekolah)
+              setmaxValueMap(maxAnakSekolah);
               break;
-            case 'totalSD':
+            case "totalSD":
               setValueMap(valueTotalSd);
-              setmaxValueMap(maxSd)
+              setmaxValueMap(maxSd);
               break;
-            case 'totalSMP':
+            case "totalSMP":
               setValueMap(valueTotalSmp);
-              setmaxValueMap(maxSmp)
+              setmaxValueMap(maxSmp);
               break;
-            case 'totalSMA':
+            case "totalSMA":
               setValueMap(valueTotalSma);
-              setmaxValueMap(maxSma)
+              setmaxValueMap(maxSma);
               break;
-            case 'totalSMK':
+            case "totalSMK":
               setValueMap(valueTotalSmk);
-              setmaxValueMap(maxSmk)
-              break;            
+              setmaxValueMap(maxSmk);
+              break;
             default:
               break;
           }
         };
-        
-  
+
         // Simpan `handleCardClick` di dalam state atau panggil langsung pada setiap card
         setHandleCardClick(() => handleCardClick);
- 
       } catch (errorDapodikTabel) {
         setErrorDapodikTabel(errorDapodikTabel);
       } finally {
@@ -385,21 +466,29 @@ const ContentDapodikV2 = () => {
     fetchData();
   };
 
-  const getDataTabelDapodikKab = ({searchTerm, tahun, tahun_data, kodeProv=""}) => {
+  const getDataTabelDapodikKab = ({
+    searchTerm,
+    tahun,
+    tahun_data,
+    kodeProv = "",
+  }) => {
     const fetchData = async () => {
       try {
-        const token = JSON.parse(sessionStorage.getItem("authUser"))
+        const token = JSON.parse(sessionStorage.getItem("authUser"));
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+          headers: {
+            "Content-Type": "application/json",
+            "x-sipdhub": `${token.token}`,
+          },
           body: JSON.stringify({
-            kode_prov:kodeProv,
+            kode_prov: kodeProv,
             nama_kabkota: searchTerm ? searchTerm : "",
             tahun: tahun,
-            tahun_data:tahun_data
+            tahun_data: tahun_data,
           }),
         };
-        
+
         const response = await fetch(
           `${API_URI_RBAC}/v2/tabel_dapodik_kabupaten`,
           requestOptions
@@ -414,108 +503,117 @@ const ContentDapodikV2 = () => {
         setDataDapodikTabelKabupaten(dataDapodikTabelKabupaten?.data);
         setDataDapodikTabelKabupatenFiltered(dataDapodikTabelKabupaten?.data);
 
-        if(kodeProv!=""){
-          const valueTotalAnakSekolah = Array.isArray(dataDapodikTabelKabupaten?.data) 
-          ? dataDapodikTabelKabupaten?.data?.map(item => {
-              const total = 
-                parseInt(item.sd || 0) + 
-                parseInt(item.smp || 0) + 
-                parseInt(item.sma || 0) + 
-                parseInt(item.smk || 0);
-              return {
-                id:item.kode_ddn,
-                name: item.nama_kabkota || "Unknown",
-                value: total
-              };
-            }) 
-          : [];
-  
+        if (kodeProv != "") {
+          const valueTotalAnakSekolah = Array.isArray(
+            dataDapodikTabelKabupaten?.data
+          )
+            ? dataDapodikTabelKabupaten?.data?.map((item) => {
+                const total =
+                  parseInt(item.sd || 0) +
+                  parseInt(item.smp || 0) +
+                  parseInt(item.sma || 0) +
+                  parseInt(item.smk || 0);
+                return {
+                  id: item.kode_ddn,
+                  name: item.nama_kabkota || "Unknown",
+                  value: total,
+                };
+              })
+            : [];
+
           const valueTotalSd = Array.isArray(dataDapodikTabelKabupaten?.data)
-          ? dataDapodikTabelKabupaten?.data?.map(item => ({
-              id:item.kode_ddn,
-              name: item.nama_kabkota || "Unknown",
-              value: parseInt(item.sd) || 0,
-            }))
-          : [];
-  
+            ? dataDapodikTabelKabupaten?.data?.map((item) => ({
+                id: item.kode_ddn,
+                name: item.nama_kabkota || "Unknown",
+                value: parseInt(item.sd) || 0,
+              }))
+            : [];
+
           const valueTotalSmp = Array.isArray(dataDapodikTabelKabupaten?.data)
-          ? dataDapodikTabelKabupaten?.data?.map(item => ({
-            id:item.kode_ddn,
-              name: item.nama_kabkota || "Unknown",
-              value: parseInt(item.smp) || 0,
-            }))
-          : [];
-  
+            ? dataDapodikTabelKabupaten?.data?.map((item) => ({
+                id: item.kode_ddn,
+                name: item.nama_kabkota || "Unknown",
+                value: parseInt(item.smp) || 0,
+              }))
+            : [];
+
           const valueTotalSma = Array.isArray(dataDapodikTabelKabupaten?.data)
-          ? dataDapodikTabelKabupaten?.data?.map(item => ({
-            id:item.kode_ddn,
-              name: item.nama_kabkota || "Unknown",
-              value: parseInt(item.sma) || 0,
-            }))
-          : [];
-  
+            ? dataDapodikTabelKabupaten?.data?.map((item) => ({
+                id: item.kode_ddn,
+                name: item.nama_kabkota || "Unknown",
+                value: parseInt(item.sma) || 0,
+              }))
+            : [];
+
           const valueTotalSmk = Array.isArray(dataDapodikTabelKabupaten?.data)
-          ? dataDapodikTabelKabupaten?.data?.map(item => ({
-            id:item.kode_ddn,
-              name: item.nama_kabkota || "Unknown",
-              value: parseInt(item.smk) || 0,
-            }))
-          : [];
-  
-          const maxAnakSekolah = Array.isArray(valueTotalAnakSekolah) && valueTotalAnakSekolah.length > 0 
-          ? Math.max(...valueTotalAnakSekolah?.map(item => item.value || 0)) 
-          : 0;
-        
-        const maxSd = Array.isArray(valueTotalSd) && valueTotalSd.length > 0 
-          ? Math.max(...valueTotalSd?.map(item => item.value || 0)) 
-          : 0;
-        
-        const maxSmp = Array.isArray(valueTotalSmp) && valueTotalSmp.length > 0 
-          ? Math.max(...valueTotalSmp?.map(item => item.value || 0)) 
-          : 0;
-        
-        const maxSma = Array.isArray(valueTotalSma) && valueTotalSma.length > 0 
-          ? Math.max(...valueTotalSma?.map(item => item.value || 0)) 
-          : 0;
-        
-        const maxSmk = Array.isArray(valueTotalSmk) && valueTotalSmk.length > 0 
-          ? Math.max(...valueTotalSmk?.map(item => item.value || 0)) 
-          : 0;
+            ? dataDapodikTabelKabupaten?.data?.map((item) => ({
+                id: item.kode_ddn,
+                name: item.nama_kabkota || "Unknown",
+                value: parseInt(item.smk) || 0,
+              }))
+            : [];
+
+          const maxAnakSekolah =
+            Array.isArray(valueTotalAnakSekolah) &&
+            valueTotalAnakSekolah.length > 0
+              ? Math.max(
+                  ...valueTotalAnakSekolah?.map((item) => item.value || 0)
+                )
+              : 0;
+
+          const maxSd =
+            Array.isArray(valueTotalSd) && valueTotalSd.length > 0
+              ? Math.max(...valueTotalSd?.map((item) => item.value || 0))
+              : 0;
+
+          const maxSmp =
+            Array.isArray(valueTotalSmp) && valueTotalSmp.length > 0
+              ? Math.max(...valueTotalSmp?.map((item) => item.value || 0))
+              : 0;
+
+          const maxSma =
+            Array.isArray(valueTotalSma) && valueTotalSma.length > 0
+              ? Math.max(...valueTotalSma?.map((item) => item.value || 0))
+              : 0;
+
+          const maxSmk =
+            Array.isArray(valueTotalSmk) && valueTotalSmk.length > 0
+              ? Math.max(...valueTotalSmk?.map((item) => item.value || 0))
+              : 0;
 
           setValueMap(valueTotalAnakSekolah);
-          setmaxValueMap(maxAnakSekolah)
-  
+          setmaxValueMap(maxAnakSekolah);
+
           const handleCardClick = (valueType) => {
-            switch(valueType) {
-              case 'totalAnakSekolah':
+            switch (valueType) {
+              case "totalAnakSekolah":
                 setValueMap(valueTotalAnakSekolah);
-                setmaxValueMap(maxAnakSekolah)
+                setmaxValueMap(maxAnakSekolah);
                 break;
-              case 'totalSD':
+              case "totalSD":
                 setValueMap(valueTotalSd);
-                setmaxValueMap(maxSd)
+                setmaxValueMap(maxSd);
                 break;
-              case 'totalSMP':
+              case "totalSMP":
                 setValueMap(valueTotalSmp);
-                setmaxValueMap(maxSmp)
+                setmaxValueMap(maxSmp);
                 break;
-              case 'totalSMA':
+              case "totalSMA":
                 setValueMap(valueTotalSma);
-                setmaxValueMap(maxSma)
+                setmaxValueMap(maxSma);
                 break;
-              case 'totalSMK':
+              case "totalSMK":
                 setValueMap(valueTotalSmk);
-                setmaxValueMap(maxSmk)
-                break;            
+                setmaxValueMap(maxSmk);
+                break;
               default:
                 break;
             }
           };
-    
+
           // Simpan `handleCardClick` di dalam state atau panggil langsung pada setiap card
           setHandleCardClick(() => handleCardClick);
         }
-
       } catch (errorDapodikTabel) {
         setErrorDapodikTabel(errorDapodikTabel);
       } finally {
@@ -524,21 +622,24 @@ const ContentDapodikV2 = () => {
     };
     fetchData();
   };
-  
-  const getDataCrossAnalisis = ({tahun, tahun_data, kodeProv}) => {
+
+  const getDataCrossAnalisis = ({ tahun, tahun_data, kodeProv }) => {
     const fetchData = async () => {
       try {
-        const token = JSON.parse(sessionStorage.getItem("authUser"))
+        const token = JSON.parse(sessionStorage.getItem("authUser"));
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+          headers: {
+            "Content-Type": "application/json",
+            "x-sipdhub": `${token.token}`,
+          },
           body: JSON.stringify({
             kode_prov: kodeProv,
-            tahun:tahun,
-            tahun_data: tahun_data
+            tahun: tahun,
+            tahun_data: tahun_data,
           }),
         };
-        
+
         const response = await fetch(
           `${API_URI_RBAC}/v2/dashboard_dapodik_cross_analisis_ats_seprovinsi`,
           requestOptions
@@ -550,21 +651,19 @@ const ContentDapodikV2 = () => {
 
         const dataDapodikCrossAnalisis = await response.json();
 
-        const resultChartRincianDapodik =
-        dataDapodikCrossAnalisis.data.reduce(
-            (acc, item) => {
-              acc[0].push(item.nama_daerah);
-              acc[1].push(item.persenats);
-              acc[2].push(item.persenblj);
-              acc[3].push(item.total_rincianall);
-              acc[4].push(item.total_rincianursbid);
-              return acc;
-            },
-            [[], [], [], [], []]
-          );
+        const resultChartRincianDapodik = dataDapodikCrossAnalisis.data.reduce(
+          (acc, item) => {
+            acc[0].push(item.nama_daerah);
+            acc[1].push(item.persenats);
+            acc[2].push(item.persenblj);
+            acc[3].push(item.total_rincianall);
+            acc[4].push(item.total_rincianursbid);
+            return acc;
+          },
+          [[], [], [], [], []]
+        );
 
         setDataChartRincianDapodik(resultChartRincianDapodik);
-
       } catch (errorDapodikTabel) {
         setErrorDapodikTabel(errorDapodikTabel);
       } finally {
@@ -574,22 +673,26 @@ const ContentDapodikV2 = () => {
     fetchData();
   };
 
-  const [dataDapodikJumlahAnakSekolah, setDataDapodikJumlahAnakSekolah] = useState([])
-  const getDataAnakSekolah = ({kodeDdn, kodeProv, tahun, tahun_data}) => {
+  const [dataDapodikJumlahAnakSekolah, setDataDapodikJumlahAnakSekolah] =
+    useState([]);
+  const getDataAnakSekolah = ({ kodeDdn, kodeProv, tahun, tahun_data }) => {
     const fetchData = async () => {
       try {
-        const token = JSON.parse(sessionStorage.getItem("authUser"))
+        const token = JSON.parse(sessionStorage.getItem("authUser"));
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+          headers: {
+            "Content-Type": "application/json",
+            "x-sipdhub": `${token.token}`,
+          },
           body: JSON.stringify({
             kode_prov: kodeProv,
             kode_ddn: kodeDdn,
             tahun: tahun,
-            tahun_data:tahun_data
-        }),
+            tahun_data: tahun_data,
+          }),
         };
-        
+
         const response = await fetch(
           `${API_URI_RBAC}/v2/dashboard_dapodik_jumlah_anak_sekolah`,
           requestOptions
@@ -600,10 +703,12 @@ const ContentDapodikV2 = () => {
         }
 
         const dataDapodikJumlahAnakSekolah = await response.json();
-        setDataDapodikJumlahAnakSekolah(dataDapodikJumlahAnakSekolah?.data)
-        const totalJumlahSiswa = dataDapodikJumlahAnakSekolah.data.reduce((acc, item) => acc + item.jumlah_siswa, 0);
+        setDataDapodikJumlahAnakSekolah(dataDapodikJumlahAnakSekolah?.data);
+        const totalJumlahSiswa = dataDapodikJumlahAnakSekolah.data.reduce(
+          (acc, item) => acc + item.jumlah_siswa,
+          0
+        );
         setDataTotalTkSdSmpSma(totalJumlahSiswa);
-
       } catch (errorDapodikTabel) {
         setErrorDapodikTabel(errorDapodikTabel);
       } finally {
@@ -613,20 +718,21 @@ const ContentDapodikV2 = () => {
     fetchData();
   };
 
-
-
-  const getDataTabelDapodikProv = ({searchTerm, tahun, tahun_data}) => {
+  const getDataTabelDapodikProv = ({ searchTerm, tahun, tahun_data }) => {
     const fetchData = async () => {
       try {
-        const token = JSON.parse(sessionStorage.getItem("authUser"))
+        const token = JSON.parse(sessionStorage.getItem("authUser"));
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+          headers: {
+            "Content-Type": "application/json",
+            "x-sipdhub": `${token.token}`,
+          },
           body: JSON.stringify({
             // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
             nama_prov: searchTerm,
             tahun: tahun,
-            tahun_data:tahun_data
+            tahun_data: tahun_data,
           }),
         };
         const response = await fetch(
@@ -640,13 +746,12 @@ const ContentDapodikV2 = () => {
         const dataDapodikTabelProvinsi = await response.json();
         setDataDapodikTabelProvinsi(dataDapodikTabelProvinsi?.data);
         setDataDapodikTabelProvinsiFiltered(dataDapodikTabelProvinsi?.data);
-        setShowNextData(false)
-        const filterKabupaten = dataDapodikTabelProvinsi?.data?.filter((item)=>(
-          item.jns_pemda=="kab" || item.jns_pemda=="kota"
-        ))
+        setShowNextData(false);
+        const filterKabupaten = dataDapodikTabelProvinsi?.data?.filter(
+          (item) => item.jns_pemda == "kab" || item.jns_pemda == "kota"
+        );
         setDataKolomNamaDaerah("Provinsi");
-        setCurrentPageProvinsi(1)
-
+        setCurrentPageProvinsi(1);
       } catch (errorDapodikTabel) {
         setErrorDapodikTabel(errorDapodikTabel);
       } finally {
@@ -656,60 +761,75 @@ const ContentDapodikV2 = () => {
     fetchData();
   };
 
-    const [dataDetailAnggaranSubSub, setDataDetailAnggaranSubSub] = useState([]);
-    const [dataDetailAnggaranSubSubFiltered, setDataDetailAnggaranSubSubFiltered] = useState([]);
-    const [loadingDetailAnggaranSub, setLoadingDetailAnggaranSub] = useState([]);
-    const [errorDetailAnggaranSub, setErrorDetailAnggaranSub] = useState([]);
-  
-    const getDataDetailAnggaranSubSub = ({kodeDdn, kodeSubGiat, kodeSro, tahun, url}) => {
-      const fetchData = async () => {
-        setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
-        try {
-          const token = JSON.parse(sessionStorage.getItem("authUser"))
-          const requestOptions = {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
-            body: JSON.stringify({
-              kode_ddn: kodeDdn,
-              kode_sub_giat: kodeSubGiat,
-              kode_sro: kodeSro,
-              tahun: tahun
-            }),
-          };
-    
-          const response = await fetch(
-            `${API_URI_RBAC}/v2${url}`,
-            requestOptions
-          );
-    
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-    
-          const dataDetailAnggaran = await response.json();
-          setDataDetailAnggaranSubSub(dataDetailAnggaran?.data)
-          setDataDetailAnggaranSubSubFiltered(dataDetailAnggaran?.data)
-          setModalSub(true)
-        } catch (errorDetailAnggaran) {
-          setErrorDetailAnggaran(errorDetailAnggaran);
-        } finally {
-          setLoadingDetailAnggaran(false);
-        }
-      };
-    
-      fetchData();
-    };
+  const [dataDetailAnggaranSubSub, setDataDetailAnggaranSubSub] = useState([]);
+  const [
+    dataDetailAnggaranSubSubFiltered,
+    setDataDetailAnggaranSubSubFiltered,
+  ] = useState([]);
+  const [loadingDetailAnggaranSub, setLoadingDetailAnggaranSub] = useState([]);
+  const [errorDetailAnggaranSub, setErrorDetailAnggaranSub] = useState([]);
 
-  const getDataTabelDapodikProvDetail = (kodeProv, e) => {
-    const fetchData = async () => {      
+  const getDataDetailAnggaranSubSub = ({
+    kodeDdn,
+    kodeSubGiat,
+    kodeSro,
+    tahun,
+    url,
+  }) => {
+    const fetchData = async () => {
+      setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
       try {
-        const token = JSON.parse(sessionStorage.getItem("authUser"))
+        const token = JSON.parse(sessionStorage.getItem("authUser"));
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+          headers: {
+            "Content-Type": "application/json",
+            "x-sipdhub": `${token.token}`,
+          },
+          body: JSON.stringify({
+            kode_ddn: kodeDdn,
+            kode_sub_giat: kodeSubGiat,
+            kode_sro: kodeSro,
+            tahun: tahun,
+          }),
+        };
+
+        const response = await fetch(
+          `${API_URI_RBAC}/v2${url}`,
+          requestOptions
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const dataDetailAnggaran = await response.json();
+        setDataDetailAnggaranSubSub(dataDetailAnggaran?.data);
+        setDataDetailAnggaranSubSubFiltered(dataDetailAnggaran?.data);
+        setModalSub(true);
+      } catch (errorDetailAnggaran) {
+        setErrorDetailAnggaran(errorDetailAnggaran);
+      } finally {
+        setLoadingDetailAnggaran(false);
+      }
+    };
+
+    fetchData();
+  };
+
+  const getDataTabelDapodikProvDetail = (kodeProv, e) => {
+    const fetchData = async () => {
+      try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"));
+        const requestOptions = {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-sipdhub": `${token.token}`,
+          },
           body: JSON.stringify({
             // Mengirimkan pencarian nama_kabkota berdasarkan searchTerm
-            kode_prov: kodeProv
+            kode_prov: kodeProv,
           }),
         };
         const response = await fetch(
@@ -724,9 +844,8 @@ const ContentDapodikV2 = () => {
         e.stopPropagation(); // Mencegah event bubbling jika dibutuhkan
         setShowNextData(true);
         setDataKolomNamaDaerah("Nama Daerah");
-        setCurrentPageProvinsi(1)
+        setCurrentPageProvinsi(1);
         setDataDapodikTabelProvinsi(dataDapodikTabelProvinsiDetail?.data);
-
       } catch (errorDapodikTabel) {
         setErrorDapodikTabel(errorDapodikTabel);
       } finally {
@@ -737,10 +856,13 @@ const ContentDapodikV2 = () => {
   };
 
   const [dataDetailAnggaran, setDataDetailAnggaran] = useState([]);
-  const [dataDetailAnggaranFiltered, setDataDetailAnggaranFiltered] = useState([]);
+  const [dataDetailAnggaranFiltered, setDataDetailAnggaranFiltered] = useState(
+    []
+  );
   const [dataDetailAnggaranSub, setDataDetailAnggaranSub] = useState([]);
-  const [dataDetailAnggaranSubFiltered, setDataDetailAnggaranSubFiltered] = useState([]);
-  const [dataDetailHighlight, setDataDetailHighlight] = useState([])
+  const [dataDetailAnggaranSubFiltered, setDataDetailAnggaranSubFiltered] =
+    useState([]);
+  const [dataDetailHighlight, setDataDetailHighlight] = useState([]);
   const [loadingDetailAnggaran, setLoadingDetailAnggaran] = useState([]);
   const [errorDetailAnggaran, setErrorDetailAnggaran] = useState([]);
 
@@ -756,16 +878,20 @@ const ContentDapodikV2 = () => {
     const fetchData = async () => {
       setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
       try {
-        const token = JSON.parse(sessionStorage.getItem("authUser"))
+        const token = JSON.parse(sessionStorage.getItem("authUser"));
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+          headers: {
+            "Content-Type": "application/json",
+            "x-sipdhub": `${token.token}`,
+          },
           body: JSON.stringify({
             kode_prov: kodeSeProvinsi,
-            kode_ddn: kodeDdnKabupaten != "" ? kodeDdnKabupaten : kodeDdnProvinsi,
+            kode_ddn:
+              kodeDdnKabupaten != "" ? kodeDdnKabupaten : kodeDdnProvinsi,
             kode_sub_giat: kodeSubGiat,
             tahun: tahun,
-            tahun_data: tahun_data
+            tahun_data: tahun_data,
           }),
         };
 
@@ -787,7 +913,9 @@ const ContentDapodikV2 = () => {
           setDataDetailAnggaranFiltered(
             dataDetailAnggaran?.data?.detail_tabel_dapodik_seprovinsi
           );
-          setDataDetailHighlight(dataDetailAnggaran?.data?.dapodik_highlight_nasional)
+          setDataDetailHighlight(
+            dataDetailAnggaran?.data?.dapodik_highlight_nasional
+          );
           setModall(true);
         } else if (kodeDdnProvinsi != "" && kodeSubGiat == "") {
           setDataDetailAnggaran(
@@ -796,7 +924,9 @@ const ContentDapodikV2 = () => {
           setDataDetailAnggaranFiltered(
             dataDetailAnggaran?.data?.detail_tabel_dapodik_byprovinsi
           );
-          setDataDetailHighlight(dataDetailAnggaran?.data?.dapodik_highlight_daerah)
+          setDataDetailHighlight(
+            dataDetailAnggaran?.data?.dapodik_highlight_daerah
+          );
           setModall(true);
         } else if (kodeDdnKabupaten != "" && kodeSubGiat == "") {
           setDataDetailAnggaran(
@@ -805,7 +935,9 @@ const ContentDapodikV2 = () => {
           setDataDetailAnggaranFiltered(
             dataDetailAnggaran?.data?.detail_tabel_dapodik_bykabupaten
           );
-          setDataDetailHighlight(dataDetailAnggaran?.data?.dapodik_highlight_daerah)
+          setDataDetailHighlight(
+            dataDetailAnggaran?.data?.dapodik_highlight_daerah
+          );
           setModall(true);
         }
 
@@ -848,12 +980,30 @@ const ContentDapodikV2 = () => {
   };
 
   useEffect(() => {
-    getDataDapodik({kodeDdn: "", kodeProv: "", tahun: selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
-    getDataAnakSekolah({kodeProv:"00", tahun_data:selectedSingleTahunData});
-    getDataTabelDapodikSeProv({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
-    getDataTabelDapodikProv({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
-    getDataTabelDapodikKab({kodeProv:"", tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
-    getDataCrossAnalisis({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
+    getDataDapodik({
+      kodeDdn: "",
+      kodeProv: "",
+      tahun: selectedSingleTahunAnggaran,
+      tahun_data: selectedSingleTahunData,
+    });
+    getDataAnakSekolah({ kodeProv: "00", tahun_data: selectedSingleTahunData });
+    getDataTabelDapodikSeProv({
+      tahun: selectedSingleTahunAnggaran,
+      tahun_data: selectedSingleTahunData,
+    });
+    getDataTabelDapodikProv({
+      tahun: selectedSingleTahunAnggaran,
+      tahun_data: selectedSingleTahunData,
+    });
+    getDataTabelDapodikKab({
+      kodeProv: "",
+      tahun: selectedSingleTahunAnggaran,
+      tahun_data: selectedSingleTahunData,
+    });
+    getDataCrossAnalisis({
+      tahun: selectedSingleTahunAnggaran,
+      tahun_data: selectedSingleTahunData,
+    });
   }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -890,7 +1040,8 @@ const ContentDapodikV2 = () => {
   const indexOfFirstItemDetailSub =
     indexOfLastItemDetailSub - itemsPerPageDetailSub;
 
-    const indexOfLastItemDetailSubSub = currentPageDetailSubSub * itemsPerPageDetailSubSub;
+  const indexOfLastItemDetailSubSub =
+    currentPageDetailSubSub * itemsPerPageDetailSubSub;
   const indexOfFirstItemDetailSubSub =
     indexOfLastItemDetailSubSub - itemsPerPageDetailSubSub;
 
@@ -1066,7 +1217,8 @@ const ContentDapodikV2 = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const paginateDetail = (pageNumber) => setCurrentPageDetail(pageNumber);
   const paginateDetailSub = (pageNumber) => setCurrentPageDetailSub(pageNumber);
-  const paginateDetailSubSub = (pageNumber) => setCurrentPageDetailSubSub(pageNumber);
+  const paginateDetailSubSub = (pageNumber) =>
+    setCurrentPageDetailSubSub(pageNumber);
   const paginateProvinsi = (pageNumber) => setCurrentPageProvinsi(pageNumber);
   const paginateKabupaten = (pageNumber) => setCurrentPageKabupaten(pageNumber);
 
@@ -1082,10 +1234,10 @@ const ContentDapodikV2 = () => {
       </tr>
     )
   );
-  
+
   const [dataKolomNamaDaerah, setDataKolomNamaDaerah] = useState("Provinsi");
   const [showNextData, setShowNextData] = useState(false);
-  
+
   const placeholdersKabupaten = Array.from(
     { length: itemsPerPage - currentItemsKabupaten.length },
     (_, index) => (
@@ -1128,7 +1280,15 @@ const ContentDapodikV2 = () => {
     jenisPemda = "",
     rincianDetail = 0
   ) => {
-    getDataDetailAnggaran(kodeProv, kodeDdnKab, kodeDdnProv, "", jenisPemda, selectedSingleTahunAnggaran, selectedSingleTahunData);
+    getDataDetailAnggaran(
+      kodeProv,
+      kodeDdnKab,
+      kodeDdnProv,
+      "",
+      jenisPemda,
+      selectedSingleTahunAnggaran,
+      selectedSingleTahunData
+    );
 
     if (jenisPemda == "prov") {
       setDataJenisPemda("prov");
@@ -1144,22 +1304,37 @@ const ContentDapodikV2 = () => {
     setCardHead(null);
   };
 
-  const handleOpenNextModalSub = ({kodeDdn, kodeSubGiat, kodeSro,tahun, rincianDetail, namaSro}) => {
-    let url = ""
-    dataJenisPemda === "seProv" ? url = "/dapodik_ssro_seprov" : url = "/dapodik_ssro_provkabkota"
-    getDataDetailAnggaranSubSub({kodeDdn:kodeDdn, kodeSubGiat:kodeSubGiat, kodeSro:kodeSro, tahun:tahun, url: url})
-    setNamaSro(namaSro)
+  const handleOpenNextModalSub = ({
+    kodeDdn,
+    kodeSubGiat,
+    kodeSro,
+    tahun,
+    rincianDetail,
+    namaSro,
+  }) => {
+    let url = "";
+    dataJenisPemda === "seProv"
+      ? (url = "/dapodik_ssro_seprov")
+      : (url = "/dapodik_ssro_provkabkota");
+    getDataDetailAnggaranSubSub({
+      kodeDdn: kodeDdn,
+      kodeSubGiat: kodeSubGiat,
+      kodeSro: kodeSro,
+      tahun: tahun,
+      url: url,
+    });
+    setNamaSro(namaSro);
     setDataRincianDetailSubSub(rincianDetail);
-    setCardHead(null)
-  }
-  
+    setCardHead(null);
+  };
+
   const handleCloseNextModalSub = () => {
-    setModalSub(false)
-  }
+    setModalSub(false);
+  };
 
   const [cardhead, setCardHead] = useState();
-  const [namaSubGiat, setNamaSubGiat] = useState("")
-  const [namaSro, setNamaSro] = useState("")
+  const [namaSubGiat, setNamaSubGiat] = useState("");
+  const [namaSro, setNamaSro] = useState("");
 
   const handleOpenNextModal = (
     kodeDaerah,
@@ -1169,13 +1344,29 @@ const ContentDapodikV2 = () => {
     namaSubGiat = ""
   ) => {
     if (kodeDaerah != "") {
-      getDataDetailAnggaran(kodeDaerah, "", "", kodeSubGiat, "", selectedSingleTahunAnggaran, selectedSingleTahunData);
+      getDataDetailAnggaran(
+        kodeDaerah,
+        "",
+        "",
+        kodeSubGiat,
+        "",
+        selectedSingleTahunAnggaran,
+        selectedSingleTahunData
+      );
     } else if (kodeDdn != "") {
-      getDataDetailAnggaran("", "", kodeDdn, kodeSubGiat, "", selectedSingleTahunAnggaran, selectedSingleTahunData);
+      getDataDetailAnggaran(
+        "",
+        "",
+        kodeDdn,
+        kodeSubGiat,
+        "",
+        selectedSingleTahunAnggaran,
+        selectedSingleTahunData
+      );
     }
     // setModal(true);
     setDataRincianDetailSub(rincianDetail);
-    setNamaSubGiat(namaSubGiat)
+    setNamaSubGiat(namaSubGiat);
     setCardHead(null);
   };
   const handleCloseNextModal = () => {
@@ -1196,52 +1387,49 @@ const ContentDapodikV2 = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchTermProvinsi, setSearchTermProvinsi] = useState("");
   const [searchTermKab, setSearchTermKab] = useState("");
-  const [searchTermDetail, setSearchTermDetail] = useState(""); 
-  const [searchTermDetailSub, setSearchTermDetailSub] = useState(""); 
-  const [searchTermDetailSubSub, setSearchTermDetailSubSub] = useState(""); 
+  const [searchTermDetail, setSearchTermDetail] = useState("");
+  const [searchTermDetailSub, setSearchTermDetailSub] = useState("");
+  const [searchTermDetailSubSub, setSearchTermDetailSubSub] = useState("");
 
   // Fungsi untuk menangani perubahan pada input
   const handleSearchInput = (e) => {
-    const value = e.target.value.toLowerCase()
+    const value = e.target.value.toLowerCase();
     setSearchTerm(e.target.value);
-    if(value===""){
-     setDataDapodikTabelSeProvinsiFiltered(dataDapodikTabelSeProvinsi)
-    }else{
+    if (value === "") {
+      setDataDapodikTabelSeProvinsiFiltered(dataDapodikTabelSeProvinsi);
+    } else {
       const filtered = dataDapodikTabelSeProvinsi.filter((item) => {
-        return item.nama_prov.toLowerCase().includes(value)
-        }
-      );
-      setDataDapodikTabelSeProvinsiFiltered(filtered)
+        return item.nama_prov.toLowerCase().includes(value);
+      });
+      setDataDapodikTabelSeProvinsiFiltered(filtered);
     }
     setCurrentPage(1);
   };
 
   const handleSearchInputProvinsi = (e) => {
-    const value = e.target.value.toLowerCase()
+    const value = e.target.value.toLowerCase();
     setSearchTermProvinsi(e.target.value);
-    if(value===""){
-     setDataDapodikTabelProvinsiFiltered(dataDapodikTabelProvinsi)
-    }else{
+    if (value === "") {
+      setDataDapodikTabelProvinsiFiltered(dataDapodikTabelProvinsi);
+    } else {
       const filtered = dataDapodikTabelProvinsi.filter((item) => {
-          return item.nama_prov.toLowerCase().includes(value)
-        }
-      );
-     setDataDapodikTabelProvinsiFiltered(filtered)
+        return item.nama_prov.toLowerCase().includes(value);
+      });
+      setDataDapodikTabelProvinsiFiltered(filtered);
     }
     setCurrentPageProvinsi(1);
   };
 
   const handleSearchInputKabupaten = (e) => {
-    const value = e.target.value.toLowerCase()
+    const value = e.target.value.toLowerCase();
     setSearchTermKab(e.target.value);
-    if(value===""){
-     setDataDapodikTabelKabupatenFiltered(dataDapodikTabelKabupaten)
-    }else{
-      const filtered = dataDapodikTabelKabupaten.filter((item) => {  
-          return item.nama_kabkota.toLowerCase().includes(value)
-        }
-      );
-      setDataDapodikTabelKabupatenFiltered(filtered)
+    if (value === "") {
+      setDataDapodikTabelKabupatenFiltered(dataDapodikTabelKabupaten);
+    } else {
+      const filtered = dataDapodikTabelKabupaten.filter((item) => {
+        return item.nama_kabkota.toLowerCase().includes(value);
+      });
+      setDataDapodikTabelKabupatenFiltered(filtered);
     }
     setCurrentPageKabupaten(1);
   };
@@ -1267,13 +1455,12 @@ const ContentDapodikV2 = () => {
     const value = e.target.value.toLowerCase();
     setSearchTermDetail(value);
     if (value === "") {
-      setDataDetailAnggaranFiltered(dataDetailAnggaran)
+      setDataDetailAnggaranFiltered(dataDetailAnggaran);
     } else {
       const filtered = dataDetailAnggaran.filter((item) => {
-          return item.nama_sub_giat.toLowerCase().includes(value)
-      }
-      );
-      setDataDetailAnggaranFiltered(filtered)
+        return item.nama_sub_giat.toLowerCase().includes(value);
+      });
+      setDataDetailAnggaranFiltered(filtered);
     }
     setCurrentPageDetail(1);
   };
@@ -1281,20 +1468,19 @@ const ContentDapodikV2 = () => {
   const handleClearSearchDetail = (area = "") => {
     setCurrentPageDetail(1);
     setSearchTermDetail(""); // Kosongkan isi input
-    setDataDetailAnggaranFiltered(dataDetailAnggaran)
+    setDataDetailAnggaranFiltered(dataDetailAnggaran);
   };
 
   const handleSearchInputDetailSub = (e) => {
     const value = e.target.value.toLowerCase();
     setSearchTermDetailSub(value);
     if (value === "") {
-      setDataDetailAnggaranSubFiltered(dataDetailAnggaranSub)  
+      setDataDetailAnggaranSubFiltered(dataDetailAnggaranSub);
     } else {
       const filtered = dataDetailAnggaranSub.filter((item) => {
-          return item.nama_sro.toLowerCase().includes(value)
-      }
-      );
-      setDataDetailAnggaranSubFiltered(filtered)
+        return item.nama_sro.toLowerCase().includes(value);
+      });
+      setDataDetailAnggaranSubFiltered(filtered);
     }
     setCurrentPageDetailSub(1);
   };
@@ -1302,20 +1488,19 @@ const ContentDapodikV2 = () => {
   const handleClearSearchDetailSub = () => {
     setCurrentPageDetailSub(1);
     setSearchTermDetailSub(""); // Kosongkan isi input
-    setDataDetailAnggaranSubFiltered(dataDetailAnggaranSub)
+    setDataDetailAnggaranSubFiltered(dataDetailAnggaranSub);
   };
 
   const handleSearchInputDetailSubSub = (e) => {
     const value = e.target.value.toLowerCase();
     setSearchTermDetailSubSub(value);
     if (value === "") {
-      setDataDetailAnggaranSubSubFiltered(dataDetailAnggaranSubSub)  
+      setDataDetailAnggaranSubSubFiltered(dataDetailAnggaranSubSub);
     } else {
       const filtered = dataDetailAnggaranSubSub.filter((item) => {
-          return item.nama_standar_harga.toLowerCase().includes(value)
-      }
-      );
-      setDataDetailAnggaranSubSubFiltered(filtered)
+        return item.nama_standar_harga.toLowerCase().includes(value);
+      });
+      setDataDetailAnggaranSubSubFiltered(filtered);
     }
     setCurrentPageDetailSubSub(1);
   };
@@ -1323,49 +1508,69 @@ const ContentDapodikV2 = () => {
   const handleClearSearchDetailSubSub = () => {
     setCurrentPageDetailSubSub(1);
     setSearchTermDetailSubSub(""); // Kosongkan isi input
-    setDataDetailAnggaranSubSubFiltered(dataDetailAnggaranSubSub)
+    setDataDetailAnggaranSubSubFiltered(dataDetailAnggaranSubSub);
   };
 
-  const [dataWidth, setDataWidth] = useState(6)  
-  const [roam, setRoam] = useState(false)
+  const [dataWidth, setDataWidth] = useState(6);
+  const [roam, setRoam] = useState(false);
 
-  const [dataShowChartTidakLanjutProvinsi, setShowDataChartTidakLanjutProvinsi] = useState(false)
-  const [dataShowChartTidakLanjutPemda, setShowDataChartTidakLanjutPemda] = useState(false)
-  
-  const [currentCategoryClicked, setCurrentCategoryClicked] = useState(null)
-  const [dataChartDetailTidakLanjutProvinsi, setDataChartDetailTidakLanjutProvinsi] = useState([],[],0,[])    
-  const [tidakLanjutShow, setTidakLanjutShow] = useState("")
+  const [
+    dataShowChartTidakLanjutProvinsi,
+    setShowDataChartTidakLanjutProvinsi,
+  ] = useState(false);
+  const [dataShowChartTidakLanjutPemda, setShowDataChartTidakLanjutPemda] =
+    useState(false);
+
+  const [currentCategoryClicked, setCurrentCategoryClicked] = useState(null);
+  const [
+    dataChartDetailTidakLanjutProvinsi,
+    setDataChartDetailTidakLanjutProvinsi,
+  ] = useState([], [], 0, []);
+  const [tidakLanjutShow, setTidakLanjutShow] = useState("");
 
   const handleBarClick = (params) => {
-    const clickedCategory = params.name
-    setTidakLanjutShow(clickedCategory)        
-    const dataDetail = (clickedCategory == "SMP" ? dataDapodik.dapodik_compare_ats_tidak_lanjut_ltm6_prov.reduce((acc, item) => {
-      acc[0].push(item.tkt_6_ltm)
-      acc[1].push(item.nama_prov)      
-      acc[2] += item.tkt_6_ltm;
-      acc[3].push(item.kode_prov)
-      return acc
-    }, [[],[], 0, []]) : dataDapodik.dapodik_compare_ats_tidak_lanjut_ltm9_prov.reduce((acc, item) => {
-      acc[0].push(item.tkt_9_ltm)
-      acc[1].push(item.nama_prov)
-      acc[2] += item.tkt_9_ltm;
-      acc[3].push(item.kode_prov)
-      return acc
-    }, [[],[], 0, []]))
-    
-    setCurrentCategoryClicked(clickedCategory)    
-    setDataChartDetailTidakLanjutProvinsi(dataDetail)
-    setShowDataChartTidakLanjutProvinsi(true)
+    const clickedCategory = params.name;
+    setTidakLanjutShow(clickedCategory);
+    const dataDetail =
+      clickedCategory == "SMP"
+        ? dataDapodik.dapodik_compare_ats_tidak_lanjut_ltm6_prov.reduce(
+            (acc, item) => {
+              acc[0].push(item.tkt_6_ltm);
+              acc[1].push(item.nama_prov);
+              acc[2] += item.tkt_6_ltm;
+              acc[3].push(item.kode_prov);
+              return acc;
+            },
+            [[], [], 0, []]
+          )
+        : dataDapodik.dapodik_compare_ats_tidak_lanjut_ltm9_prov.reduce(
+            (acc, item) => {
+              acc[0].push(item.tkt_9_ltm);
+              acc[1].push(item.nama_prov);
+              acc[2] += item.tkt_9_ltm;
+              acc[3].push(item.kode_prov);
+              return acc;
+            },
+            [[], [], 0, []]
+          );
+
+    setCurrentCategoryClicked(clickedCategory);
+    setDataChartDetailTidakLanjutProvinsi(dataDetail);
+    setShowDataChartTidakLanjutProvinsi(true);
   };
 
-  const [dataDapodikTidakLanjutPemda, setDataDapodikTidakLanjutPemda] = useState([],[])
-  const getDataDapodikTidakLanjutPerProv = ({kodeDdn = "", url=""}) => {
+  const [dataDapodikTidakLanjutPemda, setDataDapodikTidakLanjutPemda] =
+    useState([], []);
+  const getDataDapodikTidakLanjutPerProv = ({ kodeDdn = "", url = "" }) => {
     const fetchData = async () => {
       try {
-        const token = JSON.parse(sessionStorage.getItem("authUser"))
+        const token = JSON.parse(sessionStorage.getItem("authUser"));
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+          headers: {
+            "Content-Type": "application/json",
+            "x-sipdhub": `${token.token}`,
+          },
           body: JSON.stringify({
             kode_ddn: kodeDdn,
           }),
@@ -1382,23 +1587,32 @@ const ContentDapodikV2 = () => {
 
         const dataDapodikTidakLanjut = await response.json();
 
-        const dataDetail = (tidakLanjutShow == "SMP" ? dataDapodikTidakLanjut.data.reduce((acc, item) => {
-          acc[0].push(item.tkt_6_ltm)
-          acc[1].push(item.nama_kabkota)      
-          acc[2] += item.tkt_6_ltm;
-          acc[3].push(item.kode_ddn)
-          return acc
-        }, [[],[], 0, []]) : dataDapodikTidakLanjut.data.reduce((acc, item) => {
-          acc[0].push(item.tkt_9_ltm)
-          acc[1].push(item.nama_kabkota)
-          acc[2] += item.tkt_9_ltm;
-          acc[3].push(item.kode_ddn)
-          return acc
-        }, [[],[], 0, []]))
-        
-        setDataDapodikTidakLanjutPemda(dataDetail)
+        const dataDetail =
+          tidakLanjutShow == "SMP"
+            ? dataDapodikTidakLanjut.data.reduce(
+                (acc, item) => {
+                  acc[0].push(item.tkt_6_ltm);
+                  acc[1].push(item.nama_kabkota);
+                  acc[2] += item.tkt_6_ltm;
+                  acc[3].push(item.kode_ddn);
+                  return acc;
+                },
+                [[], [], 0, []]
+              )
+            : dataDapodikTidakLanjut.data.reduce(
+                (acc, item) => {
+                  acc[0].push(item.tkt_9_ltm);
+                  acc[1].push(item.nama_kabkota);
+                  acc[2] += item.tkt_9_ltm;
+                  acc[3].push(item.kode_ddn);
+                  return acc;
+                },
+                [[], [], 0, []]
+              );
 
-        setShowDataChartTidakLanjutPemda(true)
+        setDataDapodikTidakLanjutPemda(dataDetail);
+
+        setShowDataChartTidakLanjutPemda(true);
       } catch (errorDapodik) {
         setErrorDapodik(errorDapodik);
       } finally {
@@ -1409,55 +1623,102 @@ const ContentDapodikV2 = () => {
   };
 
   const handleBarClickProv = (data) => {
-    if (tidakLanjutShow == "SMP") {      
-      getDataDapodikTidakLanjutPerProv({kodeDdn: data.id, url: "/dashboard_dapodik_detail_ats_ltm6_kabkota"})
-    } else {      
-      getDataDapodikTidakLanjutPerProv({kodeDdn: data.id, url: "/dashboard_dapodik_detail_ats_ltm9_kabkota"})
-    }  
+    if (tidakLanjutShow == "SMP") {
+      getDataDapodikTidakLanjutPerProv({
+        kodeDdn: data.id,
+        url: "/dashboard_dapodik_detail_ats_ltm6_kabkota",
+      });
+    } else {
+      getDataDapodikTidakLanjutPerProv({
+        kodeDdn: data.id,
+        url: "/dashboard_dapodik_detail_ats_ltm9_kabkota",
+      });
+    }
   };
 
-  
-  const [clickDaerah, setClickDaerah] = useState(false)
-  const [clickNamaDaerah, setClickNamaDaerah] = useState("")
+  const [clickDaerah, setClickDaerah] = useState(false);
+  const [clickNamaDaerah, setClickNamaDaerah] = useState("");
   const handleRegionClick = (kodeProv, namaProv) => {
-    setKodeProvDefault(kodeProv)
-    setKodeWilayahPeta(kodeProv)
-    getDataDapodik({kodeDdn: "",  kodeProv: kodeProv, tahun_data:selectedSingleTahunData, tahun:selectedSingleTahunAnggaran})
-    getDataAnakSekolah({kodeProv: kodeProv, tahun_data:selectedSingleTahunData})
-    getDataCrossAnalisis({kodeProv: kodeProv, tahun_data:selectedSingleTahunData, tahun:selectedSingleTahunAnggaran})
-    getDataTabelDapodikKab({kodeProv: kodeProv, tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
-    setClickNamaDaerah(namaProv)
-    setClickDaerah(true)
+    setKodeProvDefault(kodeProv);
+    setKodeWilayahPeta(kodeProv);
+    getDataDapodik({
+      kodeDdn: "",
+      kodeProv: kodeProv,
+      tahun_data: selectedSingleTahunData,
+      tahun: selectedSingleTahunAnggaran,
+    });
+    getDataAnakSekolah({
+      kodeProv: kodeProv,
+      tahun_data: selectedSingleTahunData,
+    });
+    getDataCrossAnalisis({
+      kodeProv: kodeProv,
+      tahun_data: selectedSingleTahunData,
+      tahun: selectedSingleTahunAnggaran,
+    });
+    getDataTabelDapodikKab({
+      kodeProv: kodeProv,
+      tahun: selectedSingleTahunAnggaran,
+      tahun_data: selectedSingleTahunData,
+    });
+    setClickNamaDaerah(namaProv);
+    setClickDaerah(true);
   };
 
   const handleKabKotaClick = (kodeProv, namaProv) => {
-    getDataDapodik({kodeDdn: kodeProv,  kodeProv: "", tahun_data:selectedSingleTahunData, tahun:selectedSingleTahunAnggaran})
-    getDataAnakSekolah({kodeDdn: kodeProv, tahun_data:selectedSingleTahunData})
-    setKodeWilayahPeta(kodeProv)
-    setKodeProvDefault(kodeProv)
-    setClickNamaDaerah(namaProv)
+    getDataDapodik({
+      kodeDdn: kodeProv,
+      kodeProv: "",
+      tahun_data: selectedSingleTahunData,
+      tahun: selectedSingleTahunAnggaran,
+    });
+    getDataAnakSekolah({
+      kodeDdn: kodeProv,
+      tahun_data: selectedSingleTahunData,
+    });
+    setKodeWilayahPeta(kodeProv);
+    setKodeProvDefault(kodeProv);
+    setClickNamaDaerah(namaProv);
   };
 
-
   const resetRegionClick = () => {
-    getDataDapodik({kodeDdn: "", kodeProv:"", tahun_data: selectedSingleTahunData, tahun:selectedSingleTahunAnggaran});
-    getDataAnakSekolah({kodeDdn: "", kodeProv:"00", tahun_data:selectedSingleTahunData});
-    getDataCrossAnalisis({kodeProv: "", tahun_data:selectedSingleTahunData, tahun:selectedSingleTahunAnggaran})
-    getDataTabelDapodikKab({kodeProv: "", tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
-    getDataTabelDapodikSeProv({tahun:selectedSingleTahunAnggaran, tahun_data:selectedSingleTahunData});
-    setClickDaerah(false)
-    
-  }
+    getDataDapodik({
+      kodeDdn: "",
+      kodeProv: "",
+      tahun_data: selectedSingleTahunData,
+      tahun: selectedSingleTahunAnggaran,
+    });
+    getDataAnakSekolah({
+      kodeDdn: "",
+      kodeProv: "00",
+      tahun_data: selectedSingleTahunData,
+    });
+    getDataCrossAnalisis({
+      kodeProv: "",
+      tahun_data: selectedSingleTahunData,
+      tahun: selectedSingleTahunAnggaran,
+    });
+    getDataTabelDapodikKab({
+      kodeProv: "",
+      tahun: selectedSingleTahunAnggaran,
+      tahun_data: selectedSingleTahunData,
+    });
+    getDataTabelDapodikSeProv({
+      tahun: selectedSingleTahunAnggaran,
+      tahun_data: selectedSingleTahunData,
+    });
+    setClickDaerah(false);
+  };
 
   useEffect(() => {
     const handleEscKey = (event) => {
       if (event.key === "Escape") {
-        handleClose()
-        handleCloseNextModal()
+        handleClose();
+        handleCloseNextModal();
         handleCloseNextModalSub();
       }
     };
-  
+
     window.addEventListener("keydown", handleEscKey);
     return () => {
       window.removeEventListener("keydown", handleEscKey);
@@ -1470,60 +1731,74 @@ const ContentDapodikV2 = () => {
         <Col>
           <Card className="card-custom">
             <div className="d-flex justify-content-between">
-            <div className="d-flex title-page">
-              <div className="d-flex justify-content-center align-items-center avatar-sm">
-                <span className="logo-sm">
-                  <img src={logoKemendikbud} alt="" width="40" height="40" />
-                </span>
+              <div className="d-flex title-page">
+                <div className="d-flex justify-content-center align-items-center avatar-sm">
+                  <span className="logo-sm">
+                    <img src={logoKemendikbud} alt="" width="40" height="40" />
+                  </span>
+                </div>
+                <div className="d-flex justify-content-center align-items-center">
+                  <span>Kementerian Pendidikan Dasar dan Menengah</span>
+                </div>
               </div>
-              <div className="d-flex justify-content-center align-items-center">
-                <span>Kementerian Pendidikan Dasar dan Menengah</span>
+              <div className="d-flex nav-beranda">
+                <div
+                  className="d-flex justify-content-center align-items-center"
+                  style={{
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    fontFamily: "poppins",
+                  }}
+                >
+                  Tahun Data:
+                </div>
+                <select
+                  name="tahun"
+                  style={{
+                    padding: "10px 30px 10px 10px",
+                    fontSize: "16px",
+                    borderRadius: "5px",
+                    border: "1px solid #ccc",
+                    backgroundColor: "#ffffff",
+                    cursor: "pointer",
+                    margin: "15px 15px 15px 5px",
+                  }}
+                  value={selectedSingleTahunData}
+                  onChange={handleSelectChangeDataPokok}
+                >
+                  <option value="2023">2023</option>
+                  <option value="2024">2024</option>
+                  <option value="2025">2025</option>
+                </select>
+                <div
+                  className="d-flex justify-content-center align-items-center"
+                  style={{
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    fontFamily: "poppins",
+                  }}
+                >
+                  Tahun Anggaran:
+                </div>
+                <select
+                  name="tahun"
+                  style={{
+                    padding: "10px 30px 10px 10px",
+                    fontSize: "16px",
+                    borderRadius: "5px",
+                    border: "1px solid #ccc",
+                    backgroundColor: "#ffffff",
+                    cursor: "pointer",
+                    margin: "15px 15px 15px 5px",
+                  }}
+                  value={selectedSingleTahunAnggaran}
+                  onChange={handleSelectChangeAnggaran}
+                >
+                  <option value="2024">2024</option>
+                  <option value="2025">2025</option>
+                </select>
               </div>
-            </div>
-            <div className="d-flex nav-beranda">
-                  <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
-                    Tahun Data:
-                  </div>
-                 <select
-              name="tahun"
-              style={{
-                padding: "10px 30px 10px 10px",
-                fontSize: "16px",
-                borderRadius: "5px",
-                border: "1px solid #ccc",
-                backgroundColor: "#ffffff",                          
-                cursor: "pointer",                          
-                margin: "15px 15px 15px 5px",
-              }}
-              value={selectedSingleTahunData}
-              onChange={handleSelectChangeDataPokok}
-            > 
-              <option value="2023">2023</option>
-              <option value="2024">2024</option>
-              <option value="2025">2025</option>
-            </select>
-            <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
-                    Tahun Anggaran:
-                  </div>
-                 <select
-              name="tahun"
-              style={{
-                padding: "10px 30px 10px 10px",
-                fontSize: "16px",
-                borderRadius: "5px",
-                border: "1px solid #ccc",
-                backgroundColor: "#ffffff",                          
-                cursor: "pointer",                          
-                margin: "15px 15px 15px 5px",
-              }}
-              value={selectedSingleTahunAnggaran}
-              onChange={handleSelectChangeAnggaran}
-            >                        
-              <option value="2024">2024</option>
-              <option value="2025">2025</option>
-            </select>
-            </div>
-            {/* <select
+              {/* <select
               name="tahun"
               style={{
                 padding: "10px 30px 10px 10px",
@@ -1545,65 +1820,90 @@ const ContentDapodikV2 = () => {
             </div>
           </Card>
         </Col>
-      </Row>      
+      </Row>
       <Row>
-        <Col md={dataWidth}>        
+        <Col md={dataWidth}>
           <Card className="card-height-100">
             <CardBody>
-            <div className="d-flex justify-content-between mb-2">
-            <div className="d-flex justify-content-center align-items-center">
-              {dataWidth==6 ? (<>
-                  <button onClick={()=>{
-                  setDataWidth(12)
-                  setRoam(true)
-                  }} style={{
-                    backgroundColor: "#007bff",
-                    color: "white",
-                    padding: "5px 10px",
-                    border: "none",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                    fontSize: "16px",
-                  }}>
-                    Maximize Map
-                  </button>
-                  </>) : (<>
-                    <button onClick={()=>{
-                      setDataWidth(6)
-                      setRoam(false)
-                    }} style={{
-                      backgroundColor: "#007bff",
-                      color: "white",
-                      padding: "5px 10px",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                      fontSize: "16px",
-                    }}>
-                      Minimize Map
-                    </button>                    
-                  </>)}
-                  </div>
-                  {clickDaerah ? <><button onClick={()=>{
-                    resetRegionClick()
-                    setTitleMap("Total Anak Sekolah")
-                    }} style={{
-                      backgroundColor: "#007bff",
-                      color: "white",
-                      padding: "5px 10px",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                      fontSize: "16px",
-                      marginBottom: "8px"
-                    }}>
+              <div className="d-flex justify-content-between mb-2">
+                <div className="d-flex justify-content-center align-items-center">
+                  {dataWidth == 6 ? (
+                    <>
+                      <button
+                        onClick={() => {
+                          setDataWidth(12);
+                          setRoam(true);
+                        }}
+                        style={{
+                          backgroundColor: "#007bff",
+                          color: "white",
+                          padding: "5px 10px",
+                          border: "none",
+                          borderRadius: "5px",
+                          cursor: "pointer",
+                          fontSize: "16px",
+                        }}
+                      >
+                        Maximize Map
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => {
+                          setDataWidth(6);
+                          setRoam(false);
+                        }}
+                        style={{
+                          backgroundColor: "#007bff",
+                          color: "white",
+                          padding: "5px 10px",
+                          border: "none",
+                          borderRadius: "5px",
+                          cursor: "pointer",
+                          fontSize: "16px",
+                        }}
+                      >
+                        Minimize Map
+                      </button>
+                    </>
+                  )}
+                </div>
+                {clickDaerah ? (
+                  <>
+                    <button
+                      onClick={() => {
+                        resetRegionClick();
+                        setTitleMap("Total Anak Sekolah");
+                      }}
+                      style={{
+                        backgroundColor: "#007bff",
+                        color: "white",
+                        padding: "5px 10px",
+                        border: "none",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                        fontSize: "16px",
+                        marginBottom: "8px",
+                      }}
+                    >
                       Nasional
                     </button>
-                    </> : 
-                    <>
-                  </>}
-                  </div>
-                  <MapIndoChart chartTitle={titleMap} roam={roam} onKabKotaClick={handleKabKotaClick} daerah={clickDaerah} maxValue={maxValueMap} onRegionClick={handleRegionClick} valueSeries={valueMap} colorData={['#B3E0E5', '#69D6E8', '#0092B3', '#1B8BA6']} />
+                  </>
+                ) : (
+                  <></>
+                )}
+              </div>
+              <MapIndoChart
+                chartTitle={titleMap}
+                roam={roam}
+                onKabKotaClick={handleKabKotaClick}
+                daerah={clickDaerah}
+                maxValue={maxValueMap}
+                onRegionClick={handleRegionClick}
+                valueSeries={valueMap}
+                colorData={["#B3E0E5", "#69D6E8", "#0092B3", "#1B8BA6"]}
+              />
               {/* <PolygonMaps /> */}
             </CardBody>
           </Card>
@@ -1611,15 +1911,19 @@ const ContentDapodikV2 = () => {
         <Col md={dataWidth}>
           <Card className="card-height-100">
             <CardBody>
-                  <div className="d-flex justify-content-center align-items-center title-page">
-                    {clickDaerah ? clickNamaDaerah : "Nasional"}
-                  </div>
+              <div className="d-flex justify-content-center align-items-center title-page">
+                {clickDaerah ? clickNamaDaerah : "Nasional"}
+              </div>
               <Row>
                 <Col>
-                  <Card style={{cursor:"pointer"}} className="card-animate card-height-100" onClick={()=> {
-                        handleCardClick('totalAnakSekolah')
-                        setTitleMap("Total Anak Sekolah")
-                      }}>
+                  <Card
+                    style={{ cursor: "pointer" }}
+                    className="card-animate card-height-100"
+                    onClick={() => {
+                      handleCardClick("totalAnakSekolah");
+                      setTitleMap("Total Anak Sekolah");
+                    }}
+                  >
                     <CardBody>
                       <div className="d-flex flex-column title-custom-card">
                         <div className="d-flex justify-content-start align-items-start mb-1 title-card">
@@ -1691,15 +1995,16 @@ const ContentDapodikV2 = () => {
                   ?.slice(0, 2)
                   .map((item, index) => (
                     <Col md={6} key={`first-${index}`}>
-                      <Card style={{cursor:"pointer"}} className="card-animate card-height-100" onClick={()=> {
-                        handleCardClick(`total${item.bentuk_pendidikan}`)
-                        setTitleMap(`Total ${item.bentuk_pendidikan}`)
-                      }}>
+                      <Card
+                        style={{ cursor: "pointer" }}
+                        className="card-animate card-height-100"
+                        onClick={() => {
+                          handleCardClick(`total${item.bentuk_pendidikan}`);
+                          setTitleMap(`Total ${item.bentuk_pendidikan}`);
+                        }}
+                      >
                         <CardBody>
-                          <div
-                            className="d-flex flex-column title-custom-card"
-                            
-                          >
+                          <div className="d-flex flex-column title-custom-card">
                             <div className="d-flex justify-content-between align-items-start mb-1 title-card">
                               <span>{item.bentuk_pendidikan}</span>
                             </div>
@@ -1737,10 +2042,14 @@ const ContentDapodikV2 = () => {
                   .reverse()
                   .map((item, index) => (
                     <Col md={6} key={`second-${index}`}>
-                      <Card style={{cursor:"pointer"}} className="card-animate card-height-100" onClick={()=> {
-                        handleCardClick(`total${item.bentuk_pendidikan}`)
-                        setTitleMap(`Total ${item.bentuk_pendidikan}`)
-                      }}>
+                      <Card
+                        style={{ cursor: "pointer" }}
+                        className="card-animate card-height-100"
+                        onClick={() => {
+                          handleCardClick(`total${item.bentuk_pendidikan}`);
+                          setTitleMap(`Total ${item.bentuk_pendidikan}`);
+                        }}
+                      >
                         <CardBody>
                           <div className="d-flex flex-column title-custom-card">
                             <div className="d-flex justify-content-between align-items-start mb-1 title-card">
@@ -1777,60 +2086,63 @@ const ContentDapodikV2 = () => {
         <Col>
           <Card>
             <CardBody>
-                  <div>                  
-              <Nav tabs className="nav nav-tabs nav-success nav-justified mb-3">
-                <NavItem>
-                  <NavLink
-                    style={{ cursor: "pointer" }}
-                    className={classnames("h-100", {
-                      active: customActiveTabTabel === "1",
-                    })}
-                    onClick={() => {
-                      toggleCustomTabel("1");
-                      setSearchTerm("");
-                      handleClearSearch('seprov')
-                    }}
-                  >
-                    NASIONAL
-                  </NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink
-                    style={{ cursor: "pointer" }}
-                    className={classnames("h-100", {
-                      active: customActiveTabTabel === "2",
-                    })}
-                    onClick={() => {
-                      toggleCustomTabel("2");
-                      setSearchTerm("");
-                      handleClearSearch('provinsi')
-                    }}
-                  >
-                    PROVINSI
-                  </NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink
-                    style={{ cursor: "pointer" }}
-                    className={classnames("h-100", {
-                      active: customActiveTabTabel === "3",
-                    })}
-                    onClick={() => {
-                      toggleCustomTabel("3");
-                      setSearchTerm("");
-                      handleClearSearch('kabupaten')
-                    }}
-                  >
-                    KABUPATEN/KOTA
-                  </NavLink>
-                </NavItem>
-              </Nav>
-              <TabContent activeTab={customActiveTabTabel}>
-              <div className="nav-beranda">
+              <div>
+                <Nav
+                  tabs
+                  className="nav nav-tabs nav-success nav-justified mb-3"
+                >
+                  <NavItem>
+                    <NavLink
+                      style={{ cursor: "pointer" }}
+                      className={classnames("h-100", {
+                        active: customActiveTabTabel === "1",
+                      })}
+                      onClick={() => {
+                        toggleCustomTabel("1");
+                        setSearchTerm("");
+                        handleClearSearch("seprov");
+                      }}
+                    >
+                      NASIONAL
+                    </NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink
+                      style={{ cursor: "pointer" }}
+                      className={classnames("h-100", {
+                        active: customActiveTabTabel === "2",
+                      })}
+                      onClick={() => {
+                        toggleCustomTabel("2");
+                        setSearchTerm("");
+                        handleClearSearch("provinsi");
+                      }}
+                    >
+                      PROVINSI
+                    </NavLink>
+                  </NavItem>
+                  <NavItem>
+                    <NavLink
+                      style={{ cursor: "pointer" }}
+                      className={classnames("h-100", {
+                        active: customActiveTabTabel === "3",
+                      })}
+                      onClick={() => {
+                        toggleCustomTabel("3");
+                        setSearchTerm("");
+                        handleClearSearch("kabupaten");
+                      }}
+                    >
+                      KABUPATEN/KOTA
+                    </NavLink>
+                  </NavItem>
+                </Nav>
+                <TabContent activeTab={customActiveTabTabel}>
+                  <div className="nav-beranda">
                     <Nav
                       tabs
                       className="nav nav-tabs-custom card-header-tabs border-bottom-0 ms-2 mb-3"
-                    >                      
+                    >
                       <NavItem>
                         <NavLink
                           style={{ cursor: "pointer" }}
@@ -1859,53 +2171,53 @@ const ContentDapodikV2 = () => {
                       </NavItem>
                     </Nav>
                   </div>
-                <TabPane tabId="1" id="paud">
-                  <div className="mb-2 d-flex">
-                    <div
-                      className="mx-2"
-                      style={{
-                        position: "relative",
-                        width: "100%",
-                        maxWidth: "300px",
-                        marginBottom: "20px",
-                      }}
-                    >
-                      <input
+                  <TabPane tabId="1" id="paud">
+                    <div className="mb-2 d-flex">
+                      <div
+                        className="mx-2"
                         style={{
-                          padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                          position: "relative",
                           width: "100%",
-                          border: "1px solid #ccc",
-                          borderRadius: "5px",
-                          fontSize: "16px",
+                          maxWidth: "300px",
+                          marginBottom: "20px",
                         }}
-                        type="text"
-                        value={searchTerm}
-                        onChange={handleSearchInput}
-                        // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
-                        placeholder="Cari Provinsi"
-                      />
-
-                      {/* Tombol "X" di dalam input */}
-                      {searchTerm && (
-                        <button
-                          onClick={() => handleClearSearch("seprovinsi")}
+                      >
+                        <input
                           style={{
-                            position: "absolute",
-                            right: "10px",
-                            top: "50%",
-                            transform: "translateY(-50%)", // Tengah-tengah secara vertikal
-                            background: "transparent",
-                            border: "none",
+                            padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                            width: "100%",
+                            border: "1px solid #ccc",
+                            borderRadius: "5px",
                             fontSize: "16px",
-                            cursor: "pointer",
-                            color: "#999",
                           }}
-                        >
-                          &#10006;
-                        </button>
-                      )}
-                    </div>
-                    {/* <div>
+                          type="text"
+                          value={searchTerm}
+                          onChange={handleSearchInput}
+                          // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                          placeholder="Cari Provinsi"
+                        />
+
+                        {/* Tombol "X" di dalam input */}
+                        {searchTerm && (
+                          <button
+                            onClick={() => handleClearSearch("seprovinsi")}
+                            style={{
+                              position: "absolute",
+                              right: "10px",
+                              top: "50%",
+                              transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                              background: "transparent",
+                              border: "none",
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              color: "#999",
+                            }}
+                          >
+                            &#10006;
+                          </button>
+                        )}
+                      </div>
+                      {/* <div>
                       <button
                         style={{
                           backgroundColor: "#007bff",
@@ -1921,538 +2233,651 @@ const ContentDapodikV2 = () => {
                         search
                       </button>
                     </div> */}
-                  </div>
-
-                  <div style={{ overflowX: "auto" }}>
-                    {/* Render Table */}
-                    <table
-                      className="table table-bordered table-nowrap align-middle mb-0 custom-table"
-                      style={{ width: "100%" }}
-                    >
-                      <thead className="table-light">
-                        {customActiveTabJenisData == "1" ? (<>
-                          <tr>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              cursor: "pointer",
-                              verticalAlign: "middle",
-                              
-                            }}
-                          >
-                            No
-                          </th>
-                          <th
-                            rowSpan="2"
-                            onClick={() => requestSort("nama_prov")}
-                            style={{
-                              cursor: "pointer",
-                              verticalAlign: "middle",
-                              textAlign:"center"
-                            }}
-                          >
-                            Se-Provinsi {getSortIcon("nama_prov")}
-                          </th>
-                          <th
-                            colSpan="4"
-                            style={{
-                              textAlign: "center",
-                              borderRight: "2px solid #A9A9A9",
-                              backgroundColor: "#f7f7ff"
-                            }}
-                          >
-                            Peserta Didik
-                          </th>
-                          <th
-                            colSpan="4"
-                            style={{
-                              textAlign: "center",
-                              borderRight: "2px solid #A9A9A9",
-                              backgroundColor: "#f7f7ff"
-                            }}
-                          >
-                            Tenaga Pengajar
-                          </th>
-                          <th
-                            colSpan="4"
-                            style={{
-                              textAlign: "center",
-                              borderRight: "2px solid #A9A9A9",
-                              backgroundColor: "#f7f7ff"
-                            }}
-                          >
-                            Jumlah Sekolah
-                          </th>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => requestSort("totalanggaran")}
-                          >
-                            Total Anggaran (Rp){" "}
-                            {getSortIcon("totalanggaran")}
-                          </th>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => requestSort("total_pendidikan ")}
-                          >
-                            Total Anggaran Pendidikan (Rp){" "}
-                            {getSortIcon("total_pendidikan ")}
-                          </th>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => requestSort("persentase_anggaran")}
-                          >
-                            Persentase {" "}
-                            {getSortIcon("persentase_anggaran")}
-                          </th>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                            }}
-                          >
-                            Detail Anggaran Pendidikan
-                          </th>
-                        </tr>
-                        <tr>
-                          <th
-                            onClick={() => requestSort("sd")}
-                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
-                          >
-                            SD {getSortIcon("sd")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("smp")}
-                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
-                          >
-                            SMP {getSortIcon("smp")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("sma")}
-                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
-                          >
-                            SMA {getSortIcon("sma")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("smk")}
-                            style={{
-                              cursor: "pointer",
-                              borderRight: "2px solid #A9A9A9",
-                              backgroundColor: "#f7f7ff"
-                            }}
-                          >
-                            SMK {getSortIcon("smk")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("guru_sd")}
-                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
-                          >
-                            SD {getSortIcon("guru_sd")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("guru_smp")}
-                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
-                          >
-                            SMP {getSortIcon("guru_smp")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("guru_sma")}
-                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
-                          >
-                            SMA {getSortIcon("guru_sma")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("guru_smk")}
-                            style={{
-                              cursor: "pointer",
-                              borderRight: "2px solid #A9A9A9",
-                              backgroundColor: "#f7f7ff"
-                            }}
-                          >
-                            SMK {getSortIcon("guru_smk")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("jumlah_sekolah_sd")}
-                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
-                          >
-                            SD {getSortIcon("jumlah_sekolah_sd")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("jumlah_sekolah_smp")}
-                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
-                          >
-                            SMP {getSortIcon("jumlah_sekolah_smp")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("jumlah_sekolah_sma")}
-                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
-                          >
-                            SMA {getSortIcon("jumlah_sekolah_sma")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("jumlah_sekolah_smk")}
-                            style={{
-                              cursor: "pointer",
-                              borderRight: "2px solid #A9A9A9",
-                              backgroundColor: "#f7f7ff"
-                            }}
-                          >
-                            SMK {getSortIcon("jumlah_sekolah_smk")}
-                          </th>
-                        </tr>
-                        </>) : (
-                        <>
-                        <tr>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              cursor: "pointer",
-                              verticalAlign: "middle",
-                            }}
-                          >
-                            No
-                          </th>
-                          <th
-                            rowSpan="2"
-                            onClick={() => requestSort("nama_prov")}
-                            style={{
-                              cursor: "pointer",
-                              verticalAlign: "middle",
-                              textAlign: "center",
-                            }}
-                          >
-                            Se-Provinsi {getSortIcon("nama_prov")}
-                          </th>
-                          <th colSpan="6" style={{ textAlign: "center" }}>
-                            Anak Tidak Sekolah
-                          </th>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => requestSort("totalanggaran")}
-                          >
-                            Total Anggaran (Rp){" "}
-                            {getSortIcon("totalanggaran")}
-                          </th>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => requestSort("total_pendidikan ")}
-                          >
-                            Total Anggaran Pendidikan (Rp){" "}
-                            {getSortIcon("total_pendidikan ")}
-                          </th>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => requestSort("persentase_anggaran")}
-                          >
-                            Persentase {" "}
-                            {getSortIcon("persentase_anggaran")}
-                          </th>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                            }}
-                          >
-                            Detail Anggaran Pendidikan
-                          </th>
-                        </tr>
-                        <tr>
-                          <th
-                            onClick={() => requestSort("totsd_do")}
-                            style={{ cursor: "pointer" }}
-                          >
-                            Drop Out SD {getSortIcon("totsd_do")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("totsmp_do")}
-                            style={{ cursor: "pointer" }}
-                          >
-                            Drop Out SMP {getSortIcon("totsmp_do")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("totsma_do")}
-                            style={{ cursor: "pointer", borderRight: "2px solid #A9A9A9" }}
-                          >
-                            Drop Out SMA/SMK {getSortIcon("totsma_do")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("tkt_6_ltm")}
-                            style={{ cursor: "pointer" }}
-                          >
-                            Tidak Lanjut ke SMP {getSortIcon("tkt_6_ltm")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("tkt_9_ltm")}
-                            style={{ cursor: "pointer", borderRight: "2px solid #A9A9A9" }}
-                          >
-                            Tidak Lanjut ke SMA {getSortIcon("tkt_9_ltm")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("tkt_bpb")}
-                            style={{ cursor: "pointer" }}
-                          >
-                            Anak Belum Pernah Bersekolah{" "}
-                            {getSortIcon("tkt_bpb")}
-                          </th>
-                        </tr>
-                        </>)}                        
-                      </thead>
-                      <tbody style={{ minHeight: "500px" }}>
-                        {currentItems.map((item, index) => (
-                          <tr key={index}>
-                            {/* <td>{item.kode_prop}</td> */}
-                            <td
-                              style={{
-                                textAlign: "center",
-                                verticalAlign: "middle",
-                              }}
-                            >
-                              {indexOfFirstItem + index + 1}
-                            </td>
-                            <td style={{ maxWidth: "250px" }}>
-                              {" "}
-                              {`${item.nama_prov}` || "-"}
-                            </td>
-                            {customActiveTabJenisData == "1" ? (<><td style={{ backgroundColor: "#f7f7ff" }}>
-                              {item.sd
-                                ? parseInt(item.sd).toLocaleString("id-ID")
-                                : "-"}
-                            </td>
-                            <td style={{ backgroundColor: "#f7f7ff" }}>
-                              {item.smp
-                                ? parseInt(item.smp).toLocaleString("id-ID")
-                                : "-"}
-                            </td>
-                            <td style={{ backgroundColor: "#f7f7ff" }} >
-                              {item.sma
-                                ? parseInt(item.sma).toLocaleString("id-ID")
-                                : "-"}
-                            </td >
-                            <td style={{ backgroundColor: "#f7f7ff", borderRight: "2px solid #A9A9A9" }}>
-                              {item.smk 
-                                ? parseInt(item.smk).toLocaleString("id-ID")
-                                : "-"}
-                            </td>
-                            <td style={{ backgroundColor: "#f7f7ff" }}>
-                              {item.guru_sd
-                                ? parseInt(item.guru_sd).toLocaleString("id-ID")
-                                : "-"}
-                            </td>
-                            <td style={{ backgroundColor: "#f7f7ff" }}>
-                              {item.guru_smp
-                                ? parseInt(item.guru_smp).toLocaleString("id-ID")
-                                : "-"}
-                            </td>
-                            <td  style={{ backgroundColor: "#f7f7ff" }}>
-                              {item.guru_sma
-                                ? parseInt(item.guru_sma).toLocaleString("id-ID")
-                                : "-"}
-                            </td >
-                            <td style={{ backgroundColor: "#f7f7ff", borderRight: "2px solid #A9A9A9" }}>
-                              {item.guru_smk
-                                ? parseInt(item.guru_smk).toLocaleString("id-ID")
-                                : "-"}
-                            </td>
-
-                            <td style={{ backgroundColor: "#f7f7ff" }}>
-                              {item.jumlah_sekolah_sd
-                                ? parseInt(item.jumlah_sekolah_sd).toLocaleString("id-ID")
-                                : "-"}
-                            </td>
-                            <td style={{ backgroundColor: "#f7f7ff" }}>
-                              {item.jumlah_sekolah_smp
-                                ? parseInt(item.jumlah_sekolah_smp).toLocaleString("id-ID")
-                                : "-"}
-                            </td>
-                            <td  style={{ backgroundColor: "#f7f7ff" }}>
-                              {item.jumlah_sekolah_sma
-                                ? parseInt(item.jumlah_sekolah_sma).toLocaleString("id-ID")
-                                : "-"}
-                            </td >
-                            <td style={{ backgroundColor: "#f7f7ff", borderRight: "2px solid #A9A9A9" }}>
-                              {item.jumlah_sekolah_smk
-                                ? parseInt(item.jumlah_sekolah_smk).toLocaleString("id-ID")
-                                : "-"}
-                            </td>
-                            </>):(<>
-                              <td style={{ backgroundColor: "#f7f7f7" }}>
-                              {item.totsd_do
-                                ? parseInt(item.totsd_do).toLocaleString(
-                                    "id-ID"
-                                  )
-                                : "-"}
-                            </td>
-                            <td style={{ backgroundColor: "#f7f7f7" }}>
-                              {item.totsmp_do
-                                ? parseInt(item.totsmp_do).toLocaleString(
-                                    "id-ID"
-                                  )
-                                : "-"}
-                            </td>
-                            <td style={{ backgroundColor: "#f7f7f7", borderRight: "2px solid #A9A9A9" }}>
-                              {item.totsma_do
-                                ? parseInt(item.totsma_do).toLocaleString(
-                                    "id-ID"
-                                  )
-                                : "-"}
-                            </td>
-                            <td style={{ backgroundColor: "#f7f7f7" }}>
-                              {item.tkt_6_ltm
-                                ? parseInt(item.tkt_6_ltm).toLocaleString(
-                                    "id-ID"
-                                  )
-                                : "-"}
-                            </td>
-                            <td style={{ backgroundColor: "#f7f7f7", borderRight: "2px solid #A9A9A9" }}>
-                              {item.tkt_9_ltm
-                                ? parseInt(item.tkt_9_ltm).toLocaleString(
-                                    "id-ID"
-                                  )
-                                : "-"}
-                            </td>
-                            <td style={{ backgroundColor: "#f7f7f7" }}>
-                              {item.tkt_bpb
-                                ? parseInt(item.tkt_bpb).toLocaleString("id-ID")
-                                : "-"}
-                            </td>
-                            </>)}                                                        
-                            <td>
-                              <span style={{ float: "right" }}>
-                                {item.totalanggaran
-                                  ? parseInt(item.totalanggaran).toLocaleString(
-                                      "id-ID"
-                                    )
-                                  : "-"}
-                              </span>
-                            </td>
-                            <td>
-                              <span style={{ float: "right" }}>
-                                {item.total_pendidikan
-                                  ? parseInt(item.total_pendidikan).toLocaleString(
-                                      "id-ID"
-                                    )
-                                  : "-"}
-                              </span>
-                            </td>
-                            <td>
-                              <span style={{ float: "right" }}>
-                                {`${item.persentase_anggaran
-                                  ? parseInt(item.persentase_anggaran).toLocaleString(
-                                      "id-ID"
-                                    )
-                                  : "-"}%`}
-                              </span>
-                            </td>
-                            <td style={{ textAlign: "center" }}>
-                              <i
-                                style={{
-                                  padding: "5px 10px",
-                                  cursor: "pointer",
-                                  fontSize: "25px",
-                                }}
-                                onClick={() =>
-                                  handleOpen(
-                                    item.kode_prov,
-                                    item.nama_prov,
-                                    "",
-                                    "",
-                                    "se-prov",
-                                    item.total_pendidikan
-                                  )
-                                }
-                                className="bx bx-list-ul text-primary"
-                              ></i>
-                            </td>
-                          </tr>
-                        ))}
-                        {/* {placeholders} */}
-                      </tbody>
-                    </table>
-                  </div>
-                  <Pagination
-                    currentPage={currentPage}
-                    totalPages={totalPages}
-                    onPageChange={paginate}
-                  />
-                </TabPane>
-                <TabPane tabId="2" id="">
-                <div className="mb-2 d-flex">
-                  {showNextData ? (<></>): (<><div
-                      className="mx-2"
-                      style={{
-                        position: "relative",
-                        width: "100%",
-                        maxWidth: "300px",
-                        marginBottom: "20px",
-                      }}
-                    >
-                      <input
-                        style={{
-                          padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
-                          width: "100%",
-                          border: "1px solid #ccc",
-                          borderRadius: "5px",
-                          fontSize: "16px",
-                        }}
-                        type="text"
-                        value={searchTermProvinsi}
-                        onChange={handleSearchInputProvinsi}
-                        // onKeyDown={(e) => handleKeyDown(e, "provinsi")}
-                        placeholder="Cari Provinsi"
-                      />
-
-                      {/* Tombol "X" di dalam input */}
-                      {searchTermProvinsi && (
-                        <button
-                          onClick={() => handleClearSearch("provinsi")}
-                          style={{
-                            position: "absolute",
-                            right: "10px",
-                            top: "50%",
-                            transform: "translateY(-50%)", // Tengah-tengah secara vertikal
-                            background: "transparent",
-                            border: "none",
-                            fontSize: "16px",
-                            cursor: "pointer",
-                            color: "#999",
-                          }}
-                        >
-                          &#10006;
-                        </button>
-                      )}
                     </div>
-                    {/* <div>
+
+                    <div style={{ overflowX: "auto" }}>
+                      {/* Render Table */}
+                      <table
+                        className="table table-bordered table-nowrap align-middle mb-0 custom-table"
+                        style={{ width: "100%" }}
+                      >
+                        <thead className="table-light">
+                          {customActiveTabJenisData == "1" ? (
+                            <>
+                              <tr>
+                                <th
+                                  rowSpan="2"
+                                  style={{
+                                    cursor: "pointer",
+                                    verticalAlign: "middle",
+                                  }}
+                                >
+                                  No
+                                </th>
+                                <th
+                                  rowSpan="2"
+                                  onClick={() => requestSort("nama_prov")}
+                                  style={{
+                                    cursor: "pointer",
+                                    verticalAlign: "middle",
+                                    textAlign: "center",
+                                  }}
+                                >
+                                  Se-Provinsi {getSortIcon("nama_prov")}
+                                </th>
+                                <th
+                                  colSpan="4"
+                                  style={{
+                                    textAlign: "center",
+                                    borderRight: "2px solid #A9A9A9",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  Peserta Didik
+                                </th>
+                                <th
+                                  colSpan="4"
+                                  style={{
+                                    textAlign: "center",
+                                    borderRight: "2px solid #A9A9A9",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  Tenaga Pengajar
+                                </th>
+                                <th
+                                  colSpan="4"
+                                  style={{
+                                    textAlign: "center",
+                                    borderRight: "2px solid #A9A9A9",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  Jumlah Sekolah
+                                </th>
+                                <th
+                                  rowSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    verticalAlign: "middle",
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={() => requestSort("totalanggaran")}
+                                >
+                                  Total Anggaran (Rp){" "}
+                                  {getSortIcon("totalanggaran")}
+                                </th>
+                                <th
+                                  rowSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    verticalAlign: "middle",
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={() =>
+                                    requestSort("total_pendidikan ")
+                                  }
+                                >
+                                  Total Anggaran Pendidikan (Rp){" "}
+                                  {getSortIcon("total_pendidikan ")}
+                                </th>
+                                <th
+                                  rowSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    verticalAlign: "middle",
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={() =>
+                                    requestSort("persentase_anggaran")
+                                  }
+                                >
+                                  Persentase{" "}
+                                  {getSortIcon("persentase_anggaran")}
+                                </th>
+                                <th
+                                  rowSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    verticalAlign: "middle",
+                                  }}
+                                >
+                                  Detail Anggaran Pendidikan
+                                </th>
+                              </tr>
+                              <tr>
+                                <th
+                                  onClick={() => requestSort("sd")}
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SD {getSortIcon("sd")}
+                                </th>
+                                <th
+                                  onClick={() => requestSort("smp")}
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SMP {getSortIcon("smp")}
+                                </th>
+                                <th
+                                  onClick={() => requestSort("sma")}
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SMA {getSortIcon("sma")}
+                                </th>
+                                <th
+                                  onClick={() => requestSort("smk")}
+                                  style={{
+                                    cursor: "pointer",
+                                    borderRight: "2px solid #A9A9A9",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SMK {getSortIcon("smk")}
+                                </th>
+                                <th
+                                  onClick={() => requestSort("guru_sd")}
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SD {getSortIcon("guru_sd")}
+                                </th>
+                                <th
+                                  onClick={() => requestSort("guru_smp")}
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SMP {getSortIcon("guru_smp")}
+                                </th>
+                                <th
+                                  onClick={() => requestSort("guru_sma")}
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SMA {getSortIcon("guru_sma")}
+                                </th>
+                                <th
+                                  onClick={() => requestSort("guru_smk")}
+                                  style={{
+                                    cursor: "pointer",
+                                    borderRight: "2px solid #A9A9A9",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SMK {getSortIcon("guru_smk")}
+                                </th>
+                                <th
+                                  onClick={() =>
+                                    requestSort("jumlah_sekolah_sd")
+                                  }
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SD {getSortIcon("jumlah_sekolah_sd")}
+                                </th>
+                                <th
+                                  onClick={() =>
+                                    requestSort("jumlah_sekolah_smp")
+                                  }
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SMP {getSortIcon("jumlah_sekolah_smp")}
+                                </th>
+                                <th
+                                  onClick={() =>
+                                    requestSort("jumlah_sekolah_sma")
+                                  }
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SMA {getSortIcon("jumlah_sekolah_sma")}
+                                </th>
+                                <th
+                                  onClick={() =>
+                                    requestSort("jumlah_sekolah_smk")
+                                  }
+                                  style={{
+                                    cursor: "pointer",
+                                    borderRight: "2px solid #A9A9A9",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SMK {getSortIcon("jumlah_sekolah_smk")}
+                                </th>
+                              </tr>
+                            </>
+                          ) : (
+                            <>
+                              <tr>
+                                <th
+                                  rowSpan="2"
+                                  style={{
+                                    cursor: "pointer",
+                                    verticalAlign: "middle",
+                                  }}
+                                >
+                                  No
+                                </th>
+                                <th
+                                  rowSpan="2"
+                                  onClick={() => requestSort("nama_prov")}
+                                  style={{
+                                    cursor: "pointer",
+                                    verticalAlign: "middle",
+                                    textAlign: "center",
+                                  }}
+                                >
+                                  Se-Provinsi {getSortIcon("nama_prov")}
+                                </th>
+                                <th colSpan="6" style={{ textAlign: "center" }}>
+                                  Anak Tidak Sekolah
+                                </th>
+                                <th
+                                  rowSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    verticalAlign: "middle",
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={() => requestSort("totalanggaran")}
+                                >
+                                  Total Anggaran (Rp){" "}
+                                  {getSortIcon("totalanggaran")}
+                                </th>
+                                <th
+                                  rowSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    verticalAlign: "middle",
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={() =>
+                                    requestSort("total_pendidikan ")
+                                  }
+                                >
+                                  Total Anggaran Pendidikan (Rp){" "}
+                                  {getSortIcon("total_pendidikan ")}
+                                </th>
+                                <th
+                                  rowSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    verticalAlign: "middle",
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={() =>
+                                    requestSort("persentase_anggaran")
+                                  }
+                                >
+                                  Persentase{" "}
+                                  {getSortIcon("persentase_anggaran")}
+                                </th>
+                                <th
+                                  rowSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    verticalAlign: "middle",
+                                  }}
+                                >
+                                  Detail Anggaran Pendidikan
+                                </th>
+                              </tr>
+                              <tr>
+                                <th
+                                  onClick={() => requestSort("totsd_do")}
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  Drop Out SD {getSortIcon("totsd_do")}
+                                </th>
+                                <th
+                                  onClick={() => requestSort("totsmp_do")}
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  Drop Out SMP {getSortIcon("totsmp_do")}
+                                </th>
+                                <th
+                                  onClick={() => requestSort("totsma_do")}
+                                  style={{
+                                    cursor: "pointer",
+                                    borderRight: "2px solid #A9A9A9",
+                                  }}
+                                >
+                                  Drop Out SMA/SMK {getSortIcon("totsma_do")}
+                                </th>
+                                <th
+                                  onClick={() => requestSort("tkt_6_ltm")}
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  Tidak Lanjut ke SMP {getSortIcon("tkt_6_ltm")}
+                                </th>
+                                <th
+                                  onClick={() => requestSort("tkt_9_ltm")}
+                                  style={{
+                                    cursor: "pointer",
+                                    borderRight: "2px solid #A9A9A9",
+                                  }}
+                                >
+                                  Tidak Lanjut ke SMA {getSortIcon("tkt_9_ltm")}
+                                </th>
+                                <th
+                                  onClick={() => requestSort("tkt_bpb")}
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  Anak Belum Pernah Bersekolah{" "}
+                                  {getSortIcon("tkt_bpb")}
+                                </th>
+                              </tr>
+                            </>
+                          )}
+                        </thead>
+                        <tbody style={{ minHeight: "500px" }}>
+                          {currentItems.map((item, index) => (
+                            <tr key={index}>
+                              {/* <td>{item.kode_prop}</td> */}
+                              <td
+                                style={{
+                                  textAlign: "center",
+                                  verticalAlign: "middle",
+                                }}
+                              >
+                                {indexOfFirstItem + index + 1}
+                              </td>
+                              <td style={{ maxWidth: "250px" }}>
+                                {" "}
+                                {`${item.nama_prov}` || "-"}
+                              </td>
+                              {customActiveTabJenisData == "1" ? (
+                                <>
+                                  <td style={{ backgroundColor: "#f7f7ff" }}>
+                                    {item.sd
+                                      ? parseInt(item.sd).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td style={{ backgroundColor: "#f7f7ff" }}>
+                                    {item.smp
+                                      ? parseInt(item.smp).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td style={{ backgroundColor: "#f7f7ff" }}>
+                                    {item.sma
+                                      ? parseInt(item.sma).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td
+                                    style={{
+                                      backgroundColor: "#f7f7ff",
+                                      borderRight: "2px solid #A9A9A9",
+                                    }}
+                                  >
+                                    {item.smk
+                                      ? parseInt(item.smk).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td style={{ backgroundColor: "#f7f7ff" }}>
+                                    {item.guru_sd
+                                      ? parseInt(item.guru_sd).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td style={{ backgroundColor: "#f7f7ff" }}>
+                                    {item.guru_smp
+                                      ? parseInt(item.guru_smp).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td style={{ backgroundColor: "#f7f7ff" }}>
+                                    {item.guru_sma
+                                      ? parseInt(item.guru_sma).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td
+                                    style={{
+                                      backgroundColor: "#f7f7ff",
+                                      borderRight: "2px solid #A9A9A9",
+                                    }}
+                                  >
+                                    {item.guru_smk
+                                      ? parseInt(item.guru_smk).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+
+                                  <td style={{ backgroundColor: "#f7f7ff" }}>
+                                    {item.jumlah_sekolah_sd
+                                      ? parseInt(
+                                          item.jumlah_sekolah_sd
+                                        ).toLocaleString("id-ID")
+                                      : "-"}
+                                  </td>
+                                  <td style={{ backgroundColor: "#f7f7ff" }}>
+                                    {item.jumlah_sekolah_smp
+                                      ? parseInt(
+                                          item.jumlah_sekolah_smp
+                                        ).toLocaleString("id-ID")
+                                      : "-"}
+                                  </td>
+                                  <td style={{ backgroundColor: "#f7f7ff" }}>
+                                    {item.jumlah_sekolah_sma
+                                      ? parseInt(
+                                          item.jumlah_sekolah_sma
+                                        ).toLocaleString("id-ID")
+                                      : "-"}
+                                  </td>
+                                  <td
+                                    style={{
+                                      backgroundColor: "#f7f7ff",
+                                      borderRight: "2px solid #A9A9A9",
+                                    }}
+                                  >
+                                    {item.jumlah_sekolah_smk
+                                      ? parseInt(
+                                          item.jumlah_sekolah_smk
+                                        ).toLocaleString("id-ID")
+                                      : "-"}
+                                  </td>
+                                </>
+                              ) : (
+                                <>
+                                  <td style={{ backgroundColor: "#f7f7f7" }}>
+                                    {item.totsd_do
+                                      ? parseInt(item.totsd_do).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td style={{ backgroundColor: "#f7f7f7" }}>
+                                    {item.totsmp_do
+                                      ? parseInt(item.totsmp_do).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td
+                                    style={{
+                                      backgroundColor: "#f7f7f7",
+                                      borderRight: "2px solid #A9A9A9",
+                                    }}
+                                  >
+                                    {item.totsma_do
+                                      ? parseInt(item.totsma_do).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td style={{ backgroundColor: "#f7f7f7" }}>
+                                    {item.tkt_6_ltm
+                                      ? parseInt(item.tkt_6_ltm).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td
+                                    style={{
+                                      backgroundColor: "#f7f7f7",
+                                      borderRight: "2px solid #A9A9A9",
+                                    }}
+                                  >
+                                    {item.tkt_9_ltm
+                                      ? parseInt(item.tkt_9_ltm).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td style={{ backgroundColor: "#f7f7f7" }}>
+                                    {item.tkt_bpb
+                                      ? parseInt(item.tkt_bpb).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                </>
+                              )}
+                              <td>
+                                <span style={{ float: "right" }}>
+                                  {item.totalanggaran
+                                    ? parseInt(
+                                        item.totalanggaran
+                                      ).toLocaleString("id-ID")
+                                    : "-"}
+                                </span>
+                              </td>
+                              <td>
+                                <span style={{ float: "right" }}>
+                                  {item.total_pendidikan
+                                    ? parseInt(
+                                        item.total_pendidikan
+                                      ).toLocaleString("id-ID")
+                                    : "-"}
+                                </span>
+                              </td>
+                              <td>
+                                <span style={{ float: "right" }}>
+                                  {`${
+                                    item.persentase_anggaran
+                                      ? parseInt(
+                                          item.persentase_anggaran
+                                        ).toLocaleString("id-ID")
+                                      : "-"
+                                  }%`}
+                                </span>
+                              </td>
+                              <td style={{ textAlign: "center" }}>
+                                <i
+                                  style={{
+                                    padding: "5px 10px",
+                                    cursor: "pointer",
+                                    fontSize: "25px",
+                                  }}
+                                  onClick={() =>
+                                    handleOpen(
+                                      item.kode_prov,
+                                      item.nama_prov,
+                                      "",
+                                      "",
+                                      "se-prov",
+                                      item.total_pendidikan
+                                    )
+                                  }
+                                  className="bx bx-list-ul text-primary"
+                                ></i>
+                              </td>
+                            </tr>
+                          ))}
+                          {/* {placeholders} */}
+                        </tbody>
+                      </table>
+                    </div>
+                    <Pagination
+                      currentPage={currentPage}
+                      totalPages={totalPages}
+                      onPageChange={paginate}
+                    />
+                  </TabPane>
+                  <TabPane tabId="2" id="">
+                    <div className="mb-2 d-flex">
+                      {showNextData ? (
+                        <></>
+                      ) : (
+                        <>
+                          <div
+                            className="mx-2"
+                            style={{
+                              position: "relative",
+                              width: "100%",
+                              maxWidth: "300px",
+                              marginBottom: "20px",
+                            }}
+                          >
+                            <input
+                              style={{
+                                padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                                width: "100%",
+                                border: "1px solid #ccc",
+                                borderRadius: "5px",
+                                fontSize: "16px",
+                              }}
+                              type="text"
+                              value={searchTermProvinsi}
+                              onChange={handleSearchInputProvinsi}
+                              // onKeyDown={(e) => handleKeyDown(e, "provinsi")}
+                              placeholder="Cari Provinsi"
+                            />
+
+                            {/* Tombol "X" di dalam input */}
+                            {searchTermProvinsi && (
+                              <button
+                                onClick={() => handleClearSearch("provinsi")}
+                                style={{
+                                  position: "absolute",
+                                  right: "10px",
+                                  top: "50%",
+                                  transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                                  background: "transparent",
+                                  border: "none",
+                                  fontSize: "16px",
+                                  cursor: "pointer",
+                                  color: "#999",
+                                }}
+                              >
+                                &#10006;
+                              </button>
+                            )}
+                          </div>
+                          {/* <div>
                       <button
                         style={{
                           backgroundColor: "#007bff",
@@ -2468,444 +2893,559 @@ const ContentDapodikV2 = () => {
                         search
                       </button>
                     </div> */}
-                    </>)}                    
-                  </div>                  
-                  {showNextData ? (
-                    <><button
-                    style={{
-                      backgroundColor: "#007bff",
-                      color: "white",
-                      padding: "10px 20px",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                      fontSize: "16px",
-                      marginBottom: "8px",
-                    }}
-                    onClick={() => {getDataTabelDapodikProv({searchTerm, tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData}); resetRegionClick()}}
-                  >
-                    Kembali ke Provinsi
-                  </button></>
-                  ) : (
-                    <>
-                    </>
-                  )}
-                  <div style={{ overflowX: "auto" }}>
-                    {/* Render Table */}
-                    <table
-                      className="table table-bordered table-nowrap align-middle mb-0 custom-table"
-                      style={{ width: "100%" }}
-                    >
-                      <thead className="table-light">
-                      {customActiveTabJenisData == "1" ? (<>
-                        <tr>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              cursor: "pointer",
-                              verticalAlign: "middle",
-                            }}
-                          >
-                            No
-                          </th>
-                          <th
-                            rowSpan="2"
-                            onClick={() => dataKolomNamaDaerah =="Provinsi" ? requestSort("kode_prov") : requestSort("kode_ddn")}
-                            style={{
-                              cursor: "pointer",
-                              verticalAlign: "middle",
-                              textAlign: "center",
-                            }}
-                          >
-                            {dataKolomNamaDaerah}
-                            {dataKolomNamaDaerah == "Provinsi"
-                              ? getSortIcon("kode_prov")
-                              : getSortIcon("kode_ddn")}                            
-                          </th>
-                          <th
-                            colSpan="2"
-                            style={{
-                              textAlign: "center",
-                              borderRight: "2px solid #A9A9A9",
-                              backgroundColor: "#f7f7ff"
-                            }}
-                          >
-                            Peserta Didik
-                          </th>
-                          <th
-                            colSpan="2"
-                            style={{
-                              textAlign: "center",
-                              borderRight: "2px solid #A9A9A9",
-                              backgroundColor: "#f7f7ff"
-                            }}
-                          >
-                            Tenaga Pengajar
-                          </th>
-                          <th
-                            colSpan="2"
-                            style={{
-                              textAlign: "center",
-                              borderRight: "2px solid #A9A9A9",
-                              backgroundColor: "#f7f7ff"
-                            }}
-                          >
-                            Jumlah Sekolah
-                          </th>
-                          {/* <th colSpan="2" style={{ textAlign: "center" }}>
-                            Anak Tidak Sekolah
-                          </th> */}
-                          {showNextData ? (<></>) : (<><th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => requestSort("totalanggaran")}
-                          >
-                            Total Anggaran (Rp){" "}
-                            {getSortIcon("totalanggaran")}
-                          </th>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => requestSort("total_pendidikan ")}
-                          >
-                            Total Anggaran Pendidikan (Rp){" "}
-                            {getSortIcon("total_pendidikan ")}
-                          </th>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => requestSort("persentase_anggaran")}
-                          >
-                            Persentase {" "}
-                            {getSortIcon("persentase_anggaran")}
-                          </th>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                            }}
-                          >
-                            Detail Anggaran Pendidikan
-                          </th></>)}                          
-                        </tr>
-                        <tr>
-                          <th
-                            onClick={() => requestSort("sma")}
-                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
-                          >
-                            SMA {getSortIcon("sma")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("smk")}
-                            style={{
-                              cursor: "pointer",
-                              borderRight: "2px solid #A9A9A9",
-                              backgroundColor: "#f7f7ff"
-                            }}
-                          >
-                            SMK {getSortIcon("smk")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("guru_sma")}
-                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
-                          >
-                            SMA {getSortIcon("guru_sma")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("guru_smk")}
-                            style={{
-                              cursor: "pointer",
-                              borderRight: "2px solid #A9A9A9",
-                              backgroundColor: "#f7f7ff"
-                            }}
-                          >
-                            SMK {getSortIcon("guru_smk")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("jumlah_sekolah_sma")}
-                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
-                          >
-                            SMA {getSortIcon("jumlah_sekolah_sma")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("jumlah_sekolah_smk")}
-                            style={{
-                              cursor: "pointer",
-                              borderRight: "2px solid #A9A9A9",
-                              backgroundColor: "#f7f7ff"
-                            }}
-                          >
-                            SMK {getSortIcon("jumlah_sekolah_smk")}
-                          </th>
-                        </tr>
-                      </>) : (<>
-                        <tr>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              cursor: "pointer",
-                              verticalAlign: "middle",
-                              textAlign: "center"
-                            }}
-                          >
-                            No
-                          </th>
-                          <th
-                            rowSpan="2"
-                            onClick={() => requestSort("nama_prov")}
-                            style={{
-                              cursor: "pointer",
-                              verticalAlign: "middle",
-                              textAlign: "center",
-                            }}
-                          >
-                            Provinsi {getSortIcon("nama_prov")}
-                          </th>
-                          <th colSpan="2" style={{ textAlign: "center" }}>
-                            Anak Tidak Sekolah
-                          </th>
-                          {showNextData ? (<></>) : (<><th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => requestSort("totalanggaran")}
-                          >
-                            Total Anggaran (Rp){" "}
-                            {getSortIcon("totalanggaran")}
-                          </th>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => requestSort("total_pendidikan ")}
-                          >
-                            Total Anggaran Pendidikan (Rp){" "}
-                            {getSortIcon("total_pendidikan ")}
-                          </th>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => requestSort("persentase_anggaran")}
-                          >
-                            Persentase {" "}
-                            {getSortIcon("persentase_anggaran")}
-                          </th>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                            }}
-                          >
-                            Detail Anggaran Pendidikan
-                          </th></>)}                          
-                        </tr>
-                        <tr>
-                          <th
-                            onClick={() => requestSort("totsma_do")}
-                            style={{ cursor: "pointer", borderRight: "2px solid #A9A9A9", }}
-                          >
-                            Drop Out SMA/SMK {getSortIcon("totsma_do")}
-                          </th>                          
-                          <th
-                            onClick={() => requestSort("tkt_9_ltm")}
-                            style={{ cursor: "pointer" }}
-                          >
-                            Tidak Lanjut ke SMA {getSortIcon("tkt_9_ltm")}
-                          </th>                        
-                        </tr></>)}
-                        
-                      </thead>
-                      <tbody style={{ minHeight: "500px" }}>
-                        {currentItemProvinsi.map((item, index) => (
-                          <tr key={index}>
-                            {/* <td>{item.kode_prop}</td> */}
-                            <td
-                              style={{
-                                textAlign: "center",
-                                verticalAlign: "middle",
-                              }}
-                            >
-                              {indexOfFirstItemProvinsi + index + 1}
-                            </td>
-                            <td onClick={(e)=>{showNextData ? "" : getDataTabelDapodikProvDetail(item.kode_prov, e)}} className={showNextData ? "" : "click-data"} style={{ maxWidth: "250px" }}>                              
-                              {showNextData ? item.nama_kabkota : item.nama_prov}
-                            </td>
-                        {customActiveTabJenisData == "1" ? (<><td style={{ backgroundColor: "#f7f7ff" }}>
-                              {item.sma
-                                ? parseInt(item.sma).toLocaleString("id-ID")
-                                : "-"}
-                            </td>
-                            <td style={{ borderRight: "2px solid #A9A9A9", backgroundColor: "#f7f7ff" }}>
-                              {item.smk
-                                ? parseInt(item.smk).toLocaleString("id-ID")
-                                : "-"}
-                            </td>
-                            <td style={{ backgroundColor: "#f7f7ff" }}>
-                              {item.guru_sma
-                                ? parseInt(item.guru_sma).toLocaleString("id-ID")
-                                : "-"}
-                            </td>
-                            <td style={{ borderRight: "2px solid #A9A9A9", backgroundColor: "#f7f7ff" }}>
-                              {item.guru_smk
-                                ? parseInt(item.guru_smk).toLocaleString("id-ID")
-                                : "-"}
-                            </td>
-                            <td style={{ backgroundColor: "#f7f7ff" }}>
-                              {item.jumlah_sekolah_sma
-                                ? parseInt(item.jumlah_sekolah_sma).toLocaleString("id-ID")
-                                : "-"}
-                            </td>
-                            <td style={{ borderRight: "2px solid #A9A9A9", backgroundColor: "#f7f7ff" }}>
-                              {item.jumlah_sekolah_smk
-                                ? parseInt(item.jumlah_sekolah_smk).toLocaleString("id-ID")
-                                : "-"}
-                            </td></>) : (<>
-                            <td style={{ backgroundColor: "#f7f7f7", borderRight: "2px solid #A9A9A9", }}>
-                              {item.totsma_do
-                                ? parseInt(item.totsma_do).toLocaleString(
-                                    "id-ID"
-                                  )
-                                : "-"}
-                            </td>
-                            <td style={{ backgroundColor: "#f7f7f7" }}>
-                              {item.tkt_9_ltm
-                                ? parseInt(item.tkt_9_ltm).toLocaleString(
-                                    "id-ID"
-                                  )
-                                : "-"}
-                            </td>
-                            </>)}
-                            {showNextData ? (<></>):(<><td>
-                              <span style={{ float: "right" }}>
-                                {item.totalanggaran
-                                  ? parseInt(item.totalanggaran).toLocaleString(
-                                      "id-ID"
-                                    )
-                                  : "-"}
-                              </span>
-                            </td>
-                            <td>
-                              <span style={{ float: "right" }}>
-                                {item.total_pendidikan
-                                  ? parseInt(item.total_pendidikan).toLocaleString(
-                                      "id-ID"
-                                    )
-                                  : "-"}
-                              </span>
-                            </td>
-                            <td>
-                              <span style={{ float: "right" }}>
-                                {`${item.persentase_anggaran
-                                  ? parseInt(item.persentase_anggaran).toLocaleString(
-                                      "id-ID"
-                                    )
-                                  : "-"}%`}
-                              </span>
-                            </td>
-                            <td style={{ textAlign: "center" }}>
-                              <i
-                                style={{
-                                  padding: "5px 10px",
-                                  cursor: "pointer",
-                                  fontSize: "25px",
-                                }}
-                                onClick={() =>
-                                  handleOpen(
-                                    "",
-                                    item.nama_prov,
-                                    "",
-                                    item.kode_ddn,
-                                    item.jns_pemda,
-                                    item.total_pendidikan
-                                  )
-                                }
-                                className="bx bx-list-ul text-primary"
-                              ></i>
-                            </td></>)}
-                            
-                          </tr>
-                        ))}                        
-                      </tbody>
-                    </table>
-                  </div>
-                  <Pagination
-                    currentPage={currentPageProvinsi}
-                    totalPages={totalPagesProvinsi}
-                    onPageChange={paginateProvinsi}
-                  />
-                </TabPane>
-                <TabPane tabId="3" id="paud">
-                <div className="mb-2 d-flex">
-                    <div
-                      className="mx-2"
-                      style={{
-                        position: "relative",
-                        width: "100%",
-                        maxWidth: "300px",
-                        marginBottom: "20px",
-                      }}
-                    >
-                      <input
-                        style={{
-                          padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
-                          width: "100%",
-                          border: "1px solid #ccc",
-                          borderRadius: "5px",
-                          fontSize: "16px",
-                        }}
-                        type="text"
-                        value={searchTermKab}
-                        onChange={handleSearchInputKabupaten}
-                        // onKeyDown={(e) => handleKeyDown(e, "kabupaten")}
-                        placeholder="Cari Kabupaten/Kota"
-                      />
-
-                      {/* Tombol "X" di dalam input */}
-                      {searchTermKab && (
-                        <button
-                          onClick={() => handleClearSearch("kabupaten")}
-                          style={{
-                            position: "absolute",
-                            right: "10px",
-                            top: "50%",
-                            transform: "translateY(-50%)", // Tengah-tengah secara vertikal
-                            background: "transparent",
-                            border: "none",
-                            fontSize: "16px",
-                            cursor: "pointer",
-                            color: "#999",
-                          }}
-                        >
-                          &#10006;
-                        </button>
+                        </>
                       )}
                     </div>
-                    {/* <div>
+                    {showNextData ? (
+                      <>
+                        <button
+                          style={{
+                            backgroundColor: "#007bff",
+                            color: "white",
+                            padding: "10px 20px",
+                            border: "none",
+                            borderRadius: "5px",
+                            cursor: "pointer",
+                            fontSize: "16px",
+                            marginBottom: "8px",
+                          }}
+                          onClick={() => {
+                            getDataTabelDapodikProv({
+                              searchTerm,
+                              tahun: selectedSingleTahunAnggaran,
+                              tahun_data: selectedSingleTahunData,
+                            });
+                            resetRegionClick();
+                          }}
+                        >
+                          Kembali ke Provinsi
+                        </button>
+                      </>
+                    ) : (
+                      <></>
+                    )}
+                    <div style={{ overflowX: "auto" }}>
+                      {/* Render Table */}
+                      <table
+                        className="table table-bordered table-nowrap align-middle mb-0 custom-table"
+                        style={{ width: "100%" }}
+                      >
+                        <thead className="table-light">
+                          {customActiveTabJenisData == "1" ? (
+                            <>
+                              <tr>
+                                <th
+                                  rowSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    cursor: "pointer",
+                                    verticalAlign: "middle",
+                                  }}
+                                >
+                                  No
+                                </th>
+                                <th
+                                  rowSpan="2"
+                                  onClick={() =>
+                                    dataKolomNamaDaerah == "Provinsi"
+                                      ? requestSort("kode_prov")
+                                      : requestSort("kode_ddn")
+                                  }
+                                  style={{
+                                    cursor: "pointer",
+                                    verticalAlign: "middle",
+                                    textAlign: "center",
+                                  }}
+                                >
+                                  {dataKolomNamaDaerah}
+                                  {dataKolomNamaDaerah == "Provinsi"
+                                    ? getSortIcon("kode_prov")
+                                    : getSortIcon("kode_ddn")}
+                                </th>
+                                <th
+                                  colSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    borderRight: "2px solid #A9A9A9",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  Peserta Didik
+                                </th>
+                                <th
+                                  colSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    borderRight: "2px solid #A9A9A9",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  Tenaga Pengajar
+                                </th>
+                                <th
+                                  colSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    borderRight: "2px solid #A9A9A9",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  Jumlah Sekolah
+                                </th>
+                                {/* <th colSpan="2" style={{ textAlign: "center" }}>
+                            Anak Tidak Sekolah
+                          </th> */}
+                                {showNextData ? (
+                                  <></>
+                                ) : (
+                                  <>
+                                    <th
+                                      rowSpan="2"
+                                      style={{
+                                        textAlign: "center",
+                                        verticalAlign: "middle",
+                                        cursor: "pointer",
+                                      }}
+                                      onClick={() =>
+                                        requestSort("totalanggaran")
+                                      }
+                                    >
+                                      Total Anggaran (Rp){" "}
+                                      {getSortIcon("totalanggaran")}
+                                    </th>
+                                    <th
+                                      rowSpan="2"
+                                      style={{
+                                        textAlign: "center",
+                                        verticalAlign: "middle",
+                                        cursor: "pointer",
+                                      }}
+                                      onClick={() =>
+                                        requestSort("total_pendidikan ")
+                                      }
+                                    >
+                                      Total Anggaran Pendidikan (Rp){" "}
+                                      {getSortIcon("total_pendidikan ")}
+                                    </th>
+                                    <th
+                                      rowSpan="2"
+                                      style={{
+                                        textAlign: "center",
+                                        verticalAlign: "middle",
+                                        cursor: "pointer",
+                                      }}
+                                      onClick={() =>
+                                        requestSort("persentase_anggaran")
+                                      }
+                                    >
+                                      Persentase{" "}
+                                      {getSortIcon("persentase_anggaran")}
+                                    </th>
+                                    <th
+                                      rowSpan="2"
+                                      style={{
+                                        textAlign: "center",
+                                        verticalAlign: "middle",
+                                      }}
+                                    >
+                                      Detail Anggaran Pendidikan
+                                    </th>
+                                  </>
+                                )}
+                              </tr>
+                              <tr>
+                                <th
+                                  onClick={() => requestSort("sma")}
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SMA {getSortIcon("sma")}
+                                </th>
+                                <th
+                                  onClick={() => requestSort("smk")}
+                                  style={{
+                                    cursor: "pointer",
+                                    borderRight: "2px solid #A9A9A9",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SMK {getSortIcon("smk")}
+                                </th>
+                                <th
+                                  onClick={() => requestSort("guru_sma")}
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SMA {getSortIcon("guru_sma")}
+                                </th>
+                                <th
+                                  onClick={() => requestSort("guru_smk")}
+                                  style={{
+                                    cursor: "pointer",
+                                    borderRight: "2px solid #A9A9A9",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SMK {getSortIcon("guru_smk")}
+                                </th>
+                                <th
+                                  onClick={() =>
+                                    requestSort("jumlah_sekolah_sma")
+                                  }
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SMA {getSortIcon("jumlah_sekolah_sma")}
+                                </th>
+                                <th
+                                  onClick={() =>
+                                    requestSort("jumlah_sekolah_smk")
+                                  }
+                                  style={{
+                                    cursor: "pointer",
+                                    borderRight: "2px solid #A9A9A9",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SMK {getSortIcon("jumlah_sekolah_smk")}
+                                </th>
+                              </tr>
+                            </>
+                          ) : (
+                            <>
+                              <tr>
+                                <th
+                                  rowSpan="2"
+                                  style={{
+                                    cursor: "pointer",
+                                    verticalAlign: "middle",
+                                    textAlign: "center",
+                                  }}
+                                >
+                                  No
+                                </th>
+                                <th
+                                  rowSpan="2"
+                                  onClick={() => requestSort("nama_prov")}
+                                  style={{
+                                    cursor: "pointer",
+                                    verticalAlign: "middle",
+                                    textAlign: "center",
+                                  }}
+                                >
+                                  Provinsi {getSortIcon("nama_prov")}
+                                </th>
+                                <th colSpan="2" style={{ textAlign: "center" }}>
+                                  Anak Tidak Sekolah
+                                </th>
+                                {showNextData ? (
+                                  <></>
+                                ) : (
+                                  <>
+                                    <th
+                                      rowSpan="2"
+                                      style={{
+                                        textAlign: "center",
+                                        verticalAlign: "middle",
+                                        cursor: "pointer",
+                                      }}
+                                      onClick={() =>
+                                        requestSort("totalanggaran")
+                                      }
+                                    >
+                                      Total Anggaran (Rp){" "}
+                                      {getSortIcon("totalanggaran")}
+                                    </th>
+                                    <th
+                                      rowSpan="2"
+                                      style={{
+                                        textAlign: "center",
+                                        verticalAlign: "middle",
+                                        cursor: "pointer",
+                                      }}
+                                      onClick={() =>
+                                        requestSort("total_pendidikan ")
+                                      }
+                                    >
+                                      Total Anggaran Pendidikan (Rp){" "}
+                                      {getSortIcon("total_pendidikan ")}
+                                    </th>
+                                    <th
+                                      rowSpan="2"
+                                      style={{
+                                        textAlign: "center",
+                                        verticalAlign: "middle",
+                                        cursor: "pointer",
+                                      }}
+                                      onClick={() =>
+                                        requestSort("persentase_anggaran")
+                                      }
+                                    >
+                                      Persentase{" "}
+                                      {getSortIcon("persentase_anggaran")}
+                                    </th>
+                                    <th
+                                      rowSpan="2"
+                                      style={{
+                                        textAlign: "center",
+                                        verticalAlign: "middle",
+                                      }}
+                                    >
+                                      Detail Anggaran Pendidikan
+                                    </th>
+                                  </>
+                                )}
+                              </tr>
+                              <tr>
+                                <th
+                                  onClick={() => requestSort("totsma_do")}
+                                  style={{
+                                    cursor: "pointer",
+                                    borderRight: "2px solid #A9A9A9",
+                                  }}
+                                >
+                                  Drop Out SMA/SMK {getSortIcon("totsma_do")}
+                                </th>
+                                <th
+                                  onClick={() => requestSort("tkt_9_ltm")}
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  Tidak Lanjut ke SMA {getSortIcon("tkt_9_ltm")}
+                                </th>
+                              </tr>
+                            </>
+                          )}
+                        </thead>
+                        <tbody style={{ minHeight: "500px" }}>
+                          {currentItemProvinsi.map((item, index) => (
+                            <tr key={index}>
+                              {/* <td>{item.kode_prop}</td> */}
+                              <td
+                                style={{
+                                  textAlign: "center",
+                                  verticalAlign: "middle",
+                                }}
+                              >
+                                {indexOfFirstItemProvinsi + index + 1}
+                              </td>
+                              <td
+                                onClick={(e) => {
+                                  showNextData
+                                    ? ""
+                                    : getDataTabelDapodikProvDetail(
+                                        item.kode_prov,
+                                        e
+                                      );
+                                }}
+                                className={showNextData ? "" : "click-data"}
+                                style={{ maxWidth: "250px" }}
+                              >
+                                {showNextData
+                                  ? item.nama_kabkota
+                                  : item.nama_prov}
+                              </td>
+                              {customActiveTabJenisData == "1" ? (
+                                <>
+                                  <td style={{ backgroundColor: "#f7f7ff" }}>
+                                    {item.sma
+                                      ? parseInt(item.sma).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td
+                                    style={{
+                                      borderRight: "2px solid #A9A9A9",
+                                      backgroundColor: "#f7f7ff",
+                                    }}
+                                  >
+                                    {item.smk
+                                      ? parseInt(item.smk).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td style={{ backgroundColor: "#f7f7ff" }}>
+                                    {item.guru_sma
+                                      ? parseInt(item.guru_sma).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td
+                                    style={{
+                                      borderRight: "2px solid #A9A9A9",
+                                      backgroundColor: "#f7f7ff",
+                                    }}
+                                  >
+                                    {item.guru_smk
+                                      ? parseInt(item.guru_smk).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td style={{ backgroundColor: "#f7f7ff" }}>
+                                    {item.jumlah_sekolah_sma
+                                      ? parseInt(
+                                          item.jumlah_sekolah_sma
+                                        ).toLocaleString("id-ID")
+                                      : "-"}
+                                  </td>
+                                  <td
+                                    style={{
+                                      borderRight: "2px solid #A9A9A9",
+                                      backgroundColor: "#f7f7ff",
+                                    }}
+                                  >
+                                    {item.jumlah_sekolah_smk
+                                      ? parseInt(
+                                          item.jumlah_sekolah_smk
+                                        ).toLocaleString("id-ID")
+                                      : "-"}
+                                  </td>
+                                </>
+                              ) : (
+                                <>
+                                  <td
+                                    style={{
+                                      backgroundColor: "#f7f7f7",
+                                      borderRight: "2px solid #A9A9A9",
+                                    }}
+                                  >
+                                    {item.totsma_do
+                                      ? parseInt(item.totsma_do).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td style={{ backgroundColor: "#f7f7f7" }}>
+                                    {item.tkt_9_ltm
+                                      ? parseInt(item.tkt_9_ltm).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                </>
+                              )}
+                              {showNextData ? (
+                                <></>
+                              ) : (
+                                <>
+                                  <td>
+                                    <span style={{ float: "right" }}>
+                                      {item.totalanggaran
+                                        ? parseInt(
+                                            item.totalanggaran
+                                          ).toLocaleString("id-ID")
+                                        : "-"}
+                                    </span>
+                                  </td>
+                                  <td>
+                                    <span style={{ float: "right" }}>
+                                      {item.total_pendidikan
+                                        ? parseInt(
+                                            item.total_pendidikan
+                                          ).toLocaleString("id-ID")
+                                        : "-"}
+                                    </span>
+                                  </td>
+                                  <td>
+                                    <span style={{ float: "right" }}>
+                                      {`${
+                                        item.persentase_anggaran
+                                          ? parseInt(
+                                              item.persentase_anggaran
+                                            ).toLocaleString("id-ID")
+                                          : "-"
+                                      }%`}
+                                    </span>
+                                  </td>
+                                  <td style={{ textAlign: "center" }}>
+                                    <i
+                                      style={{
+                                        padding: "5px 10px",
+                                        cursor: "pointer",
+                                        fontSize: "25px",
+                                      }}
+                                      onClick={() =>
+                                        handleOpen(
+                                          "",
+                                          item.nama_prov,
+                                          "",
+                                          item.kode_ddn,
+                                          item.jns_pemda,
+                                          item.total_pendidikan
+                                        )
+                                      }
+                                      className="bx bx-list-ul text-primary"
+                                    ></i>
+                                  </td>
+                                </>
+                              )}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    <Pagination
+                      currentPage={currentPageProvinsi}
+                      totalPages={totalPagesProvinsi}
+                      onPageChange={paginateProvinsi}
+                    />
+                  </TabPane>
+                  <TabPane tabId="3" id="paud">
+                    <div className="mb-2 d-flex">
+                      <div
+                        className="mx-2"
+                        style={{
+                          position: "relative",
+                          width: "100%",
+                          maxWidth: "300px",
+                          marginBottom: "20px",
+                        }}
+                      >
+                        <input
+                          style={{
+                            padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                            width: "100%",
+                            border: "1px solid #ccc",
+                            borderRadius: "5px",
+                            fontSize: "16px",
+                          }}
+                          type="text"
+                          value={searchTermKab}
+                          onChange={handleSearchInputKabupaten}
+                          // onKeyDown={(e) => handleKeyDown(e, "kabupaten")}
+                          placeholder="Cari Kabupaten/Kota"
+                        />
+
+                        {/* Tombol "X" di dalam input */}
+                        {searchTermKab && (
+                          <button
+                            onClick={() => handleClearSearch("kabupaten")}
+                            style={{
+                              position: "absolute",
+                              right: "10px",
+                              top: "50%",
+                              transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                              background: "transparent",
+                              border: "none",
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              color: "#999",
+                            }}
+                          >
+                            &#10006;
+                          </button>
+                        )}
+                      </div>
+                      {/* <div>
                       <button
                         style={{
                           backgroundColor: "#007bff",
@@ -2921,405 +3461,487 @@ const ContentDapodikV2 = () => {
                         search
                       </button>
                     </div> */}
-                  </div>
-                  <div style={{ overflowX: "auto" }}>
-                    {/* Render Table */}
-                    <table
-                      className="table table-bordered table-nowrap align-middle mb-0 custom-table"
-                      style={{ width: "100%" }}
-                    >
-                      <thead className="table-light">
-                        {customActiveTabJenisData == "1" ? (<>
-                          <tr>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              cursor: "pointer",
-                              verticalAlign: "middle",
-                            }}
-                          >
-                            No
-                          </th>
-                          <th
-                            rowSpan="2"
-                            onClick={() => requestSort("nama_prov")}
-                            style={{
-                              cursor: "pointer",
-                              verticalAlign: "middle",
-                              textAlign: "center",
-                            }}
-                          >
-                            Kabupaten/Kota {getSortIcon("nama_prov")}
-                          </th>
-                          <th
-                            colSpan="2"
-                            style={{
-                              textAlign: "center",
-                              borderRight: "2px solid #A9A9A9",
-                              backgroundColor: "#f7f7ff"
-                            }}
-                          >
-                            Peserta Didik
-                          </th>
-                          <th
-                            colSpan="2"
-                            style={{
-                              textAlign: "center",
-                              borderRight: "2px solid #A9A9A9",
-                              backgroundColor: "#f7f7ff"
-                            }}
-                          >
-                            Tenaga Pengajar
-                          </th>
-                          <th
-                            colSpan="2"
-                            style={{
-                              textAlign: "center",
-                              borderRight: "2px solid #A9A9A9",
-                              backgroundColor: "#f7f7ff"
-                            }}
-                          >
-                            Jumlah Sekolah
-                          </th>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => requestSort("totalanggaran")}
-                          >
-                            Total Anggaran (Rp){" "}
-                            {getSortIcon("totalanggaran")}
-                          </th>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => requestSort("total_pendidikan ")}
-                          >
-                            Total Anggaran Pendidikan (Rp){" "}
-                            {getSortIcon("total_pendidikan ")}
-                          </th>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => requestSort("persentase_anggaran")}
-                          >
-                            Persentase {" "}
-                            {getSortIcon("persentase_anggaran")}
-                          </th>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                            }}
-                          >
-                            Detail Anggaran Pendidikan
-                          </th>
-                        </tr>
-                        <tr>
-                          <th
-                            onClick={() => requestSort("sd")}
-                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
-                          >
-                            SD {getSortIcon("sd")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("smp")}
-                            style={{
-                              cursor: "pointer",
-                              borderRight: "2px solid #A9A9A9",
-                              backgroundColor: "#f7f7ff"
-                            }}
-                          >
-                            SMP {getSortIcon("smp")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("guru_sd")}
-                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
-                          >
-                            SD {getSortIcon("guru_sd")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("guru_smp")}
-                            style={{
-                              cursor: "pointer",
-                              borderRight: "2px solid #A9A9A9",
-                              backgroundColor: "#f7f7ff"
-                            }}
-                          >
-                            SMP {getSortIcon("guru_smp")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("jumlah_sekolah_sd")}
-                            style={{ cursor: "pointer", backgroundColor: "#f7f7ff" }}
-                          >
-                            SD {getSortIcon("jumlah_sekolah_sd")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("jumlah_sekolah_smp")}
-                            style={{
-                              cursor: "pointer",
-                              borderRight: "2px solid #A9A9A9",
-                              backgroundColor: "#f7f7ff"
-                            }}
-                          >
-                            SMP {getSortIcon("jumlah_sekolah_smp")}
-                          </th>
-                        </tr>
-                        </>):(<>
-                        <tr>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              cursor: "pointer",
-                              verticalAlign: "middle",
-                            }}
-                          >
-                            No
-                          </th>
-                          <th
-                            rowSpan="2"
-                            onClick={() => requestSort("nama_prov")}
-                            style={{
-                              cursor: "pointer",
-                              verticalAlign: "middle",
-                              textAlign: "center",
-                            }}
-                          >
-                            Kabupaten/Kota {getSortIcon("nama_prov")}
-                          </th>
-                          <th colSpan="4" style={{ textAlign: "center" }}>
-                            Anak Tidak Sekolah
-                          </th>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => requestSort("totalanggaran")}
-                          >
-                            Total Anggaran (Rp){" "}
-                            {getSortIcon("totalanggaran")}
-                          </th>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => requestSort("total_pendidikan ")}
-                          >
-                            Total Anggaran Pendidikan (Rp){" "}
-                            {getSortIcon("total_pendidikan ")}
-                          </th>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                              cursor: "pointer",
-                            }}
-                            onClick={() => requestSort("persentase_anggaran")}
-                          >
-                            Persentase {" "}
-                            {getSortIcon("persentase_anggaran")}
-                          </th>
-                          <th
-                            rowSpan="2"
-                            style={{
-                              textAlign: "center",
-                              verticalAlign: "middle",
-                            }}
-                          >
-                            Detail Anggaran Pendidikan
-                          </th>
-                        </tr>
-                        <tr>
-                          <th
-                            onClick={() => requestSort("totsd_do")}
-                            style={{ cursor: "pointer" }}
-                          >
-                            Drop Out SD {getSortIcon("totsd_do")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("totsmp_do")}
-                            style={{ cursor: "pointer", borderRight: "2px solid #A9A9A9" }}
-                          >
-                            Drop Out SMP {getSortIcon("totsmp_do")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("tkt_6_ltm")}
-                            style={{ cursor: "pointer", borderRight: "2px solid #A9A9A9" }}
-                          >
-                            Tidak Lanjut ke SMP {getSortIcon("tkt_6_ltm")}
-                          </th>
-                          <th
-                            onClick={() => requestSort("tkt_bpb")}
-                            style={{ cursor: "pointer" }}
-                          >
-                            Anak Belum Pernah Bersekolah{" "}
-                            {getSortIcon("tkt_bpb")}
-                          </th>
-                        </tr>
-                        </>)}
-                        
-                      </thead>
-                      <tbody style={{ minHeight: "500px" }}>
-                        {currentItemsKabupaten.map((item, index) => (
-                          <tr key={index}>
-                            {/* <td>{item.kode_prop}</td> */}
-                            <td
-                              style={{
-                                textAlign: "center",
-                                verticalAlign: "middle",
-                              }}
-                            >
-                              {indexOfFirstItemKabupaten + index + 1}
-                            </td>
-                            <td style={{ maxWidth: "250px" }}>
-                              {" "}
-                              {item.nama_kabkota || "-"}
-                            </td>
-                            {customActiveTabJenisData == "1" ? (<><td style={{
-                                backgroundColor: "#f7f7ff"
-                              }} >
-                              {item.sd
-                                ? parseInt(item.sd).toLocaleString("id-ID")
-                                : "-"}
-                            </td>
-                            <td style={{ borderRight: "2px solid #A9A9A9", backgroundColor: "#f7f7ff" }}>
-                              {item.smp
-                                ? parseInt(item.smp).toLocaleString("id-ID")
-                                : "-"}
-                            </td>
-                            <td style={{
-                                backgroundColor: "#f7f7ff"
-                              }} >
-                              {item.guru_sd
-                                ? parseInt(item.guru_sd).toLocaleString("id-ID")
-                                : "-"}
-                            </td>
-                            <td style={{ borderRight: "2px solid #A9A9A9", backgroundColor: "#f7f7ff" }}>
-                              {item.guru_smp
-                                ? parseInt(item.guru_smp).toLocaleString("id-ID")
-                                : "-"}
-                            </td>
-                            <td style={{
-                                backgroundColor: "#f7f7ff"
-                              }} >
-                              {item.jumlah_sekolah_sd
-                                ? parseInt(item.jumlah_sekolah_sd).toLocaleString("id-ID")
-                                : "-"}
-                            </td>
-                            <td style={{ borderRight: "2px solid #A9A9A9", backgroundColor: "#f7f7ff" }}>
-                              {item.jumlah_sekolah_smp
-                                ? parseInt(item.jumlah_sekolah_smp).toLocaleString("id-ID")
-                                : "-"}
-                            </td>
-                            </>) : (<>
-                            <td style={{ backgroundColor: "#f7f7f7" }}>
-                              {item.totsd_do
-                                ? parseInt(item.totsd_do).toLocaleString(
-                                    "id-ID"
-                                  )
-                                : "-"}
-                            </td>
-                            <td style={{ backgroundColor: "#f7f7f7", borderRight: "2px solid #A9A9A9"}}>
-                              {item.totsmp_do
-                                ? parseInt(item.totsmp_do).toLocaleString(
-                                    "id-ID"
-                                  )
-                                : "-"}
-                            </td>
-                            <td style={{ backgroundColor: "#f7f7f7", borderRight: "2px solid #A9A9A9" }}>
-                              {item.tkt_6_ltm
-                                ? parseInt(item.tkt_6_ltm).toLocaleString(
-                                    "id-ID"
-                                  )
-                                : "-"}
-                            </td>
-                            <td style={{ backgroundColor: "#f7f7f7" }}>
-                              {item.tkt_bpb
-                                ? parseInt(item.tkt_bpb).toLocaleString("id-ID")
-                                : "-"}
-                            </td>
-                            </>)}
-                            
-                            <td>
-                              <span style={{ float: "right" }}>
-                                {item.totalanggaran
-                                  ? parseInt(item.totalanggaran).toLocaleString(
-                                      "id-ID"
-                                    )
-                                  : "-"}
-                              </span>
-                            </td>
-                            <td>
-                              <span style={{ float: "right" }}>
-                                {item.total_pendidikan
-                                  ? parseInt(item.total_pendidikan).toLocaleString(
-                                      "id-ID"
-                                    )
-                                  : "-"}
-                              </span>
-                            </td>
-                            <td>
-                              <span style={{ float: "right" }}>
-                                {`${item.persentase_anggaran
-                                  ? parseInt(item.persentase_anggaran).toLocaleString(
-                                      "id-ID"
-                                    )
-                                  : "-"}%`}
-                              </span>
-                            </td>
-                            <td style={{ textAlign: "center" }}>
-                              <i
+                    </div>
+                    <div style={{ overflowX: "auto" }}>
+                      {/* Render Table */}
+                      <table
+                        className="table table-bordered table-nowrap align-middle mb-0 custom-table"
+                        style={{ width: "100%" }}
+                      >
+                        <thead className="table-light">
+                          {customActiveTabJenisData == "1" ? (
+                            <>
+                              <tr>
+                                <th
+                                  rowSpan="2"
+                                  style={{
+                                    cursor: "pointer",
+                                    verticalAlign: "middle",
+                                  }}
+                                >
+                                  No
+                                </th>
+                                <th
+                                  rowSpan="2"
+                                  onClick={() => requestSort("nama_prov")}
+                                  style={{
+                                    cursor: "pointer",
+                                    verticalAlign: "middle",
+                                    textAlign: "center",
+                                  }}
+                                >
+                                  Kabupaten/Kota {getSortIcon("nama_prov")}
+                                </th>
+                                <th
+                                  colSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    borderRight: "2px solid #A9A9A9",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  Peserta Didik
+                                </th>
+                                <th
+                                  colSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    borderRight: "2px solid #A9A9A9",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  Tenaga Pengajar
+                                </th>
+                                <th
+                                  colSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    borderRight: "2px solid #A9A9A9",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  Jumlah Sekolah
+                                </th>
+                                <th
+                                  rowSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    verticalAlign: "middle",
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={() => requestSort("totalanggaran")}
+                                >
+                                  Total Anggaran (Rp){" "}
+                                  {getSortIcon("totalanggaran")}
+                                </th>
+                                <th
+                                  rowSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    verticalAlign: "middle",
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={() =>
+                                    requestSort("total_pendidikan ")
+                                  }
+                                >
+                                  Total Anggaran Pendidikan (Rp){" "}
+                                  {getSortIcon("total_pendidikan ")}
+                                </th>
+                                <th
+                                  rowSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    verticalAlign: "middle",
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={() =>
+                                    requestSort("persentase_anggaran")
+                                  }
+                                >
+                                  Persentase{" "}
+                                  {getSortIcon("persentase_anggaran")}
+                                </th>
+                                <th
+                                  rowSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    verticalAlign: "middle",
+                                  }}
+                                >
+                                  Detail Anggaran Pendidikan
+                                </th>
+                              </tr>
+                              <tr>
+                                <th
+                                  onClick={() => requestSort("sd")}
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SD {getSortIcon("sd")}
+                                </th>
+                                <th
+                                  onClick={() => requestSort("smp")}
+                                  style={{
+                                    cursor: "pointer",
+                                    borderRight: "2px solid #A9A9A9",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SMP {getSortIcon("smp")}
+                                </th>
+                                <th
+                                  onClick={() => requestSort("guru_sd")}
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SD {getSortIcon("guru_sd")}
+                                </th>
+                                <th
+                                  onClick={() => requestSort("guru_smp")}
+                                  style={{
+                                    cursor: "pointer",
+                                    borderRight: "2px solid #A9A9A9",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SMP {getSortIcon("guru_smp")}
+                                </th>
+                                <th
+                                  onClick={() =>
+                                    requestSort("jumlah_sekolah_sd")
+                                  }
+                                  style={{
+                                    cursor: "pointer",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SD {getSortIcon("jumlah_sekolah_sd")}
+                                </th>
+                                <th
+                                  onClick={() =>
+                                    requestSort("jumlah_sekolah_smp")
+                                  }
+                                  style={{
+                                    cursor: "pointer",
+                                    borderRight: "2px solid #A9A9A9",
+                                    backgroundColor: "#f7f7ff",
+                                  }}
+                                >
+                                  SMP {getSortIcon("jumlah_sekolah_smp")}
+                                </th>
+                              </tr>
+                            </>
+                          ) : (
+                            <>
+                              <tr>
+                                <th
+                                  rowSpan="2"
+                                  style={{
+                                    cursor: "pointer",
+                                    verticalAlign: "middle",
+                                  }}
+                                >
+                                  No
+                                </th>
+                                <th
+                                  rowSpan="2"
+                                  onClick={() => requestSort("nama_prov")}
+                                  style={{
+                                    cursor: "pointer",
+                                    verticalAlign: "middle",
+                                    textAlign: "center",
+                                  }}
+                                >
+                                  Kabupaten/Kota {getSortIcon("nama_prov")}
+                                </th>
+                                <th colSpan="4" style={{ textAlign: "center" }}>
+                                  Anak Tidak Sekolah
+                                </th>
+                                <th
+                                  rowSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    verticalAlign: "middle",
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={() => requestSort("totalanggaran")}
+                                >
+                                  Total Anggaran (Rp){" "}
+                                  {getSortIcon("totalanggaran")}
+                                </th>
+                                <th
+                                  rowSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    verticalAlign: "middle",
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={() =>
+                                    requestSort("total_pendidikan ")
+                                  }
+                                >
+                                  Total Anggaran Pendidikan (Rp){" "}
+                                  {getSortIcon("total_pendidikan ")}
+                                </th>
+                                <th
+                                  rowSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    verticalAlign: "middle",
+                                    cursor: "pointer",
+                                  }}
+                                  onClick={() =>
+                                    requestSort("persentase_anggaran")
+                                  }
+                                >
+                                  Persentase{" "}
+                                  {getSortIcon("persentase_anggaran")}
+                                </th>
+                                <th
+                                  rowSpan="2"
+                                  style={{
+                                    textAlign: "center",
+                                    verticalAlign: "middle",
+                                  }}
+                                >
+                                  Detail Anggaran Pendidikan
+                                </th>
+                              </tr>
+                              <tr>
+                                <th
+                                  onClick={() => requestSort("totsd_do")}
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  Drop Out SD {getSortIcon("totsd_do")}
+                                </th>
+                                <th
+                                  onClick={() => requestSort("totsmp_do")}
+                                  style={{
+                                    cursor: "pointer",
+                                    borderRight: "2px solid #A9A9A9",
+                                  }}
+                                >
+                                  Drop Out SMP {getSortIcon("totsmp_do")}
+                                </th>
+                                <th
+                                  onClick={() => requestSort("tkt_6_ltm")}
+                                  style={{
+                                    cursor: "pointer",
+                                    borderRight: "2px solid #A9A9A9",
+                                  }}
+                                >
+                                  Tidak Lanjut ke SMP {getSortIcon("tkt_6_ltm")}
+                                </th>
+                                <th
+                                  onClick={() => requestSort("tkt_bpb")}
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  Anak Belum Pernah Bersekolah{" "}
+                                  {getSortIcon("tkt_bpb")}
+                                </th>
+                              </tr>
+                            </>
+                          )}
+                        </thead>
+                        <tbody style={{ minHeight: "500px" }}>
+                          {currentItemsKabupaten.map((item, index) => (
+                            <tr key={index}>
+                              {/* <td>{item.kode_prop}</td> */}
+                              <td
                                 style={{
-                                  padding: "5px 10px",
-                                  cursor: "pointer",
-                                  fontSize: "25px",
+                                  textAlign: "center",
+                                  verticalAlign: "middle",
                                 }}
-                                onClick={() =>
-                                  handleOpen(
-                                    "",
-                                    item.nama_kabkota,
-                                    item.kode_ddn,
-                                    "",
-                                    item.jns_pemda,
-                                    item.total_pendidikan
-                                  )
-                                }
-                                className="bx bx-list-ul text-primary"
-                              ></i>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                      {/* {placeholdersKabupaten} */}
-                    </table>
-                  </div>
-                  <Pagination
-                    currentPage={currentPageKabupaten}
-                    totalPages={totalPagesKabupaten}
-                    onPageChange={paginateKabupaten}
-                  />
-                </TabPane>
-              </TabContent>
-              </div>                                                                           
+                              >
+                                {indexOfFirstItemKabupaten + index + 1}
+                              </td>
+                              <td style={{ maxWidth: "250px" }}>
+                                {" "}
+                                {item.nama_kabkota || "-"}
+                              </td>
+                              {customActiveTabJenisData == "1" ? (
+                                <>
+                                  <td
+                                    style={{
+                                      backgroundColor: "#f7f7ff",
+                                    }}
+                                  >
+                                    {item.sd
+                                      ? parseInt(item.sd).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td
+                                    style={{
+                                      borderRight: "2px solid #A9A9A9",
+                                      backgroundColor: "#f7f7ff",
+                                    }}
+                                  >
+                                    {item.smp
+                                      ? parseInt(item.smp).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td
+                                    style={{
+                                      backgroundColor: "#f7f7ff",
+                                    }}
+                                  >
+                                    {item.guru_sd
+                                      ? parseInt(item.guru_sd).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td
+                                    style={{
+                                      borderRight: "2px solid #A9A9A9",
+                                      backgroundColor: "#f7f7ff",
+                                    }}
+                                  >
+                                    {item.guru_smp
+                                      ? parseInt(item.guru_smp).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td
+                                    style={{
+                                      backgroundColor: "#f7f7ff",
+                                    }}
+                                  >
+                                    {item.jumlah_sekolah_sd
+                                      ? parseInt(
+                                          item.jumlah_sekolah_sd
+                                        ).toLocaleString("id-ID")
+                                      : "-"}
+                                  </td>
+                                  <td
+                                    style={{
+                                      borderRight: "2px solid #A9A9A9",
+                                      backgroundColor: "#f7f7ff",
+                                    }}
+                                  >
+                                    {item.jumlah_sekolah_smp
+                                      ? parseInt(
+                                          item.jumlah_sekolah_smp
+                                        ).toLocaleString("id-ID")
+                                      : "-"}
+                                  </td>
+                                </>
+                              ) : (
+                                <>
+                                  <td style={{ backgroundColor: "#f7f7f7" }}>
+                                    {item.totsd_do
+                                      ? parseInt(item.totsd_do).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td
+                                    style={{
+                                      backgroundColor: "#f7f7f7",
+                                      borderRight: "2px solid #A9A9A9",
+                                    }}
+                                  >
+                                    {item.totsmp_do
+                                      ? parseInt(item.totsmp_do).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td
+                                    style={{
+                                      backgroundColor: "#f7f7f7",
+                                      borderRight: "2px solid #A9A9A9",
+                                    }}
+                                  >
+                                    {item.tkt_6_ltm
+                                      ? parseInt(item.tkt_6_ltm).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                  <td style={{ backgroundColor: "#f7f7f7" }}>
+                                    {item.tkt_bpb
+                                      ? parseInt(item.tkt_bpb).toLocaleString(
+                                          "id-ID"
+                                        )
+                                      : "-"}
+                                  </td>
+                                </>
+                              )}
+
+                              <td>
+                                <span style={{ float: "right" }}>
+                                  {item.totalanggaran
+                                    ? parseInt(
+                                        item.totalanggaran
+                                      ).toLocaleString("id-ID")
+                                    : "-"}
+                                </span>
+                              </td>
+                              <td>
+                                <span style={{ float: "right" }}>
+                                  {item.total_pendidikan
+                                    ? parseInt(
+                                        item.total_pendidikan
+                                      ).toLocaleString("id-ID")
+                                    : "-"}
+                                </span>
+                              </td>
+                              <td>
+                                <span style={{ float: "right" }}>
+                                  {`${
+                                    item.persentase_anggaran
+                                      ? parseInt(
+                                          item.persentase_anggaran
+                                        ).toLocaleString("id-ID")
+                                      : "-"
+                                  }%`}
+                                </span>
+                              </td>
+                              <td style={{ textAlign: "center" }}>
+                                <i
+                                  style={{
+                                    padding: "5px 10px",
+                                    cursor: "pointer",
+                                    fontSize: "25px",
+                                  }}
+                                  onClick={() =>
+                                    handleOpen(
+                                      "",
+                                      item.nama_kabkota,
+                                      item.kode_ddn,
+                                      "",
+                                      item.jns_pemda,
+                                      item.total_pendidikan
+                                    )
+                                  }
+                                  className="bx bx-list-ul text-primary"
+                                ></i>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                        {/* {placeholdersKabupaten} */}
+                      </table>
+                    </div>
+                    <Pagination
+                      currentPage={currentPageKabupaten}
+                      totalPages={totalPagesKabupaten}
+                      onPageChange={paginateKabupaten}
+                    />
+                  </TabPane>
+                </TabContent>
+              </div>
             </CardBody>
           </Card>
         </Col>
@@ -3559,7 +4181,6 @@ const ContentDapodikV2 = () => {
           <Card>
             <CardBody>
               <div className="nav-beranda">
-                
                 <Nav
                   tabs
                   className="nav nav-tabs nav-success nav-justified mb-3"
@@ -3710,36 +4331,32 @@ const ContentDapodikV2 = () => {
                     <TabPane tabId="2" id="sd">
                       <Row>
                         <Col md={4}>
-                        <Card>
-                        <CardBody>
-                        <div className="d-flex flex-column title-custom-card">
-                          <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                            <span>
-                              Total Drop Out SD
-                            </span>
-                          </div>
-                          <div className="d-flex">
-                            <div className="d-flex justify-content-center align-items-center title-body">
-                              <span>
-                                <CountUp
-                                  start={0}
-                                  end={
-                                    dataDropOutSd[1]
-                                  }                                 
-                                  separator="."
-                                  // prefix="Rp "
-                                  // suffix=" T"
-                                  duration={1}
-                                />
-                              </span>
-                            </div>
-                          </div>
-                        </div>                          
-                        </CardBody>
-                      </Card>
+                          <Card>
+                            <CardBody>
+                              <div className="d-flex flex-column title-custom-card">
+                                <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                                  <span>Total Drop Out SD</span>
+                                </div>
+                                <div className="d-flex">
+                                  <div className="d-flex justify-content-center align-items-center title-body">
+                                    <span>
+                                      <CountUp
+                                        start={0}
+                                        end={dataDropOutSd[1]}
+                                        separator="."
+                                        // prefix="Rp "
+                                        // suffix=" T"
+                                        duration={1}
+                                      />
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </CardBody>
+                          </Card>
                         </Col>
                       </Row>
-                    
+
                       <VerticalBarChart
                         valueChart={dataDropOutSd[0]}
                         categoryChart={[
@@ -3756,36 +4373,32 @@ const ContentDapodikV2 = () => {
                     <TabPane tabId="3" id="smp">
                       <Row>
                         <Col md={4}>
-                        <Card>
-                        <CardBody>
-                        <div className="d-flex flex-column title-custom-card">
-                          <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                            <span>
-                              Total Drop Out SMP
-                            </span>
-                          </div>
-                          <div className="d-flex">
-                            <div className="d-flex justify-content-center align-items-center title-body">
-                              <span>
-                                <CountUp
-                                  start={0}
-                                  end={
-                                    dataDropOutSmp[1]
-                                  }
-                                  separator="."
-                                  // prefix="Rp "
-                                  // suffix=" T"
-                                  duration={1}
-                                />
-                              </span>
-                            </div>
-                          </div>
-                        </div>   
-                        </CardBody>
-                      </Card>
+                          <Card>
+                            <CardBody>
+                              <div className="d-flex flex-column title-custom-card">
+                                <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                                  <span>Total Drop Out SMP</span>
+                                </div>
+                                <div className="d-flex">
+                                  <div className="d-flex justify-content-center align-items-center title-body">
+                                    <span>
+                                      <CountUp
+                                        start={0}
+                                        end={dataDropOutSmp[1]}
+                                        separator="."
+                                        // prefix="Rp "
+                                        // suffix=" T"
+                                        duration={1}
+                                      />
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </CardBody>
+                          </Card>
                         </Col>
                       </Row>
-                    
+
                       <VerticalBarChart
                         valueChart={dataDropOutSmp[0]}
                         categoryChart={["Kelas 7", "Kelas 8", "Kelas 9"]}
@@ -3793,37 +4406,33 @@ const ContentDapodikV2 = () => {
                       />
                     </TabPane>
                     <TabPane tabId="4" id="sma/smk">
-                    <Row>
-                      <Col md={4}>
-                      <Card>
-                        <CardBody>
-                        <div className="d-flex flex-column title-custom-card">
-                          <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                            <span>
-                              Total Drop Out SMA
-                            </span>
-                          </div>
-                          <div className="d-flex">
-                            <div className="d-flex justify-content-center align-items-center title-body">
-                              <span>
-                                <CountUp
-                                  start={0}
-                                  end={
-                                    dataDropOutSma[1]
-                                  }                                  
-                                  separator="."
-                                  // prefix="Rp "
-                                  // suffix=" T"
-                                  duration={1}
-                                />
-                              </span>
-                            </div>
-                          </div>
-                        </div>   
-                        </CardBody>
-                      </Card>
-                      </Col>
-                    </Row>                    
+                      <Row>
+                        <Col md={4}>
+                          <Card>
+                            <CardBody>
+                              <div className="d-flex flex-column title-custom-card">
+                                <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                                  <span>Total Drop Out SMA</span>
+                                </div>
+                                <div className="d-flex">
+                                  <div className="d-flex justify-content-center align-items-center title-body">
+                                    <span>
+                                      <CountUp
+                                        start={0}
+                                        end={dataDropOutSma[1]}
+                                        separator="."
+                                        // prefix="Rp "
+                                        // suffix=" T"
+                                        duration={1}
+                                      />
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </CardBody>
+                          </Card>
+                        </Col>
+                      </Row>
                       <VerticalBarChart
                         valueChart={dataDropOutSma[0]}
                         categoryChart={[
@@ -3844,39 +4453,44 @@ const ContentDapodikV2 = () => {
                     Anak Tidak Sekolah Karena Tidak Melanjutkan Ke Jenjang
                     Pendidikan
                   </h4>
-                  {dataShowChartTidakLanjutProvinsi ? dataShowChartTidakLanjutPemda ? (<><button
-                        style={{
-                          backgroundColor: "#007bff",
-                          color: "white",
-                          padding: "10px 20px",
-                          border: "none",
-                          borderRadius: "5px",
-                          cursor: "pointer",
-                          fontSize: "16px",
-                          margin: "8px 0px",
-                        }}
-                        onClick={() => setShowDataChartTidakLanjutPemda(false)}
-                      >
-                        Kembali
-                      </button>
+                  {dataShowChartTidakLanjutProvinsi ? (
+                    dataShowChartTidakLanjutPemda ? (
+                      <>
+                        <button
+                          style={{
+                            backgroundColor: "#007bff",
+                            color: "white",
+                            padding: "10px 20px",
+                            border: "none",
+                            borderRadius: "5px",
+                            cursor: "pointer",
+                            fontSize: "16px",
+                            margin: "8px 0px",
+                          }}
+                          onClick={() =>
+                            setShowDataChartTidakLanjutPemda(false)
+                          }
+                        >
+                          Kembali
+                        </button>
                         <Row>
                           <Col md={3}>
                             <Card className="card-animate mt-4 mb-0">
                               <CardBody>
-                                  <div className="d-flex flex-column title-custom-card">
+                                <div className="d-flex flex-column title-custom-card">
                                   <div className="d-flex justify-content-start align-items-start mb-1 title-card">
                                     <span>
-                                      {currentCategoryClicked == "SMP" ? "Total Tidak Lanjut SMP" : "Total Tidak Lanjut SMA"}
+                                      {currentCategoryClicked == "SMP"
+                                        ? "Total Tidak Lanjut SMP"
+                                        : "Total Tidak Lanjut SMA"}
                                     </span>
                                   </div>
-                                  <div className="d-flex">                            
+                                  <div className="d-flex">
                                     <div className="d-flex justify-content-center align-items-center title-body">
                                       <span>
                                         <CountUp
                                           start={0}
-                                          end={
-                                            dataDapodikTidakLanjutPemda[2]
-                                          }
+                                          end={dataDapodikTidakLanjutPemda[2]}
                                           separator="."
                                           // prefix=""
                                           suffix=""
@@ -3891,40 +4505,52 @@ const ContentDapodikV2 = () => {
                           </Col>
                           <Col md={9}>
                             <HorizontalBarChart
-                              dataColors= {currentCategoryClicked == "SMP" ? '["#7CCCE4"]' : '["#B0B0B0"]'}
+                              dataColors={
+                                currentCategoryClicked == "SMP"
+                                  ? '["#7CCCE4"]'
+                                  : '["#B0B0B0"]'
+                              }
                               valueChart={dataDapodikTidakLanjutPemda[0]}
                               categoryChart={dataDapodikTidakLanjutPemda[1]}
                               idParam={dataDapodikTidakLanjutPemda[3]}
                               dataZoom={true}
-                              breakWord={true}                          
+                              breakWord={true}
                             />
                           </Col>
-                        </Row>  </>) : (<><button
-                        style={{
-                          backgroundColor: "#007bff",
-                          color: "white",
-                          padding: "10px 20px",
-                          border: "none",
-                          borderRadius: "5px",
-                          cursor: "pointer",
-                          fontSize: "16px",
-                          margin: "8px 0px",
-                        }}
-                        onClick={() => setShowDataChartTidakLanjutProvinsi(false)}
-                      >
-                        Kembali
-                      </button>
+                        </Row>{" "}
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          style={{
+                            backgroundColor: "#007bff",
+                            color: "white",
+                            padding: "10px 20px",
+                            border: "none",
+                            borderRadius: "5px",
+                            cursor: "pointer",
+                            fontSize: "16px",
+                            margin: "8px 0px",
+                          }}
+                          onClick={() =>
+                            setShowDataChartTidakLanjutProvinsi(false)
+                          }
+                        >
+                          Kembali
+                        </button>
                         <Row>
                           <Col md={3}>
                             <Card className="card-animate mt-4 mb-0">
                               <CardBody>
-                                  <div className="d-flex flex-column title-custom-card">
+                                <div className="d-flex flex-column title-custom-card">
                                   <div className="d-flex justify-content-start align-items-start mb-1 title-card">
                                     <span>
-                                      {currentCategoryClicked == "SMP" ? "Total Tidak Lanjut SMP" : "Total Tidak Lanjut SMA"}
+                                      {currentCategoryClicked == "SMP"
+                                        ? "Total Tidak Lanjut SMP"
+                                        : "Total Tidak Lanjut SMA"}
                                     </span>
                                   </div>
-                                  <div className="d-flex">                            
+                                  <div className="d-flex">
                                     <div className="d-flex justify-content-center align-items-center title-body">
                                       <span>
                                         <CountUp
@@ -3946,21 +4572,34 @@ const ContentDapodikV2 = () => {
                           </Col>
                           <Col md={9}>
                             <HorizontalBarChart
-                              dataColors= {currentCategoryClicked == "SMP" ? '["#7CCCE4"]' : '["#B0B0B0"]'}
+                              dataColors={
+                                currentCategoryClicked == "SMP"
+                                  ? '["#7CCCE4"]'
+                                  : '["#B0B0B0"]'
+                              }
                               valueChart={dataChartDetailTidakLanjutProvinsi[0]}
-                              categoryChart={dataChartDetailTidakLanjutProvinsi[1]}
+                              categoryChart={
+                                dataChartDetailTidakLanjutProvinsi[1]
+                              }
                               idParam={dataChartDetailTidakLanjutProvinsi[3]}
                               onBarClickProv={handleBarClickProv}
                               dataZoom={true}
-                              breakWord={true}                          
+                              breakWord={true}
                             />
                           </Col>
-                        </Row>  </>) : (<><HorizontalBarChart
-                    valueChart={dataChartAts}
-                    categoryChart={["SMP", "SMA"]}
-                    dataColors='["#7CCCE4", "#B0B0B0"]'
-                    onBarClick={handleBarClick}
-                  /></>)}
+                        </Row>{" "}
+                      </>
+                    )
+                  ) : (
+                    <>
+                      <HorizontalBarChart
+                        valueChart={dataChartAts}
+                        categoryChart={["SMP", "SMA"]}
+                        dataColors='["#7CCCE4", "#B0B0B0"]'
+                        onBarClick={handleBarClick}
+                      />
+                    </>
+                  )}
                 </TabPane>
 
                 <TabPane tabId="3" id="smp">
@@ -4079,7 +4718,7 @@ const ContentDapodikV2 = () => {
                         percentageChart2={dataChartRincianDapodik[1]}
                         axisY={["Total Anggaran", "Persentase"]}
                         additionalData={dataChartRincianDapodik[3]}
-                        seProv={true}                        
+                        seProv={true}
                         dataColors='["#2DAED4", "#090909"]'
                       />
                     </TabPane>
@@ -4091,7 +4730,7 @@ const ContentDapodikV2 = () => {
                         percentageChart2={dataChartRincianDapodikProvinsi[1]}
                         axisY={["Total Anggaran", "Persentase"]}
                         additionalData={dataChartRincianDapodikProvinsi[3]}
-                        dataColors='["#2DAED4", "#090909"]'                        
+                        dataColors='["#2DAED4", "#090909"]'
                       />
                     </TabPane>
                     <TabPane tabId="3" id="kabupaten">
@@ -4103,7 +4742,7 @@ const ContentDapodikV2 = () => {
                         axisY={["Total Anggaran", "Persentase"]}
                         additionalData={dataChartRincianDapodikKabupaten[3]}
                         dataColors='["#2DAED4", "#090909"]'
-                        kabupaten={true}                        
+                        kabupaten={true}
                       />
                     </TabPane>
                   </TabContent>
@@ -4215,101 +4854,110 @@ const ContentDapodikV2 = () => {
                 </Card>
               </Col>
               <Col md={8}>
-              {dataDetailHighlight.map((item, index)=>(
-                <div className="d-flex mb-3" key={index}>
-                  <div style={{ flexBasis: "350px", color:"#929FB1" }}>{item.nama_rekening}</div>
-                  <div>:&nbsp;</div>
-                  <div style={{ fontWeight: 650 }}>
-                  <CountUp
-                      start={0}
-                      end={item.anggaran}
-                      // decimal=","
-                      // decimals={2}
-                      separator="."
-                      prefix="Rp "
-                      // suffix=" T"
-                      duration={1}
-                    /> 
-                    &nbsp;
+                {dataDetailHighlight.map((item, index) => (
+                  <div className="d-flex mb-3" key={index}>
+                    <div style={{ flexBasis: "350px", color: "#929FB1" }}>
+                      {item.nama_rekening}
+                    </div>
+                    <div>:&nbsp;</div>
+                    <div style={{ fontWeight: 650 }}>
+                      <CountUp
+                        start={0}
+                        end={item.anggaran}
+                        // decimal=","
+                        // decimals={2}
+                        separator="."
+                        prefix="Rp "
+                        // suffix=" T"
+                        duration={1}
+                      />
+                      &nbsp;
+                    </div>
+                    {(item.anggaran / dataRincianDetail) * 100 >= 1 ? (
+                      <>
+                        <div>
+                          (
+                          <CountUp
+                            start={0}
+                            end={(item.anggaran / dataRincianDetail) * 100}
+                            decimal=","
+                            decimals={2}
+                            separator="."
+                            // prefix="Rp "
+                            suffix="%"
+                            duration={1}
+                          />
+                          )
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div>
+                          (
+                          <CountUp
+                            start={0}
+                            end={(item.anggaran / dataRincianDetail) * 100}
+                            decimal=","
+                            decimals={6}
+                            separator="."
+                            // prefix="Rp "
+                            suffix="%"
+                            duration={1}
+                          />
+                          )
+                        </div>
+                      </>
+                    )}
                   </div>
-                  {((item.anggaran/dataRincianDetail)*100)>=1 ? <>
-                    <div>
-                    (<CountUp
-                      start={0}
-                      end={(item.anggaran/dataRincianDetail)*100}
-                      decimal=","
-                      decimals={2}
-                      separator="."
-                      // prefix="Rp "
-                      suffix="%"
-                      duration={1}
-                    />)
-                  </div>
-                  </> : <>
-                  <div>
-                    (<CountUp
-                      start={0}
-                      end={(item.anggaran/dataRincianDetail)*100}
-                      decimal=","
-                      decimals={6}
-                      separator="."
-                      // prefix="Rp "
-                      suffix="%"
-                      duration={1}
-                    />)
-                  </div>
-                  </>}
-                  
-                </div>
-              ))}
+                ))}
               </Col>
             </Row>
             <div className="mb-2 d-flex">
-                    <div
-                      className="mx-2"
-                      style={{
-                        position: "relative",
-                        width: "100%",
-                        maxWidth: "300px",
-                        marginBottom: "20px",
-                      }}
-                    >
-                      <input
-                        style={{
-                          padding: "10px 30px 10px 10px",
-                          width: "100%",
-                          border: "1px solid #ccc",
-                          borderRadius: "5px",
-                          fontSize: "16px",
-                        }}
-                        type="text"
-                        value={searchTermDetail}
-                        onChange={handleSearchInputDetail}
-                        // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
-                        placeholder="Cari Nama Sub Giat"
-                      />
+              <div
+                className="mx-2"
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  maxWidth: "300px",
+                  marginBottom: "20px",
+                }}
+              >
+                <input
+                  style={{
+                    padding: "10px 30px 10px 10px",
+                    width: "100%",
+                    border: "1px solid #ccc",
+                    borderRadius: "5px",
+                    fontSize: "16px",
+                  }}
+                  type="text"
+                  value={searchTermDetail}
+                  onChange={handleSearchInputDetail}
+                  // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                  placeholder="Cari Nama Sub Giat"
+                />
 
-                      {/* Tombol "X" di dalam input */}
-                      {searchTermDetail && (
-                        <button
-                          onClick={() => handleClearSearchDetail()}
-                          style={{
-                            position: "absolute",
-                            right: "10px",
-                            top: "50%",
-                            transform: "translateY(-50%)", // Tengah-tengah secara vertikal
-                            background: "transparent",
-                            border: "none",
-                            fontSize: "16px",
-                            cursor: "pointer",
-                            color: "#999",
-                          }}
-                        >
-                          &#10006;
-                        </button>
-                      )}
-                    </div>
-                    {/* <div>
+                {/* Tombol "X" di dalam input */}
+                {searchTermDetail && (
+                  <button
+                    onClick={() => handleClearSearchDetail()}
+                    style={{
+                      position: "absolute",
+                      right: "10px",
+                      top: "50%",
+                      transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                      background: "transparent",
+                      border: "none",
+                      fontSize: "16px",
+                      cursor: "pointer",
+                      color: "#999",
+                    }}
+                  >
+                    &#10006;
+                  </button>
+                )}
+              </div>
+              {/* <div>
                       <button
                         style={{
                           backgroundColor: "#007bff",
@@ -4325,7 +4973,7 @@ const ContentDapodikV2 = () => {
                         search
                       </button>
                     </div> */}
-                  </div>
+            </div>
             <div style={{ overflowY: "scroll", maxHeight: "500px" }}>
               <table
                 className="table table-bordered table-nowrap align-middle mb-0"
@@ -4613,51 +5261,51 @@ const ContentDapodikV2 = () => {
               </Col>
             </Row>
             <div className="mb-2 d-flex">
-            <div
-              className="mx-2"
-              style={{
-                position: "relative",
-                width: "100%",
-                maxWidth: "300px",
-                marginBottom: "20px",
-              }}
-            >
-              <input
+              <div
+                className="mx-2"
                 style={{
-                  padding: "10px 30px 10px 10px",
+                  position: "relative",
                   width: "100%",
-                  border: "1px solid #ccc",
-                  borderRadius: "5px",
-                  fontSize: "16px",
+                  maxWidth: "300px",
+                  marginBottom: "20px",
                 }}
-                type="text"
-                value={searchTermDetailSub}
-                onChange={handleSearchInputDetailSub}
-                // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
-                placeholder="Cari Nama Sub Rincian Objek"
-              />
-
-              {/* Tombol "X" di dalam input */}
-              {searchTermDetailSub && (
-                <button
-                  onClick={() => handleClearSearchDetailSub()}
+              >
+                <input
                   style={{
-                    position: "absolute",
-                    right: "10px",
-                    top: "50%",
-                    transform: "translateY(-50%)", // Tengah-tengah secara vertikal
-                    background: "transparent",
-                    border: "none",
+                    padding: "10px 30px 10px 10px",
+                    width: "100%",
+                    border: "1px solid #ccc",
+                    borderRadius: "5px",
                     fontSize: "16px",
-                    cursor: "pointer",
-                    color: "#999",
                   }}
-                >
-                  &#10006;
-                </button>
-              )}
-            </div>
-            {/* <div>
+                  type="text"
+                  value={searchTermDetailSub}
+                  onChange={handleSearchInputDetailSub}
+                  // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                  placeholder="Cari Nama Sub Rincian Objek"
+                />
+
+                {/* Tombol "X" di dalam input */}
+                {searchTermDetailSub && (
+                  <button
+                    onClick={() => handleClearSearchDetailSub()}
+                    style={{
+                      position: "absolute",
+                      right: "10px",
+                      top: "50%",
+                      transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                      background: "transparent",
+                      border: "none",
+                      fontSize: "16px",
+                      cursor: "pointer",
+                      color: "#999",
+                    }}
+                  >
+                    &#10006;
+                  </button>
+                )}
+              </div>
+              {/* <div>
               <button
                 style={{
                   backgroundColor: "#007bff",
@@ -4673,7 +5321,7 @@ const ContentDapodikV2 = () => {
                 search
               </button>
             </div> */}
-          </div>
+            </div>
             <div style={{ overflowY: "scroll", maxHeight: "500px" }}>
               <table
                 className="table table-bordered table-nowrap align-middle mb-0"
@@ -4718,9 +5366,17 @@ const ContentDapodikV2 = () => {
                     >
                       Persentase {getSortIcon("persentase")}
                     </th>
-                    <th style={{verticalAlign: "middle", textAlign: "center", whiteSpace: "normal", wordWrap: "break-word",maxWidth:"100px"  }}>
-                        Lihat Sub Sub Rincian Objek 
-                      </th>   
+                    <th
+                      style={{
+                        verticalAlign: "middle",
+                        textAlign: "center",
+                        whiteSpace: "normal",
+                        wordWrap: "break-word",
+                        maxWidth: "100px",
+                      }}
+                    >
+                      Lihat Sub Sub Rincian Objek
+                    </th>
                   </tr>
                 </thead>
                 <tbody style={{ minHeight: "500px" }}>
@@ -4777,7 +5433,9 @@ const ContentDapodikV2 = () => {
                             : "-"}
                         </span>
                       </td>
-                      <td style={{verticalAlign: "middle", textAlign: "center" }}>            
+                      <td
+                        style={{ verticalAlign: "middle", textAlign: "center" }}
+                      >
                         {/* <button style={{
                       backgroundColor: "#28a745",
                       color: "white",
@@ -4787,12 +5445,27 @@ const ContentDapodikV2 = () => {
                       cursor: "pointer",
                       fontSize: "16px"
                     }} onClick={()=>dataJenisPemda=="prov" ? handleOpenNextModal("", item.kode_sub_giat, item.kode_ddn, "") : (dataJenisPemda=="kab" || dataJenisPemda=="kota") ? handleOpenNextModal("", item.kode_sub_giat, "", item.kode_ddn) : handleOpenNextModal(item.kode_prov, item.kode_sub_giat, "", "")}>Lihat Detail</button> */}
-                    <i style={{                                            
-                      padding: "5px 10px",                      
-                      cursor: "pointer",
-                      fontSize: "30px"
-                    }} onClick={()=>handleOpenNextModalSub({kodeDdn: item.kode_prov? item.kode_prov : item.kode_ddn, kodeSubGiat: item.kode_sub_giat, kodeSro: item.kode_sro, tahun: selectedSingleTahunAnggaran, rincianDetail: item.total_rinciansro, namaSro: item.nama_sro})} className="bx bx-list-ul text-primary"></i>
-                        </td> 
+                        <i
+                          style={{
+                            padding: "5px 10px",
+                            cursor: "pointer",
+                            fontSize: "30px",
+                          }}
+                          onClick={() =>
+                            handleOpenNextModalSub({
+                              kodeDdn: item.kode_prov
+                                ? item.kode_prov
+                                : item.kode_ddn,
+                              kodeSubGiat: item.kode_sub_giat,
+                              kodeSro: item.kode_sro,
+                              tahun: selectedSingleTahunAnggaran,
+                              rincianDetail: item.total_rinciansro,
+                              namaSro: item.nama_sro,
+                            })
+                          }
+                          className="bx bx-list-ul text-primary"
+                        ></i>
+                      </td>
                     </tr>
                   ))}
                   {/* {placeholders} */}
@@ -4808,92 +5481,102 @@ const ContentDapodikV2 = () => {
         </div>
       </Modal>
 
-      <Modal size="xl" isOpen={modalSub} toggle={handleOpenNextModalSub} centered={true} backdrop="static">
-      <div className="modal-content border-0">
-        <ModalHeader className=" p-3 bg-info-subtle" toggle={handleCloseNextModalSub}>Sub Sub Rincian Objek {namaSro}
-        </ModalHeader>
-        <ModalBody>
-        <Row>
-            <Col md={4}><Card className="card-animate card-height-100">
-                        <CardBody>
-                          <div
-                            className="d-flex flex-column title-custom-card"                            
-                          >
-                            <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                              <span>Total Anggaran Sub Rincian Objek</span>
-                            </div>
-                            <div className="d-flex">
-                              {/* <div className="avatar-xs-half flex-shrink-0">
+      <Modal
+        size="xl"
+        isOpen={modalSub}
+        toggle={handleOpenNextModalSub}
+        centered={true}
+        backdrop="static"
+      >
+        <div className="modal-content border-0">
+          <ModalHeader
+            className=" p-3 bg-info-subtle"
+            toggle={handleCloseNextModalSub}
+          >
+            Sub Sub Rincian Objek {namaSro}
+          </ModalHeader>
+          <ModalBody>
+            <Row>
+              <Col md={4}>
+                <Card className="card-animate card-height-100">
+                  <CardBody>
+                    <div className="d-flex flex-column title-custom-card">
+                      <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                        <span>Total Anggaran Sub Rincian Objek</span>
+                      </div>
+                      <div className="d-flex">
+                        {/* <div className="avatar-xs-half flex-shrink-0">
                         <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
                           <i className=" ri-women-line text-danger"></i>
                         </span>
                       </div> */}
-                              <div className="d-flex justify-content-center align-items-center title-body">
-                                <span>
-                                  <CountUp
-                                    start={0}
-                                    end={
-                                      // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
-                                      dataRincianDetailSubSub
-                                    }
-                                    separator="."
-                                    prefix="Rp "
-                                    suffix=""
-                                    duration={1}
-                                  />
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </CardBody>
-                      </Card></Col>
-          </Row>
-          <div className="mb-2 d-flex">
-            <div
-              className="mx-2"
-              style={{
-                position: "relative",
-                width: "100%",
-                maxWidth: "300px",
-                marginBottom: "20px",
-              }}
-            >
-              <input
+                        <div className="d-flex justify-content-center align-items-center title-body">
+                          <span>
+                            <CountUp
+                              start={0}
+                              end={
+                                // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                                dataRincianDetailSubSub
+                              }
+                              separator="."
+                              prefix="Rp "
+                              suffix=""
+                              duration={1}
+                            />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardBody>
+                </Card>
+              </Col>
+            </Row>
+            <div className="mb-2 d-flex">
+              <div
+                className="mx-2"
                 style={{
-                  padding: "10px 30px 10px 10px",
+                  position: "relative",
                   width: "100%",
-                  border: "1px solid #ccc",
-                  borderRadius: "5px",
-                  fontSize: "16px",
+                  maxWidth: "300px",
+                  marginBottom: "20px",
                 }}
-                type="text"
-                value={searchTermDetailSubSub}
-                onChange={handleSearchInputDetailSubSub}
-                // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
-                placeholder="Cari Sub Sub Rincian Objek"
-              />
-
-              {/* Tombol "X" di dalam input */}
-              {searchTermDetailSubSub && (
-                <button
-                  onClick={() => handleClearSearchDetailSubSub()}
+              >
+                <input
                   style={{
-                    position: "absolute",
-                    right: "10px",
-                    top: "50%",
-                    transform: "translateY(-50%)", // Tengah-tengah secara vertikal
-                    background: "transparent",
-                    border: "none",
+                    padding: "10px 30px 10px 10px",
+                    width: "100%",
+                    border: "1px solid #ccc",
+                    borderRadius: "5px",
                     fontSize: "16px",
-                    cursor: "pointer",
-                    color: "#999",
                   }}
-                >
-                  &#10006;
-                </button>
-              )}
-            </div>
-            {/* <div>
+                  type="text"
+                  value={searchTermDetailSubSub}
+                  onChange={handleSearchInputDetailSubSub}
+                  // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                  placeholder="Cari Sub Sub Rincian Objek"
+                />
+
+                {/* Tombol "X" di dalam input */}
+                {searchTermDetailSubSub && (
+                  <button
+                    onClick={() => handleClearSearchDetailSubSub()}
+                    style={{
+                      position: "absolute",
+                      right: "10px",
+                      top: "50%",
+                      transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                      background: "transparent",
+                      border: "none",
+                      fontSize: "16px",
+                      cursor: "pointer",
+                      color: "#999",
+                    }}
+                  >
+                    &#10006;
+                  </button>
+                )}
+              </div>
+              {/* <div>
               <button
                 style={{
                   backgroundColor: "#007bff",
@@ -4909,118 +5592,181 @@ const ContentDapodikV2 = () => {
                 search
               </button>
             </div> */}
-          </div>
-          <div style={{ overflowY: "scroll", maxHeight:"500px"}}>
-          <table
-                  className="table table-bordered table-nowrap align-middle mb-0"
-                  // style={{ width: "100%" }}
+            </div>
+            <div style={{ overflowY: "scroll", maxHeight: "500px" }}>
+              <table
+                className="table table-bordered table-nowrap align-middle mb-0"
+                // style={{ width: "100%" }}
+              >
+                <thead
+                  className="table-light"
+                  style={{ position: "sticky", top: 0, zIndex: 2 }}
                 >
-                  <thead className="table-light" style={{ position: "sticky", top: 0, zIndex: 2 }}>
-                    <tr>
-                    <th style={{ verticalAlign: "middle", textAlign: "center" }}>
-                        NO
-                      </th>                      
-                      <th                        
-                        onClick={() => requestSort("kode_standar_harga")}
-                        style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
-                          wordWrap: "break-word", maxWidth:"100px" }}
+                  <tr>
+                    <th
+                      style={{ verticalAlign: "middle", textAlign: "center" }}
+                    >
+                      NO
+                    </th>
+                    <th
+                      onClick={() => requestSort("kode_standar_harga")}
+                      style={{
+                        cursor: "pointer",
+                        verticalAlign: "middle",
+                        whiteSpace: "normal",
+                        wordWrap: "break-word",
+                        maxWidth: "100px",
+                      }}
+                    >
+                      Kode Standar Harga {getSortIcon("kode_standar_harga")}
+                    </th>
+                    <th
+                      onClick={() => requestSort("nama_standar_harga")}
+                      style={{
+                        cursor: "pointer",
+                        verticalAlign: "middle",
+                        whiteSpace: "normal",
+                        wordWrap: "break-word",
+                        maxWidth: "100px",
+                      }}
+                    >
+                      Nama Standar Harga {getSortIcon("nama_standar_harga")}
+                    </th>
+                    <th
+                      onClick={() => requestSort("satuan")}
+                      style={{
+                        cursor: "pointer",
+                        verticalAlign: "middle",
+                        whiteSpace: "normal",
+                        wordWrap: "break-word",
+                        maxWidth: "100px",
+                      }}
+                    >
+                      Satuan {getSortIcon("satuan")}
+                    </th>
+                    <th
+                      onClick={() => requestSort("volume")}
+                      style={{
+                        cursor: "pointer",
+                        textAlign: "center",
+                        whiteSpace: "normal",
+                        wordWrap: "break-word",
+                        maxWidth: "100px",
+                      }}
+                    >
+                      Volume {getSortIcon("volume")}
+                    </th>
+                    <th
+                      onClick={() => requestSort("harga_satuan")}
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Harga Satuan (Rp) {getSortIcon("harga_satuan")}
+                    </th>
+                    <th
+                      onClick={() => requestSort("total_rinciansro")}
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                    >
+                      Total Rincian Sub sro {getSortIcon("total_rinciansro")}
+                    </th>
+                    <th
+                      onClick={() => requestSort("persentase")}
+                      style={{
+                        cursor: "pointer",
+                        textAlign: "center",
+                        whiteSpace: "normal",
+                        wordWrap: "break-word",
+                      }}
+                    >
+                      Persentase {getSortIcon("persentase")}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody style={{ minHeight: "500px" }}>
+                  {currentItemsDetailSubSub.map((item, index) => (
+                    <tr key={index}>
+                      <td
+                        style={{ textAlign: "center", verticalAlign: "middle" }}
                       >
-                        Kode Standar Harga {getSortIcon("kode_standar_harga")}
-                      </th>                                                                  
-                      <th                        
-                        onClick={() => requestSort("nama_standar_harga")}
-                        style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
-                          wordWrap: "break-word", maxWidth:"100px" }}
+                        {/* { index + 1} */}
+                        {indexOfFirstItemDetailSubSub + index + 1}
+                      </td>
+                      <td>{item.kode_standar_harga}</td>
+                      <td>{item.nama_standar_harga}</td>
+                      <td
+                        style={{
+                          whiteSpace: "normal", // Membolehkan teks turun ke baris berikutnya
+                          wordWrap: "break-word", // Memastikan teks panjang terpotong dan turun ke bawah
+                          maxWidth: "200px", // Menetapkan lebar maksimum sel (sesuaikan dengan kebutuhan)
+                        }}
                       >
-                        Nama Standar Harga {getSortIcon("nama_standar_harga")}
-                      </th>                                                                  
-                      <th                        
-                        onClick={() => requestSort("satuan")}
-                        style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
-                          wordWrap: "break-word", maxWidth:"100px" }}
-                      >
-                        Satuan {getSortIcon("satuan")}
-                      </th>                                                                  
-                      <th onClick={() => requestSort("volume")}
-                        style={{ cursor: "pointer", textAlign: "center", whiteSpace: "normal",
-                          wordWrap: "break-word", maxWidth:"100px" }}>
-                        Volume {getSortIcon("volume")}
-                      </th>  
-                      <th onClick={() => requestSort("harga_satuan")}
-                        style={{ cursor: "pointer", textAlign: "center" }}>
-                        Harga Satuan (Rp) {getSortIcon("harga_satuan")}
-                      </th>
-                      <th onClick={() => requestSort("total_rinciansro")}
-                        style={{ cursor: "pointer", textAlign: "center" }}>
-                        Total Rincian Sub sro {getSortIcon("total_rinciansro")}
-                      </th>
-                      <th onClick={() => requestSort("persentase")}
-                        style={{ cursor: "pointer", textAlign: "center",whiteSpace: "normal",
-                          wordWrap: "break-word" }}>
-                        Persentase {getSortIcon("persentase")}
-                      </th>                                                                   
-                    </tr>                  
-                  </thead>
-                  <tbody style={{ minHeight: "500px" }}>
-                    {currentItemsDetailSubSub.map((item, index) => (
-                      <tr key={index}>                        
-                        <td style={{textAlign: "center",
-                        verticalAlign: "middle"}}>
-                          {/* { index + 1} */}
-                          {indexOfFirstItemDetailSubSub + index + 1}
-                        </td>
-                        <td>
-                          {item.kode_standar_harga}
-                        </td>
-                        <td>
-                          {item.nama_standar_harga}
-                        </td>
-                        <td style={{
-                            whiteSpace: "normal",  // Membolehkan teks turun ke baris berikutnya
-                            wordWrap: "break-word",  // Memastikan teks panjang terpotong dan turun ke bawah
-                            maxWidth: "200px"  // Menetapkan lebar maksimum sel (sesuaikan dengan kebutuhan)
-                          }}>
-                          {" "}
-                          {item.satuan || "-"}
-                        </td>     
-                        <td>
-                        <span style={{float: "right"}}>{item.volume ? item.volume.toLocaleString("id-ID")
-                          : "-"}</span>                          
-                        </td>         
-                        <td>
-                        <span style={{float: "right"}}>{item.harga_satuan ? parseInt(item.harga_satuan).toLocaleString("id-ID")
-                            : "-"}</span>                          
-                        </td>                                                                    
-                        <td>
-                        <span style={{float: "right"}}>{dataJenisPemda ==="seProv" ? (item.total_rinciansubsro ? parseInt(item.total_rinciansubsro).toLocaleString("id-ID")
-                            : "-") : (item.total_rinciansro ? parseInt(item.total_rinciansro).toLocaleString("id-ID")
-                            : "-")}</span>                          
-                        </td>                                      
-                        <td>
-                        <span style={{float: "right"}}>
-                        {item.persentase
-                          ? (item.persentase >= 1
-                              ? `${Number(item.persentase).toLocaleString("id-ID", {
-                                  minimumFractionDigits: 2,
-                                  maximumFractionDigits: 2,
-                                })}%`
-                              : `${Number(item.persentase).toLocaleString("id-ID", {
-                                  minimumFractionDigits: 4,
-                                })}%`
-                            )
-                          : "-"}
-                        </span>   
-                        </td>
-                      </tr>
-                    ))}
-                    {/* {placeholders} */}
-                  </tbody>
-                </table>
-          </div> 
-          <Pagination currentPage={currentPageDetailSubSub} totalPages={totalPagesDetailSubSub} onPageChange={paginateDetailSubSub} />
-        </ModalBody>
-      </div>          
-      </Modal>   
+                        {" "}
+                        {item.satuan || "-"}
+                      </td>
+                      <td>
+                        <span style={{ float: "right" }}>
+                          {item.volume
+                            ? item.volume.toLocaleString("id-ID")
+                            : "-"}
+                        </span>
+                      </td>
+                      <td>
+                        <span style={{ float: "right" }}>
+                          {item.harga_satuan
+                            ? parseInt(item.harga_satuan).toLocaleString(
+                                "id-ID"
+                              )
+                            : "-"}
+                        </span>
+                      </td>
+                      <td>
+                        <span style={{ float: "right" }}>
+                          {dataJenisPemda === "seProv"
+                            ? item.total_rinciansubsro
+                              ? parseInt(
+                                  item.total_rinciansubsro
+                                ).toLocaleString("id-ID")
+                              : "-"
+                            : item.total_rinciansro
+                            ? parseInt(item.total_rinciansro).toLocaleString(
+                                "id-ID"
+                              )
+                            : "-"}
+                        </span>
+                      </td>
+                      <td>
+                        <span style={{ float: "right" }}>
+                          {item.persentase
+                            ? item.persentase >= 1
+                              ? `${Number(item.persentase).toLocaleString(
+                                  "id-ID",
+                                  {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  }
+                                )}%`
+                              : `${Number(item.persentase).toLocaleString(
+                                  "id-ID",
+                                  {
+                                    minimumFractionDigits: 4,
+                                  }
+                                )}%`
+                            : "-"}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                  {/* {placeholders} */}
+                </tbody>
+              </table>
+            </div>
+            <Pagination
+              currentPage={currentPageDetailSubSub}
+              totalPages={totalPagesDetailSubSub}
+              onPageChange={paginateDetailSubSub}
+            />
+          </ModalBody>
+        </div>
+      </Modal>
     </React.Fragment>
   );
 };

@@ -5,18 +5,27 @@ import { useGetDataKementerian } from "./hooks/useGetDataKementerian";
 import HeaderKl from "../components/header.kl";
 import LoadingSpinner from "../components/loading";
 import DateRangeFilter from "./_components/date.range.filter";
+import { useSearchKementerianLembaga } from "./hooks/useSearchKL";
+import SearchInput from "../components/search.input";
 
 export default function CardKementerianDanLembaga() {
   const [filters, setFilters] = useState({
     tangga_mulai: "",
     tangga_akhir: "",
   });
+  const {
+    kataKunciInput,
+    setKataKunciInput,
+    handleSearchSubmit,
+    kataKunciSearch,
+    handleClearSearch,
+  } = useSearchKementerianLembaga();
 
   const {
     data: dataKementerian,
     loading,
     error,
-  } = useGetDataKementerian(filters.tangga_mulai, filters.tangga_akhir);
+  } = useGetDataKementerian(kataKunciSearch);
 
   const mappedData =
     dataKementerian?.data?.map((item) => ({
@@ -32,8 +41,16 @@ export default function CardKementerianDanLembaga() {
             Monitoring Integrasi Kementerian dan Lembaga
           </h4>
         </div>
-
-        <DateRangeFilter onFilter={setFilters} />
+        <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
+          <DateRangeFilter onFilter={setFilters} />
+          <SearchInput
+            onChange={(e) => setKataKunciInput(e.target.value)}
+            value={kataKunciInput}
+            placeholder="cari data kementerian dan lembaga..."
+            onSubmit={handleSearchSubmit}
+            onClear={handleClearSearch}
+          />
+        </div>
 
         {loading ? (
           <LoadingSpinner />

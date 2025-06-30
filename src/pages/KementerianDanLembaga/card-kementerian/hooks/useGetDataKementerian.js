@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { useDateRange } from "../../context/date-range.context";
 
-
 const API_URI_RBAC = process.env.REACT_APP_API_URL_9007;
 
-export function useGetDataKementerian() {
+export function useGetDataKementerian(kataKunci) {
   const { tanggal_mulai, tanggal_akhir } = useDateRange();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -22,6 +21,7 @@ export function useGetDataKementerian() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
+              kata_kunci: kataKunci,
               tanggal_mulai,
               tanggal_akhir,
             }),
@@ -41,7 +41,7 @@ export function useGetDataKementerian() {
     };
 
     fetchData();
-  }, [tanggal_mulai, tanggal_akhir]);
+  }, [kataKunci, tanggal_mulai, tanggal_akhir]);
 
   return { data, loading, error };
 }

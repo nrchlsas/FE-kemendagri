@@ -12,7 +12,8 @@ const API_URI = process.env.REACT_APP_API_URL_9007;
 export function useGetAplikasiByKementerian(
   nama_kementerian,
   tanggal_mulai,
-  tanggal_akhir
+  tanggal_akhir,
+  kataKunci
 ) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -31,6 +32,7 @@ export function useGetAplikasiByKementerian(
           },
           body: JSON.stringify({
             nama_kementerian,
+            kata_kunci: kataKunci,
             tanggal_mulai: tanggal_mulai || getToday(),
             tanggal_akhir: tanggal_akhir || getToday(),
           }),
@@ -48,7 +50,7 @@ export function useGetAplikasiByKementerian(
     };
 
     fetchData();
-  }, [nama_kementerian, tanggal_mulai, tanggal_akhir]);
+  }, [nama_kementerian, tanggal_mulai, tanggal_akhir, kataKunci]);
 
   return { data, loading, error };
 }

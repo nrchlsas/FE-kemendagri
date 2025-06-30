@@ -1,81 +1,72 @@
-import { useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
 import { Card, CardBody } from "reactstrap";
 import HeaderKl from "../components/header.kl";
 import DataTable from "../components/data.table";
-
-import { useLog } from "../context/log.context";
-import { useGetLogByParams } from "../tabel-monitoring/hooks/useGetLogByParams";
+import BackButton from "../components/back.button";
+import { useMonitoringTable } from "./hooks/useMonitoringTable";
+import LoadingSpinner from "../components/loading";
 
 export default function MonitoringTableKl() {
-  const { params, pagination, setPagination } = useLog();
-  const navigate = useNavigate();
+  const {
+    params,
+    data,
+    loading,
+    error,
+    columns,
+    pagination,
+    totalPages,
+    handlePageChange,
+  } = useMonitoringTable();
 
-  useEffect(() => {
-    if (!params) navigate("/");
-  }, [params, navigate]);
+  if (loading) {
+    return (
+      <div className="page-content">
+        <BackButton />
+        <HeaderKl
+          iconClass="bi bi-clipboard-data"
+          text={`Monitoring aplikasi ${params?.nama_kementerian} - ${params?.nama_aplikasi} - ${params?.nama_komponen}`}
+        />
+        <Card>
+          <CardBody className="d-flex justify-content-center align-items-center py-5">
+            <LoadingSpinner />
+          </CardBody>
+        </Card>
+      </div>
+    );
+  }
 
-  const requestParams = useMemo(
-    () => ({
-      ...params,
-      perpage: pagination.page,
-      limit: pagination.limit,
-    }),
-    [params, pagination]
-  );
-
-  const { data, meta, loading, error } = useGetLogByParams(requestParams);
-
-  const totalPages =
-    meta?.total_data && meta.limit
-      ? Math.ceil(meta.total_data / meta.limit)
-      : 1;
-
-  const columns = [
-    { key: "end_point", label: "Endpoint" },
-    {
-      key: "tahun_data",
-      label: "Tahun Data",
-      render: (row) => `${row.data_tarik || "-"} - ${row.tahun || "-"}`,
-    },
-    { key: "created_at", label: "Waktu Tarik" },
-  ];
-
-  const handlePageChange = (newPage) => {
-    if (newPage < 1 || newPage > totalPages) return;
-    setPagination((prev) => ({ ...prev, page: newPage }));
-  };
+  if (error) {
+    return (
+      <div className="page-content">
+        <BackButton />
+        <HeaderKl
+          iconClass="bi bi-clipboard-data"
+          text={`Monitoring aplikasi ${params?.nama_kementerian} - ${params?.nama_aplikasi} - ${params?.nama_komponen}`}
+        />
+        <Card>
+          <CardBody>
+            <div className="text-danger text-center">Error: {error}</div>
+          </CardBody>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="page-content">
+      <BackButton />
       <HeaderKl
         iconClass="bi bi-clipboard-data"
         text={`Monitoring aplikasi ${params?.nama_kementerian} - ${params?.nama_aplikasi} - ${params?.nama_komponen}`}
       />
       <Card>
         <CardBody>
-          {loading ? (
-            <div className="d-flex justify-content-center align-items-center py-5">
-              <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
-            </div>
-          ) : error ? (
-            <div className="text-danger text-center">Error: {error}</div>
-          ) : (
-            <>
-              <DataTable
-                columns={columns}
-                data={data}
-                currentPage={pagination.page}
-                totalPages={totalPages}
-                handlePageChange={handlePageChange}
-              />
-              <div className="text-muted mt-2">
-                Page {pagination.page} of {totalPages}
-              </div>
-            </>
-          )}
+          <DataTable
+            columns={columns}
+            data={data}
+            currentPage={pagination.page}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
+          />
         </CardBody>
       </Card>
     </div>

@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import CardKementerianDanLembaga from "./card-kementerian";
 import ComponentKementerianDanLembaga from "./CardComponentKl";
 import HeaderKl from "./components/header.kl";
+import BackButton from "./components/back.button";
 const KementerianDanLembaga = () => {
   document.title =
     "Dashboard Kementerian & Lembaga | Velzon - React Admin & Dashboard Template";
@@ -35,6 +36,7 @@ const KementerianDanLembaga = () => {
   return (
     <React.Fragment>
       <div className="page-content">
+        <BackButton />
         {/* <Row>
           <Col>
             <ContentKementerianDanLembaga />

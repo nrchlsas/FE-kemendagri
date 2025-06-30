@@ -7,7 +7,7 @@ function getDefaultDates() {
   const format = (date) => date.toISOString().slice(0, 10);
 
   return {
-    tanggal_mulai: format(sevenDaysAgo),
+    tanggal_mulai: format(today),
     tanggal_akhir: format(today),
   };
 }

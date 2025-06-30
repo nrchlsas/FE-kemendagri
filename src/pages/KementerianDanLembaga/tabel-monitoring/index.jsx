@@ -5,6 +5,7 @@ import HeaderKl from "../components/header.kl";
 import DataTable from "../components/data.table";
 import { useGetLogByParams } from "./hooks/useGetLogByParams";
 import { useLog } from "../context/log.context";
+import BackButton from "../components/back.button";
 
 export default function MonitoringTableKl() {
   const { params, pagination, setPagination } = useLog();
@@ -19,8 +20,8 @@ export default function MonitoringTableKl() {
   const requestParams = useMemo(
     () => ({
       ...params,
-      perpage: pagination.page,
-      limit: pagination.limit,
+      perpage: pagination.page.toString(), // ⬅️ perpage = nomor halaman (misal: "76")
+      limit: pagination.limit.toString(), // ⬅️ limit = jumlah data per halaman
     }),
     [params, pagination]
   );
@@ -34,12 +35,10 @@ export default function MonitoringTableKl() {
 
   const columns = [
     { key: "end_point", label: "Endpoint" },
-    {
-      key: "tahun_data",
-      label: "Tahun Data",
-      render: (row) => `${row.data_tarik || "-"} - ${row.tahun || "-"}`,
-    },
-    { key: "created_at", label: "Waktu Tarik" },
+    { key: "data_tarik", label: "Data" },
+    { key: "tahun", label: "Tahun" },
+    { key: "nama_daerah", label: "Nama Daerah" },
+    { key: "created_at", label: "Waktu" },
   ];
 
   const handlePageChange = (newPage) => {
@@ -48,6 +47,7 @@ export default function MonitoringTableKl() {
 
   return (
     <div className="page-content">
+      <BackButton />
       <HeaderKl
         iconClass="bi bi-clipboard-data"
         text={
@@ -66,18 +66,16 @@ export default function MonitoringTableKl() {
           ) : error ? (
             <div className="text-danger text-center">Error: {error}</div>
           ) : (
-            <>
+            <div>
               <DataTable
                 columns={columns}
                 data={data}
+                meta={meta}
                 currentPage={pagination.page}
                 totalPages={totalPages}
                 handlePageChange={handlePageChange}
               />
-              <div className="text-muted mt-2">
-                Page {pagination.page} of {totalPages}
-              </div>
-            </>
+            </div>
           )}
         </CardBody>
       </Card>

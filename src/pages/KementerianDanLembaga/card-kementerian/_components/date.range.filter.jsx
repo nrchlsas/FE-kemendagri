@@ -9,7 +9,7 @@ export default function DateRangeFilter() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!mulai || !akhir) {
-      alert("Isi kedua tanggal dulu bro.");
+      alert("Isi kedua tanggal terlebih dahulu!");
       return;
     }
     setTanggalRange({ tanggal_mulai: mulai, tanggal_akhir: akhir });
@@ -21,25 +21,33 @@ export default function DateRangeFilter() {
   }, [tanggal_mulai, tanggal_akhir]);
 
   return (
-    <form onSubmit={handleSubmit} className="mb-4 row">
+    <form onSubmit={handleSubmit} className="row g-3 mb-4">
       <div className="col-md-4">
-        <label className="form-label">Tanggal Mulai</label>
+        <label htmlFor="tanggalMulai" className="form-label fw-semibold">
+          Tanggal Mulai
+        </label>
         <input
+          id="tanggalMulai"
           type="date"
           value={mulai}
           onChange={(e) => setMulai(e.target.value)}
           className="form-control"
         />
       </div>
+
       <div className="col-md-4">
-        <label className="form-label">Tanggal Akhir</label>
+        <label htmlFor="tanggalAkhir" className="form-label fw-semibold">
+          Tanggal Akhir
+        </label>
         <input
+          id="tanggalAkhir"
           type="date"
           value={akhir}
           onChange={(e) => setAkhir(e.target.value)}
           className="form-control"
         />
       </div>
+
       <div className="col-md-4 d-flex align-items-end">
         <button type="submit" className="btn btn-primary w-100">
           Filter
