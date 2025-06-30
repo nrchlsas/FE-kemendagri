@@ -25,10 +25,12 @@ export function useGetAplikasiByKementerian(
     const fetchData = async () => {
       setLoading(true);
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"));
         const response = await fetch(`${API_URI}/v2/monitor-aplikasi-list`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "x-sipdhub": `${token.token}`,
           },
           body: JSON.stringify({
             nama_kementerian,

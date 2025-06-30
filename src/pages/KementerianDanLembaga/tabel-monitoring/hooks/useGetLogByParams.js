@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 const API_URI = process.env.REACT_APP_API_URL_9007;
 
-export function useGetLogByParams(params, ) {
+export function useGetLogByParams(params) {
   const [data, setData] = useState([]);
   const [meta, setMeta] = useState({});
   const [loading, setLoading] = useState(false);
@@ -13,9 +13,13 @@ export function useGetLogByParams(params, ) {
     const fetchData = async () => {
       setLoading(true);
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"));
         const response = await fetch(`${API_URI}/v2/monitor-log`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "x-sipdhub": `${token.token}`,
+          },
           body: JSON.stringify(params),
         });
 

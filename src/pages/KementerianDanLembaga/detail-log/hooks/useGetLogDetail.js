@@ -13,9 +13,13 @@ export function useGetDetailLog(params) {
     const fetchData = async () => {
       setLoading(true);
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"));
         const response = await fetch(`${API_URI}/v2/monitor-log-detail`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "x-sipdhub": `${token.token}`,
+          },
           body: JSON.stringify(params),
         });
 

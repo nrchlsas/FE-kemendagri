@@ -15,11 +15,15 @@ export function useGetDataKementerian(kataKunci) {
       setError(null);
 
       try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"));
         const response = await fetch(
           `${API_URI_RBAC}/v2/monitor-kementerian-list`,
           {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              "x-sipdhub": `${token.token}`,
+            },
             body: JSON.stringify({
               kata_kunci: kataKunci,
               tanggal_mulai,
