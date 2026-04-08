@@ -18,7 +18,6 @@ import PieChartNew from "../../Components/Chart/PieChart";
 import CountUp from "react-countup";
 import logoKemendagri from "../../assets/images/logo-kemendagri/Animasi.gif"
 import imageBeranda from "../../assets/images/logo-kemendagri/image-beranda.png"
-import video from "../../assets/images/logo-kemendagri/bumper-2D.mp4"
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
