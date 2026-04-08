@@ -10,23 +10,23 @@ import { logoutUser } from "../slices/thunks";
 const AuthProtected = (props) => {
   const dispatch = useDispatch();
   const { userProfile, loading, token } = useProfile();
-  useEffect(() => {
-    if (userProfile && !loading && token) {
-      setAuthorization(token);
-    } else if (!userProfile && loading && !token) {
-      dispatch(logoutUser());
-    }
-  }, [token, userProfile, loading, dispatch]);
+  // useEffect(() => {
+  //   if (userProfile && !loading && token) {
+  //     setAuthorization(token);
+  //   } else if (!userProfile && loading && !token) {
+  //     dispatch(logoutUser());
+  //   }
+  // }, [token, userProfile, loading, dispatch]);
 
   /*
     redirect is un-auth access protected routes via url
     */
 
-  if (!userProfile && loading && !token) {
-    return (
-      <Navigate to={{ pathname: "/login", state: { from: props.location } }} />
-    );
-  }
+  // if (!userProfile && loading && !token) {
+  //   return (
+  //     <Navigate to={{ pathname: "/login", state: { from: props.location } }} />
+  //   );
+  // }
 
   return <>{props.children}</>;
 };

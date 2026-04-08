@@ -55,13 +55,13 @@ export const resetProfileFlag = () => {
 };
 
 export const load_menu_by_profile = (user) => async (dispatch) => {
-    let response = api.get(`${API_9007_URI}/rbac/list-menu`);
-    let data = await response;
+    // let response = api.get(`${API_9007_URI}/rbac/list-menu`);
+    // let data = await response;
 
     let list_menu = [];
-    if (data.code == 200) {
-        list_menu = data.data;
-    }
+    // if (data.code == 200) {
+    //     list_menu = data.data;
+    // }
 
     dispatch(update_list_menu(list_menu));
 }

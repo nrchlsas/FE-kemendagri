@@ -20,18 +20,18 @@ export const loginUser = (user, history) => async (dispatch) => {
 
     const isUsernameLogin = user.username !== undefined; // Cek apakah login menggunakan username
 
-    if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {
+    if (false) {
       let fireBaseBackend = getFirebaseBackend();
       response = fireBaseBackend.loginUser(
         user.email,
         user.password
       );
-    } else if (process.env.REACT_APP_DEFAULTAUTH === "jwt") {
+    } else if (false) {
       response = postJwtLogin({
         email: user.email,
         password: user.password
       });
-    } else if (API_9007_URI) {
+    } else if (false) {
       const formData = new URLSearchParams();
       if (user.login_type === "SIPD") {
         // Jika login SIPD, gunakan parameter ini
@@ -54,24 +54,24 @@ export const loginUser = (user, history) => async (dispatch) => {
         }
       );
 
-    } else if (process.env.REACT_APP_API_URL) {
-      response = postFakeLogin({
-        email: user.email,
-        password: user.password,
-      });
-    }
+    } 
+    // else if (process.env.REACT_APP_API_URL) {
+    //   response = postFakeLogin({
+    //     email: user.email,
+    //     password: user.password,
+    //   });
+    // }
 
-    var data = await response;
+    // var data = await response;
 
-    if (data) {
-      if (API_9007_URI) {
-        data = await data.json();
-        if (data.status === true) {
+    if (true) {
+      if (true) {
+        // data = await data.json();
+        if (true) {
 
-          // sesuaikan data session storage dengan yang existing
           let finalLogin = {
             "status": "success",
-            "token": data.data.token,
+            "token": "Bearer e2140bdafb3c80e27ef795e2e65ade23c1b7470924cde21df8dcfbf87c7eeb10",
             "data": {
               "_id": "629f15c770a470a230cc5d5a",
               "first_name": "SIPD-HUB",
@@ -81,14 +81,15 @@ export const loginUser = (user, history) => async (dispatch) => {
               "changePasswordAt": null,
               "skills": [],
               "__v": 1,
-              "passwordtoken": data.data.token,
-              "passwordtokenexp": data.data.expirationTime,
+              "passwordtoken": 'Bearer e2140bdafb3c80e27ef795e2e65ade23c1b7470924cde21df8dcfbf87c7eeb10',
+              "passwordtokenexp": null,
               "exp_year": [],
               "portfolio": []
             }
           };
           sessionStorage.setItem("authUser", JSON.stringify(finalLogin));
           dispatch(loginSuccess(finalLogin));
+          console.log('finalLogin', finalLogin);
           history('/beranda')
         } else {
           dispatch(apiError({ data: "Login Failed" }));
@@ -96,7 +97,7 @@ export const loginUser = (user, history) => async (dispatch) => {
       } else {
         sessionStorage.setItem("authUser", JSON.stringify(data));
         // if (process.env.REACT_APP_DEFAULTAUTH === "fake") {
-        if (process.env.REACT_APP_DEFAULTAUTH === "") {
+        if (process.env.REACT_APP_DEFAULTAUTH !== "") {
           var finallogin = JSON.stringify(data);
           finallogin = JSON.parse(finallogin)
           data = finallogin.data;
@@ -167,14 +168,14 @@ export const resetLoginFlag = () => async (dispatch) => {
 };
 
 export const get_user_detail = () => async (dispatch) => {
-  let response = api.get(`${API_9007_URI}/users/detail-users`);
+  // let response = api.get(`${API_9007_URI}/users/detail-users`);
 
-  let data = await response;
+  // let data = await response;
 
   // update session storage
   const user_login = getLoggedinUser();
-  user_login.data.first_name = data?.data?.username || 'SIPD-HUB';
-  user_login.roles = data?.roles;
+  // user_login.data.first_name = data?.data?.username || 'SIPD-HUB';
+  // user_login.roles = data?.roles;
 
   sessionStorage.setItem("authUser", JSON.stringify(user_login));
 
