@@ -61,6 +61,7 @@ const HorizontalLayout = (props) => {
             }
         };
         initMenu();
+        console.log("path", path);
     }, [path, props.layoutType]);
 
     const updatedMenu = (item) => (event) => {

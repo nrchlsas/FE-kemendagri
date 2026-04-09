@@ -25,11 +25,15 @@ const VerticalLayout = (props) => {
     );
     const { list_menus } = useSelector(listMenusProperties);
     useEffect(() => {
-        if (list_menus && list_menus.length) {
-            setTimeout(() => {
+        // Show all menus without access restrictions
+        setTimeout(() => {
+            if (list_menus && list_menus.length) {
                 setNavData(calculate_menu_by_login(template_nav, list_menus));
-            }, 500);
-        }
+            } else {
+                // If no menus from login, show all menus
+                setNavData(template_nav);
+            }
+        }, 500);
     }, [list_menus]);
 
     /* layout settings */

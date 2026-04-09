@@ -67,58 +67,14 @@ export const load_menu_by_profile = (user) => async (dispatch) => {
 }
 
 export const calculate_menu_by_login = (menus = [], login_menus = []) => {
+    // If no login_menus provided, return all menus without filtering
+    if (!login_menus || login_menus.length === 0) {
+        return menus;
+    }
+
     const final_menus = [];
     const menus_only = login_menus.filter(d => d.is_menu === true);
-    let check_menus = [];
-
-    if (menus_only.length == 0) {
-        // debug with dummy data
-
-        // // menu beranda
-        // check_menus.push({
-        //     id: 99,
-        //     is_menu: true,
-        //     nama_menu: "Beranda",
-        //     nama_sub_menu: null,
-        //     url: "/beranda"
-        // });
-
-        // // menu kependudukan
-        // check_menus.push({
-        //     id: 99,
-        //     is_menu: true,
-        //     nama_menu: "Kependudukan",
-        //     nama_sub_menu: "",
-        //     url: "/kependudukan"
-        // });
-
-        // // menu sipd
-        // check_menus.push({
-        //     id: 99,
-        //     is_menu: true,
-        //     nama_menu: "SIPD",
-        //     nama_sub_menu: "Perencanaan",
-        //     url: "/perencanaan"
-        // });
-
-        // // menu rbac
-        // check_menus.push({
-        //     id: 999,
-        //     is_menu: true,
-        //     nama_menu: "rbac",
-        //     nama_sub_menu: "menu",
-        //     url: "/menu"
-        // });
-        // check_menus.push({
-        //     id: 999,
-        //     is_menu: true,
-        //     nama_menu: "rbac",
-        //     nama_sub_menu: "Pengguna",
-        //     url: "/pengguna"
-        // });
-    } else {
-        check_menus = menus_only;
-    }
+    let check_menus = menus_only;
 
     menus.forEach(d => {
         if (d.subItems && d.subItems.length) {
@@ -151,20 +107,20 @@ export const calculate_menu_by_login = (menus = [], login_menus = []) => {
 }
 
 export const get_permission_by_url = (url, is_page, cb) => (dispatch, getState) => {
-    const { list_menus } = getState().Profile;
-    if (is_page) {
-        const list_page = list_menus.filter(d => d.is_menu);
-        const found = list_page.find(d => d.is_menu && d.url == url);
-        if (!found && typeof cb === "function") {
-            console.error('tidak memimilik hak akses untuk', url);
-            cb();
-        }
-    } else {
-        const list_page = list_menus.filter(d => !d.is_menu);
-        const found = list_page.find(d => d.is_menu && d.url == url);
-        if (!found && typeof cb === "function") {
-            console.error('tidak memimilik hak akses untuk', url);
-            cb();
-        }
-    }
+    // const { list_menus } = getState().Profile;
+    // if (is_page) {
+    //     const list_page = list_menus.filter(d => d.is_menu);
+    //     const found = list_page.find(d => d.is_menu && d.url == url);
+    //     if (!found && typeof cb === "function") {
+    //         console.error('tidak memimilik hak akses untuk', url);
+    //         cb();
+    //     }
+    // } else {
+    //     const list_page = list_menus.filter(d => !d.is_menu);
+    //     const found = list_page.find(d => d.is_menu && d.url == url);
+    //     if (!found && typeof cb === "function") {
+    //         console.error('tidak memimilik hak akses untuk', url);
+    //         cb();
+    //     }
+    // }
 }
