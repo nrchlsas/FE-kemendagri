@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import geoIndo from '../../data/geoIndo.json'
+import geoIndo from '../../data/geoJsonNasional.json'
 // import geoIndo from '../../data/geoJsonNasional.json'
 import kabupatenData from '../../data/geoIndoKabupaten.json'
 import { MapContainer, GeoJSON, TileLayer } from 'react-leaflet'
@@ -252,6 +252,11 @@ const PolygonMaps = () => {
   const initialZoom = 4;  // Simpan zoom awal
   const initialCenter = [0, 115];  // Simpan center awal
 
+  // Validasi data kabupaten
+  const geoKabupatenData = kabupatenData && kabupatenData.features ? kabupatenData : { type: "FeatureCollection", features: [] };
+
+  console.log("Kabupaten data loaded:", geoKabupatenData.features.length);
+  
   // Fungsi untuk menentukan warna berdasarkan kepadatan penduduk
   const getColorBasedOnDensity = (density) => {
     return density > 500 ? '#006400' :
@@ -280,13 +285,17 @@ const PolygonMaps = () => {
     const map = mapRef.current;  // Mengakses referensi MapContainer
     const provinceName = layer.feature.properties.WADMPR;  // Nama provinsi yang di klik
 
+    console.log("Provinsi diklik:", provinceName);
+
     if (map) {
       map.fitBounds(layer.getBounds());  // Zoom ke wilayah yang di klik
 
       // Filter data kabupaten yang sesuai dengan provinsi yang di klik
-      const filteredKabupaten = kabupatenData.features.filter(kabupaten => {
+      const filteredKabupaten = geoKabupatenData.features.filter(kabupaten => {
         return kabupaten.properties.WADMPR === provinceName;  // Sesuaikan properti provinsi
       });
+
+      console.log("Kabupaten yang ditemukan:", filteredKabupaten.length);
 
       if (filteredKabupaten.length > 0) {
         // Tampilkan data kabupaten yang sudah difilter
@@ -295,7 +304,7 @@ const PolygonMaps = () => {
           features: filteredKabupaten,
         });
       } else {
-        console.log("Kabupaten tidak ditemukan untuk provinsi ini.");
+        console.log("Kabupaten tidak ditemukan untuk provinsi:", provinceName);
       }
     }
   };
@@ -305,6 +314,7 @@ const PolygonMaps = () => {
     const map = mapRef.current;
     if (map) {
       map.setView(initialCenter, initialZoom);  // Reset ke zoom dan pusat semula
+      setDisplayData(geoIndo);  // Reset data kembali ke provinsi
     }
   };
 

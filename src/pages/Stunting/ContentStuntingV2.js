@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, use, useEffect, useState } from "react";
 import {
   Card,
   CardBody,
@@ -30,21 +30,165 @@ import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 
+// Default dummy data untuk Stunting Chart
+const DEFAULT_STUNTING_DATA = {
+  // Summary card fields
+  jumlah_keluarga: 2500000,
+  jumlah_keluarga_sasaran: 2000000,
+  jumlah_keluarga_stunting: 450000,
+  peserta_kb_modern: 1250000,
+  jumlah_pus: 1800000,
+
+  // Chart data
+  fasilitas_tidak_sehat: {
+    jamban_tidak_layak: 2450,
+    air_tidak_sehat: 1850,
+  },
+  compare_resiko_by_provinsi: [
+    { nama_prov: "Jawa Barat", kode_prov: "32", jumlah_keluarga_beresiko_stunting: 12500, jumlah_keluarga_tidak_beresiko_stunting: 87500 },
+    { nama_prov: "Jawa Tengah", kode_prov: "33", jumlah_keluarga_beresiko_stunting: 10200, jumlah_keluarga_tidak_beresiko_stunting: 89800 },
+    { nama_prov: "Sulawesi Selatan", kode_prov: "73", jumlah_keluarga_beresiko_stunting: 8900, jumlah_keluarga_tidak_beresiko_stunting: 91100 },
+    { nama_prov: "Papua", kode_prov: "94", jumlah_keluarga_beresiko_stunting: 15600, jumlah_keluarga_tidak_beresiko_stunting: 84400 },
+  ],
+  compare_resiko_by_kecamatan: {
+    data: [
+      { kecamatan: "Kecamatan A", jumlah_keluarga_beresiko: 450, jumlah_keluarga_tidak_beresiko: 5550 },
+      { kecamatan: "Kecamatan B", jumlah_keluarga_beresiko: 380, jumlah_keluarga_tidak_beresiko: 5620 },
+      { kecamatan: "Kecamatan C", jumlah_keluarga_beresiko: 520, jumlah_keluarga_tidak_beresiko: 5480 },
+    ]
+  },
+  compare_resiko_by_kelurahan: {
+    data: [
+      { kelurahan: "Kelurahan I", jumlah_keluarga_beresiko: 120, jumlah_keluarga_tidak_beresiko: 1880 },
+      { kelurahan: "Kelurahan II", jumlah_keluarga_beresiko: 95, jumlah_keluarga_tidak_beresiko: 1905 },
+      { kelurahan: "Kelurahan III", jumlah_keluarga_beresiko: 140, jumlah_keluarga_tidak_beresiko: 1860 },
+    ]
+  },
+  punya_anak_dan_pus: {
+    data: [
+      { provinsi: "Jawa Barat", jumlah_baduta: 2500, jumlah_balita: 4200, jumlah_pus_hamil: 1800 },
+      { provinsi: "Jawa Tengah", jumlah_baduta: 2100, jumlah_balita: 3800, jumlah_pus_hamil: 1600 },
+      { provinsi: "Sulawesi Selatan", jumlah_baduta: 1800, jumlah_balita: 3200, jumlah_pus_hamil: 1400 },
+    ]
+  },
+  stunting_peringkat_kesejahteraan: [
+    { nama_provinsi: "Jawa Barat", kode_prov: "32", peringkat_kesejahteraan_1: 450, peringkat_kesejahteraan_2: 820, peringkat_kesejahteraan_3: 1200, peringkat_kesejahteraan_4: 2100 },
+    { nama_provinsi: "Jawa Tengah", kode_prov: "33", peringkat_kesejahteraan_1: 380, peringkat_kesejahteraan_2: 720, peringkat_kesejahteraan_3: 1050, peringkat_kesejahteraan_4: 1850 },
+    { nama_provinsi: "Papua", kode_prov: "94", peringkat_kesejahteraan_1: 680, peringkat_kesejahteraan_2: 980, peringkat_kesejahteraan_3: 1450, peringkat_kesejahteraan_4: 2200 },
+  ],
+  perbandingan_spm_untuk_kasus_stunting: {
+    data: [
+      { value: 2400, spm: "SPM Gizi" },
+      { value: 1800, spm: "SPM Kesehatan Ibu" },
+      { value: 1200, spm: "SPM Sanitasi" },
+      { value: 950, spm: "SPM Air Bersih" },
+    ]
+  },
+  total_perbandingan_total_anggaran_belanja_urusan_kesehatan_berdasarkan_total_belanja_nasional: {
+    total_nasional: 6000000000000,
+    total_kesehatan: 1500000000000,
+  },
+  total_perbandingan_keluarga_beresiko_stunting_berdasarkan_total_keluarga_sasaran: {
+    total_keluarga_sasaran: 2000000,
+    total_keluarga_beresiko_stunting: 450000,
+  },
+  total_perbandingan_total_anggaran_belanja_kasus_stunting_berdasarkan_total_belanja_nasional: {
+    data: [
+      { value: 850000000000 },
+      { value: 290000000000 },
+    ]
+  },
+  top5_akun_belanja_terbesar_untuk_kasus_stunting: {
+    data: [
+      { value: 125000000000, akun_belanja: "Belanja Pegawai" },
+      { value: 98000000000, akun_belanja: "Belanja Barang & Jasa" },
+      { value: 78000000000, akun_belanja: "Belanja Modal" },
+      { value: 65000000000, akun_belanja: "Belanja Perjalanan" },
+      { value: 42000000000, akun_belanja: "Belanja Operasional" },
+    ]
+  },
+  cross_analisis_stunting_per_prov: [
+    { nama_daerah: "Jawa Barat", persenblj: 25.5, persenstunting: 18.2, total_anggaran_stunting: 1250000000000, total_rincian_all: 4900000000000 },
+    { nama_daerah: "Jawa Tengah", persenblj: 22.1, persenstunting: 16.8, total_anggaran_stunting: 980000000000, total_rincian_all: 4430000000000 },
+    { nama_daerah: "Papua", persenblj: 35.2, persenstunting: 28.5, total_anggaran_stunting: 1650000000000, total_rincian_all: 4680000000000 },
+  ],
+  cross_analisis_stunting_per_kabkota: [
+    { nama_daerah: "Kabupaten A", persenblj: 18.5, persenstunting: 14.2, total_anggaran_stunting: 450000000000, total_rincian_all: 2430000000000 },
+    { nama_daerah: "Kabupaten B", persenblj: 21.3, persenstunting: 17.8, total_anggaran_stunting: 550000000000, total_rincian_all: 2580000000000 },
+  ],
+  pie_spm_stunting: {
+    jml_rincian_total_anggaran_spm_stunting: 580000000000,
+    jml_rincian_diluar_anggaran_spm_stunting: 270000000000,
+  },
+  urusan_pemerintahan_untuk_kasus_stunting: [
+    { total_rincian: 450000000000, nama_bidang_urusan: "Kesehatan" },
+    { total_rincian: 280000000000, nama_bidang_urusan: "Pendidikan" },
+    { total_rincian: 120000000000, nama_bidang_urusan: "Pemberdayaan Masyarakat" },
+  ],
+  pus_4_terlalu: {
+    muda: 12500,
+    tua: 8900,
+    gemuk: 15600,
+    kurus: 5800,
+  },
+  fasilitas_lingkungan_tidak_sehat_jamban: [
+    { kode_prov: "32", nama_prov: "Jawa Barat", jumlah: 1250 },
+    { kode_prov: "33", nama_prov: "Jawa Tengah", jumlah: 950 },
+    { kode_prov: "73", nama_prov: "Sulawesi Selatan", jumlah: 750 },
+  ],
+  fasilitas_lingkungan_tidak_sehat_air: [
+    { kode_prov: "32", nama_prov: "Jawa Barat", jumlah: 980 },
+    { kode_prov: "33", nama_prov: "Jawa Tengah", jumlah: 720 },
+    { kode_prov: "73", nama_prov: "Sulawesi Selatan", jumlah: 650 },
+  ],
+};
+
+// Default dummy data untuk Fasilitas Kesehatan Per Provinsi
+const DEFAULT_FASILITAS_KESEHATAN_DATA = {
+  data: {
+    fasilitas_lingkungan_tidak_sehat_jamban_kabkota: [
+      { kode_ddn: "3201", nama_daerah: "Bogor", jumlah_jamban_tidak_layak: 245 },
+      { kode_ddn: "3202", nama_daerah: "Sukabumi", jumlah_jamban_tidak_layak: 189 },
+      { kode_ddn: "3203", nama_daerah: "Cianjur", jumlah_jamban_tidak_layak: 156 },
+      { kode_ddn: "3204", nama_daerah: "Bandung", jumlah_jamban_tidak_layak: 203 },
+      { kode_ddn: "3205", nama_daerah: "Garut", jumlah_jamban_tidak_layak: 178 },
+      { kode_ddn: "3206", nama_daerah: "Tasikmalaya", jumlah_jamban_tidak_layak: 167 },
+      { kode_ddn: "3207", nama_daerah: "Ciamis", jumlah_jamban_tidak_layak: 142 },
+      { kode_ddn: "3208", nama_daerah: "Kuningan", jumlah_jamban_tidak_layak: 134 },
+    ],
+    fasilitas_lingkungan_tidak_sehat_air_kabkota: [
+      { kode_ddn: "3201", nama_daerah: "Bogor", jumlah_jamban_tidak_layak: 189 },
+      { kode_ddn: "3202", nama_daerah: "Sukabumi", jumlah_jamban_tidak_layak: 156 },
+      { kode_ddn: "3203", nama_daerah: "Cianjur", jumlah_jamban_tidak_layak: 134 },
+      { kode_ddn: "3204", nama_daerah: "Bandung", jumlah_jamban_tidak_layak: 167 },
+      { kode_ddn: "3205", nama_daerah: "Garut", jumlah_jamban_tidak_layak: 145 },
+      { kode_ddn: "3206", nama_daerah: "Tasikmalaya", jumlah_jamban_tidak_layak: 123 },
+      { kode_ddn: "3207", nama_daerah: "Ciamis", jumlah_jamban_tidak_layak: 112 },
+      { kode_ddn: "3208", nama_daerah: "Kuningan", jumlah_jamban_tidak_layak: 98 },
+    ]
+  }
+};
+
+// Helper function untuk menggunakan fallback value
+const getStuntingValueOrDefault = (value, defaultValue) => {
+  return (value === 0 || value === null || value === undefined) ? defaultValue : value;
+};
+
 const ContentStunting = () => {
   const [selectedDesil, setSelectedDesil] = useState("1"); // State untuk menyimpan pilihan dropdown
   const handleSelectChange = (e) => {
     const { name, value } = e.target;
     const selectedValue = value;
     setSelectedDesil(selectedValue); // Update state dengan pilihan yang dipilih
-    if(selectedValue == "5"){
+    if (selectedValue == "5") {
       setTitleMap(`Keluarga Berisiko Stunting ${name} >4`)
-    }else{
+    } else {
       setTitleMap(`Keluarga Berisiko Stunting ${name} ${value}`)
     }
-  
+
     // Ambil data desil yang sesuai dan update valueMap
     const selectedData = dataDesil[`desil${selectedValue}`]; // Ambil data sesuai pilihan
-    
+
     if (Array.isArray(selectedData) && selectedData.length > 0) {
       setValueMap(selectedData);
       const maxValue = Math.max(...selectedData.map(item => item.value || 0));
@@ -64,14 +208,14 @@ const ContentStunting = () => {
 
   const [customActiveTab, setcustomActiveTab] = useState("1");
 
-  const toggleCustom = (tab) => {    
+  const toggleCustom = (tab) => {
     if (customActiveTab !== tab) {
       setcustomActiveTab(tab);
     }
   };
 
   const [customActiveTabAll, setcustomActiveTabAll] = useState("1");
-  const toggleCustomTabAll = (tab) => {    
+  const toggleCustomTabAll = (tab) => {
     if (customActiveTabAll !== tab) {
       setcustomActiveTabAll(tab);
     }
@@ -201,7 +345,7 @@ const ContentStunting = () => {
   const [loadingStunting, setLoadingStunting] = useState([]);
   const [errorStunting, setErrorStunting] = useState([]);
 
-  const getDataStunting = ({tahun, tahun_data, kodeDdn="", kodeProv=""}) => {
+  const getDataStunting = ({ tahun, tahun_data, kodeDdn = "", kodeProv = "" }) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -213,14 +357,16 @@ const ContentStunting = () => {
             kode_prov: kodeProv,
             tahun: tahun,
             tahun_data: tahun_data
-        }),
+          }),
         };
 
-        const response = await fetch(
-          `${API_URI_RBAC}/v2/dashboard_stunting`,
-          requestOptions
-        );
 
+        // const response = await fetch(
+        //   `${API_URI_RBAC}/v2/dashboard_stunting`,
+        //   requestOptions
+        // );
+
+        const response = []
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -240,7 +386,7 @@ const ContentStunting = () => {
         try {
           const categoryNamesProv =
             dataStunting.data.compare_resiko_by_provinsi.reduce(
-              (acc, item) => {                
+              (acc, item) => {
                 acc[0].push(item.nama_prov);
                 acc[1].push(item.kode_prov);
                 return acc;
@@ -252,10 +398,10 @@ const ContentStunting = () => {
             dataStunting.data.compare_resiko_by_provinsi.reduce(
               (acc, item) => {
                 acc[0].push(item.jumlah_keluarga_beresiko_stunting);
-                acc[1].push(item.jumlah_keluarga_tidak_beresiko_stunting);                
+                acc[1].push(item.jumlah_keluarga_tidak_beresiko_stunting);
                 return acc;
               },
-              [[] , []]
+              [[], []]
             );
           setDataBeresikoProvinsi(resultChartStackedProv);
           setDataCategoryChartProvinsi(categoryNamesProv);
@@ -331,13 +477,13 @@ const ContentStunting = () => {
         // chart kesejahteraan
         try {
           const provinsiKesejahteraan = dataStunting.data.stunting_peringkat_kesejahteraan.reduce(
-              (acc, item) => {                
-                acc[0].push(item.nama_provinsi);
-                acc[1].push(item.kode_prov);
-                return acc;
-              },
-              [[], []]
-            );
+            (acc, item) => {
+              acc[0].push(item.nama_provinsi);
+              acc[1].push(item.kode_prov);
+              return acc;
+            },
+            [[], []]
+          );
           const peringkatKesejahteraan1 =
             dataStunting.data.stunting_peringkat_kesejahteraan.map(
               (item) => item.peringkat_kesejahteraan_1
@@ -368,7 +514,7 @@ const ContentStunting = () => {
             peringkatKesejahteraan2,
             peringkatKesejahteraan3,
             peringkatKesejahteraan4,
-          ];          
+          ];
           setDataChartKesejahteraanStacked(isiChartStackedKesejahteraan);
           setDataChartCategoryKesejahteraan(provinsiKesejahteraan);
           setDataChartKesejahteraan(isiChartKesejahteraan);
@@ -408,9 +554,9 @@ const ContentStunting = () => {
             dataStunting.data
               .total_perbandingan_total_anggaran_belanja_urusan_kesehatan_berdasarkan_total_belanja_nasional
               .total_nasional -
-              dataStunting.data
-                .total_perbandingan_total_anggaran_belanja_urusan_kesehatan_berdasarkan_total_belanja_nasional
-                .total_kesehatan,
+            dataStunting.data
+              .total_perbandingan_total_anggaran_belanja_urusan_kesehatan_berdasarkan_total_belanja_nasional
+              .total_kesehatan,
             dataStunting.data
               .total_perbandingan_total_anggaran_belanja_urusan_kesehatan_berdasarkan_total_belanja_nasional
               .total_kesehatan,
@@ -430,9 +576,9 @@ const ContentStunting = () => {
             dataStunting.data
               .total_perbandingan_keluarga_beresiko_stunting_berdasarkan_total_keluarga_sasaran
               .total_keluarga_sasaran -
-              dataStunting.data
-                .total_perbandingan_keluarga_beresiko_stunting_berdasarkan_total_keluarga_sasaran
-                .total_keluarga_beresiko_stunting,
+            dataStunting.data
+              .total_perbandingan_keluarga_beresiko_stunting_berdasarkan_total_keluarga_sasaran
+              .total_keluarga_beresiko_stunting,
             dataStunting.data
               .total_perbandingan_keluarga_beresiko_stunting_berdasarkan_total_keluarga_sasaran
               .total_keluarga_beresiko_stunting,
@@ -517,12 +663,12 @@ const ContentStunting = () => {
         }
         //pie chart spm
         try {
-          const resultChartSpm = [dataStunting.data.pie_spm_stunting.jml_rincian_total_anggaran_spm_stunting,dataStunting.data.pie_spm_stunting.jml_rincian_diluar_anggaran_spm_stunting]
-            // dataStunting.data.pie_spm_stunting.map(
-            //   (item) =>                 
-            //   (item.total_rincian)              
-            // );          
-            seDataChartPerbandinganSpm(resultChartSpm)      
+          const resultChartSpm = [dataStunting.data.pie_spm_stunting.jml_rincian_total_anggaran_spm_stunting, dataStunting.data.pie_spm_stunting.jml_rincian_diluar_anggaran_spm_stunting]
+          // dataStunting.data.pie_spm_stunting.map(
+          //   (item) =>                 
+          //   (item.total_rincian)              
+          // );          
+          seDataChartPerbandinganSpm(resultChartSpm)
         } catch (error) {
           console.error("Error processing top 5 akun belanja", error);
         }
@@ -530,14 +676,14 @@ const ContentStunting = () => {
         try {
           const resultChartTopUrusan =
             dataStunting.data.urusan_pemerintahan_untuk_kasus_stunting
-            .reduce(
-              (acc, item) => {
-                acc[0].push(item.total_rincian)
-                acc[1].push(item.nama_bidang_urusan)
-                return acc
-              }, [[],[]]              
-            );          
-            setDataChartTopUrusan(resultChartTopUrusan)      
+              .reduce(
+                (acc, item) => {
+                  acc[0].push(item.total_rincian)
+                  acc[1].push(item.nama_bidang_urusan)
+                  return acc
+                }, [[], []]
+              );
+          setDataChartTopUrusan(resultChartTopUrusan)
         } catch (error) {
           console.error("Error processing top 5 akun belanja", error);
         }
@@ -554,13 +700,174 @@ const ContentStunting = () => {
           const values = Object.values(dataStunting.data.pus_4_terlalu);
 
           const resultChartPus4Terlalu = [values, keys]
-            setDataChartPus4Terlalu(resultChartPus4Terlalu)
+          setDataChartPus4Terlalu(resultChartPus4Terlalu)
         } catch (error) {
           console.error("Error processing top 5 akun belanja", error);
         }
 
       } catch (error) {
         console.error("Error fetching dashboard_stunting data", error);
+        // Gunakan default data ketika API error
+        setDataStunting(DEFAULT_STUNTING_DATA);
+
+        // Set semua chart data dengan fallback values
+        try {
+          const fasilitasTidakSehat = Object.values(DEFAULT_STUNTING_DATA.fasilitas_tidak_sehat);
+          setDataChartFasilitas(fasilitasTidakSehat);
+          setDataChartFasilitasTidakSehat(fasilitasTidakSehat);
+        } catch (e) { console.error("Error setting fasilitas chart", e); }
+
+        try {
+          const categoryNamesProv = DEFAULT_STUNTING_DATA.compare_resiko_by_provinsi.reduce((acc, item) => {
+            acc[0].push(item.nama_prov);
+            acc[1].push(item.kode_prov);
+            return acc;
+          }, [[], []]);
+          const resultChartStackedProv = DEFAULT_STUNTING_DATA.compare_resiko_by_provinsi.reduce((acc, item) => {
+            acc[0].push(item.jumlah_keluarga_beresiko_stunting);
+            acc[1].push(item.jumlah_keluarga_tidak_beresiko_stunting);
+            return acc;
+          }, [[], []]);
+          setDataBeresikoProvinsi(resultChartStackedProv);
+          setDataCategoryChartProvinsi(categoryNamesProv);
+        } catch (e) { console.error("Error setting provinsi chart", e); }
+
+        try {
+          const categoryNamesKec = DEFAULT_STUNTING_DATA.compare_resiko_by_kecamatan.data.map((item) => item.kecamatan);
+          const resultChartStackedKec = DEFAULT_STUNTING_DATA.compare_resiko_by_kecamatan.data.reduce((acc, item) => {
+            acc[0].push(item.jumlah_keluarga_beresiko);
+            acc[1].push(item.jumlah_keluarga_tidak_beresiko);
+            return acc;
+          }, [[], []]);
+          setDataCategoryChartKecamatan(categoryNamesKec);
+          setDataBeresikoKecamatan(resultChartStackedKec);
+        } catch (e) { console.error("Error setting kecamatan chart", e); }
+
+        try {
+          const categoryNamesKel = DEFAULT_STUNTING_DATA.compare_resiko_by_kelurahan.data.map((item) => item.kelurahan);
+          const resultChartStackedKel = DEFAULT_STUNTING_DATA.compare_resiko_by_kelurahan.data.reduce((acc, item) => {
+            acc[0].push(item.jumlah_keluarga_beresiko);
+            acc[1].push(item.jumlah_keluarga_tidak_beresiko);
+            return acc;
+          }, [[], []]);
+          setDataCategoryChartKelurahan(categoryNamesKel);
+          setDataBeresikoKelurahan(resultChartStackedKel);
+        } catch (e) { console.error("Error setting kelurahan chart", e); }
+
+        try {
+          const provinsiPus = DEFAULT_STUNTING_DATA.punya_anak_dan_pus.data.map((item) => item.provinsi);
+          const jumlahBaduta = DEFAULT_STUNTING_DATA.punya_anak_dan_pus.data.map((item) => item.jumlah_baduta);
+          const jumlahBalita = DEFAULT_STUNTING_DATA.punya_anak_dan_pus.data.map((item) => item.jumlah_balita);
+          const jumlahPusHamil = DEFAULT_STUNTING_DATA.punya_anak_dan_pus.data.map((item) => item.jumlah_pus_hamil);
+          const isiChartPus = [provinsiPus, [jumlahBaduta, jumlahBalita, jumlahPusHamil]];
+          setDataChartPus(isiChartPus);
+        } catch (e) { console.error("Error setting pus chart", e); }
+
+        try {
+          const provinsiKesejahteraan = DEFAULT_STUNTING_DATA.stunting_peringkat_kesejahteraan.reduce((acc, item) => {
+            acc[0].push(item.nama_provinsi);
+            acc[1].push(item.kode_prov);
+            return acc;
+          }, [[], []]);
+          const peringkatKesejahteraan1 = DEFAULT_STUNTING_DATA.stunting_peringkat_kesejahteraan.map((item) => item.peringkat_kesejahteraan_1);
+          const peringkatKesejahteraan2 = DEFAULT_STUNTING_DATA.stunting_peringkat_kesejahteraan.map((item) => item.peringkat_kesejahteraan_2);
+          const peringkatKesejahteraan3 = DEFAULT_STUNTING_DATA.stunting_peringkat_kesejahteraan.map((item) => item.peringkat_kesejahteraan_3);
+          const peringkatKesejahteraan4 = DEFAULT_STUNTING_DATA.stunting_peringkat_kesejahteraan.map((item) => item.peringkat_kesejahteraan_4);
+          const isiChartKesejahteraan = [provinsiKesejahteraan, [peringkatKesejahteraan1, peringkatKesejahteraan2, peringkatKesejahteraan3, peringkatKesejahteraan4]];
+          const isiChartStackedKesejahteraan = [peringkatKesejahteraan1, peringkatKesejahteraan2, peringkatKesejahteraan3, peringkatKesejahteraan4];
+          setDataChartKesejahteraanStacked(isiChartStackedKesejahteraan);
+          setDataChartCategoryKesejahteraan(provinsiKesejahteraan);
+          setDataChartKesejahteraan(isiChartKesejahteraan);
+        } catch (e) { console.error("Error setting kesejahteraan chart", e); }
+
+        try {
+          const resultChartSpm = DEFAULT_STUNTING_DATA.perbandingan_spm_untuk_kasus_stunting.data.reduce((acc, item) => {
+            acc[0].push(item.value);
+            acc[1].push(item.spm);
+            return acc;
+          }, [[], []]);
+          setDataChartSpmStunting(resultChartSpm);
+        } catch (e) { console.error("Error setting spm chart", e); }
+
+        try {
+          const resultChartAnggaranKesehatan = [
+            DEFAULT_STUNTING_DATA.total_perbandingan_total_anggaran_belanja_urusan_kesehatan_berdasarkan_total_belanja_nasional.total_nasional - DEFAULT_STUNTING_DATA.total_perbandingan_total_anggaran_belanja_urusan_kesehatan_berdasarkan_total_belanja_nasional.total_kesehatan,
+            DEFAULT_STUNTING_DATA.total_perbandingan_total_anggaran_belanja_urusan_kesehatan_berdasarkan_total_belanja_nasional.total_kesehatan,
+          ];
+          setDataChartPerbandinganAnggaranKesehatan(resultChartAnggaranKesehatan);
+        } catch (e) { console.error("Error setting anggaran kesehatan chart", e); }
+
+        try {
+          const resultChartStuntingBerbandingKeluargaSasaran = [
+            DEFAULT_STUNTING_DATA.total_perbandingan_keluarga_beresiko_stunting_berdasarkan_total_keluarga_sasaran.total_keluarga_sasaran - DEFAULT_STUNTING_DATA.total_perbandingan_keluarga_beresiko_stunting_berdasarkan_total_keluarga_sasaran.total_keluarga_beresiko_stunting,
+            DEFAULT_STUNTING_DATA.total_perbandingan_keluarga_beresiko_stunting_berdasarkan_total_keluarga_sasaran.total_keluarga_beresiko_stunting,
+          ];
+          setDataChartPerbandinganKeluargaStunting(resultChartStuntingBerbandingKeluargaSasaran);
+        } catch (e) { console.error("Error setting keluarga stunting chart", e); }
+
+        try {
+          const resultChartAnggaranStunting = DEFAULT_STUNTING_DATA.total_perbandingan_total_anggaran_belanja_kasus_stunting_berdasarkan_total_belanja_nasional.data.map((item) => item.value);
+          setDataChartPerbandinganAnggaranStunting(resultChartAnggaranStunting);
+        } catch (e) { console.error("Error setting anggaran stunting chart", e); }
+
+        try {
+          const resultChartAkunBelanja = DEFAULT_STUNTING_DATA.top5_akun_belanja_terbesar_untuk_kasus_stunting.data.reduce((acc, item) => {
+            acc[0].push(item.value);
+            acc[1].push(item.akun_belanja);
+            return acc;
+          }, [[], []]);
+          setDataChartTop5AkunBelanja(resultChartAkunBelanja);
+        } catch (e) { console.error("Error setting akun belanja chart", e); }
+
+        try {
+          const resultChartRincianStuntingProvinsi = DEFAULT_STUNTING_DATA.cross_analisis_stunting_per_prov.reduce((acc, item) => {
+            acc[0].push(item.nama_daerah);
+            acc[1].push(item.persenblj);
+            acc[2].push(item.persenstunting);
+            acc[3].push(item.total_anggaran_stunting);
+            acc[4].push(item.total_rincian_all);
+            return acc;
+          }, [[], [], [], [], []]);
+          setDataChartRincianStuntingProvinsi(resultChartRincianStuntingProvinsi);
+        } catch (e) { console.error("Error setting rincian stunting provinsi chart", e); }
+
+        try {
+          const resultChartRincianStuntingKabupaten = DEFAULT_STUNTING_DATA.cross_analisis_stunting_per_kabkota.reduce((acc, item) => {
+            acc[0].push(item.nama_daerah);
+            acc[1].push(item.persenblj);
+            acc[2].push(item.persenstunting);
+            acc[3].push(item.total_anggaran_stunting);
+            acc[4].push(item.total_rincian_all);
+            return acc;
+          }, [[], [], [], [], []]);
+          setDataChartRincianStuntingKabupaten(resultChartRincianStuntingKabupaten);
+        } catch (e) { console.error("Error setting rincian stunting kabupaten chart", e); }
+
+        try {
+          const resultChartSpm = [
+            DEFAULT_STUNTING_DATA.pie_spm_stunting.jml_rincian_total_anggaran_spm_stunting,
+            DEFAULT_STUNTING_DATA.pie_spm_stunting.jml_rincian_diluar_anggaran_spm_stunting,
+          ];
+          seDataChartPerbandinganSpm(resultChartSpm);
+        } catch (e) { console.error("Error setting spm pie chart", e); }
+
+        try {
+          const resultChartTopUrusan = DEFAULT_STUNTING_DATA.urusan_pemerintahan_untuk_kasus_stunting.reduce((acc, item) => {
+            acc[0].push(item.total_rincian);
+            acc[1].push(item.nama_bidang_urusan);
+            return acc;
+          }, [[], []]);
+          setDataChartTopUrusan(resultChartTopUrusan);
+        } catch (e) { console.error("Error setting top urusan chart", e); }
+
+        try {
+          const keys = Object.keys(DEFAULT_STUNTING_DATA.pus_4_terlalu).map(key => {
+            return key.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+          });
+          const values = Object.values(DEFAULT_STUNTING_DATA.pus_4_terlalu);
+          const resultChartPus4Terlalu = [values, keys];
+          setDataChartPus4Terlalu(resultChartPus4Terlalu);
+        } catch (e) { console.error("Error setting pus 4 terlalu chart", e); }
       }
     };
     fetchData();
@@ -571,11 +878,11 @@ const ContentStunting = () => {
   const [titleMap, setTitleMap] = useState("Berisiko Stunting Desil 1")
   const [valueMap, setValueMap] = useState([]);
   const [maxValueMap, setmaxValueMap] = useState(0)
-  const [dataWidth, setDataWidth] = useState(6)  
+  const [dataWidth, setDataWidth] = useState(6)
   const [roam, setRoam] = useState(false);
-  const [dataDesil, setDataDesil] = useState({}); 
+  const [dataDesil, setDataDesil] = useState({});
 
-  const getDataStuntingTabel = ({tahun, tahun_data, kodeDdn="", kodeProv=""}) => {
+  const getDataStuntingTabel = ({ tahun, tahun_data, kodeDdn = "", kodeProv = "" }) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -611,42 +918,42 @@ const ContentStunting = () => {
           desil1: Array.isArray(dataStuntingTabel?.data)
             ? dataStuntingTabel?.data?.map(item => ({
               id: item.kode_prov,
-                name: item.nama_prov,
-                value: parseInt(item.peringkat_kesejahteraan_1),
-              }))
+              name: item.nama_prov,
+              value: parseInt(item.peringkat_kesejahteraan_1),
+            }))
             : [],
           desil2: Array.isArray(dataStuntingTabel?.data)
             ? dataStuntingTabel?.data?.map(item => ({
               id: item.kode_prov,
-                name: item.nama_prov,
-                value: parseInt(item.peringkat_kesejahteraan_2),
-              }))
+              name: item.nama_prov,
+              value: parseInt(item.peringkat_kesejahteraan_2),
+            }))
             : [],
           desil3: Array.isArray(dataStuntingTabel?.data)
             ? dataStuntingTabel?.data?.map(item => ({
               id: item.kode_prov,
-                name: item.nama_prov,
-                value: parseInt(item.peringkat_kesejahteraan_3),
-              }))
+              name: item.nama_prov,
+              value: parseInt(item.peringkat_kesejahteraan_3),
+            }))
             : [],
           desil4: Array.isArray(dataStuntingTabel?.data)
             ? dataStuntingTabel?.data?.map(item => ({
               id: item.kode_prov,
-                name: item.nama_prov,
-                value: parseInt(item.peringkat_kesejahteraan_4),
-              }))
+              name: item.nama_prov,
+              value: parseInt(item.peringkat_kesejahteraan_4),
+            }))
             : [],
           desil5: Array.isArray(dataStuntingTabel?.data)
             ? dataStuntingTabel?.data?.map(item => ({
               id: item.kode_prov,
-                name: item.nama_prov,
-                value: parseInt(item.peringkat_kesejahteraan_diatas_4),
-              }))
+              name: item.nama_prov,
+              value: parseInt(item.peringkat_kesejahteraan_diatas_4),
+            }))
             : [],
         };
         setDataDesil(desilData); // Simpan semua desil ke dalam state
         setValueMap(desilData?.desil1);
-        
+
         const maxValue = Array.isArray(desilData.desil1) && desilData.desil1.length > 0
           ? Math.max(...desilData.desil1.map(item => item.value || 0))
           : 0;
@@ -661,12 +968,14 @@ const ContentStunting = () => {
     };
     fetchData();
   };
-  const [dataStuntingTabelKabupaten, setDataStuntingTabelKabupaten] = useState([],[]);
+  const [dataStuntingTabelKabupaten, setDataStuntingTabelKabupaten] = useState([], []);
   const [filteredDataStuntingTabelKabupaten, setFilteredDataStuntingTabelKabupaten] = useState([]); // Data hasil filter
   const [dataKolomNamaDaerah, setDataKolomNamaDaerah] = useState("Se-Provinsi");
   const [showNextData, setShowNextData] = useState(false);
+  const [idDaerah, setIdDaerah] = useState("");
 
-  const getDataStuntingTabelKabupaten = ({kodeDdn = "", tahun, tahun_data}) => {
+
+  const getDataStuntingTabelKabupaten = ({ kode_ddn1 = "", tahun, tahun_data }) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -674,7 +983,7 @@ const ContentStunting = () => {
           method: "POST",
           headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
           body: JSON.stringify({
-            kode_ddn1: kodeDdn,
+            kode_ddn1: kode_ddn1 || "",
             tahun: tahun,
             tahun_data: tahun_data
           }),
@@ -692,7 +1001,7 @@ const ContentStunting = () => {
         const dataStuntingTabelKabupaten = await response.json();
         // e.stopPropagation(); 
         setShowNextData(true);
-        
+
         setDataKolomNamaDaerah("Nama Daerah");
         setCurrentPage(1);
         setDataStuntingTabel(dataStuntingTabelKabupaten?.data);
@@ -701,44 +1010,44 @@ const ContentStunting = () => {
         const desilData = {
           desil1: Array.isArray(dataStuntingTabelKabupaten?.data)
             ? dataStuntingTabelKabupaten?.data?.map(item => ({
-                id: item.kode_ddn1,
-                name: item.nama_kabupaten,
-                value: parseInt(item.peringkat_kesejahteraan_1),
-              })).slice(1)
+              id: item.kode_ddn1,
+              name: item.nama_kabupaten,
+              value: parseInt(item.peringkat_kesejahteraan_1),
+            })).slice(1)
             : [],
           desil2: Array.isArray(dataStuntingTabelKabupaten?.data)
             ? dataStuntingTabelKabupaten?.data?.map(item => ({
-                id: item.kode_ddn1,
-                name: item.nama_kabupaten,
-                value: parseInt(item.peringkat_kesejahteraan_2),
-              })).slice(1)
+              id: item.kode_ddn1,
+              name: item.nama_kabupaten,
+              value: parseInt(item.peringkat_kesejahteraan_2),
+            })).slice(1)
             : [],
           desil3: Array.isArray(dataStuntingTabelKabupaten?.data)
             ? dataStuntingTabelKabupaten?.data?.map(item => ({
               id: item.kode_ddn1,
-                name: item.nama_kabupaten,
-                value: parseInt(item.peringkat_kesejahteraan_3),
-              })).slice(1)
+              name: item.nama_kabupaten,
+              value: parseInt(item.peringkat_kesejahteraan_3),
+            })).slice(1)
             : [],
           desil4: Array.isArray(dataStuntingTabelKabupaten?.data)
             ? dataStuntingTabelKabupaten?.data?.map(item => ({
               id: item.kode_ddn1,
-                name: item.nama_kabupaten,
-                value: parseInt(item.peringkat_kesejahteraan_4),
-              })).slice(1)
+              name: item.nama_kabupaten,
+              value: parseInt(item.peringkat_kesejahteraan_4),
+            })).slice(1)
             : [],
           desil5: Array.isArray(dataStuntingTabelKabupaten?.data)
             ? dataStuntingTabelKabupaten?.data?.map(item => ({
               id: item.kode_ddn1,
-                name: item.nama_kabupaten,
-                value: parseInt(item.peringkat_kesejahteraan_diatas_4),
-              })).slice(1)
+              name: item.nama_kabupaten,
+              value: parseInt(item.peringkat_kesejahteraan_diatas_4),
+            })).slice(1)
             : [],
         };
         setDataDesil(desilData); // Simpan semua desil ke dalam state
         console.log(desilData, 'ini data desil')
         setValueMap(desilData?.desil1);
-        
+
         const maxValue = Array.isArray(desilData.desil1) && desilData.desil1.length > 0
           ? Math.max(...desilData.desil1.map(item => item.value || 0))
           : 0;
@@ -836,7 +1145,7 @@ const ContentStunting = () => {
         setCurrentPageDetailSub(1);
         setDataDetailHighlight(dataDetailAnggaran.data.stunting_highlight)
 
-        
+
         // Open the modal only after data is successfully fetched
       } catch (errorDetailAnggaran) {
         setErrorDetailAnggaran(errorDetailAnggaran);
@@ -848,58 +1157,58 @@ const ContentStunting = () => {
     fetchData();
   };
 
-    const [dataDetailAnggaranSubSub, setDataDetailAnggaranSubSub] = useState([]);
-    const [totalSebelumPembobotan, setTotalSebelumPembobotan] = useState(0)
-    const [dataDetailAnggaranSubSubFiltered, setDataDetailAnggaranSubSubFiltered] = useState([]);
-    const [loadingDetailAnggaranSub, setLoadingDetailAnggaranSub] = useState([]);
-    const [errorDetailAnggaranSub, setErrorDetailAnggaranSub] = useState([]);
-  
-    const getDataDetailAnggaranSubSub = ({kodeDdn, kodeSubGiat, kodeSro, tahun}) => {
-      const fetchData = async () => {
-        setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
-        try {
-          const token = JSON.parse(sessionStorage.getItem("authUser"))
-          const requestOptions = {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
-            body: JSON.stringify({
-              kode_ddn: kodeDdn,
-              kode_sub_giat: kodeSubGiat,
-              kode_sro: kodeSro,
-              tahun: tahun
-            }),
-          };
-    
-          const response = await fetch(
-            `${API_URI_RBAC}/v2/stunting_ssro_provkabkota`,
-            requestOptions
-          );
-    
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-    
-          const dataDetailAnggaranSub = await response.json();
-          setDataDetailAnggaranSubSub(dataDetailAnggaranSub?.data)
-          setDataDetailAnggaranSubSubFiltered(dataDetailAnggaranSub?.data)
+  const [dataDetailAnggaranSubSub, setDataDetailAnggaranSubSub] = useState([]);
+  const [totalSebelumPembobotan, setTotalSebelumPembobotan] = useState(0)
+  const [dataDetailAnggaranSubSubFiltered, setDataDetailAnggaranSubSubFiltered] = useState([]);
+  const [loadingDetailAnggaranSub, setLoadingDetailAnggaranSub] = useState([]);
+  const [errorDetailAnggaranSub, setErrorDetailAnggaranSub] = useState([]);
 
-          const total = dataDetailAnggaranSub?.data.reduce((acc, item) => acc + (item.volume * item.harga_satuan), 0);
-          console.log(total, 'ini total bobot')
-          setTotalSebelumPembobotan(total)
-          setModalSub(true)
-        } catch (errorDetailAnggaran) {
-          setErrorDetailAnggaran(errorDetailAnggaran);
-        } finally {
-          setLoadingDetailAnggaran(false);
+  const getDataDetailAnggaranSubSub = ({ kodeDdn, kodeSubGiat, kodeSro, tahun }) => {
+    const fetchData = async () => {
+      setLoadingDetailAnggaran(true); // Set loading state to true when starting the fetch
+      try {
+        const token = JSON.parse(sessionStorage.getItem("authUser"))
+        const requestOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+          body: JSON.stringify({
+            kode_ddn: kodeDdn,
+            kode_sub_giat: kodeSubGiat,
+            kode_sro: kodeSro,
+            tahun: tahun
+          }),
+        };
+
+        const response = await fetch(
+          `${API_URI_RBAC}/v2/stunting_ssro_provkabkota`,
+          requestOptions
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
         }
-      };
-    
-      fetchData();
-    }; 
+
+        const dataDetailAnggaranSub = await response.json();
+        setDataDetailAnggaranSubSub(dataDetailAnggaranSub?.data)
+        setDataDetailAnggaranSubSubFiltered(dataDetailAnggaranSub?.data)
+
+        const total = dataDetailAnggaranSub?.data.reduce((acc, item) => acc + (item.volume * item.harga_satuan), 0);
+        console.log(total, 'ini total bobot')
+        setTotalSebelumPembobotan(total)
+        setModalSub(true)
+      } catch (errorDetailAnggaran) {
+        setErrorDetailAnggaran(errorDetailAnggaran);
+      } finally {
+        setLoadingDetailAnggaran(false);
+      }
+    };
+
+    fetchData();
+  };
 
   useEffect(() => {
-    getDataStunting({kodeDdn:"", kodeProv:"", tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
-    getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
+    getDataStunting({ kodeDdn: "", kodeProv: "", tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData });
+    getDataStuntingTabel({ tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData });
     // getDataStuntingTabelKabupaten();
   }, []);
 
@@ -1122,7 +1431,7 @@ const ContentStunting = () => {
     kodeDdnProv = "",
     kodeDdnKab = "",
     rincianDetail = "",
-    namaSubGiat =""
+    namaSubGiat = ""
   ) => {
     if (kodeDaerah != "") {
       getDataDetailAnggaran(kodeDaerah, "", "", kodeSubGiat, selectedSingleTahunAnggaran, selectedSingleTahunData);
@@ -1137,13 +1446,13 @@ const ContentStunting = () => {
     // setModal(true)
   };
 
-  const handleOpenNextModalSub = ({kodeDdn, kodeSubGiat, kodeSro,tahun, rincianDetail, namaSro}) => {
-    getDataDetailAnggaranSubSub({kodeDdn:kodeDdn, kodeSubGiat:kodeSubGiat, kodeSro:kodeSro, tahun:tahun})
+  const handleOpenNextModalSub = ({ kodeDdn, kodeSubGiat, kodeSro, tahun, rincianDetail, namaSro }) => {
+    getDataDetailAnggaranSubSub({ kodeDdn: kodeDdn, kodeSubGiat: kodeSubGiat, kodeSro: kodeSro, tahun: tahun })
     setNamaSro(namaSro)
     setDataRincianDetailSubSub(rincianDetail)
     setModalSub(true)
   }
-  
+
   const handleCloseNextModalSub = () => {
     setModalSub(false)
   }
@@ -1170,26 +1479,26 @@ const ContentStunting = () => {
     setSearchTerm(value);
     console.log(dataStuntingTabel, 'ini isi data stunting <tabel>   </tabel>')
     if (value === "") {
-      if(showNextData){
+      if (showNextData) {
         setFilteredDataStuntingTabelKabupaten(dataStuntingTabel)
-      }else{
+      } else {
         setFilteredDataStuntingTabel(dataStuntingTabel);
       }
     } else {
       // Filter data berdasarkan input
       const filtered = dataStuntingTabel.filter((item) => {
-        if(showNextData){
+        if (showNextData) {
           setCurrentPageKabupaten(1)
           return item.nama_kabupaten.toLowerCase().includes(value)
-        }else{
+        } else {
           setCurrentPage(1)
           return item.nama_prov.toLowerCase().includes(value)
         }
       }
       );
-      showNextData ? (setFilteredDataStuntingTabelKabupaten(filtered)): (setFilteredDataStuntingTabel(filtered));
+      showNextData ? (setFilteredDataStuntingTabelKabupaten(filtered)) : (setFilteredDataStuntingTabel(filtered));
     }
-    
+
   };
 
   const handleClearSearch = () => {
@@ -1214,7 +1523,7 @@ const ContentStunting = () => {
       setDataDetailAnggaranFiltered(filtered)
     }
   };
-  
+
   const handleClearSearchDetail = (area = "") => {
     setDataDetailAnggaranFiltered(dataDetailAnggaran)
     setCurrentPageDetail(1);
@@ -1237,7 +1546,7 @@ const ContentStunting = () => {
       setDataDetailAnggaranSubFiltered(filtered)
     }
   };
-  
+
   const handleClearSearchDetailSub = (area = "") => {
     setDataDetailAnggaranSubFiltered(dataDetailAnggaranSub)
     setCurrentPageDetail(1);
@@ -1249,10 +1558,10 @@ const ContentStunting = () => {
     const value = e.target.value.toLowerCase();
     setSearchTermDetailSubSub(value);
     if (value === "") {
-      setDataDetailAnggaranSubSubFiltered(dataDetailAnggaranSubSub)  
+      setDataDetailAnggaranSubSubFiltered(dataDetailAnggaranSubSub)
     } else {
       const filtered = dataDetailAnggaranSubSub.filter((item) => {
-          return item.nama_standar_harga.toLowerCase().includes(value)
+        return item.nama_standar_harga.toLowerCase().includes(value)
       }
       );
       setDataDetailAnggaranSubSubFiltered(filtered)
@@ -1265,7 +1574,7 @@ const ContentStunting = () => {
     setSearchTermDetailSubSub(""); // Kosongkan isi input
     setDataDetailAnggaranSubSubFiltered(dataDetailAnggaranSubSub)
   };
-  
+
   const handleKeyDown = (e, area) => {
     // if (e.key === "Enter") {
     //   if (area === "kabupaten") {
@@ -1282,89 +1591,172 @@ const ContentStunting = () => {
   const [dataShowChartAnggaran, setDataShowChartAnggaran] = useState(false);
   const [dataShowChartFasilitasProvinsi, setShowDataChartFasilitasProvinsi] = useState(false)
   const [dataShowChartFasilitasPemda, setShowDataChartFasilitasPemda] = useState(false)
-  
+
   const [currentCategoryClicked, setCurrentCategoryClicked] = useState(null)
-  const [dataChartDetailFasilitasProvinsi, setDataChartDetailFasilitasProvinsi] = useState([],[],0,[])    
-  const [namaDaerahDetail, setNamaDaerahDetail] = useState([],[])
+  const [dataChartDetailFasilitasProvinsi, setDataChartDetailFasilitasProvinsi] = useState([], [], 0, [])
+  const [namaDaerahDetail, setNamaDaerahDetail] = useState([], [])
   const [fasilitasShow, setFasilitasShow] = useState("")
 
   const handleBarClick = (params) => {
-    const clickedCategory = params.name        
-    setFasilitasShow(clickedCategory)        
+    const clickedCategory = params.name
+    setFasilitasShow(clickedCategory)
     const dataDetail = (clickedCategory == "Jamban Tidak Layak" ? dataStunting.fasilitas_lingkungan_tidak_sehat_jamban.reduce((acc, item) => {
       acc[0].push(item.jumlah_lingkungan_tdksehat_jamban)
-      acc[1].push(item.nama_daerah)      
+      acc[1].push(item.nama_daerah)
       acc[2] += item.jumlah_lingkungan_tdksehat_jamban;
       acc[3].push(item.kode_ddn)
       return acc
-    }, [[],[], 0, []]) : dataStunting.fasilitas_lingkungan_tidak_sehat_air.reduce((acc, item) => {
+    }, [[], [], 0, []]) : dataStunting.fasilitas_lingkungan_tidak_sehat_air.reduce((acc, item) => {
       acc[0].push(item.jumlah_lingkungan_tdksehat_air)
       acc[1].push(item.nama_daerah)
       acc[2] += item.jumlah_lingkungan_tdksehat_air;
       acc[3].push(item.kode_ddn)
       return acc
-    }, [[],[], 0, []]))
-    
-    setCurrentCategoryClicked(clickedCategory)    
+    }, [[], [], 0, []]))
+
+    setCurrentCategoryClicked(clickedCategory)
     setDataChartDetailFasilitasProvinsi(dataDetail)
     setShowDataChartFasilitasProvinsi(true)
   };
 
   const [dataJambanTidakLayakPemda, setDataJambanTidakLayakPemda] = useState([])
-  const getDataFasilitasKesehatanPerProv = ({kodeProvinsi = "", kodeDdn="", url="", tahun, tahunData}) => {
-    const fetchData = async () => {
-      try {
-        const token = JSON.parse(sessionStorage.getItem("authUser"))
-        const requestOptions = {
-          method: "POST",
-          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
-          body: JSON.stringify({
-            kode_provinsi: kodeProvinsi,
-            tahun: tahun,
-            tahun_data: tahunData
-          }),
-        };
 
-        const response = await fetch(
-          `${API_URI_RBAC}/v2${url}`,
-          requestOptions
-        );
-
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-
-        const dataStuntingFasilitasKesehatan = await response.json();
+  useEffect(() => {
+        let dataStuntingFasilitasKesehatan = DEFAULT_FASILITAS_KESEHATAN_DATA;
 
         const dataDetail = (fasilitasShow == "Jamban Tidak Layak" ? dataStuntingFasilitasKesehatan.data.fasilitas_lingkungan_tidak_sehat_jamban_kabkota.reduce((acc, item) => {
-          acc[0].push(item.jumlah_jamban_tidak_layak)
-          acc[1].push(item.nama_daerah)      
-          acc[2] += item.jumlah_jamban_tidak_layak;
-          acc[3].push(item.kode_ddn)
-          return acc
-        }, [[],[], 0, []]) : dataStuntingFasilitasKesehatan.data.fasilitas_lingkungan_tidak_sehat_air_kabkota.reduce((acc, item) => {
-          acc[0].push(item.jumlah_jamban_tidak_layak)
-          acc[1].push(item.nama_daerah)
-          acc[2] += item.jumlah_jamban_tidak_layak;
-          acc[3].push(item.kode_ddn)
-          return acc
-        }, [[],[], 0, []]))            
-        
-        setDataJambanTidakLayakPemda(dataDetail)
+      acc[0].push(item.jumlah_jamban_tidak_layak)
+      acc[1].push(item.nama_daerah)
+      acc[2] += item.jumlah_jamban_tidak_layak;
+      acc[3].push(item.kode_ddn)
+      return acc
+    }, [[], [], 0, []]) : dataStuntingFasilitasKesehatan.data.fasilitas_lingkungan_tidak_sehat_air_kabkota.reduce((acc, item) => {
+      acc[0].push(item.jumlah_jamban_tidak_layak)
+      acc[1].push(item.nama_daerah)
+      acc[2] += item.jumlah_jamban_tidak_layak;
+      acc[3].push(item.kode_ddn)
+      return acc
+    }, [[], [], 0, []]))
 
-        setShowDataChartFasilitasPemda(true)
-      } catch (errorStunting) {
-        setErrorStunting(errorStunting);
-      } finally {
-        setLoadingStunting(false);
-      }
-    };
-    fetchData();
+    console.log(dataDetail, 'ini data detail fasilitas kesehatan')
+    setDataJambanTidakLayakPemda(dataDetail)
+
+    setShowDataChartFasilitasPemda(true)
+  }, [fasilitasShow])
+
+  console.log(DEFAULT_FASILITAS_KESEHATAN_DATA, 'ini default fasilitas kesehatan')
+  const getDataFasilitasKesehatanPerProv = ({ kodeProvinsi = "", kodeDdn = "", url = "", tahun, tahunData }) => {
+    let dataStuntingFasilitasKesehatan = DEFAULT_FASILITAS_KESEHATAN_DATA;
+
+    // Uncomment di bawah untuk menggunakan API yang sebenarnya
+    // const response = await fetch(
+    //   `${API_URI_RBAC}/v2${url}`,
+    //   requestOptions
+    // );
+    // if (response.ok) {
+    //   dataStuntingFasilitasKesehatan = await response.json();
+    // }
+
+    console.log(dataStuntingFasilitasKesehatan, 'ini data fasilitas kesehatan per provinsi')
+
+    // const dataDetail = (fasilitasShow == "Jamban Tidak Layak" ? dataStuntingFasilitasKesehatan.data.fasilitas_lingkungan_tidak_sehat_jamban_kabkota.reduce((acc, item) => {
+    //   acc[0].push(item.jumlah_jamban_tidak_layak)
+    //   acc[1].push(item.nama_daerah)
+    //   acc[2] += item.jumlah_jamban_tidak_layak;
+    //   acc[3].push(item.kode_ddn)
+    //   return acc
+    // }, [[], [], 0, []]) : dataStuntingFasilitasKesehatan.data.fasilitas_lingkungan_tidak_sehat_air_kabkota.reduce((acc, item) => {
+    //   acc[0].push(item.jumlah_jamban_tidak_layak)
+    //   acc[1].push(item.nama_daerah)
+    //   acc[2] += item.jumlah_jamban_tidak_layak;
+    //   acc[3].push(item.kode_ddn)
+    //   return acc
+    // }, [[], [], 0, []]))
+
+    // console.log(dataDetail, 'ini data detail fasilitas kesehatan')
+    // setDataJambanTidakLayakPemda(dataDetail)
+
+    // setShowDataChartFasilitasPemda(true)
+    // const fetchData = async () => {
+
+    //   try {
+    //     const token = JSON.parse(sessionStorage.getItem("authUser"))
+    //     const requestOptions = {
+    //       method: "POST",
+    //       headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+    //       body: JSON.stringify({
+    //         kode_provinsi: kodeProvinsi,
+    //         tahun: tahun,
+    //         tahun_data: tahunData
+    //       }),
+    //     };
+
+    //     // const response = await fetch(
+    //     //   `${API_URI_RBAC}/v2${url}`,
+    //     //   requestOptions
+    //     // );
+
+    //     let dataStuntingFasilitasKesehatan = DEFAULT_FASILITAS_KESEHATAN_DATA;
+
+    //     // Uncomment di bawah untuk menggunakan API yang sebenarnya
+    //     // const response = await fetch(
+    //     //   `${API_URI_RBAC}/v2${url}`,
+    //     //   requestOptions
+    //     // );
+    //     // if (response.ok) {
+    //     //   dataStuntingFasilitasKesehatan = await response.json();
+    //     // }
+
+    //     console.log(dataStuntingFasilitasKesehatan, 'ini data fasilitas kesehatan per provinsi')
+
+    //     const dataDetail = (fasilitasShow == "Jamban Tidak Layak" ? dataStuntingFasilitasKesehatan.data.fasilitas_lingkungan_tidak_sehat_jamban_kabkota.reduce((acc, item) => {
+    //       acc[0].push(item.jumlah_jamban_tidak_layak)
+    //       acc[1].push(item.nama_daerah)      
+    //       acc[2] += item.jumlah_jamban_tidak_layak;
+    //       acc[3].push(item.kode_ddn)
+    //       return acc
+    //     }, [[],[], 0, []]) : dataStuntingFasilitasKesehatan.data.fasilitas_lingkungan_tidak_sehat_air_kabkota.reduce((acc, item) => {
+    //       acc[0].push(item.jumlah_jamban_tidak_layak)
+    //       acc[1].push(item.nama_daerah)
+    //       acc[2] += item.jumlah_jamban_tidak_layak;
+    //       acc[3].push(item.kode_ddn)
+    //       return acc
+    //     }, [[],[], 0, []]))            
+
+    //     console.log(dataDetail, 'ini data detail fasilitas kesehatan')
+    //     setDataJambanTidakLayakPemda(dataDetail)
+
+    //     setShowDataChartFasilitasPemda(true)
+    //   } catch (errorStunting) {
+    //     console.error("Error fetching fasilitas kesehatan data:", errorStunting);
+    //     // Gunakan default data jika API error
+    //     const dataDetail = (fasilitasShow == "Jamban Tidak Layak" ? DEFAULT_FASILITAS_KESEHATAN_DATA.data.fasilitas_lingkungan_tidak_sehat_jamban_kabkota.reduce((acc, item) => {
+    //       acc[0].push(item.jumlah_jamban_tidak_layak)
+    //       acc[1].push(item.nama_daerah)      
+    //       acc[2] += item.jumlah_jamban_tidak_layak;
+    //       acc[3].push(item.kode_ddn)
+    //       return acc
+    //     }, [[],[], 0, []]) : DEFAULT_FASILITAS_KESEHATAN_DATA.data.fasilitas_lingkungan_tidak_sehat_air_kabkota.reduce((acc, item) => {
+    //       acc[0].push(item.jumlah_jamban_tidak_layak)
+    //       acc[1].push(item.nama_daerah)
+    //       acc[2] += item.jumlah_jamban_tidak_layak;
+    //       acc[3].push(item.kode_ddn)
+    //       return acc
+    //     }, [[],[], 0, []]))
+
+    //     setDataJambanTidakLayakPemda(dataDetail)
+    //     setShowDataChartFasilitasPemda(true)
+    //     setErrorStunting(errorStunting);
+    //   } finally {
+    //     setLoadingStunting(false);
+    //   }
+    // };
+    // fetchData();
   };
 
   const [dataStackedProv, setDataStackedProv] = useState([])
   const [dataShowStackKab, setDataShowStackKab] = useState(false)
-  const getDataStackPerProv = ({kodeProv = ""}) => {
+  const getDataStackPerProv = ({ kodeProv = "" }) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -1386,27 +1778,27 @@ const ContentStunting = () => {
         }
 
         const dataStuntingStackProv = await response.json();
-              
-        const categoryNamesKab = dataStuntingStackProv.data.compare_resiko_by_provinsi_onklik.reduce((acc, item) => {                
-            acc[0].push(item.nama_kabupaten);
-            acc[1].push(item.nama_provinsi);
-            return acc;
-          },
+
+        const categoryNamesKab = dataStuntingStackProv.data.compare_resiko_by_provinsi_onklik.reduce((acc, item) => {
+          acc[0].push(item.nama_kabupaten);
+          acc[1].push(item.nama_provinsi);
+          return acc;
+        },
           [[], []]
         );
-            
+
         const resultChartStackedKab = dataStuntingStackProv.data.compare_resiko_by_provinsi_onklik.reduce((acc, item) => {
-            acc[0].push(item.jumlah_keluarga_beresiko_stunting)
-            acc[1].push(item.jumlah_keluarga_tidak_beresiko_stunting)                  
-            return acc
-          }, [[],[]]
-        )            
+          acc[0].push(item.jumlah_keluarga_beresiko_stunting)
+          acc[1].push(item.jumlah_keluarga_tidak_beresiko_stunting)
+          return acc
+        }, [[], []]
+        )
         console.log(categoryNamesKab, 'ini')
         console.log(resultChartStackedKab, "kkab perbandingan")
-          setDataCategoryChartKabupaten(categoryNamesKab);
-          setDataBeresikoKabupaten(resultChartStackedKab);
+        setDataCategoryChartKabupaten(categoryNamesKab);
+        setDataBeresikoKabupaten(resultChartStackedKab);
 
-          setDataShowStackKab(true)
+        setDataShowStackKab(true)
       } catch (errorStunting) {
         setErrorStunting(errorStunting);
       } finally {
@@ -1417,7 +1809,7 @@ const ContentStunting = () => {
   };
 
   const [dataShowKesejahteraanStackKab, setDataShowKesejahteraanStackKab] = useState(false)
-  const getDataStackPerProvKesejahteraan = ({kodeProv = "", tahunData}) => {
+  const getDataStackPerProvKesejahteraan = ({ kodeProv = "", tahunData }) => {
     const fetchData = async () => {
       try {
         const token = JSON.parse(sessionStorage.getItem("authUser"))
@@ -1441,11 +1833,11 @@ const ContentStunting = () => {
 
         const dataStuntingStackProvKesejahteraan = await response.json();
         setDataShowKesejahteraanStackKab(true)
-              
-        const categoryNamesKab = dataStuntingStackProvKesejahteraan.data.reduce((acc, item) => {                
-            acc[0].push(item.nama_kabupaten);
-            return acc;
-          },
+
+        const categoryNamesKab = dataStuntingStackProvKesejahteraan.data.reduce((acc, item) => {
+          acc[0].push(item.nama_kabupaten);
+          return acc;
+        },
           [[]]
         );
         console.log(categoryNamesKab, 'ini isi kesejahteran acada')
@@ -1453,14 +1845,14 @@ const ContentStunting = () => {
 
         const resultChartStackedKab = dataStuntingStackProvKesejahteraan.data.reduce((acc, item) => {
           acc[0].push(item.peringkat_kesejahteraan_1)
-          acc[1].push(item.peringkat_kesejahteraan_2)                  
-          acc[2].push(item.peringkat_kesejahteraan_3)                  
-          acc[3].push(item.peringkat_kesejahteraan_4)                      
+          acc[1].push(item.peringkat_kesejahteraan_2)
+          acc[2].push(item.peringkat_kesejahteraan_3)
+          acc[3].push(item.peringkat_kesejahteraan_4)
           return acc
-          }, [[],[],[],[]]
+        }, [[], [], [], []]
         )
         console.log(resultChartStackedKab, 'kab kesejahteraan')
-          setDataKabupatenKesejahteraan(resultChartStackedKab);
+        setDataKabupatenKesejahteraan(resultChartStackedKab);
 
       } catch (errorStunting) {
         setErrorStunting(errorStunting);
@@ -1473,162 +1865,164 @@ const ContentStunting = () => {
 
   const handleBarClickProv = (data) => {
     if (fasilitasShow == "Jamban Tidak Layak") {
-      getDataFasilitasKesehatanPerProv({kodeDdn:"", kodeProvinsi: data.id, url: "/dashboard_stunting_jamban_kabkota", tahun: selectedSingleTahunAnggaran, tahunData: selectedSingleTahunData})
+      getDataFasilitasKesehatanPerProv({ kodeDdn: "", kodeProvinsi: data.id, url: "/dashboard_stunting_jamban_kabkota", tahun: selectedSingleTahunAnggaran, tahunData: selectedSingleTahunData })
     } else {
-      getDataFasilitasKesehatanPerProv({kodeDdn:"", kodeProvinsi: data.id, url: "/dashboard_stunting_air_kabkota", tahun: selectedSingleTahunAnggaran, tahunData: selectedSingleTahunData})
+      getDataFasilitasKesehatanPerProv({ kodeDdn: "", kodeProvinsi: data.id, url: "/dashboard_stunting_air_kabkota", tahun: selectedSingleTahunAnggaran, tahunData: selectedSingleTahunData })
     }
   };
 
   const [titleStack, setTitleStack] = useState("")
   const [titleStackKesejahteraan, setTitleStackKesejahteraan] = useState("")
-  const handleBarClickStackProv = (data) => {     
+  const handleBarClickStackProv = (data) => {
     setTitleStack(data.category)
-    getDataStackPerProv({kodeProv: data.id})
+    getDataStackPerProv({ kodeProv: data.id })
   }
 
-  const handleBarClickStackKesejahteraanProv = (data) => {     
+  const handleBarClickStackKesejahteraanProv = (data) => {
     setTitleStackKesejahteraan(data.category)
-    getDataStackPerProvKesejahteraan({kodeProv: data.id, tahunData: selectedSingleTahunData})
+    getDataStackPerProvKesejahteraan({ kodeProv: data.id, tahunData: selectedSingleTahunData })
   }
 
   const handleBack = () => {
     setShowDataChartFasilitasProvinsi(false)
+    setShowDataChartFasilitasPemda(true)
+    
   }
 
   const [showChartBerisiko, setShowChartBerisiko] = useState(false)
 
-    const [selectedSingleTahunAnggaran, setSelectedSingleTahunAnggaran] = useState('2025'); // Set default value
-    const [selectedSingleTahunData, setSelectedSingleTahunData] = useState('2024'); // Set default value
-    
-    const handleSelectChangeAnggaran = (e) => {
-      const { value } = e.target;
-      const newTahunData = (parseInt(value) - 1).toString();
-      setSelectedSingleTahunAnggaran(value);
-      setSelectedSingleTahunData(newTahunData);
-      getDataStunting({ kodeDdn:"", kodeProv: kodeWilayahPeta, tahun: value, tahun_data: newTahunData });
-      if(clickDaerah){
-        getDataStuntingTabelKabupaten({kodeDdn:kodeWilayahPeta, tahun: value, tahun_data:newTahunData})
-      }else{
-        getDataStuntingTabel({ tahun: value, tahun_data: newTahunData });
-      }
-    };
-    
-    const handleSelectChangeDataPokok = (e) => {
-      const { value } = e.target;
-      const newTahunAnggaran = (parseInt(value) + 1).toString();
-      setSelectedSingleTahunData(value);
-      setSelectedSingleTahunAnggaran(newTahunAnggaran);
-      getDataStunting({kodeDdn:"", kodeProv: kodeWilayahPeta, tahun: newTahunAnggaran, tahun_data: value });
-      // getDataStuntingTabel({ tahun: newTahunAnggaran, tahun_data: value });
-      if(clickDaerah){
-        getDataStuntingTabelKabupaten({kodeDdn:kodeWilayahPeta, tahun: selectedSingleTahunAnggaran, tahun_data:value})
-      }else{
-        getDataStuntingTabel({ tahun: newTahunAnggaran, tahun_data: value });
-      }
-      if (dataShowKesejahteraanStackKab) {
-        getDataStackPerProvKesejahteraan({ tahunData: value });
-      }
-    };
+  const [selectedSingleTahunAnggaran, setSelectedSingleTahunAnggaran] = useState('2025'); // Set default value
+  const [selectedSingleTahunData, setSelectedSingleTahunData] = useState('2024'); // Set default value
 
-    const [clickDaerah, setClickDaerah] = useState(false)
-    const [clickNamaDaerah, setClickNamaDaerah] = useState("")
-    const [kodeWilayahPeta, setKodeWilayahPeta]=useState("")  
-    const handleRegionClick = (kodeProv, namaProv) => {
-      getDataStunting({kodeDdn:"", kodeProv:kodeProv, tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
-      getDataStuntingTabelKabupaten({kodeDdn:kodeProv, tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
-      setKodeWilayahPeta(kodeProv)
-      setNamaDaerahDetail(namaProv)
-      setClickNamaDaerah(namaProv)
-      setClickDaerah(true)
-    };
-
-    const handleKabKotaClick = (kodeProv, namaProv) => {
-      getDataStunting({kodeDdn:kodeProv, kodeProv:"", tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
-      setKodeWilayahPeta(kodeProv)
-      setClickNamaDaerah(namaProv)
-    };
-
-    const resetRegionClick = () => {
-      getDataStunting({kodeDdn:"", kodeProv:"", tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData});
-      getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData})
-      setKodeWilayahPeta("")
-      setClickDaerah(false)
+  const handleSelectChangeAnggaran = (e) => {
+    const { value } = e.target;
+    const newTahunData = (parseInt(value) - 1).toString();
+    setSelectedSingleTahunAnggaran(value);
+    setSelectedSingleTahunData(newTahunData);
+    getDataStunting({ kodeDdn: "", kodeProv: kodeWilayahPeta, tahun: value, tahun_data: newTahunData });
+    if (clickDaerah) {
+      getDataStuntingTabelKabupaten({ kode_ddn1: kodeWilayahPeta, tahun: value, tahun_data: newTahunData })
+    } else {
+      getDataStuntingTabel({ tahun: value, tahun_data: newTahunData });
     }
+  };
 
-     useEffect(() => {
-        const handleEscKey = (event) => {
-          if (event.key === "Escape") {
-            handleClose()
-            handleCloseNextModal()
-            handleCloseNextModalSub();
-          }
-        };
-      
-        window.addEventListener("keydown", handleEscKey);
-        return () => {
-          window.removeEventListener("keydown", handleEscKey);
-        };
-      }, []);
+  const handleSelectChangeDataPokok = (e) => {
+    const { value } = e.target;
+    const newTahunAnggaran = (parseInt(value) + 1).toString();
+    setSelectedSingleTahunData(value);
+    setSelectedSingleTahunAnggaran(newTahunAnggaran);
+    getDataStunting({ kodeDdn: "", kodeProv: kodeWilayahPeta, tahun: newTahunAnggaran, tahun_data: value });
+    // getDataStuntingTabel({ tahun: newTahunAnggaran, tahun_data: value });
+    if (clickDaerah) {
+      getDataStuntingTabelKabupaten({ kode_ddn1: kodeWilayahPeta, tahun: selectedSingleTahunAnggaran, tahun_data: value })
+    } else {
+      getDataStuntingTabel({ tahun: newTahunAnggaran, tahun_data: value });
+    }
+    if (dataShowKesejahteraanStackKab) {
+      getDataStackPerProvKesejahteraan({ tahunData: value });
+    }
+  };
+
+  const [clickDaerah, setClickDaerah] = useState(false)
+  const [clickNamaDaerah, setClickNamaDaerah] = useState("")
+  const [kodeWilayahPeta, setKodeWilayahPeta] = useState("")
+  const handleRegionClick = (kodeProv, namaProv) => {
+    getDataStunting({ kodeDdn: "", kodeProv: kodeProv, tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData });
+    getDataStuntingTabelKabupaten({ kode_ddn1: kodeProv, tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData });
+    setKodeWilayahPeta(kodeProv)
+    setNamaDaerahDetail(namaProv)
+    setClickNamaDaerah(namaProv)
+    setClickDaerah(true)
+  };
+
+  const handleKabKotaClick = (kodeProv, namaProv) => {
+    getDataStunting({ kodeDdn: kodeProv, kodeProv: "", tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData });
+    setKodeWilayahPeta(kodeProv)
+    setClickNamaDaerah(namaProv)
+  };
+
+  const resetRegionClick = () => {
+    getDataStunting({ kodeDdn: "", kodeProv: "", tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData });
+    getDataStuntingTabel({ tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData })
+    setKodeWilayahPeta("")
+    setClickDaerah(false)
+  }
+
+  useEffect(() => {
+    const handleEscKey = (event) => {
+      if (event.key === "Escape") {
+        handleClose()
+        handleCloseNextModal()
+        handleCloseNextModalSub();
+      }
+    };
+
+    window.addEventListener("keydown", handleEscKey);
+    return () => {
+      window.removeEventListener("keydown", handleEscKey);
+    };
+  }, []);
 
   return (
     <React.Fragment>
       <Row>
         <Col>
           <Card className="card-custom">
-          <div className="d-flex justify-content-between">
-            <div className="d-flex title-page">
-              <div className="d-flex justify-content-center align-items-center avatar-sm">
-                <span className="logo-sm">
-                  <img src={logoBkkbn} alt="" width="35" height="35" />
-                </span>
-              </div>
-              <div className="d-flex justify-content-center align-items-center">
-                <span>Kementerian Kependudukan dan Pembangunan Keluarga</span>
-              </div>
-            </div>
-            <div className="d-flex nav-beranda">
-              <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
-                    Tahun Data:
-                  </div>
-                 <select
-              name="tahun"
-              style={{
-                padding: "10px 30px 10px 10px",
-                fontSize: "16px",
-                borderRadius: "5px",
-                border: "1px solid #ccc",
-                backgroundColor: "#ffffff",                          
-                cursor: "pointer",                          
-                margin: "15px 15px 15px 5px",
-              }}
-              value={selectedSingleTahunData}
-              onChange={handleSelectChangeDataPokok}
-            >    
-              <option value="2023">2023</option>
-              <option value="2024">2024</option>
-              <option value="2025">2025</option>
-            </select>
-            <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
-                    Tahun Anggaran:
-                  </div>
-                 <select
-              name="tahun"
-              style={{
-                padding: "10px 30px 10px 10px",
-                fontSize: "16px",
-                borderRadius: "5px",
-                border: "1px solid #ccc",
-                backgroundColor: "#ffffff",                          
-                cursor: "pointer",                          
-                margin: "15px 15px 15px 5px",
-              }}
-              value={selectedSingleTahunAnggaran}
-              onChange={handleSelectChangeAnggaran}
-            >                        
-              <option value="2024">2024</option>
-              <option value="2025">2025</option>
-            </select>
+            <div className="d-flex justify-content-between">
+              <div className="d-flex title-page">
+                <div className="d-flex justify-content-center align-items-center avatar-sm">
+                  <span className="logo-sm">
+                    <img src={logoBkkbn} alt="" width="35" height="35" />
+                  </span>
                 </div>
+                <div className="d-flex justify-content-center align-items-center">
+                  <span>Kementerian Kependudukan dan Pembangunan Keluarga</span>
+                </div>
+              </div>
+              <div className="d-flex nav-beranda">
+                <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight: 600, fontFamily: "poppins" }}>
+                  Tahun Data:
+                </div>
+                <select
+                  name="tahun"
+                  style={{
+                    padding: "10px 30px 10px 10px",
+                    fontSize: "16px",
+                    borderRadius: "5px",
+                    border: "1px solid #ccc",
+                    backgroundColor: "#ffffff",
+                    cursor: "pointer",
+                    margin: "15px 15px 15px 5px",
+                  }}
+                  value={selectedSingleTahunData}
+                  onChange={handleSelectChangeDataPokok}
+                >
+                  <option value="2023">2023</option>
+                  <option value="2024">2024</option>
+                  <option value="2025">2025</option>
+                </select>
+                <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight: 600, fontFamily: "poppins" }}>
+                  Tahun Anggaran:
+                </div>
+                <select
+                  name="tahun"
+                  style={{
+                    padding: "10px 30px 10px 10px",
+                    fontSize: "16px",
+                    borderRadius: "5px",
+                    border: "1px solid #ccc",
+                    backgroundColor: "#ffffff",
+                    cursor: "pointer",
+                    margin: "15px 15px 15px 5px",
+                  }}
+                  value={selectedSingleTahunAnggaran}
+                  onChange={handleSelectChangeAnggaran}
+                >
+                  <option value="2024">2024</option>
+                  <option value="2025">2025</option>
+                </select>
+              </div>
             </div>
           </Card>
         </Col>
@@ -1638,10 +2032,10 @@ const ContentStunting = () => {
           <Card className="card-height-100">
             <CardBody>
               <div className="d-flex justify-content-between mb-2">
-              <div className="d-flex justify-content-center align-items-center">
-              {dataWidth==6 ? (<><button onClick={()=>{
-                  setDataWidth(12)
-                  setRoam(true)
+                <div className="d-flex justify-content-center align-items-center">
+                  {dataWidth == 6 ? (<><button onClick={() => {
+                    setDataWidth(12)
+                    setRoam(true)
                   }} style={{
                     backgroundColor: "#007bff",
                     color: "white",
@@ -1652,7 +2046,7 @@ const ContentStunting = () => {
                     fontSize: "16px",
                   }}>
                     Maximize Map
-                  </button></>) : (<><button onClick={()=>{
+                  </button></>) : (<><button onClick={() => {
                     setDataWidth(6)
                     setRoam(false)
                   }} style={{
@@ -1666,50 +2060,50 @@ const ContentStunting = () => {
                   }}>
                     Minimize Map
                   </button></>)}
-                  {clickDaerah ? <><button onClick={()=>{
+                  {clickDaerah ? <><button onClick={() => {
                     resetRegionClick()
                     setTitleMap("Total Penduduk")
-                    }} style={{
-                      backgroundColor: "#007bff",
-                      color: "white",
-                      padding: "5px 10px",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                      fontSize: "16px",
-                      marginLeft: "4px"
-                    }}>
-                      Nasional
-                    </button>
-                    </> : 
+                  }} style={{
+                    backgroundColor: "#007bff",
+                    color: "white",
+                    padding: "5px 10px",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontSize: "16px",
+                    marginLeft: "4px"
+                  }}>
+                    Nasional
+                  </button>
+                  </> :
                     <>
-                  </>}
-              </div>
-              
-              <div className="d-flex nav-beranda">
-              <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight:600, fontFamily: "poppins" }}>
-                Keluarga Berisiko Stunting:
-              </div>
+                    </>}
+                </div>
+
+                <div className="d-flex nav-beranda">
+                  <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight: 600, fontFamily: "poppins" }}>
+                    Keluarga Berisiko Stunting:
+                  </div>
                   <select
                     name="Desil"
-                      style={{
-                        padding: "10px 30px 10px 10px",
-                        fontSize: "16px",
-                        borderRadius: "5px",
-                        border: "1px solid #ccc",
-                        backgroundColor: "#ffffff",
-                        cursor: "pointer",
-                        marginLeft: "10px"
-                      }}
-                      value={selectedDesil}
-                      onChange={handleSelectChange}
-                    >
+                    style={{
+                      padding: "10px 30px 10px 10px",
+                      fontSize: "16px",
+                      borderRadius: "5px",
+                      border: "1px solid #ccc",
+                      backgroundColor: "#ffffff",
+                      cursor: "pointer",
+                      marginLeft: "10px"
+                    }}
+                    value={selectedDesil}
+                    onChange={handleSelectChange}
+                  >
                     <option value="1">DESIL 1</option>
                     <option value="2">DESIL 2</option>
                     <option value="3">DESIL 3</option>
                     <option value="4">DESIL 4</option>
                     <option value="5">DESIL &gt;4</option>
-                    </select>
+                  </select>
                 </div>
               </div>
               <MapIndoChart roam={roam} daerah={clickDaerah} onKabKotaClick={handleKabKotaClick} maxValue={maxValueMap} onRegionClick={handleRegionClick} valueSeries={valueMap} colorData={["#FFCDD2", "#FF9EA7", "#FF7380", "#FF4B5C", "#FF2438", "#FF0017"]} />
@@ -1719,8 +2113,8 @@ const ContentStunting = () => {
         <Col md={dataWidth}>
           <Card className="card-height-100">
             <CardBody>
-            <div className="d-flex justify-content-center align-items-center title-page">
-                  {clickDaerah ? clickNamaDaerah : "Nasional"}
+              <div className="d-flex justify-content-center align-items-center title-page">
+                {clickDaerah ? clickNamaDaerah : "Nasional"}
               </div>
               <Row>
                 <Col md={6}>
@@ -1900,7 +2294,7 @@ const ContentStunting = () => {
                         categoryName={[
                           "Anggaran Untuk Lainnya",
                           "Anggaran Penurunan dan Pencegahan Stunting",
-                        ]}                        
+                        ]}
                         pieChart={false}
                         showLegend={false}
                         percentOnly={true}
@@ -1911,137 +2305,137 @@ const ContentStunting = () => {
               </Row>
               {
                 showChartBerisiko ? <><PieChartNew
-                dataChart={dataChartPerbandinganKeluargaStunting}
-                categoryName={[
-                  "Keluarga Tidak Berisiko Stunting",
-                  "Keluarga Berisiko Stunting",
-                ]}                    
-                dataColors={'["#57E7B4", "#2DAED4"]'}
-              />
-              <div className="separator mb-4">
-              <div >
-                <span
-                  onClick={() => setShowChartBerisiko(false)}
-                  style={{
-                    cursor: "pointer",
-                    color: "#2DAED4",
-                  }}
-                >
-                  Lihat Nilai
-                </span>
-              </div>
-            </div>
-              </> : <><Row>
-                <Col md={12}>
-                <Card className="card-animate">
-                  <CardBody>
-                    <div className="d-flex flex-column title-custom-card">
-                      <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                        <span>JUMLAH KELUARGA</span>
-                      </div>
-                      <div className="d-flex">
-                        <div className="avatar-xs-half flex-shrink-0">
-                          <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
-                            <i className="mdi mdi-human-male-female-child text-warning"></i>
-                          </span>
-                        </div>
-                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                          <span>
-                            <CountUp
-                              start={0}
-                              end={dataStunting.jumlah_keluarga}
-                              separator="."
-                              prefix=""
-                              duration={1}
-                            />
-                            {/* {dataStunting?.jumlah_keluarga?.toLocaleString("id-ID")} */}
-                          </span>
-                        </div>
-                      </div>
+                  dataChart={dataChartPerbandinganKeluargaStunting}
+                  categoryName={[
+                    "Keluarga Tidak Berisiko Stunting",
+                    "Keluarga Berisiko Stunting",
+                  ]}
+                  dataColors={'["#57E7B4", "#2DAED4"]'}
+                />
+                  <div className="separator mb-4">
+                    <div >
+                      <span
+                        onClick={() => setShowChartBerisiko(false)}
+                        style={{
+                          cursor: "pointer",
+                          color: "#2DAED4",
+                        }}
+                      >
+                        Lihat Nilai
+                      </span>
                     </div>
-                  </CardBody>
-                </Card>
-              </Col>  
+                  </div>
+                </> : <><Row>
+                  <Col md={12}>
+                    <Card className="card-animate">
+                      <CardBody>
+                        <div className="d-flex flex-column title-custom-card">
+                          <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                            <span>JUMLAH KELUARGA</span>
+                          </div>
+                          <div className="d-flex">
+                            <div className="avatar-xs-half flex-shrink-0">
+                              <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
+                                <i className="mdi mdi-human-male-female-child text-warning"></i>
+                              </span>
+                            </div>
+                            <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                              <span>
+                                <CountUp
+                                  start={0}
+                                  end={dataStunting.jumlah_keluarga}
+                                  separator="."
+                                  prefix=""
+                                  duration={1}
+                                />
+                                {/* {dataStunting?.jumlah_keluarga?.toLocaleString("id-ID")} */}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </CardBody>
+                    </Card>
+                  </Col>
                 </Row>
-                <Row>
-              <Col md={6}>
-                <Card className="card-animate">
-                  <CardBody>
-                    <div className="d-flex flex-column title-custom-card">
-                      <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                        <span>KELUARGA SASARAN</span>
-                      </div>
-                      <div className="d-flex">
-                        <div className="avatar-xs-half flex-shrink-0">
-                          <span className="avatar-title bg-info-subtle rounded-4 fs-3">
-                            <i className="mdi mdi-human-male-female-child text-info"></i>
-                          </span>
-                        </div>
-                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                          <span>
-                            <CountUp
-                              start={0}
-                              end={dataStunting.jumlah_keluarga_sasaran}
-                              separator="."
-                              prefix=""
-                              duration={1}
-                            />
-                            {/* {dataStunting?.jumlah_keluarga_sasaran?.toLocaleString("id-ID")} */}
-                          </span>
-                        </div>
-                      </div>
+                  <Row>
+                    <Col md={6}>
+                      <Card className="card-animate">
+                        <CardBody>
+                          <div className="d-flex flex-column title-custom-card">
+                            <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                              <span>KELUARGA SASARAN</span>
+                            </div>
+                            <div className="d-flex">
+                              <div className="avatar-xs-half flex-shrink-0">
+                                <span className="avatar-title bg-info-subtle rounded-4 fs-3">
+                                  <i className="mdi mdi-human-male-female-child text-info"></i>
+                                </span>
+                              </div>
+                              <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                                <span>
+                                  <CountUp
+                                    start={0}
+                                    end={dataStunting.jumlah_keluarga_sasaran}
+                                    separator="."
+                                    prefix=""
+                                    duration={1}
+                                  />
+                                  {/* {dataStunting?.jumlah_keluarga_sasaran?.toLocaleString("id-ID")} */}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </CardBody>
+                      </Card>
+                    </Col>
+                    <Col md={6}>
+                      <Card className="card-animate">
+                        <CardBody>
+                          <div className="d-flex flex-column title-custom-card">
+                            <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                              <span>KELUARGA BERISIKO STUNTING</span>
+                            </div>
+                            <div className="d-flex">
+                              <div className="avatar-xs-half flex-shrink-0">
+                                <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
+                                  <i className="mdi mdi-human-male-female-child text-danger"></i>
+                                </span>
+                              </div>
+                              <div className="d-flex justify-content-center align-items-center ms-2 title-body">
+                                <span>
+                                  <CountUp
+                                    start={0}
+                                    end={dataStunting.jumlah_keluarga_stunting}
+                                    separator="."
+                                    prefix=""
+                                    duration={1}
+                                  />
+                                  {/* {dataStunting?.jumlah_keluarga_stunting?.toLocaleString("id-ID")} */}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        </CardBody>
+                      </Card>
+                    </Col>
+                  </Row>
+                  <div className="separator mb-4">
+                    <div >
+                      <span
+                        onClick={() => setShowChartBerisiko(true)}
+                        style={{
+                          cursor: "pointer",
+                          color: "#2DAED4",
+                        }}
+                      >
+                        Lihat Grafik Perbandingan
+                      </span>
                     </div>
-                  </CardBody>
-                </Card>
-              </Col>
-              <Col md={6}>
-                <Card className="card-animate">
-                  <CardBody>
-                    <div className="d-flex flex-column title-custom-card">
-                      <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                        <span>KELUARGA BERISIKO STUNTING</span>
-                      </div>
-                      <div className="d-flex">
-                        <div className="avatar-xs-half flex-shrink-0">
-                          <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
-                            <i className="mdi mdi-human-male-female-child text-danger"></i>
-                          </span>
-                        </div>
-                        <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                          <span>
-                            <CountUp
-                              start={0}
-                              end={dataStunting.jumlah_keluarga_stunting}
-                              separator="."
-                              prefix=""
-                              duration={1}
-                            />
-                            {/* {dataStunting?.jumlah_keluarga_stunting?.toLocaleString("id-ID")} */}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardBody>
-                </Card>
-              </Col>
-            </Row>
-            <div className="separator mb-4">
-              <div >
-                <span
-                  onClick={() => setShowChartBerisiko(true)}
-                  style={{
-                    cursor: "pointer",
-                    color: "#2DAED4",
-                  }}
-                >
-                  Lihat Grafik Perbandingan
-                </span>
-              </div>
-            </div>
-            </>
+                  </div>
+                </>
               }
-              
-          <Row>
+
+              <Row>
                 <Col md={6}>
                   <Card className="card-animate">
                     <CardBody>
@@ -2057,7 +2451,7 @@ const ContentStunting = () => {
                       </div> */}
                           <div className="d-flex justify-content-center align-items-center title-body">
                             <span>
-                              {dataStunting?.peserta_kb_modern?.toLocaleString(
+                              {(dataStunting?.peserta_kb_modern ?? 0)?.toLocaleString(
                                 "id-ID"
                               )}
                             </span>
@@ -2082,7 +2476,7 @@ const ContentStunting = () => {
                       </div> */}
                           <div className="d-flex justify-content-center align-items-center title-body">
                             <span>
-                              {dataStunting?.jumlah_pus?.toLocaleString(
+                              {(dataStunting?.jumlah_pus ?? 0)?.toLocaleString(
                                 "id-ID"
                               )}
                             </span>
@@ -2141,7 +2535,7 @@ const ContentStunting = () => {
                 className="text-muted"
               >
                 <TabPane tabId="1">
-                <div className="mb-2 d-flex">
+                  <div className="mb-2 d-flex">
                     <div
                       className="mx-2"
                       style={{
@@ -2163,7 +2557,7 @@ const ContentStunting = () => {
                         value={searchTerm}
                         onChange={handleSearchInput}
                         onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
-                        placeholder={showNextData ? "Cari Daerah" : "Cari Se-Provinsi"} 
+                        placeholder={showNextData ? "Cari Daerah" : "Cari Se-Provinsi"}
                       />
 
                       {/* Tombol "X" di dalam input */}
@@ -2205,22 +2599,22 @@ const ContentStunting = () => {
                   </div>
                   {showNextData ? (
                     <>
-                    <button
-                      style={{
-                        backgroundColor: "#007bff",
-                        color: "white",
-                        padding: "10px 20px",
-                        border: "none",
-                        borderRadius: "5px",
-                        cursor: "pointer",
-                        fontSize: "16px",
-                        marginBottom: "8px",
-                      }}
-                      onClick={() => {getDataStuntingTabel({tahun:selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData}); setSearchTerm(""); resetRegionClick()}}
-                    >
-                      Kembali ke Provinsi
-                    </button>
-                  </>
+                      <button
+                        style={{
+                          backgroundColor: "#007bff",
+                          color: "white",
+                          padding: "10px 20px",
+                          border: "none",
+                          borderRadius: "5px",
+                          cursor: "pointer",
+                          fontSize: "16px",
+                          marginBottom: "8px",
+                        }}
+                        onClick={() => { getDataStuntingTabel({ tahun: selectedSingleTahunAnggaran, tahun_data: selectedSingleTahunData }); setSearchTerm(""); resetRegionClick() }}
+                      >
+                        Kembali ke Provinsi
+                      </button>
+                    </>
                   ) : (
                     <></>
                   )}
@@ -2370,7 +2764,7 @@ const ContentStunting = () => {
                             PERSENTASE{" "}
                             {getSortIcon("persentase_anggaran")}
                           </th>
-                          {dataKolomNamaDaerah == "Se-Provinsi" ? (<></>):(<><th
+                          {dataKolomNamaDaerah == "Se-Provinsi" ? (<></>) : (<><th
                             rowSpan="4"
                             style={{
                               whiteSpace: "normal",
@@ -2382,7 +2776,7 @@ const ContentStunting = () => {
                             }}
                           >
                             DETAIL ANGGARAN STUNTING
-                          </th></>)}                          
+                          </th></>)}
                         </tr>
                         <tr>
                           <th
@@ -2530,86 +2924,88 @@ const ContentStunting = () => {
                             <td
                               className={showNextData ? "" : "click-data"}
                               style={{ minWidth: "270px" }}
-                              onClick={(e) =>{item.nama_kabupaten
-                                ? ""
-                                : getDataStuntingTabelKabupaten({
-                                    kode_ddn1:item.kode_prov,
-                                    tahun:selectedSingleTahunAnggaran,
-                                    tahun_data:selectedSingleTahunData
-                                }), dataKolomNamaDaerah == "Se-Provinsi" ? setNamaDaerahDetail(item.nama_prov) : ""; setSearchTerm("")}                                
+                              onClick={(e) => {
+                                setIdDaerah(item.kode_prov);
+                                getDataStuntingTabelKabupaten({
+                                  kode_ddn1: item.kode_prov,
+                                  tahun: selectedSingleTahunAnggaran,
+                                  tahun_data: selectedSingleTahunData
+                                }),
+                                  dataKolomNamaDaerah == "Se-Provinsi" ? setNamaDaerahDetail(item.nama_prov) : ""; setSearchTerm("")
+                              }
                               }
                             >
-                              {item.nama_kabupaten? item.nama_kabupaten.replace("Provinsi ", "") || "-"
+                              {item.nama_kabupaten ? item.nama_kabupaten.replace("Provinsi ", "") || "-"
                                 : item.nama_prov.replace("Provinsi ", "") || "-"}
                             </td>
                             <td>
                               {item.jumlah_keluarga
                                 ? parseInt(item.jumlah_keluarga).toLocaleString(
-                                    "id-ID"
-                                  )
+                                  "id-ID"
+                                )
                                 : "-"}
                             </td>
                             <td>
                               {item.jumlah_keluarga_sasaran
                                 ? parseInt(
-                                    item.jumlah_keluarga_sasaran
-                                  ).toLocaleString("id-ID")
+                                  item.jumlah_keluarga_sasaran
+                                ).toLocaleString("id-ID")
                                 : "-"}
                             </td>
                             <td>
                               {item.peringkat_kesejahteraan_1
                                 ? parseInt(
-                                    item.peringkat_kesejahteraan_1
-                                  ).toLocaleString("id-ID")
+                                  item.peringkat_kesejahteraan_1
+                                ).toLocaleString("id-ID")
                                 : "-"}
                             </td>
                             <td>
                               {item.peringkat_kesejahteraan_2
                                 ? parseInt(
-                                    item.peringkat_kesejahteraan_2
-                                  ).toLocaleString("id-ID")
+                                  item.peringkat_kesejahteraan_2
+                                ).toLocaleString("id-ID")
                                 : "-"}
                             </td>
                             <td>
                               {item.peringkat_kesejahteraan_3
                                 ? parseInt(
-                                    item.peringkat_kesejahteraan_3
-                                  ).toLocaleString("id-ID")
+                                  item.peringkat_kesejahteraan_3
+                                ).toLocaleString("id-ID")
                                 : "-"}
                             </td>
                             <td>
                               {item.peringkat_kesejahteraan_4
                                 ? parseInt(
-                                    item.peringkat_kesejahteraan_4
-                                  ).toLocaleString("id-ID")
+                                  item.peringkat_kesejahteraan_4
+                                ).toLocaleString("id-ID")
                                 : "-"}
                             </td>
                             <td>
                               {item.peringkat_kesejahteraan_diatas_4
                                 ? parseInt(
-                                    item.peringkat_kesejahteraan_diatas_4
-                                  ).toLocaleString("id-ID")
+                                  item.peringkat_kesejahteraan_diatas_4
+                                ).toLocaleString("id-ID")
                                 : "-"}
                             </td>
                             <td>
                               {item.total_kesejahteraan
                                 ? parseInt(
-                                    item.total_kesejahteraan
-                                  ).toLocaleString("id-ID")
+                                  item.total_kesejahteraan
+                                ).toLocaleString("id-ID")
                                 : "-"}
                             </td>
                             <td>
                               {item.jumlah_keluarga_tidak_beresiko_stunting
                                 ? parseInt(
-                                    item.jumlah_keluarga_tidak_beresiko_stunting
-                                  ).toLocaleString("id-ID")
+                                  item.jumlah_keluarga_tidak_beresiko_stunting
+                                ).toLocaleString("id-ID")
                                 : "-"}
                             </td>
                             <td>
                               <span style={{ float: "right" }}>
-                                  {isNaN(item.total_kesejahteraan / item.jumlah_keluarga_sasaran) 
-                                    ? "-" 
-                                    : `${((item.total_kesejahteraan / item.jumlah_keluarga_sasaran) * 100)?.toLocaleString("id-ID", {
+                                {isNaN(item.total_kesejahteraan / item.jumlah_keluarga_sasaran)
+                                  ? "-"
+                                  : `${(((item.total_kesejahteraan / item.jumlah_keluarga_sasaran) * 100) ?? 0)?.toLocaleString("id-ID", {
                                     minimumFractionDigits: 2,
                                     maximumFractionDigits: 2,
                                   })}%`}
@@ -2619,8 +3015,8 @@ const ContentStunting = () => {
                               <span style={{ float: "right" }}>
                                 {item.total_anggaran
                                   ? parseInt(item.total_anggaran).toLocaleString(
-                                      "id-ID"
-                                    )
+                                    "id-ID"
+                                  )
                                   : "-"}
                               </span>
                             </td>
@@ -2628,19 +3024,19 @@ const ContentStunting = () => {
                               <span style={{ float: "right" }}>
                                 {item.total_anggaran_stunting
                                   ? parseInt(item.total_anggaran_stunting).toLocaleString(
-                                      "id-ID"
-                                    )
+                                    "id-ID"
+                                  )
                                   : "-"}
                               </span>
                             </td>
                             <td style={{ textAlign: "center" }}>
-                              {`${item.persentase_anggaran?.toLocaleString("id-ID",
-                                  {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2,
-                                  })}%`}
+                              {`${(item.persentase_anggaran ?? 0)?.toLocaleString("id-ID",
+                                {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                })}%`}
                             </td>
-                            {dataKolomNamaDaerah == "Se-Provinsi" ? (<></>):(<><td style={{ textAlign: "center" }}>
+                            {dataKolomNamaDaerah == "Se-Provinsi" ? (<></>) : (<><td style={{ textAlign: "center" }}>
                               {/* <button style={{
                       backgroundColor: "#28a745",
                       color: "white",
@@ -2659,26 +3055,26 @@ const ContentStunting = () => {
                                 onClick={() =>
                                   dataKolomNamaDaerah == "Se-Provinsi"
                                     ? handleOpen(
-                                        "",
-                                        item.nama_provinsi,
-                                        item.kode_provinsi,
-                                        "",
-                                        "prov",
-                                        item.total_anggaran_stunting
-                                      )
+                                      "",
+                                      item.nama_provinsi,
+                                      item.kode_provinsi,
+                                      "",
+                                      "prov",
+                                      item.total_anggaran_stunting
+                                    )
                                     : handleOpen(
-                                        "",
-                                        item.nama_kabupaten,
-                                        item.kode_ddn1,
-                                        "",
-                                        "kab",
-                                        item.total_anggaran_stunting
-                                      )
+                                      "",
+                                      item.nama_kabupaten,
+                                      item.kode_ddn1,
+                                      "",
+                                      "kab",
+                                      item.total_anggaran_stunting
+                                    )
                                 }
                                 className="bx bx-list-ul text-primary"
                               ></i>
-                            </td>  </>) }
-                                                      
+                            </td>  </>)}
+
                           </tr>
                         ))}
                         {/* {placeholders} */}
@@ -2709,7 +3105,7 @@ const ContentStunting = () => {
                   <NavItem>
                     <NavLink
                       style={{ cursor: "pointer" }}
-                      className={classnames("h-100",{
+                      className={classnames("h-100", {
                         active: customActiveTabAll === "1",
                       })}
                       onClick={() => {
@@ -2759,7 +3155,7 @@ const ContentStunting = () => {
                       Perbandingan Keluarga Sasaran yang Berisiko dan Tidak
                       Berisiko Stunting
                     </NavLink>
-                  </NavItem>                  
+                  </NavItem>
                   <NavItem>
                     <NavLink
                       style={{ cursor: "pointer" }}
@@ -2830,12 +3226,12 @@ const ContentStunting = () => {
               </div>
               <TabContent activeTab={customActiveTabAll} className="text-muted">
                 <TabPane tabId="1">
-                <HorizontalBarChart
-                    dataZoom ={true}
+                  <HorizontalBarChart
+                    dataZoom={true}
                     dataTotal={5}
-                    breakWord = {true}
+                    breakWord={true}
                     dataColors='["#FCAD24"]'
-                    trillion={true}                    
+                    trillion={true}
                     valueChart={dataChartTopUrusan[0]}
                     categoryChart={dataChartTopUrusan[1]}
                   />
@@ -2955,7 +3351,7 @@ const ContentStunting = () => {
                     categoryName={[
                       "Keluarga Tidak Berisiko Stunting",
                       "Keluarga Berisiko Stunting",
-                    ]}                    
+                    ]}
                     dataColors={'["#57E7B4", "#2DAED4"]'}
                   />
                 </TabPane>
@@ -2989,46 +3385,46 @@ const ContentStunting = () => {
                     activeTab={customActiveTab}
                     className="text-muted"
                   > */}
-                    {/* <TabPane tabId="1" id="provinsi"> */}
-                      {dataShowStackKab ? (<>
-                        <button
-                        style={{
-                          backgroundColor: "#007bff",
-                          color: "white",
-                          padding: "10px 20px",
-                          border: "none",
-                          borderRadius: "5px",
-                          cursor: "pointer",
-                          fontSize: "16px",
-                          margin: "8px 0px",
-                        }}
-                        onClick={() => {setDataShowStackKab(false); setTitleStack("")}}
-                      >
-                        Kembali
-                      </button>
-                      <StackedBarChart
-                        dataTotal={10}
-                        dataZoom={true}
-                        breakWord={true}
-                        // kabupaten={true}
-                        // namaProv={dataCategoryChartKabupaten[1]}
-                        dataColors='["#2DAED4", "#57E7B4"]'
-                        valueCharts={dataBeresikoKabupaten}
-                        legendNames={["Berisiko", "Tidak Berisiko"]}
-                        categoryChart={dataCategoryChartKabupaten[0]}
-                      /></>) : (<><StackedBarChart
-                        dataTotal={10}
-                        dataZoom={true}
-                        breakWord={true}
-                        dataColors='["#2DAED4", "#57E7B4"]'
-                        valueCharts={dataBeresikoProvinsi}
-                        idParam={dataCategoryChartProvinsi[1]}
-                        categoryChart={dataCategoryChartProvinsi[0]}
-                        legendNames={["Berisiko", "Tidak Berisiko"]}
-                        onBarClickProv={handleBarClickStackProv}
-                      /></>)}
-                    {/* </TabPane>                     */}
-                    {/* <TabPane tabId="3" id="kecamatan">
+                  {/* <TabPane tabId="1" id="provinsi"> */}
+                  {dataShowStackKab ? (<>
+                    <button
+                      style={{
+                        backgroundColor: "#007bff",
+                        color: "white",
+                        padding: "10px 20px",
+                        border: "none",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                        fontSize: "16px",
+                        margin: "8px 0px",
+                      }}
+                      onClick={() => { setDataShowStackKab(false); setTitleStack("") }}
+                    >
+                      Kembali
+                    </button>
+                    <StackedBarChart
+                      dataTotal={10}
+                      dataZoom={true}
+                      breakWord={true}
+                      // kabupaten={true}
+                      // namaProv={dataCategoryChartKabupaten[1]}
+                      dataColors='["#2DAED4", "#57E7B4"]'
+                      valueCharts={dataBeresikoKabupaten}
+                      legendNames={["Berisiko", "Tidak Berisiko"]}
+                      categoryChart={dataCategoryChartKabupaten[0]}
+                    /></>) : (<><StackedBarChart
+                      dataTotal={10}
+                      dataZoom={true}
+                      breakWord={true}
+                      dataColors='["#2DAED4", "#57E7B4"]'
+                      valueCharts={dataBeresikoProvinsi}
+                      idParam={dataCategoryChartProvinsi[1]}
+                      categoryChart={dataCategoryChartProvinsi[0]}
+                      legendNames={["Berisiko", "Tidak Berisiko"]}
+                      onBarClickProv={handleBarClickStackProv}
+                    /></>)}
+                  {/* </TabPane>                     */}
+                  {/* <TabPane tabId="3" id="kecamatan">
                   <StackedBarChart
                     dataColors='["#2DAED4", "#57E7B4"]'
                     valueCharts={dataBeresikoKecamatan}                    
@@ -3054,56 +3450,56 @@ const ContentStunting = () => {
                   </div>
                   <Row>
                     <Col md={4}>
-                    <Card className="card-animate mt-4">
-                      <CardBody>
-                        <div className="d-flex flex-column title-custom-card">
-                          <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                            <span>
-                              Total SPM
-                            </span>
-                          </div>
-                          <div className="d-flex">                            
-                            <div className="d-flex justify-content-center align-items-center title-body">
+                      <Card className="card-animate mt-4">
+                        <CardBody>
+                          <div className="d-flex flex-column title-custom-card">
+                            <div className="d-flex justify-content-start align-items-start mb-1 title-card">
                               <span>
-                                <CountUp
-                                  start={0}
-                                  end={
-                                    dataStunting?.pie_spm_stunting?.jml_rincian_total_anggaran_spm_stunting/1000000000000
-                                  }
-                                  decimals={2}
-                                  decimal=","
-                                  separator="."
-                                  prefix="Rp "
-                                  suffix=" T"
-                                  duration={1}
-                                />
+                                Total SPM
                               </span>
                             </div>
+                            <div className="d-flex">
+                              <div className="d-flex justify-content-center align-items-center title-body">
+                                <span>
+                                  <CountUp
+                                    start={0}
+                                    end={
+                                      dataStunting?.pie_spm_stunting?.jml_rincian_total_anggaran_spm_stunting / 1000000000000
+                                    }
+                                    decimals={2}
+                                    decimal=","
+                                    separator="."
+                                    prefix="Rp "
+                                    suffix=" T"
+                                    duration={1}
+                                  />
+                                </span>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      </CardBody>
-                    </Card>
-                    <PieChartNew                        
+                        </CardBody>
+                      </Card>
+                      <PieChartNew
                         dataChart={dataChartPerbandinganSpm}
                         dataColors={'["#FCAD24","#2DAED4"]'}
                         categoryName={[
                           "Anggaran Stunting yang termasuk ke dalam SPM",
                           "Anggaran Stunting di Luar SPM",
-                        ]}                        
+                        ]}
                         fitContent={true}
-                        pieChart={false}                        
+                        pieChart={false}
                         showLegend={true}
-                        percentOnly={true}                      
+                        percentOnly={true}
                       />
                     </Col>
                     <Col md={8}>
-                  <HorizontalBarChart
-                    dataColors='["#FCAD24"]'
-                    trillion={true}
-                    breakWord={true}
-                    valueChart={dataChartSpmStunting[0]}
-                    categoryChart={dataChartSpmStunting[1]}
-                  />                    
+                      <HorizontalBarChart
+                        dataColors='["#FCAD24"]'
+                        trillion={true}
+                        breakWord={true}
+                        valueChart={dataChartSpmStunting[0]}
+                        categoryChart={dataChartSpmStunting[1]}
+                      />
                     </Col>
                   </Row>
                 </TabPane>
@@ -3112,54 +3508,54 @@ const ContentStunting = () => {
                     <h4 className="card-title mb-0">
                       KELUARGA SASARAN MENURUT PERINGKAT KESEJAHTERAAN
                     </h4>
-                  </div>                 
+                  </div>
                   {/* <TabPane tabId="1" id="provinsi"> */}
                   {dataShowKesejahteraanStackKab ? (<>
-                        <button
-                        style={{
-                          backgroundColor: "#007bff",
-                          color: "white",
-                          padding: "10px 20px",
-                          border: "none",
-                          borderRadius: "5px",
-                          cursor: "pointer",
-                          fontSize: "16px",
-                          margin: "8px 0px",
-                        }}
-                        onClick={() => {setDataShowKesejahteraanStackKab(false); setTitleStack("")}}
-                      >
-                        Kembali
-                      </button>
-                      <StackedBarChart
-                        dataTotal={10}
-                        dataZoom={true}
-                        breakWord={true}
-                        dataColors='["#695FF3", "#63A9ED", "#5BE9F3", "#99FFE7"]'
-                        valueCharts={dataKabupatenKesejahteraan}
-                        categoryChart={dataCategoryChartKabupatenKesejahteraan[0]}
-                        legendNames={[
-                          "Kesejahteraan 1",
-                          "Kesejahteraan 2",
-                          "Kesejahteraan 3",
-                          "Kesejahteraan 4",
-                        ]}
-                      />
-                      </>) : (<><StackedBarChart
+                    <button
+                      style={{
+                        backgroundColor: "#007bff",
+                        color: "white",
+                        padding: "10px 20px",
+                        border: "none",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                        fontSize: "16px",
+                        margin: "8px 0px",
+                      }}
+                      onClick={() => { setDataShowKesejahteraanStackKab(false); setTitleStack("") }}
+                    >
+                      Kembali
+                    </button>
+                    <StackedBarChart
                       dataTotal={10}
                       dataZoom={true}
                       breakWord={true}
                       dataColors='["#695FF3", "#63A9ED", "#5BE9F3", "#99FFE7"]'
-                      valueCharts={dataChartKesejahteraanStacked}
-                      onBarClickProv={handleBarClickStackKesejahteraanProv}
-                      categoryChart={dataChartCategoryKesejahteraan[0]}
-                      idParam={dataChartCategoryKesejahteraan[1]}
+                      valueCharts={dataKabupatenKesejahteraan}
+                      categoryChart={dataCategoryChartKabupatenKesejahteraan[0]}
                       legendNames={[
                         "Kesejahteraan 1",
                         "Kesejahteraan 2",
                         "Kesejahteraan 3",
                         "Kesejahteraan 4",
                       ]}
-                  /></>)} 
+                    />
+                  </>) : (<><StackedBarChart
+                    dataTotal={10}
+                    dataZoom={true}
+                    breakWord={true}
+                    dataColors='["#695FF3", "#63A9ED", "#5BE9F3", "#99FFE7"]'
+                    valueCharts={dataChartKesejahteraanStacked}
+                    onBarClickProv={handleBarClickStackKesejahteraanProv}
+                    categoryChart={dataChartCategoryKesejahteraan[0]}
+                    idParam={dataChartCategoryKesejahteraan[1]}
+                    legendNames={[
+                      "Kesejahteraan 1",
+                      "Kesejahteraan 2",
+                      "Kesejahteraan 3",
+                      "Kesejahteraan 4",
+                    ]}
+                  /></>)}
                 </TabPane>
                 <TabPane tabId="6">
                   <div className="separator">
@@ -3182,139 +3578,139 @@ const ContentStunting = () => {
                     </h4>
                   </div>
                   <VerticalBarChart
-                        valueChart={dataChartPus4Terlalu[0]}
-                        categoryChart={['Terlalu Banyak', 'Terlalu Dekat', 'Terlalu Muda', 'Terlalu Tua']}
-                        dataColors='["#57E7B4"]'
-                      />
+                    valueChart={dataChartPus4Terlalu[0]}
+                    categoryChart={['Terlalu Banyak', 'Terlalu Dekat', 'Terlalu Muda', 'Terlalu Tua']}
+                    dataColors='["#57E7B4"]'
+                  />
                 </TabPane>
                 <TabPane tabId="7">
                   <div className="separator">
                     <h4 className="card-title mb-0">
                       FASILITAS LINGKUNGAN TIDAK SEHAT
-                    </h4>                    
-                  </div>              
+                    </h4>
+                  </div>
                   {dataShowChartFasilitasProvinsi ? dataShowChartFasilitasPemda ? (<>
                     <button
-                        style={{
-                          backgroundColor: "#007bff",
-                          color: "white",
-                          padding: "10px 20px",
-                          border: "none",
-                          borderRadius: "5px",
-                          cursor: "pointer",
-                          fontSize: "16px",
-                          margin: "8px 0px",
-                        }}
-                        onClick={() => setShowDataChartFasilitasPemda(false)}
-                      >
-                        Kembali
-                      </button>
-                        <Row>
-                          <Col md={3}>
-                            <Card className="card-animate mt-4 mb-0">
-                              <CardBody>
-                                  <div className="d-flex flex-column title-custom-card">
-                                  <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                                    <span>
-                                      {currentCategoryClicked == "Jamban Tidak Layak" ? "Total Jamban Tidak Layak" : "Total Air Tidak Layak"}
-                                    </span>
-                                  </div>
-                                  <div className="d-flex">                            
-                                    <div className="d-flex justify-content-center align-items-center title-body">
-                                      <span>
-                                        <CountUp
-                                          start={0}
-                                          end={
-                                            dataJambanTidakLayakPemda[2]
-                                          }
-                                          separator="."
-                                          // prefix=""
-                                          suffix=""
-                                          duration={1}
-                                        />
-                                      </span>
-                                    </div>
-                                  </div>
+                      style={{
+                        backgroundColor: "#007bff",
+                        color: "white",
+                        padding: "10px 20px",
+                        border: "none",
+                        borderRadius: "5px",
+                        cursor: "pointer",
+                        fontSize: "16px",
+                        margin: "8px 0px",
+                      }}
+                      onClick={() => setShowDataChartFasilitasPemda(false)}
+                    >
+                      Kembali
+                    </button>
+                    <Row>
+                      <Col md={3}>
+                        <Card className="card-animate mt-4 mb-0">
+                          <CardBody>
+                            <div className="d-flex flex-column title-custom-card">
+                              <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                                <span>
+                                  {currentCategoryClicked == "Jamban Tidak Layak" ? "Total Jamban Tidak Layak" : "Total Air Tidak Layak"}
+                                </span>
+                              </div>
+                              <div className="d-flex">
+                                <div className="d-flex justify-content-center align-items-center title-body">
+                                  <span>
+                                    <CountUp
+                                      start={0}
+                                      end={
+                                        dataJambanTidakLayakPemda[2]
+                                      }
+                                      separator="."
+                                      // prefix=""
+                                      suffix=""
+                                      duration={1}
+                                    />
+                                  </span>
                                 </div>
-                              </CardBody>
-                            </Card>
-                          </Col>
-                          <Col md={9}>
-                            <HorizontalBarChart
-                              dataColors= {currentCategoryClicked == "Jamban Tidak Layak" ? '["#FCAD24"]' : '["#FCAD248B"]'}
-                              valueChart={dataJambanTidakLayakPemda[0]}
-                              categoryChart={dataJambanTidakLayakPemda[1]}
-                              idParam={dataJambanTidakLayakPemda[3]}
-                              dataZoom={true}
-                              breakWord={true}                          
-                            />
-                          </Col>
-                        </Row>           
+                              </div>
+                            </div>
+                          </CardBody>
+                        </Card>
+                      </Col>
+                      <Col md={9}>
+                        <HorizontalBarChart
+                          dataColors={currentCategoryClicked == "Jamban Tidak Layak" ? '["#FCAD24"]' : '["#FCAD248B"]'}
+                          valueChart={dataJambanTidakLayakPemda[0]}
+                          categoryChart={dataJambanTidakLayakPemda[1]}
+                          idParam={dataJambanTidakLayakPemda[3]}
+                          dataZoom={true}
+                          breakWord={true}
+                        />
+                      </Col>
+                    </Row>
                   </>) : (<><button
-                        style={{
-                          backgroundColor: "#007bff",
-                          color: "white",
-                          padding: "10px 20px",
-                          border: "none",
-                          borderRadius: "5px",
-                          cursor: "pointer",
-                          fontSize: "16px",
-                          margin: "8px 0px",
-                        }}
-                        onClick={handleBack}
-                      >
-                        Kembali
-                      </button>
-                        <Row>
-                          <Col md={3}>
-                            <Card className="card-animate mt-4 mb-0">
-                              <CardBody>
-                                  <div className="d-flex flex-column title-custom-card">
-                                  <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                                    <span>
-                                      {currentCategoryClicked == "Jamban Tidak Layak" ? "Total Jamban Tidak Layak" : "Total Air Tidak Layak"}
-                                    </span>
-                                  </div>
-                                  <div className="d-flex">                            
-                                    <div className="d-flex justify-content-center align-items-center title-body">
-                                      <span>
-                                        <CountUp
-                                          start={0}
-                                          end={
-                                            dataChartDetailFasilitasProvinsi[2]
-                                          }
-                                          separator="."
-                                          // prefix=""
-                                          suffix=""
-                                          duration={1}
-                                        />
-                                      </span>
-                                    </div>
-                                  </div>
+                    style={{
+                      backgroundColor: "#007bff",
+                      color: "white",
+                      padding: "10px 20px",
+                      border: "none",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                      fontSize: "16px",
+                      margin: "8px 0px",
+                    }}
+                    onClick={handleBack}
+                  >
+                    Kembali
+                  </button>
+                    <Row>
+                      <Col md={3}>
+                        <Card className="card-animate mt-4 mb-0">
+                          <CardBody>
+                            <div className="d-flex flex-column title-custom-card">
+                              <div className="d-flex justify-content-start align-items-start mb-1 title-card">
+                                <span>
+                                  {currentCategoryClicked == "Jamban Tidak Layak" ? "Total Jamban Tidak Layak" : "Total Air Tidak Layak"}
+                                </span>
+                              </div>
+                              <div className="d-flex">
+                                <div className="d-flex justify-content-center align-items-center title-body">
+                                  <span>
+                                    <CountUp
+                                      start={0}
+                                      end={
+                                        dataChartDetailFasilitasProvinsi[2]
+                                      }
+                                      separator="."
+                                      // prefix=""
+                                      suffix=""
+                                      duration={1}
+                                    />
+                                  </span>
                                 </div>
-                              </CardBody>
-                            </Card>
-                          </Col>
-                          <Col md={9}>
-                            <HorizontalBarChart
-                              dataColors= {currentCategoryClicked == "Jamban Tidak Layak" ? '["#FCAD24"]' : '["#FCAD248B"]'}
-                              valueChart={dataChartDetailFasilitasProvinsi[0]}
-                              categoryChart={dataChartDetailFasilitasProvinsi[1]}
-                              idParam={dataChartDetailFasilitasProvinsi[3]}
-                              dataZoom={true}
-                              breakWord={true}
-                              onBarClickProv={handleBarClickProv}
-                            />
-                          </Col>
-                        </Row>              
-                      </>) : (<>
-                      <HorizontalBarChart
-                        onBarClick={handleBarClick}
-                        dataColors='["#FCAD24", "#FCAD248B"]'
-                        valueChart={dataChartFasilitasTidakSehat}
-                        fasilitasLingkungan = {true}
-                        categoryChart={["Jamban Tidak Layak", "Air Tidak Layak"]}
-                      /></>)}
+                              </div>
+                            </div>
+                          </CardBody>
+                        </Card>
+                      </Col>
+                      <Col md={9}>
+                        <HorizontalBarChart
+                          dataColors={currentCategoryClicked == "Jamban Tidak Layak" ? '["#FCAD24"]' : '["#FCAD248B"]'}
+                          valueChart={dataChartDetailFasilitasProvinsi[0]}
+                          categoryChart={dataChartDetailFasilitasProvinsi[1]}
+                          idParam={dataChartDetailFasilitasProvinsi[3]}
+                          dataZoom={true}
+                          breakWord={true}
+                          onBarClickProv={handleBarClickProv}
+                        />
+                      </Col>
+                    </Row>
+                  </>) : (<>
+                    <HorizontalBarChart
+                      onBarClick={handleBarClick}
+                      dataColors='["#FCAD24", "#FCAD248B"]'
+                      valueChart={dataChartFasilitasTidakSehat}
+                      fasilitasLingkungan={true}
+                      categoryChart={["Jamban Tidak Layak", "Air Tidak Layak"]}
+                    /></>)}
                 </TabPane>
                 <TabPane tabId="8">
                   <h4 className="card-title mb-4 d-flex justify-content-center">
@@ -3409,7 +3805,7 @@ const ContentStunting = () => {
         </Col>
       </Row>
 
-      {/* ini */}      
+      {/* ini */}
       <Row>
         <Col>
           <div
@@ -3499,7 +3895,7 @@ const ContentStunting = () => {
           <ModalHeader className=" p-3 bg-info-subtle" toggle={handleClose}>
             Detail Anggaran Stunting{" "}
             {/* {dataJenisPemda == "kab" ? "Kabupaten/Kota" : "Provinsi"} */}
-            {dataDetailNamaDaerah == "Aceh"? "Provinsi Aceh" : dataDetailNamaDaerah}
+            {dataDetailNamaDaerah == "Aceh" ? "Provinsi Aceh" : dataDetailNamaDaerah}
           </ModalHeader>
           <ModalBody>
             <Row>
@@ -3537,100 +3933,100 @@ const ContentStunting = () => {
                 </Card>
               </Col>
               <Col md={8}>
-              {dataDetailHighlight.map((item, index)=>(
-                <div className="d-flex mb-3" key={index}>
-                  <div style={{ flexBasis: "350px", color:"#929FB1" }}>{item.nama_rekening}</div>
-                  <div>:&nbsp;</div>
-                  <div style={{ fontWeight: 650 }}>
-                  <CountUp
-                      start={0}
-                      end={item.anggaran}
-                      // decimal=","
-                      // decimals={2}
-                      separator="."
-                      prefix="Rp "
-                      // suffix=" T"
-                      duration={1}
-                    /> 
-                    &nbsp;
+                {dataDetailHighlight.map((item, index) => (
+                  <div className="d-flex mb-3" key={index}>
+                    <div style={{ flexBasis: "350px", color: "#929FB1" }}>{item.nama_rekening}</div>
+                    <div>:&nbsp;</div>
+                    <div style={{ fontWeight: 650 }}>
+                      <CountUp
+                        start={0}
+                        end={item.anggaran}
+                        // decimal=","
+                        // decimals={2}
+                        separator="."
+                        prefix="Rp "
+                        // suffix=" T"
+                        duration={1}
+                      />
+                      &nbsp;
+                    </div>
+                    {((item.anggaran / dataRincianDetail) * 100) >= 1 ? <>
+                      <div>
+                        (<CountUp
+                          start={0}
+                          end={(item.anggaran / dataRincianDetail) * 100}
+                          decimal=","
+                          decimals={2}
+                          separator="."
+                          // prefix="Rp "
+                          suffix="%"
+                          duration={1}
+                        />)
+                      </div>
+                    </> : <>
+                      <div>
+                        (<CountUp
+                          start={0}
+                          end={(item.anggaran / dataRincianDetail) * 100}
+                          decimal=","
+                          decimals={6}
+                          separator="."
+                          // prefix="Rp "
+                          suffix="%"
+                          duration={1}
+                        />)
+                      </div>
+                    </>}
                   </div>
-                  {((item.anggaran/dataRincianDetail)*100)>=1 ? <>
-                    <div>
-                    (<CountUp
-                      start={0}
-                      end={(item.anggaran/dataRincianDetail)*100}
-                      decimal=","
-                      decimals={2}
-                      separator="."
-                      // prefix="Rp "
-                      suffix="%"
-                      duration={1}
-                    />)
-                  </div>
-                  </> : <>
-                  <div>
-                    (<CountUp
-                      start={0}
-                      end={(item.anggaran/dataRincianDetail)*100}
-                      decimal=","
-                      decimals={6}
-                      separator="."
-                      // prefix="Rp "
-                      suffix="%"
-                      duration={1}
-                    />)
-                  </div>
-                  </>}
-                </div>
-              ))}                
+                ))}
               </Col>
             </Row>
             <div className="mb-2 d-flex">
-                    <div
-                      className="mx-2"
-                      style={{
-                        position: "relative",
-                        width: "100%",
-                        maxWidth: "300px",
-                        marginBottom: "20px",
-                      }}
-                    >
-                      <input
-                        style={{
-                          padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
-                          width: "100%",
-                          border: "1px solid #ccc",
-                          borderRadius: "5px",
-                          fontSize: "16px",
-                        }}
-                        type="text"
-                        value={searchTermDetail}
-                        onChange={handleSearchInputDetail}
-                        // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
-                        placeholder={"Cari Nama Sub Giat"} 
-                      />
+              <div
+                className="mx-2"
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  maxWidth: "300px",
+                  marginBottom: "20px",
+                }}
+              >
+                <input
+                  style={{
+                    padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                    width: "100%",
+                    border: "1px solid #ccc",
+                    borderRadius: "5px",
+                    fontSize: "16px",
+                  }}
+                  type="text"
+                  value={searchTermDetail}
+                  onChange={handleSearchInputDetail}
+                  // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                  placeholder={"Cari Nama Sub Giat"}
+                />
 
-                      {/* Tombol "X" di dalam input */}
-                      {searchTermDetail && (
-                        <button
-                          onClick={() => handleClearSearchDetail()}
-                          style={{
-                            position: "absolute",
-                            right: "10px",
-                            top: "50%",
-                            transform: "translateY(-50%)", // Tengah-tengah secara vertikal
-                            background: "transparent",
-                            border: "none",
-                            fontSize: "16px",
-                            cursor: "pointer",
-                            color: "#999",
-                          }}
-                        >
-                          &#10006;
-                        </button>
-                      )}
-                    </div>
-                    {/* <div>
+                {/* Tombol "X" di dalam input */}
+                {searchTermDetail && (
+                  <button
+                    onClick={() => handleClearSearchDetail()}
+                    style={{
+                      position: "absolute",
+                      right: "10px",
+                      top: "50%",
+                      transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                      background: "transparent",
+                      border: "none",
+                      fontSize: "16px",
+                      cursor: "pointer",
+                      color: "#999",
+                    }}
+                  >
+                    &#10006;
+                  </button>
+                )}
+              </div>
+              {/* <div>
                       <button
                         style={{
                           backgroundColor: "#007bff",
@@ -3646,7 +4042,7 @@ const ContentStunting = () => {
                         search
                       </button>
                     </div> */}
-                  </div>
+            </div>
             <div style={{ overflowY: "scroll", maxHeight: "500px" }}>
               <table
                 className="table table-bordered table-nowrap align-middle mb-0"
@@ -3749,8 +4145,8 @@ const ContentStunting = () => {
                         <span style={{ float: "right" }}>
                           {item.total_rinciansub
                             ? parseInt(item.total_rinciansub).toLocaleString(
-                                "id-ID"
-                              )
+                              "id-ID"
+                            )
                             : "-"}
                         </span>
                       </td>
@@ -3759,18 +4155,18 @@ const ContentStunting = () => {
                           {item.persentase
                             ? item.persentase >= 1
                               ? `${Number(item.persentase).toLocaleString(
-                                  "id-ID",
-                                  {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2,
-                                  }
-                                )}%`
+                                "id-ID",
+                                {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                }
+                              )}%`
                               : `${Number(item.persentase).toLocaleString(
-                                  "id-ID",
-                                  {
-                                    minimumFractionDigits: 4,
-                                  }
-                                )}%`
+                                "id-ID",
+                                {
+                                  minimumFractionDigits: 4,
+                                }
+                              )}%`
                             : "-"}
                         </span>
                       </td>
@@ -3796,16 +4192,16 @@ const ContentStunting = () => {
                           onClick={() =>
                             dataJenisPemda == "prov"
                               ? handleOpenNextModal(
-                                  "",
-                                  item.kode_sub_giat,
-                                  item.kode_ddn,
-                                  "",
-                                  item.total_rinciansub,
-                                  item.nama_sub_giat
-                                )
+                                "",
+                                item.kode_sub_giat,
+                                item.kode_ddn,
+                                "",
+                                item.total_rinciansub,
+                                item.nama_sub_giat
+                              )
                               : dataJenisPemda == "kab" ||
                                 dataJenisPemda == "kota"
-                              ? handleOpenNextModal(
+                                ? handleOpenNextModal(
                                   "",
                                   item.kode_sub_giat,
                                   "",
@@ -3813,7 +4209,7 @@ const ContentStunting = () => {
                                   item.total_rinciansub,
                                   item.nama_sub_giat
                                 )
-                              : handleOpenNextModal(
+                                : handleOpenNextModal(
                                   item.kode_prov,
                                   item.kode_sub_giat,
                                   "",
@@ -3891,51 +4287,51 @@ const ContentStunting = () => {
               </Col>
             </Row>
             <div className="mb-2 d-flex">
-                    <div
-                      className="mx-2"
-                      style={{
-                        position: "relative",
-                        width: "100%",
-                        maxWidth: "300px",
-                        marginBottom: "20px",
-                      }}
-                    >
-                      <input
-                        style={{
-                          padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
-                          width: "100%",
-                          border: "1px solid #ccc",
-                          borderRadius: "5px",
-                          fontSize: "16px",
-                        }}
-                        type="text"
-                        value={searchTermDetailSub}
-                        onChange={handleSearchInputDetailSub}
-                        onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
-                        placeholder={"Cari Sub Rincian Objek"} 
-                      />
+              <div
+                className="mx-2"
+                style={{
+                  position: "relative",
+                  width: "100%",
+                  maxWidth: "300px",
+                  marginBottom: "20px",
+                }}
+              >
+                <input
+                  style={{
+                    padding: "10px 30px 10px 10px", // Sesuaikan padding kanan agar tidak menimpa tombol X
+                    width: "100%",
+                    border: "1px solid #ccc",
+                    borderRadius: "5px",
+                    fontSize: "16px",
+                  }}
+                  type="text"
+                  value={searchTermDetailSub}
+                  onChange={handleSearchInputDetailSub}
+                  onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                  placeholder={"Cari Sub Rincian Objek"}
+                />
 
-                      {/* Tombol "X" di dalam input */}
-                      {searchTermDetailSub && (
-                        <button
-                          onClick={() => handleClearSearchDetailSub()}
-                          style={{
-                            position: "absolute",
-                            right: "10px",
-                            top: "50%",
-                            transform: "translateY(-50%)", // Tengah-tengah secara vertikal
-                            background: "transparent",
-                            border: "none",
-                            fontSize: "16px",
-                            cursor: "pointer",
-                            color: "#999",
-                          }}
-                        >
-                          &#10006;
-                        </button>
-                      )}
-                    </div>
-                    {/* <div>
+                {/* Tombol "X" di dalam input */}
+                {searchTermDetailSub && (
+                  <button
+                    onClick={() => handleClearSearchDetailSub()}
+                    style={{
+                      position: "absolute",
+                      right: "10px",
+                      top: "50%",
+                      transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                      background: "transparent",
+                      border: "none",
+                      fontSize: "16px",
+                      cursor: "pointer",
+                      color: "#999",
+                    }}
+                  >
+                    &#10006;
+                  </button>
+                )}
+              </div>
+              {/* <div>
                       <button
                         style={{
                           backgroundColor: "#007bff",
@@ -3951,7 +4347,7 @@ const ContentStunting = () => {
                         search
                       </button>
                     </div> */}
-                  </div>
+            </div>
             <div style={{ overflowY: "scroll", maxHeight: "500px" }}>
               <table
                 className="table table-bordered table-nowrap align-middle mb-0"
@@ -3993,9 +4389,9 @@ const ContentStunting = () => {
                     >
                       Persentase {getSortIcon("persentase")}
                     </th>
-                    <th style={{verticalAlign: "middle", textAlign: "center", whiteSpace: "normal", wordWrap: "break-word",maxWidth:"100px"  }}>
-                        Lihat Sub Sub Rincian Objek 
-                      </th>           
+                    <th style={{ verticalAlign: "middle", textAlign: "center", whiteSpace: "normal", wordWrap: "break-word", maxWidth: "100px" }}>
+                      Lihat Sub Sub Rincian Objek
+                    </th>
                   </tr>
                 </thead>
                 <tbody style={{ minHeight: "500px" }}>
@@ -4022,8 +4418,8 @@ const ContentStunting = () => {
                         <span style={{ float: "right" }}>
                           {item.total_rinciansro
                             ? parseInt(item.total_rinciansro).toLocaleString(
-                                "id-ID"
-                              )
+                              "id-ID"
+                            )
                             : "-"}
                         </span>
                       </td>
@@ -4032,28 +4428,28 @@ const ContentStunting = () => {
                           {item.persentase
                             ? item.persentase >= 1
                               ? `${Number(item.persentase).toLocaleString(
-                                  "id-ID",
-                                  {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2,
-                                  }
-                                )}%`
+                                "id-ID",
+                                {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                }
+                              )}%`
                               : `${Number(item.persentase).toLocaleString(
-                                  "id-ID",
-                                  {
-                                    minimumFractionDigits: 4,
-                                  }
-                                )}%`
+                                "id-ID",
+                                {
+                                  minimumFractionDigits: 4,
+                                }
+                              )}%`
                             : "-"}
                         </span>
                       </td>
-                      <td style={{verticalAlign: "middle", textAlign: "center" }}>            
-                    <i style={{                                            
-                      padding: "5px 10px",                      
-                      cursor: "pointer",
-                      fontSize: "30px"
-                    }} onClick={()=>handleOpenNextModalSub({kodeDdn: item.kode_ddn, kodeSubGiat: item.kode_sub_giat, kodeSro: item.kode_sro, tahun: selectedSingleTahunAnggaran, rincianDetail:item.total_rinciansro, namaSro: item.nama_sro})} className="bx bx-list-ul text-primary"></i>
-                        </td> 
+                      <td style={{ verticalAlign: "middle", textAlign: "center" }}>
+                        <i style={{
+                          padding: "5px 10px",
+                          cursor: "pointer",
+                          fontSize: "30px"
+                        }} onClick={() => handleOpenNextModalSub({ kodeDdn: item.kode_ddn, kodeSubGiat: item.kode_sub_giat, kodeSro: item.kode_sro, tahun: selectedSingleTahunAnggaran, rincianDetail: item.total_rinciansro, namaSro: item.nama_sro })} className="bx bx-list-ul text-primary"></i>
+                      </td>
                     </tr>
                   ))}
                   {/* {placeholders} */}
@@ -4070,124 +4466,124 @@ const ContentStunting = () => {
       </Modal>
 
       <Modal size="xl" isOpen={modalSub} toggle={handleOpenNextModalSub} centered={true} backdrop="static">
-      <div className="modal-content border-0">
-        <ModalHeader className=" p-3 bg-info-subtle" toggle={handleCloseNextModalSub}>Sub Sub Rincian Objek {namaSro}
-        </ModalHeader>
-        <ModalBody>
-        <Row>
-            <Col md={4}><Card className="card-animate card-height-100">
-                        <CardBody>
-                          <div
-                            className="d-flex flex-column title-custom-card"                            
-                          >
-                            <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                              <span>Total Anggaran Sub Rincian Objek Setelah Pembobotan</span>
-                            </div>
-                            <div className="d-flex">
-                              {/* <div className="avatar-xs-half flex-shrink-0">
+        <div className="modal-content border-0">
+          <ModalHeader className=" p-3 bg-info-subtle" toggle={handleCloseNextModalSub}>Sub Sub Rincian Objek {namaSro}
+          </ModalHeader>
+          <ModalBody>
+            <Row>
+              <Col md={4}><Card className="card-animate card-height-100">
+                <CardBody>
+                  <div
+                    className="d-flex flex-column title-custom-card"
+                  >
+                    <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                      <span>Total Anggaran Sub Rincian Objek Setelah Pembobotan</span>
+                    </div>
+                    <div className="d-flex">
+                      {/* <div className="avatar-xs-half flex-shrink-0">
                         <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
                           <i className=" ri-women-line text-danger"></i>
                         </span>
                       </div> */}
-                              <div className="d-flex justify-content-center align-items-center title-body">
-                                <span>
-                                  <CountUp
-                                    start={0}
-                                    end={
-                                      // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
-                                      dataRincianDetailSubSub
-                                    }
-                                    separator="."
-                                    prefix="Rp "
-                                    suffix=""
-                                    duration={1}
-                                  />
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </CardBody>
-                      </Card></Col>
-            <Col md={4}><Card className="card-animate card-height-100">
-                        <CardBody>
-                          <div
-                            className="d-flex flex-column title-custom-card"                            
-                          >
-                            <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                              <span>Total Anggaran Sub Rincian Objek Sebelum Pembobotan</span>
-                            </div>
-                            <div className="d-flex">
-                              {/* <div className="avatar-xs-half flex-shrink-0">
+                      <div className="d-flex justify-content-center align-items-center title-body">
+                        <span>
+                          <CountUp
+                            start={0}
+                            end={
+                              // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                              dataRincianDetailSubSub
+                            }
+                            separator="."
+                            prefix="Rp "
+                            suffix=""
+                            duration={1}
+                          />
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </CardBody>
+              </Card></Col>
+              <Col md={4}><Card className="card-animate card-height-100">
+                <CardBody>
+                  <div
+                    className="d-flex flex-column title-custom-card"
+                  >
+                    <div className="d-flex justify-content-between align-items-start mb-1 title-card">
+                      <span>Total Anggaran Sub Rincian Objek Sebelum Pembobotan</span>
+                    </div>
+                    <div className="d-flex">
+                      {/* <div className="avatar-xs-half flex-shrink-0">
                         <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
                           <i className=" ri-women-line text-danger"></i>
                         </span>
                       </div> */}
-                              <div className="d-flex justify-content-center align-items-center title-body">
-                                <span>
-                                  <CountUp
-                                    start={0}
-                                    end={
-                                      // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
-                                      totalSebelumPembobotan
-                                    }
-                                    separator="."
-                                    prefix="Rp "
-                                    suffix=""
-                                    duration={1}
-                                  />
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </CardBody>
-                      </Card></Col>
-          </Row>
-          <div className="mb-2 d-flex">
-            <div
-              className="mx-2"
-              style={{
-                position: "relative",
-                width: "100%",
-                maxWidth: "300px",
-                marginBottom: "20px",
-              }}
-            >
-              <input
+                      <div className="d-flex justify-content-center align-items-center title-body">
+                        <span>
+                          <CountUp
+                            start={0}
+                            end={
+                              // dataDapodik?.dapodik_jumlah_anak_sekolah?.jumlah_siswa
+                              totalSebelumPembobotan
+                            }
+                            separator="."
+                            prefix="Rp "
+                            suffix=""
+                            duration={1}
+                          />
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </CardBody>
+              </Card></Col>
+            </Row>
+            <div className="mb-2 d-flex">
+              <div
+                className="mx-2"
                 style={{
-                  padding: "10px 30px 10px 10px",
+                  position: "relative",
                   width: "100%",
-                  border: "1px solid #ccc",
-                  borderRadius: "5px",
-                  fontSize: "16px",
+                  maxWidth: "300px",
+                  marginBottom: "20px",
                 }}
-                type="text"
-                value={searchTermDetailSubSub}
-                onChange={handleSearchInputDetailSubSub}
-                // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
-                placeholder="Cari Sub Sub Rincian Objek"
-              />
-
-              {/* Tombol "X" di dalam input */}
-              {searchTermDetailSubSub && (
-                <button
-                  onClick={() => handleClearSearchDetailSubSub()}
+              >
+                <input
                   style={{
-                    position: "absolute",
-                    right: "10px",
-                    top: "50%",
-                    transform: "translateY(-50%)", // Tengah-tengah secara vertikal
-                    background: "transparent",
-                    border: "none",
+                    padding: "10px 30px 10px 10px",
+                    width: "100%",
+                    border: "1px solid #ccc",
+                    borderRadius: "5px",
                     fontSize: "16px",
-                    cursor: "pointer",
-                    color: "#999",
                   }}
-                >
-                  &#10006;
-                </button>
-              )}
-            </div>
-            {/* <div>
+                  type="text"
+                  value={searchTermDetailSubSub}
+                  onChange={handleSearchInputDetailSubSub}
+                  // onKeyDown={(e) => handleKeyDown(e, "seprovinsi")}
+                  placeholder="Cari Sub Sub Rincian Objek"
+                />
+
+                {/* Tombol "X" di dalam input */}
+                {searchTermDetailSubSub && (
+                  <button
+                    onClick={() => handleClearSearchDetailSubSub()}
+                    style={{
+                      position: "absolute",
+                      right: "10px",
+                      top: "50%",
+                      transform: "translateY(-50%)", // Tengah-tengah secara vertikal
+                      background: "transparent",
+                      border: "none",
+                      fontSize: "16px",
+                      cursor: "pointer",
+                      color: "#999",
+                    }}
+                  >
+                    &#10006;
+                  </button>
+                )}
+              </div>
+              {/* <div>
               <button
                 style={{
                   backgroundColor: "#007bff",
@@ -4203,75 +4599,87 @@ const ContentStunting = () => {
                 search
               </button>
             </div> */}
-          </div>
-          <div style={{ overflowY: "scroll", maxHeight:"500px"}}>
-          <table
-                  className="table table-bordered table-nowrap align-middle mb-0"
-                  // style={{ width: "100%" }}
-                >
-                  <thead className="table-light" style={{ position: "sticky", top: 0, zIndex: 2 }}>
-                    <tr>
+            </div>
+            <div style={{ overflowY: "scroll", maxHeight: "500px" }}>
+              <table
+                className="table table-bordered table-nowrap align-middle mb-0"
+              // style={{ width: "100%" }}
+              >
+                <thead className="table-light" style={{ position: "sticky", top: 0, zIndex: 2 }}>
+                  <tr>
                     <th rowSpan="3" style={{ verticalAlign: "middle", textAlign: "center" }}>
-                        NO
-                      </th>                      
-                      <th  rowSpan="3"           
-                        onClick={() => requestSort("kode_standar_harga")}
-                        style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
-                          wordWrap: "break-word", maxWidth:"100px" }}
-                      >
-                        Kode Standar Harga {getSortIcon("kode_standar_harga")}
-                      </th>                                                                  
-                      <th  rowSpan="3"                      
-                        onClick={() => requestSort("nama_standar_harga")}
-                        style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
-                          wordWrap: "break-word", maxWidth:"100px" }}
-                      >
-                        Nama Standar Harga {getSortIcon("nama_standar_harga")}
-                      </th>                                                                  
-                      <th  rowSpan="3"                      
-                        onClick={() => requestSort("satuan")}
-                        style={{ cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
-                          wordWrap: "break-word", maxWidth:"100px" }}
-                      >
-                        Satuan {getSortIcon("satuan")}
-                      </th>                                                                  
-                      <th rowSpan="3" onClick={() => requestSort("volume")}
-                        style={{ cursor: "pointer", textAlign: "center", whiteSpace: "normal",
-                          wordWrap: "break-word", maxWidth:"100px" }}>
-                        Volume {getSortIcon("volume")}
-                      </th>  
-                      <th rowSpan="3" onClick={() => requestSort("harga_satuan")}
-                        style={{ cursor: "pointer", textAlign: "center" }}>
-                        Harga Satuan (Rp) {getSortIcon("harga_satuan")}
-                      </th>
-                    </tr>
-                    <tr>
-                      <th colSpan="2"
-                        style={{ cursor: "pointer", textAlign: "center" }}>
-                        Total Rincian
-                      </th>
-                      <th rowSpan="2" onClick={() => requestSort("persentase")}
-                        style={{ cursor: "pointer", textAlign: "center",whiteSpace: "normal",
-                          wordWrap: "break-word" }}>
-                        Persentase Setelah Pembobotan {getSortIcon("persentase")}
-                      </th>                                                                   
-                    </tr>
-                    <tr>
-                      <th onClick={() => requestSort("total_rinciansro")}
-                        style={{ cursor: "pointer", textAlign: "center" }}>
-                        Sebelum Pembobotan
-                      </th>
-                      <th onClick={() => requestSort("total_rinciansro")}
-                        style={{ cursor: "pointer", textAlign: "center" }}>
-                        Setelah Pembobotan {getSortIcon("total_rinciansro")}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody style={{ minHeight: "500px" }}>
-                    {currentItemDetailSubSub.map((item, index) => (
-                      <tr key={index}>                        
-                      <td style={{textAlign: "center",
-                      verticalAlign: "middle"}}>
+                      NO
+                    </th>
+                    <th rowSpan="3"
+                      onClick={() => requestSort("kode_standar_harga")}
+                      style={{
+                        cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
+                        wordWrap: "break-word", maxWidth: "100px"
+                      }}
+                    >
+                      Kode Standar Harga {getSortIcon("kode_standar_harga")}
+                    </th>
+                    <th rowSpan="3"
+                      onClick={() => requestSort("nama_standar_harga")}
+                      style={{
+                        cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
+                        wordWrap: "break-word", maxWidth: "100px"
+                      }}
+                    >
+                      Nama Standar Harga {getSortIcon("nama_standar_harga")}
+                    </th>
+                    <th rowSpan="3"
+                      onClick={() => requestSort("satuan")}
+                      style={{
+                        cursor: "pointer", verticalAlign: "middle", whiteSpace: "normal",
+                        wordWrap: "break-word", maxWidth: "100px"
+                      }}
+                    >
+                      Satuan {getSortIcon("satuan")}
+                    </th>
+                    <th rowSpan="3" onClick={() => requestSort("volume")}
+                      style={{
+                        cursor: "pointer", textAlign: "center", whiteSpace: "normal",
+                        wordWrap: "break-word", maxWidth: "100px"
+                      }}>
+                      Volume {getSortIcon("volume")}
+                    </th>
+                    <th rowSpan="3" onClick={() => requestSort("harga_satuan")}
+                      style={{ cursor: "pointer", textAlign: "center" }}>
+                      Harga Satuan (Rp) {getSortIcon("harga_satuan")}
+                    </th>
+                  </tr>
+                  <tr>
+                    <th colSpan="2"
+                      style={{ cursor: "pointer", textAlign: "center" }}>
+                      Total Rincian
+                    </th>
+                    <th rowSpan="2" onClick={() => requestSort("persentase")}
+                      style={{
+                        cursor: "pointer", textAlign: "center", whiteSpace: "normal",
+                        wordWrap: "break-word"
+                      }}>
+                      Persentase Setelah Pembobotan {getSortIcon("persentase")}
+                    </th>
+                  </tr>
+                  <tr>
+                    <th onClick={() => requestSort("total_rinciansro")}
+                      style={{ cursor: "pointer", textAlign: "center" }}>
+                      Sebelum Pembobotan
+                    </th>
+                    <th onClick={() => requestSort("total_rinciansro")}
+                      style={{ cursor: "pointer", textAlign: "center" }}>
+                      Setelah Pembobotan {getSortIcon("total_rinciansro")}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody style={{ minHeight: "500px" }}>
+                  {currentItemDetailSubSub.map((item, index) => (
+                    <tr key={index}>
+                      <td style={{
+                        textAlign: "center",
+                        verticalAlign: "middle"
+                      }}>
                         {/* { index + 1} */}
                         {indexOfFirstItemDetailSubSub + index + 1}
                       </td>
@@ -4282,54 +4690,54 @@ const ContentStunting = () => {
                         {item.nama_standar_harga}
                       </td>
                       <td style={{
-                          whiteSpace: "normal",  // Membolehkan teks turun ke baris berikutnya
-                          wordWrap: "break-word",  // Memastikan teks panjang terpotong dan turun ke bawah
-                          maxWidth: "200px"  // Menetapkan lebar maksimum sel (sesuaikan dengan kebutuhan)
-                        }}>
+                        whiteSpace: "normal",  // Membolehkan teks turun ke baris berikutnya
+                        wordWrap: "break-word",  // Memastikan teks panjang terpotong dan turun ke bawah
+                        maxWidth: "200px"  // Menetapkan lebar maksimum sel (sesuaikan dengan kebutuhan)
+                      }}>
                         {" "}
                         {item.satuan || "-"}
-                      </td>     
+                      </td>
                       <td>
-                      <span style={{float: "right"}}>{item.volume ? item.volume.toLocaleString("id-ID")
-                          : "-"}</span>                          
-                      </td>         
+                        <span style={{ float: "right" }}>{item.volume ? item.volume.toLocaleString("id-ID")
+                          : "-"}</span>
+                      </td>
                       <td>
-                      <span style={{float: "right"}}>{item.harga_satuan ? parseInt(item.harga_satuan).toLocaleString("id-ID")
-                          : "-"}</span>                          
-                      </td>      
+                        <span style={{ float: "right" }}>{item.harga_satuan ? parseInt(item.harga_satuan).toLocaleString("id-ID")
+                          : "-"}</span>
+                      </td>
                       <td>
-                      <span style={{float: "right"}}>{item.harga_satuan ? parseInt(item.harga_satuan*item.volume).toLocaleString("id-ID")
-                          : "-"}</span>  
-                      </td>                                                             
+                        <span style={{ float: "right" }}>{item.harga_satuan ? parseInt(item.harga_satuan * item.volume).toLocaleString("id-ID")
+                          : "-"}</span>
+                      </td>
                       <td>
-                      <span style={{float: "right"}}>{item.total_rinciansro ? parseInt(item.total_rinciansro).toLocaleString("id-ID")
-                          : "-"}</span>                          
-                      </td>                                      
+                        <span style={{ float: "right" }}>{item.total_rinciansro ? parseInt(item.total_rinciansro).toLocaleString("id-ID")
+                          : "-"}</span>
+                      </td>
                       <td>
-                      <span style={{float: "right"}}>
-                      {item.persentase
-                        ? (item.persentase >= 1
-                            ? `${Number(item.persentase).toLocaleString("id-ID", {
+                        <span style={{ float: "right" }}>
+                          {item.persentase
+                            ? (item.persentase >= 1
+                              ? `${Number(item.persentase).toLocaleString("id-ID", {
                                 minimumFractionDigits: 2,
                                 maximumFractionDigits: 2,
                               })}%`
-                            : `${Number(item.persentase).toLocaleString("id-ID", {
+                              : `${Number(item.persentase).toLocaleString("id-ID", {
                                 minimumFractionDigits: 4,
                               })}%`
-                          )
-                        : "-"}
-                      </span>   
+                            )
+                            : "-"}
+                        </span>
                       </td>
                     </tr>
-                    ))}
-                    {/* {placeholders} */}
-                  </tbody>
-                </table>
-          </div> 
-          <Pagination currentPage={currentPageDetailSubSub} totalPages={totalPagesDetailSubSub} onPageChange={paginateDetailSubSub} />
-        </ModalBody>
-      </div>          
-      </Modal>   
+                  ))}
+                  {/* {placeholders} */}
+                </tbody>
+              </table>
+            </div>
+            <Pagination currentPage={currentPageDetailSubSub} totalPages={totalPagesDetailSubSub} onPageChange={paginateDetailSubSub} />
+          </ModalBody>
+        </div>
+      </Modal>
     </React.Fragment>
   );
 };

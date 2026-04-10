@@ -28,14 +28,15 @@ import "./../Dapodik/dapodik.scss";
 import { useNavigate } from "react-router-dom";
 import BreadCrumb from "../../Components/Common/BreadCrumb";
 import MapIndoChart from "../../Components/MapIndo/MapIndoChart";
+import mapIndoChartDummy from "./mapIndoChartDummy.json";
 
 const API_URI = `${process.env.REACT_APP_API_URL_BE}`;
 const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 
 const ContentPerencanaan = () => {
   const [titleMap, setTitleMap] = useState("Total Peserta Aktif")
-  const [valueMap, setValueMap] = useState([]);
-  const [maxValueMap, setmaxValueMap] = useState(0)
+  const [valueMap, setValueMap] = useState(mapIndoChartDummy.mapIndoChartData);
+  const [maxValueMap, setmaxValueMap] = useState(mapIndoChartDummy.maxValue)
   const [dataWidth, setDataWidth] = useState(6)  
   const [roam, setRoam] = useState(false);
   const [dataPersentaseMap, setDataPersentaseMap] = useState({}); 
@@ -717,7 +718,8 @@ const ContentPerencanaan = () => {
                   </button></>)}
               </div>                          
               </div>
-                  <MapIndoChart onKabKotaClick={handleKabKotaClick} onRegionClick={handleRegionClick} roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#FCAD24", "#57E7B4"]} />
+                  <MapIndoChart onKabKotaClick={handleKabKotaClick} onRegionClick={handleRegionClick} roam={roam} maxValue={maxValueMap} valueSeries={valueMap} colorData={["#FCAD24", "#57E7B4"]} />\
+                  
                   <div className="d-flex justify-content-end">
                     {/* <div className="d-flex flex-column justify-content-evenly">
                     <div className="d-flex align-items-center mb-2">

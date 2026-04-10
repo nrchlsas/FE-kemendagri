@@ -1,0 +1,158 @@
+
+{
+  "mapIndoChartData": [
+    {
+      "name": "Aceh",
+      "value": 75
+    },
+    {
+      "name": "Provinsi Sumatera Utara",
+      "value": 85
+    },
+    {
+      "name": "Provinsi Sumatera Barat",
+      "value": 60
+    },
+    {
+      "name": "Provinsi Riau",
+      "value": 90
+    },
+    {
+      "name": "Provinsi Jambi",
+      "value": 50
+    },
+    {
+      "name": "Provinsi Sumatera Selatan",
+      "value": 70
+    },
+    {
+      "name": "Provinsi Bengkulu",
+      "value": 55
+    },
+    {
+      "name": "Provinsi Lampung",
+      "value": 80
+    },
+    {
+      "name": "Provinsi Bangka Belitung",
+      "value": 65
+    },
+    {
+      "name": "Provinsi Kepulauan Riau",
+      "value": 70
+    },
+    {
+      "name": "Provinsi DKI Jakarta",
+      "value": 100
+    },
+    {
+      "name": "Provinsi Jawa Barat",
+      "value": 95
+    },
+    {
+      "name": "Provinsi Jawa Tengah",
+      "value": 88
+    },
+    {
+      "name": "Provinsi DI Yogyakarta",
+      "value": 92
+    },
+    {
+      "name": "Provinsi Jawa Timur",
+      "value": 87
+    },
+    {
+      "name": "Provinsi Banten",
+      "value": 82
+    },
+    {
+      "name": "Provinsi Bali",
+      "value": 78
+    },
+    {
+      "name": "Provinsi Nusa Tenggara Barat",
+      "value": 45
+    },
+    {
+      "name": "Provinsi Nusa Tenggara Timur",
+      "value": 40
+    },
+    {
+      "name": "Provinsi Kalimantan Barat",
+      "value": 58
+    },
+    {
+      "name": "Provinsi Kalimantan Tengah",
+      "value": 52
+    },
+    {
+      "name": "Provinsi Kalimantan Selatan",
+      "value": 72
+    },
+    {
+      "name": "Provinsi Kalimantan Timur",
+      "value": 68
+    },
+    {
+      "name": "Provinsi Kalimantan Utara",
+      "value": 35
+    },
+    {
+      "name": "Provinsi Sulawesi Utara",
+      "value": 62
+    },
+    {
+      "name": "Provinsi Sulawesi Tengah",
+      "value": 48
+    },
+    {
+      "name": "Provinsi Sulawesi Selatan",
+      "value": 76
+    },
+    {
+      "name": "Provinsi Sulawesi Tenggara",
+      "value": 55
+    },
+    {
+      "name": "Provinsi Gorontalo",
+      "value": 42
+    },
+    {
+      "name": "Provinsi Sulawesi Barat",
+      "value": 38
+    },
+    {
+      "name": "Provinsi Maluku",
+      "value": 50
+    },
+    {
+      "name": "Provinsi Maluku Utara",
+      "value": 45
+    },
+    {
+      "name": "Provinsi Papua Barat",
+      "value": 30
+    },
+    {
+      "name": "Provinsi Papua",
+      "value": 25
+    },
+    {
+      "name": "Provinsi Papua Tengah",
+      "value": 28
+    },
+    {
+      "name": "Provinsi Papua Pegunungan",
+      "value": 22
+    },
+    {
+      "name": "Provinsi Papua Selatan",
+      "value": 20
+    }
+  ],
+  "maxValue": 100,
+  "colorData": [
+    "#FCAD24",
+    "#57E7B4"
+  ]
+}
