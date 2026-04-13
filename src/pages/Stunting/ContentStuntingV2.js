@@ -33,12 +33,15 @@ const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 // Default dummy data untuk Stunting Chart
 const DEFAULT_STUNTING_DATA = {
   // Summary card fields
-  jumlah_keluarga: 2500000,
-  jumlah_keluarga_sasaran: 2000000,
-  jumlah_keluarga_stunting: 450000,
-  peserta_kb_modern: 1250000,
-  jumlah_pus: 1800000,
+  jumlah_keluarga: 287198,
+  jumlah_keluarga_sasaran: 229760,
+  jumlah_keluarga_stunting: 51700,
+  peserta_kb_modern: 143600,
+  jumlah_pus: 206780,
 
+  total_anggaran_belanja_nasional: 6000000000000,
+  total_anggaran_belanja_kasus_stunting: 1500000000000,
+  total_anggaran_belanja_urusan_kesehatan: 1100000000000,
   // Chart data
   fasilitas_tidak_sehat: {
     jamban_tidak_layak: 2450,
@@ -361,12 +364,11 @@ const ContentStunting = () => {
         };
 
 
-        // const response = await fetch(
-        //   `${API_URI_RBAC}/v2/dashboard_stunting`,
-        //   requestOptions
-        // );
+        const response = await fetch(
+          `${API_URI_RBAC}/v2/dashboard_stunting`,
+          requestOptions
+        );
 
-        const response = []
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
@@ -907,8 +909,14 @@ const ContentStunting = () => {
         }
 
         const dataStuntingTabel = await response.json();
-        setDataStuntingTabel(dataStuntingTabel?.data); // Simpan data asli
-        setFilteredDataStuntingTabel(dataStuntingTabel?.data); // Tampilkan data awal
+        let data = dataStuntingTabel?.data.map(item => ({
+          ...item,
+          realisasi: 10000000
+        }));
+
+
+        setDataStuntingTabel(data); // Simpan data asli
+        setFilteredDataStuntingTabel(data); // Tampilkan data awal
         setShowNextData(false);
         setCurrentPage(1);
         setDataKolomNamaDaerah("Se-Provinsi");
@@ -1001,11 +1009,11 @@ const ContentStunting = () => {
         const dataStuntingTabelKabupaten = await response.json();
         // e.stopPropagation(); 
         setShowNextData(true);
-
+        let data = dataStuntingTabelKabupaten?.data.map(item => ({ ...item, realisasi: 10000000 }));
         setDataKolomNamaDaerah("Nama Daerah");
         setCurrentPage(1);
-        setDataStuntingTabel(dataStuntingTabelKabupaten?.data);
-        setFilteredDataStuntingTabelKabupaten(dataStuntingTabelKabupaten?.data);
+        setDataStuntingTabel(data);
+        setFilteredDataStuntingTabelKabupaten(data);
 
         const desilData = {
           desil1: Array.isArray(dataStuntingTabelKabupaten?.data)
@@ -1069,6 +1077,58 @@ const ContentStunting = () => {
   const [dataDetailHighlight, setDataDetailHighlight] = useState([])
   const [loadingDetailAnggaran, setLoadingDetailAnggaran] = useState([]);
   const [errorDetailAnggaran, setErrorDetailAnggaran] = useState([]);
+  const dummyResponse = {
+    data: {
+      detail_stunting_subgiat: [
+        {
+          kode_sub_giat: "SG001",
+          nama_sub_giat: "Pencegahan Stunting",
+          anggaran: 150000000,
+          realisasi: 120000000,
+          persen: 80,
+        },
+        {
+          kode_sub_giat: "SG002",
+          nama_sub_giat: "Intervensi Gizi",
+          anggaran: 200000000,
+          realisasi: 150000000,
+          persen: 75,
+        },
+      ],
+      detail_stunting_subgiat_sro: [
+        {
+          kode_sro: "SRO001",
+          nama_sro: "Penyuluhan Gizi",
+          anggaran: 50000000,
+          realisasi: 40000000,
+          persen: 80,
+        },
+        {
+          kode_sro: "SRO002",
+          nama_sro: "Pemberian Makanan Tambahan",
+          anggaran: 100000000,
+          realisasi: 70000000,
+          persen: 70,
+        },
+      ],
+
+      // 🔥 UBAH JADI ARRAY
+      stunting_highlight: [
+        {
+          nama_rekening: "Total Anggaran",
+          anggaran: 350000000,
+        },
+        {
+          nama_rekening: "Total Realisasi",
+          anggaran: 270000000,
+        },
+        {
+          nama_rekening: "Persentase",
+          anggaran: 77,
+        },
+      ],
+    },
+  };
 
   const getDataDetailAnggaran = (
     kodeSeProvinsi = "",
@@ -1094,16 +1154,18 @@ const ContentStunting = () => {
           }),
         };
 
-        const response = await fetch(
-          `${API_URI_RBAC}/v2/detail-tabel-stunting`,
-          requestOptions
-        );
+        // const response = await fetch(
+        //   `${API_URI_RBAC}/v2/detail-tabel-stunting`,
+        //   requestOptions
+        // );
 
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
+        const response = []
+        // if (!response.ok) {
+        //   throw new Error("Network response was not ok");
+        // }
 
-        const dataDetailAnggaran = await response.json();
+        const dataDetailAnggaran = dummyResponse;
+        console.log(dataDetailAnggaran, 'ini data detail anggaran')
 
         if (kodeDdnProvinsi != "" && kodeSubGiat == "") {
           setDataDetailAnggaran(
@@ -1622,9 +1684,9 @@ const ContentStunting = () => {
   const [dataJambanTidakLayakPemda, setDataJambanTidakLayakPemda] = useState([])
 
   useEffect(() => {
-        let dataStuntingFasilitasKesehatan = DEFAULT_FASILITAS_KESEHATAN_DATA;
+    let dataStuntingFasilitasKesehatan = DEFAULT_FASILITAS_KESEHATAN_DATA;
 
-        const dataDetail = (fasilitasShow == "Jamban Tidak Layak" ? dataStuntingFasilitasKesehatan.data.fasilitas_lingkungan_tidak_sehat_jamban_kabkota.reduce((acc, item) => {
+    const dataDetail = (fasilitasShow == "Jamban Tidak Layak" ? dataStuntingFasilitasKesehatan.data.fasilitas_lingkungan_tidak_sehat_jamban_kabkota.reduce((acc, item) => {
       acc[0].push(item.jumlah_jamban_tidak_layak)
       acc[1].push(item.nama_daerah)
       acc[2] += item.jumlah_jamban_tidak_layak;
@@ -1886,7 +1948,7 @@ const ContentStunting = () => {
   const handleBack = () => {
     setShowDataChartFasilitasProvinsi(false)
     setShowDataChartFasilitasPemda(true)
-    
+
   }
 
   const [showChartBerisiko, setShowChartBerisiko] = useState(false)
@@ -2764,6 +2826,23 @@ const ContentStunting = () => {
                             PERSENTASE{" "}
                             {getSortIcon("persentase_anggaran")}
                           </th>
+                          <th
+                            rowSpan="4"
+                            style={{
+                              whiteSpace: "normal",
+                              overflowWrap: "break-word",
+                              maxWidth: "150px",
+                              textAlign: "center",
+                              verticalAlign: "middle",
+                              cursor: "pointer",
+                            }}
+                            onClick={() => requestSort("realisasi")}
+                          >
+                            Realisasi{" "}
+                            {getSortIcon("realisasi")}
+                          </th>
+
+
                           {dataKolomNamaDaerah == "Se-Provinsi" ? (<></>) : (<><th
                             rowSpan="4"
                             style={{
@@ -3036,6 +3115,14 @@ const ContentStunting = () => {
                                   maximumFractionDigits: 2,
                                 })}%`}
                             </td>
+                            <td style={{ textAlign: "center" }}>
+                              {item.realisasi ? parseInt(item.realisasi).toLocaleString(
+                                "id-ID"
+                              )
+                                : "-"}
+
+                            </td>
+
                             {dataKolomNamaDaerah == "Se-Provinsi" ? (<></>) : (<><td style={{ textAlign: "center" }}>
                               {/* <button style={{
                       backgroundColor: "#28a745",
@@ -4103,9 +4190,15 @@ const ContentStunting = () => {
                       Persentase {getSortIcon("persentase")}
                     </th>
                     <th
-                      style={{ verticalAlign: "middle", textAlign: "center" }}
+                      onClick={() => requestSort("realisasi")}
+                      style={{
+                        cursor: "pointer",
+                        textAlign: "center",
+                        whiteSpace: "normal",
+                        overflowWrap: "break-word",
+                      }}
                     >
-                      Lihat Sub Rincian Objek
+                      Realisasi {getSortIcon("realisasi")}
                     </th>
                   </tr>
                 </thead>
@@ -4170,57 +4263,9 @@ const ContentStunting = () => {
                             : "-"}
                         </span>
                       </td>
-                      <td
-                        style={{ verticalAlign: "middle", textAlign: "center" }}
-                      >
-                        {/* <button style={{
-                      backgroundColor: "#28a745",
-                      color: "white",
-                      padding: "5px 10px",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                      fontSize: "16px"
-                    }} onClick={()=>dataJenisPemda=="prov" ? handleOpenNextModal("", item.kode_sub_giat, item.kode_ddn, "",item.total_rinciansub) : (dataJenisPemda=="kab" || dataJenisPemda=="kota") ? handleOpenNextModal("", item.kode_sub_giat, "", item.kode_ddn,item.total_rinciansub) : handleOpenNextModal(item.kode_prov, item.kode_sub_giat, "", "",item.total_rinciansub)}>Lihat Detail</button> */}
+                      <td>{item.realisasi}</td>
 
-                        <i
-                          style={{
-                            padding: "5px 10px",
-                            cursor: "pointer",
-                            fontSize: "30px",
-                          }}
-                          onClick={() =>
-                            dataJenisPemda == "prov"
-                              ? handleOpenNextModal(
-                                "",
-                                item.kode_sub_giat,
-                                item.kode_ddn,
-                                "",
-                                item.total_rinciansub,
-                                item.nama_sub_giat
-                              )
-                              : dataJenisPemda == "kab" ||
-                                dataJenisPemda == "kota"
-                                ? handleOpenNextModal(
-                                  "",
-                                  item.kode_sub_giat,
-                                  "",
-                                  item.kode_ddn,
-                                  item.total_rinciansub,
-                                  item.nama_sub_giat
-                                )
-                                : handleOpenNextModal(
-                                  item.kode_prov,
-                                  item.kode_sub_giat,
-                                  "",
-                                  "",
-                                  item.total_rinciansub,
-                                  item.nama_sub_giat
-                                )
-                          }
-                          className="bx bx-list-ul text-primary"
-                        ></i>
-                      </td>
+
                     </tr>
                   ))}
                   {/* {placeholders} */}
@@ -4389,6 +4434,18 @@ const ContentStunting = () => {
                     >
                       Persentase {getSortIcon("persentase")}
                     </th>
+                    <th
+                      onClick={() => requestSort("realisasi")}
+                      style={{
+                        cursor: "pointer",
+                        textAlign: "center",
+                        whiteSpace: "normal",
+                        overflowWrap: "break-word",
+                      }}
+                    >
+                      Realisasi {getSortIcon("realisasi")}
+                    </th>
+
                     <th style={{ verticalAlign: "middle", textAlign: "center", whiteSpace: "normal", wordWrap: "break-word", maxWidth: "100px" }}>
                       Lihat Sub Sub Rincian Objek
                     </th>
@@ -4443,6 +4500,12 @@ const ContentStunting = () => {
                             : "-"}
                         </span>
                       </td>
+                      <td>
+                        <span style={{ float: "right" }}>
+                          {item.realisasi}
+                        </span>
+                      </td>
+
                       <td style={{ verticalAlign: "middle", textAlign: "center" }}>
                         <i style={{
                           padding: "5px 10px",
