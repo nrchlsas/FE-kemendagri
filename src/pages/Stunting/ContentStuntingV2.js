@@ -796,6 +796,7 @@ const ContentStunting = () => {
             DEFAULT_STUNTING_DATA.total_perbandingan_total_anggaran_belanja_urusan_kesehatan_berdasarkan_total_belanja_nasional.total_nasional - DEFAULT_STUNTING_DATA.total_perbandingan_total_anggaran_belanja_urusan_kesehatan_berdasarkan_total_belanja_nasional.total_kesehatan,
             DEFAULT_STUNTING_DATA.total_perbandingan_total_anggaran_belanja_urusan_kesehatan_berdasarkan_total_belanja_nasional.total_kesehatan,
           ];
+          
           setDataChartPerbandinganAnggaranKesehatan(resultChartAnggaranKesehatan);
         } catch (e) { console.error("Error setting anggaran kesehatan chart", e); }
 
@@ -976,6 +977,7 @@ const ContentStunting = () => {
     };
     fetchData();
   };
+
   const [dataStuntingTabelKabupaten, setDataStuntingTabelKabupaten] = useState([], []);
   const [filteredDataStuntingTabelKabupaten, setFilteredDataStuntingTabelKabupaten] = useState([]); // Data hasil filter
   const [dataKolomNamaDaerah, setDataKolomNamaDaerah] = useState("Se-Provinsi");
@@ -1060,6 +1062,7 @@ const ContentStunting = () => {
           ? Math.max(...desilData.desil1.map(item => item.value || 0))
           : 0;
 
+        console.log(valueMap, "CEKING")
         setmaxValueMap(maxValue);
       } catch (errorStunting) {
         setErrorStunting(errorStunting);
@@ -2030,541 +2033,439 @@ const ContentStunting = () => {
     <React.Fragment>
       <Row>
         <Col>
-          <Card className="card-custom">
-            <div className="d-flex justify-content-between">
-              <div className="d-flex title-page">
-                <div className="d-flex justify-content-center align-items-center avatar-sm">
-                  <span className="logo-sm">
-                    <img src={logoBkkbn} alt="" width="35" height="35" />
-                  </span>
+          <Card className="card-custom" style={{ borderRadius: "16px", boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
+            <div className="d-flex justify-content-between align-items-center" style={{ padding: "20px 24px" }}>
+              <div className="d-flex align-items-center gap-3">
+                <div 
+                  className="d-flex justify-content-center align-items-center" 
+                  style={{ 
+                    width: "48px", 
+                    height: "48px", 
+                    borderRadius: "12px", 
+                    backgroundColor: "#f8f9fa",
+                    padding: "8px"
+                  }}
+                >
+                  <img src={logoBkkbn} alt="Logo BKKBN" width="32" height="32" style={{ objectFit: "contain" }} />
                 </div>
-                <div className="d-flex justify-content-center align-items-center">
-                  <span>Kementerian Kependudukan dan Pembangunan Keluarga</span>
+                <div>
+                  <h6 className="mb-0" style={{ fontSize: "15px", fontWeight: 600, color: "#1a1a1a", lineHeight: "1.4" }}>
+                    Kementerian Kependudukan dan<br />Pembangunan Keluarga
+                  </h6>
                 </div>
               </div>
-              <div className="d-flex nav-beranda">
-                <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight: 600, fontFamily: "poppins" }}>
-                  Tahun Data:
+              
+              <div className="d-flex align-items-center gap-3">
+                <div className="d-flex align-items-center gap-2">
+                  <label 
+                    htmlFor="tahunData" 
+                    style={{ 
+                      fontSize: "13px", 
+                      fontWeight: 500, 
+                      color: "#6c757d",
+                      marginBottom: 0,
+                      whiteSpace: "nowrap"
+                    }}
+                  >
+                    Tahun Data:
+                  </label>
+                  <select
+                    id="tahunData"
+                    name="tahun"
+                    className="form-select form-select-sm"
+                    style={{
+                      padding: "8px 32px 8px 12px",
+                      fontSize: "14px",
+                      fontWeight: 500,
+                      borderRadius: "8px",
+                      border: "1px solid #e0e0e0",
+                      backgroundColor: "#ffffff",
+                      cursor: "pointer",
+                      minWidth: "90px",
+                      transition: "all 0.2s ease",
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
+                    }}
+                    value={selectedSingleTahunData}
+                    onChange={handleSelectChangeDataPokok}
+                    onMouseEnter={(e) => e.target.style.borderColor = "#0d6efd"}
+                    onMouseLeave={(e) => e.target.style.borderColor = "#e0e0e0"}
+                  >
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                  </select>
                 </div>
-                <select
-                  name="tahun"
-                  style={{
-                    padding: "10px 30px 10px 10px",
-                    fontSize: "16px",
-                    borderRadius: "5px",
-                    border: "1px solid #ccc",
-                    backgroundColor: "#ffffff",
-                    cursor: "pointer",
-                    margin: "15px 15px 15px 5px",
-                  }}
-                  value={selectedSingleTahunData}
-                  onChange={handleSelectChangeDataPokok}
-                >
-                  <option value="2023">2023</option>
-                  <option value="2024">2024</option>
-                  <option value="2025">2025</option>
-                </select>
-                <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight: 600, fontFamily: "poppins" }}>
-                  Tahun Anggaran:
+
+                <div className="d-flex align-items-center gap-2">
+                  <label 
+                    htmlFor="tahunAnggaran" 
+                    style={{ 
+                      fontSize: "13px", 
+                      fontWeight: 500, 
+                      color: "#6c757d",
+                      marginBottom: 0,
+                      whiteSpace: "nowrap"
+                    }}
+                  >
+                    Tahun Anggaran:
+                  </label>
+                  <select
+                    id="tahunAnggaran"
+                    name="tahun"
+                    className="form-select form-select-sm"
+                    style={{
+                      padding: "8px 32px 8px 12px",
+                      fontSize: "14px",
+                      fontWeight: 500,
+                      borderRadius: "8px",
+                      border: "1px solid #e0e0e0",
+                      backgroundColor: "#ffffff",
+                      cursor: "pointer",
+                      minWidth: "90px",
+                      transition: "all 0.2s ease",
+                      boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
+                    }}
+                    value={selectedSingleTahunAnggaran}
+                    onChange={handleSelectChangeAnggaran}
+                    onMouseEnter={(e) => e.target.style.borderColor = "#0d6efd"}
+                    onMouseLeave={(e) => e.target.style.borderColor = "#e0e0e0"}
+                  >
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                  </select>
                 </div>
-                <select
-                  name="tahun"
-                  style={{
-                    padding: "10px 30px 10px 10px",
-                    fontSize: "16px",
-                    borderRadius: "5px",
-                    border: "1px solid #ccc",
-                    backgroundColor: "#ffffff",
-                    cursor: "pointer",
-                    margin: "15px 15px 15px 5px",
-                  }}
-                  value={selectedSingleTahunAnggaran}
-                  onChange={handleSelectChangeAnggaran}
-                >
-                  <option value="2024">2024</option>
-                  <option value="2025">2025</option>
-                </select>
               </div>
             </div>
           </Card>
         </Col>
       </Row>
+      {/* ===== ROW UTAMA ===== */}
       <Row>
-        <Col md={dataWidth}>
-          <Card className="card-height-100">
-            <CardBody>
-              <div className="d-flex justify-content-between mb-2">
-                <div className="d-flex justify-content-center align-items-center">
-                  {dataWidth == 6 ? (<><button onClick={() => {
-                    setDataWidth(12)
-                    setRoam(true)
-                  }} style={{
-                    backgroundColor: "#007bff",
-                    color: "white",
-                    padding: "5px 10px",
-                    border: "none",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                    fontSize: "16px",
-                  }}>
-                    Maximize Map
-                  </button></>) : (<><button onClick={() => {
-                    setDataWidth(6)
-                    setRoam(false)
-                  }} style={{
-                    backgroundColor: "#007bff",
-                    color: "white",
-                    padding: "5px 10px",
-                    border: "none",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                    fontSize: "16px",
-                  }}>
-                    Minimize Map
-                  </button></>)}
-                  {clickDaerah ? <><button onClick={() => {
-                    resetRegionClick()
-                    setTitleMap("Total Penduduk")
-                  }} style={{
-                    backgroundColor: "#007bff",
-                    color: "white",
-                    padding: "5px 10px",
-                    border: "none",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                    fontSize: "16px",
-                    marginLeft: "4px"
-                  }}>
-                    Nasional
+        <Col md={dataWidth} id="mapCol">
+          <Card className="card-height-100" style={{ borderRadius: "12px", border: "1px solid #E2E8F0", boxShadow: "none" }}>
+            <CardBody style={{ padding: "20px" }}>
+
+              {/* ── Header Controls ── */}
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", gap: "12px", flexWrap: "wrap" }}>
+
+                {/* Left: Maximize / Nasional buttons */}
+                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                  <button
+                    onClick={() => { setDataWidth(dataWidth === 6 ? 12 : 6); setRoam(dataWidth === 6); }}
+                    style={{
+                      display: "inline-flex", alignItems: "center", gap: "6px",
+                      backgroundColor: "#1B6FE8", color: "#fff",
+                      padding: "8px 16px", border: "none", borderRadius: "8px",
+                      cursor: "pointer", fontSize: "13px", fontWeight: 600,
+                    }}
+                  >
+                    {dataWidth === 6 ? "⛶ Maximize Map" : "⊡ Minimize Map"}
                   </button>
-                  </> :
-                    <>
-                    </>}
+
+                  {clickDaerah && (
+                    <button
+                      onClick={() => { resetRegionClick(); setTitleMap("Total Penduduk"); }}
+                      style={{
+                        display: "inline-flex", alignItems: "center", gap: "6px",
+                        backgroundColor: "transparent", color: "#1B6FE8",
+                        padding: "8px 16px", border: "1.5px solid #1B6FE8", borderRadius: "8px",
+                        cursor: "pointer", fontSize: "13px", fontWeight: 600,
+                      }}
+                    >
+                      ⌂ Nasional
+                    </button>
+                  )}
                 </div>
 
-                <div className="d-flex nav-beranda">
-                  <div className="d-flex justify-content-center align-items-center" style={{ fontSize: "14px", fontWeight: 600, fontFamily: "poppins" }}>
+                {/* Right: Desil Select */}
+                <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <span style={{ fontSize: "12px", fontWeight: 700, color: "#64748B", whiteSpace: "nowrap" }}>
                     Keluarga Berisiko Stunting:
-                  </div>
+                  </span>
                   <select
                     name="Desil"
-                    style={{
-                      padding: "10px 30px 10px 10px",
-                      fontSize: "16px",
-                      borderRadius: "5px",
-                      border: "1px solid #ccc",
-                      backgroundColor: "#ffffff",
-                      cursor: "pointer",
-                      marginLeft: "10px"
-                    }}
                     value={selectedDesil}
                     onChange={handleSelectChange}
+                    style={{
+                      appearance: "none", background: "#fff",
+                      border: "1.5px solid #E2E8F0", borderRadius: "8px",
+                      padding: "8px 32px 8px 12px", fontSize: "13px",
+                      fontWeight: 600, color: "#0F172A", cursor: "pointer",
+                      minWidth: "110px",
+                    }}
                   >
-                    <option value="1">DESIL 1</option>
-                    <option value="2">DESIL 2</option>
-                    <option value="3">DESIL 3</option>
-                    <option value="4">DESIL 4</option>
-                    <option value="5">DESIL &gt;4</option>
+                    <option value="1">Desil 1</option>
+                    <option value="2">Desil 2</option>
+                    <option value="3">Desil 3</option>
+                    <option value="4">Desil 4</option>
+                    <option value="5">Desil &gt;4</option>
                   </select>
                 </div>
               </div>
-              <MapIndoChart roam={roam} daerah={clickDaerah} onKabKotaClick={handleKabKotaClick} maxValue={maxValueMap} onRegionClick={handleRegionClick} valueSeries={valueMap} colorData={["#FFCDD2", "#FF9EA7", "#FF7380", "#FF4B5C", "#FF2438", "#FF0017"]} />
+
+              {/* ── Map Component ── */}
+              <MapIndoChart
+                roam={roam} daerah={clickDaerah}
+                onKabKotaClick={handleKabKotaClick}
+                maxValue={maxValueMap}
+                onRegionClick={handleRegionClick}
+                valueSeries={valueMap}
+                colorData={["#FFCDD2", "#FF9EA7", "#FF7380", "#FF4B5C", "#FF2438", "#FF0017"]}
+              />
+
+              <div style={{
+                marginTop: "16px",
+                padding: "12px 16px",
+                backgroundColor: "#f0f9ff",
+                borderLeft: "4px solid #0ea5e9",
+                borderRadius: "8px"
+              }}>
+                <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px"
+                }}>
+                  <i className="bx bx-info-circle" style={{
+                    fontSize: "18px",
+                    color: "#0284c7"
+                  }}></i>
+                  <span style={{
+                    fontSize: "13px",
+                    fontWeight: 500,
+                    color: "#0c4a6e",
+                    lineHeight: "1.5"
+                  }}>
+                    Klik pada peta untuk melihat data detail per provinsi dan kabupaten/kota
+                  </span>
+                </div>
+              </div>
             </CardBody>
           </Card>
         </Col>
+
+        {/* ===== DATA COLUMN ===== */}
         <Col md={dataWidth}>
-          <Card className="card-height-100">
-            <CardBody>
-              <div className="d-flex justify-content-center align-items-center title-page">
+          <Card className="card-height-100" style={{ borderRadius: "12px", border: "1px solid #E2E8F0", boxShadow: "none" }}>
+            <CardBody style={{ padding: "20px" }}>
+
+              {/* ── Region Title ── */}
+              <div style={{ fontSize: "16px", fontWeight: 700, color: "#0F172A", textAlign: "center", paddingBottom: "16px", borderBottom: "1px solid #E2E8F0", marginBottom: "16px" }}>
                 {clickDaerah ? clickNamaDaerah : "Nasional"}
               </div>
+
               <Row>
+                {/* ─ LEFT: Budget + Tabs ─ */}
                 <Col md={6}>
-                  <Row>
+                  <Row className="mb-2">
                     <Col>
-                      <Card className="card-animate">
-                        <CardBody>
-                          <div className="d-flex flex-column title-custom-card">
-                            <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                              <span>TOTAL BELANJA NASIONAL</span>
-                            </div>
-                            <div className="d-flex">
-                              <div className="avatar-xs-half flex-shrink-0">
-                                <span className="avatar-title bg-info-subtle rounded-4 fs-3">
-                                  <i className="bx bx-cart text-info"></i>
-                                </span>
-                              </div>
-                              <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                                <span>
-                                  <CountUp
-                                    start={0}
-                                    end={
-                                      dataStunting?.total_anggaran_belanja_nasional /
-                                      1000000000000
-                                    }
-                                    decimals={2}
-                                    decimal=","
-                                    separator="."
-                                    prefix="Rp "
-                                    suffix=" T"
-                                    duration={1}
-                                  />
-                                </span>
-                              </div>
-                            </div>
+                      {/* Total Belanja Nasional */}
+                      <div style={{ background: "#fff", borderRadius: "12px", border: "1px solid #E2E8F0", padding: "16px", display: "flex", alignItems: "center", gap: "14px" }}>
+                        <div style={{ width: "44px", height: "44px", borderRadius: "10px", background: "#E0F2FE", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                          <i className="bx bx-cart" style={{ fontSize: "20px", color: "#0EA5E9" }}></i>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: "10px", fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: ".6px", marginBottom: "4px" }}>Total Belanja Nasional</div>
+                          <div style={{ fontSize: "20px", fontWeight: 700, color: "#0F172A", lineHeight: 1 }}>
+                            <CountUp start={0} end={dataStunting?.total_anggaran_belanja_nasional / 1000000000000}
+                              decimals={2} decimal="," separator="." prefix="Rp " suffix=" T" duration={1} />
                           </div>
-                        </CardBody>
-                      </Card>
+                        </div>
+                      </div>
                     </Col>
                   </Row>
+
                   <Row>
                     <Col>
-                      <Card className="card-animate">
-                        <CardBody>
-                          <TabContent
-                            activeTab={customActiveTabBelanja}
-                            className="text-muted"
-                          >
-                            <TabPane tabId="1" id="provinsi">
-                              <div className="d-flex flex-column title-custom-card">
-                                <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                                  <span>
-                                    TOTAL BELANJA PENURUNAN DAN PENCEGAHAN
-                                    STUNTING
-                                  </span>
-                                </div>
-                                <div className="d-flex">
-                                  <div className="avatar-xs-half flex-shrink-0">
-                                    <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
-                                      <i className="ri-shopping-bag-line text-warning"></i>
-                                    </span>
-                                  </div>
-                                  <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                                    <span>
-                                      <CountUp
-                                        start={0}
-                                        end={
-                                          dataStunting?.total_anggaran_belanja_kasus_stunting /
-                                          1000000000000
-                                        }
-                                        decimals={2}
-                                        decimal=","
-                                        separator="."
-                                        prefix="Rp "
-                                        suffix=" T"
-                                        duration={1}
-                                      />
-                                    </span>
-                                  </div>
+                      {/* Tab Card */}
+                      <div style={{ background: "#fff", borderRadius: "12px", border: "1px solid #E2E8F0", padding: "14px" }}>
+                        {/* Tab Nav */}
+                        <div style={{ display: "flex", background: "#F0F4FA", borderRadius: "8px", padding: "3px", gap: "2px", marginBottom: "14px" }}>
+                          {[["1", "Penurunan Stunting"], ["2", "Urusan Kesehatan"]].map(([id, label]) => (
+                            <button key={id}
+                              onClick={() => { toggleCustomBelanja(id); setDataShowChartAnggaran(id === "2"); }}
+                              style={{
+                                flex: 1, padding: "8px 10px", borderRadius: "6px", border: "none", cursor: "pointer",
+                                fontSize: "11px", fontWeight: 600, lineHeight: 1.3, textAlign: "center",
+                                background: customActiveTabBelanja === id ? "#fff" : "transparent",
+                                color: customActiveTabBelanja === id ? "#1B6FE8" : "#64748B",
+                                boxShadow: customActiveTabBelanja === id ? "0 1px 4px rgba(0,0,0,.1)" : "none",
+                                transition: "all .15s",
+                              }}
+                            >{label}</button>
+                          ))}
+                        </div>
+
+                        {/* Tab Content */}
+                        <TabContent activeTab={customActiveTabBelanja} className="text-muted">
+                          <TabPane tabId="1">
+                            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                              <div style={{ width: "38px", height: "38px", borderRadius: "10px", background: "#FFFBEB", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                <i className="ri-shopping-bag-line" style={{ fontSize: "18px", color: "#F59E0B" }}></i>
+                              </div>
+                              <div>
+                                <div style={{ fontSize: "10px", fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: ".6px", marginBottom: "4px" }}>Total Belanja Penurunan & Pencegahan Stunting</div>
+                                <div style={{ fontSize: "17px", fontWeight: 700, color: "#0F172A", lineHeight: 1 }}>
+                                  <CountUp start={0} end={dataStunting?.total_anggaran_belanja_kasus_stunting / 1000000000000}
+                                    decimals={2} decimal="," separator="." prefix="Rp " suffix=" T" duration={1} />
                                 </div>
                               </div>
-                            </TabPane>
-                            <TabPane tabId="2" id="kabupaten">
-                              <div className="d-flex flex-column title-custom-card">
-                                <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                                  <span>
-                                    TOTAL BELANJA UNTUK BIDANG URUSAN KESEHATAN
-                                  </span>
-                                </div>
-                                <div className="d-flex">
-                                  <div className="avatar-xs-half flex-shrink-0">
-                                    <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
-                                      <i className="ri-shopping-bag-line text-warning"></i>
-                                    </span>
-                                  </div>
-                                  <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                                    <span>
-                                      <CountUp
-                                        start={0}
-                                        end={
-                                          dataStunting?.total_anggaran_belanja_urusan_kesehatan /
-                                          1000000000000
-                                        }
-                                        decimals={2}
-                                        decimal=","
-                                        separator="."
-                                        prefix="Rp "
-                                        suffix=" T"
-                                        duration={1}
-                                      />
-                                    </span>
-                                  </div>
+                            </div>
+                          </TabPane>
+                          <TabPane tabId="2">
+                            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                              <div style={{ width: "38px", height: "38px", borderRadius: "10px", background: "#FFFBEB", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                                <i className="ri-shopping-bag-line" style={{ fontSize: "18px", color: "#F59E0B" }}></i>
+                              </div>
+                              <div>
+                                <div style={{ fontSize: "10px", fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: ".6px", marginBottom: "4px" }}>Total Belanja Bidang Urusan Kesehatan</div>
+                                <div style={{ fontSize: "17px", fontWeight: 700, color: "#0F172A", lineHeight: 1 }}>
+                                  <CountUp start={0} end={dataStunting?.total_anggaran_belanja_urusan_kesehatan / 1000000000000}
+                                    decimals={2} decimal="," separator="." prefix="Rp " suffix=" T" duration={1} />
                                 </div>
                               </div>
-                            </TabPane>
-                          </TabContent>
-                          <div className="nav-beranda">
-                            <Nav
-                              tabs
-                              className="nav nav-tabs nav-success nav-justified mb-3"
-                            >
-                              <NavItem>
-                                <NavLink
-                                  style={{ cursor: "pointer" }}
-                                  className={classnames("h-100", {
-                                    active: customActiveTabBelanja === "1",
-                                  })}
-                                  onClick={() => {
-                                    toggleCustomBelanja("1");
-                                    setDataShowChartAnggaran(false);
-                                  }}
-                                >
-                                  PENURUNAN DAN PENCEGAHAN STUNTING
-                                </NavLink>
-                              </NavItem>
-                              <NavItem>
-                                <NavLink
-                                  style={{ cursor: "pointer" }}
-                                  className={classnames("h-100", {
-                                    active: customActiveTabBelanja === "2",
-                                  })}
-                                  onClick={() => {
-                                    toggleCustomBelanja("2");
-                                    setDataShowChartAnggaran(true);
-                                  }}
-                                >
-                                  BIDANG URUSAN KESEHATAN
-                                </NavLink>
-                              </NavItem>
-                            </Nav>
-                          </div>
-                        </CardBody>
-                      </Card>
+                            </div>
+                          </TabPane>
+                        </TabContent>
+                      </div>
                     </Col>
                   </Row>
                 </Col>
-                <Col md={6}>
+
+                {/* ─ RIGHT: Pie Chart ─ */}
+                <Col md={6} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                   {dataShowChartAnggaran ? (
-                    <>
-                      <PieChartNew
-                        dataChart={dataChartPerbandinganAnggaranKesehatan}
-                        dataColors={'["#2DAED4", "#FCAD24"]'}
-                        categoryName={[
-                          "Bidang Urusan di Luar Kesehatan",
-                          "Bidang Urusan Kesehatan",
-                        ]}
-                        showLegend={false}
-                        percentOnly={true}
-                        pieChart={false}
-                      />
-                    </>
+                    <PieChartNew
+                      dataChart={dataChartPerbandinganAnggaranKesehatan}
+                      dataColors={'["#2DAED4","#FCAD24"]'}
+                      categoryName={["Bidang Urusan di Luar Kesehatan", "Bidang Urusan Kesehatan"]}
+                      showLegend={false} percentOnly={true} pieChart={false}
+                    />
                   ) : (
-                    <>
-                      <PieChartNew
-                        dataChart={dataChartPerbandinganAnggaranStunting}
-                        dataColors={'["#2DAED4", "#FCAD24"]'}
-                        categoryName={[
-                          "Anggaran Untuk Lainnya",
-                          "Anggaran Penurunan dan Pencegahan Stunting",
-                        ]}
-                        pieChart={false}
-                        showLegend={false}
-                        percentOnly={true}
-                      />
-                    </>
+                    <PieChartNew
+                      dataChart={dataChartPerbandinganAnggaranStunting}
+                      dataColors={'["#2DAED4","#FCAD24"]'}
+                      categoryName={["Anggaran Untuk Lainnya", "Anggaran Penurunan dan Pencegahan Stunting"]}
+                      pieChart={false} showLegend={false} percentOnly={true}
+                    />
                   )}
                 </Col>
               </Row>
-              {
-                showChartBerisiko ? <><PieChartNew
-                  dataChart={dataChartPerbandinganKeluargaStunting}
-                  categoryName={[
-                    "Keluarga Tidak Berisiko Stunting",
-                    "Keluarga Berisiko Stunting",
-                  ]}
-                  dataColors={'["#57E7B4", "#2DAED4"]'}
-                />
-                  <div className="separator mb-4">
-                    <div >
-                      <span
-                        onClick={() => setShowChartBerisiko(false)}
-                        style={{
-                          cursor: "pointer",
-                          color: "#2DAED4",
-                        }}
-                      >
-                        Lihat Nilai
-                      </span>
-                    </div>
-                  </div>
-                </> : <><Row>
-                  <Col md={12}>
-                    <Card className="card-animate">
-                      <CardBody>
-                        <div className="d-flex flex-column title-custom-card">
-                          <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                            <span>JUMLAH KELUARGA</span>
-                          </div>
-                          <div className="d-flex">
-                            <div className="avatar-xs-half flex-shrink-0">
-                              <span className="avatar-title bg-warning-subtle rounded-4 fs-3">
-                                <i className="mdi mdi-human-male-female-child text-warning"></i>
-                              </span>
-                            </div>
-                            <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                              <span>
-                                <CountUp
-                                  start={0}
-                                  end={dataStunting.jumlah_keluarga}
-                                  separator="."
-                                  prefix=""
-                                  duration={1}
-                                />
-                                {/* {dataStunting?.jumlah_keluarga?.toLocaleString("id-ID")} */}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </CardBody>
-                    </Card>
-                  </Col>
-                </Row>
-                  <Row>
-                    <Col md={6}>
-                      <Card className="card-animate">
-                        <CardBody>
-                          <div className="d-flex flex-column title-custom-card">
-                            <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                              <span>KELUARGA SASARAN</span>
-                            </div>
-                            <div className="d-flex">
-                              <div className="avatar-xs-half flex-shrink-0">
-                                <span className="avatar-title bg-info-subtle rounded-4 fs-3">
-                                  <i className="mdi mdi-human-male-female-child text-info"></i>
-                                </span>
-                              </div>
-                              <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                                <span>
-                                  <CountUp
-                                    start={0}
-                                    end={dataStunting.jumlah_keluarga_sasaran}
-                                    separator="."
-                                    prefix=""
-                                    duration={1}
-                                  />
-                                  {/* {dataStunting?.jumlah_keluarga_sasaran?.toLocaleString("id-ID")} */}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </CardBody>
-                      </Card>
-                    </Col>
-                    <Col md={6}>
-                      <Card className="card-animate">
-                        <CardBody>
-                          <div className="d-flex flex-column title-custom-card">
-                            <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                              <span>KELUARGA BERISIKO STUNTING</span>
-                            </div>
-                            <div className="d-flex">
-                              <div className="avatar-xs-half flex-shrink-0">
-                                <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
-                                  <i className="mdi mdi-human-male-female-child text-danger"></i>
-                                </span>
-                              </div>
-                              <div className="d-flex justify-content-center align-items-center ms-2 title-body">
-                                <span>
-                                  <CountUp
-                                    start={0}
-                                    end={dataStunting.jumlah_keluarga_stunting}
-                                    separator="."
-                                    prefix=""
-                                    duration={1}
-                                  />
-                                  {/* {dataStunting?.jumlah_keluarga_stunting?.toLocaleString("id-ID")} */}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </CardBody>
-                      </Card>
-                    </Col>
-                  </Row>
-                  <div className="separator mb-4">
-                    <div >
-                      <span
-                        onClick={() => setShowChartBerisiko(true)}
-                        style={{
-                          cursor: "pointer",
-                          color: "#2DAED4",
-                        }}
-                      >
-                        Lihat Grafik Perbandingan
-                      </span>
-                    </div>
+
+              {/* ── Divider ── */}
+              <hr style={{ margin: "16px 0", borderColor: "#E2E8F0", borderWidth: "1px 0 0" }} />
+
+              {/* ── Family Stats Toggle ── */}
+              {showChartBerisiko ? (
+                <>
+                  <PieChartNew
+                    dataChart={dataChartPerbandinganKeluargaStunting}
+                    categoryName={["Keluarga Tidak Berisiko Stunting", "Keluarga Berisiko Stunting"]}
+                    dataColors={'["#57E7B4","#2DAED4"]'}
+                  />
+                  <div style={{ textAlign: "center", padding: "4px 0" }}>
+                    <span onClick={() => setShowChartBerisiko(false)}
+                      style={{ cursor: "pointer", color: "#1B6FE8", fontSize: "12px", fontWeight: 600 }}>
+                      ← Lihat Nilai
+                    </span>
                   </div>
                 </>
-              }
+              ) : (
+                <>
+                  <Row className="mb-2">
+                    <Col md={12}>
+                      <div style={{ background: "#fff", borderRadius: "12px", border: "1px solid #E2E8F0", padding: "16px", display: "flex", alignItems: "center", gap: "14px" }}>
+                        <div style={{ width: "44px", height: "44px", borderRadius: "10px", background: "#EBF2FF", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                          <i className="mdi mdi-human-male-female-child" style={{ fontSize: "20px", color: "#1B6FE8" }}></i>
+                        </div>
+                        <div>
+                          <div style={{ fontSize: "10px", fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: ".6px", marginBottom: "4px" }}>Jumlah Keluarga</div>
+                          <div style={{ fontSize: "20px", fontWeight: 700, color: "#0F172A", lineHeight: 1 }}>
+                            <CountUp start={0} end={dataStunting.jumlah_keluarga} separator="." duration={1} />
+                          </div>
+                        </div>
+                      </div>
+                    </Col>
+                  </Row>
+                  <Row className="mb-2">
+                    {[
+                      { label: "Keluarga Sasaran", value: dataStunting.jumlah_keluarga_sasaran, icon: "mdi mdi-human-male-female-child", bg: "#E0F2FE", color: "#0EA5E9", key: "sasaran" },
+                      { label: "Keluarga Berisiko Stunting", value: dataStunting.jumlah_keluarga_stunting, icon: "mdi mdi-human-male-female-child", bg: "#FFEBEE", color: "#E53935", key: "stunting" },
+                    ].map(({ label, value, icon, bg, color, key }) => (
+                      <Col md={6} key={key}>
+                        <div style={{ background: "#fff", borderRadius: "12px", border: "1px solid #E2E8F0", padding: "16px", display: "flex", alignItems: "center", gap: "12px" }}>
+                          <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                            <i className={icon} style={{ fontSize: "18px", color }}></i>
+                          </div>
+                          <div>
+                            <div style={{ fontSize: "10px", fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: ".6px", marginBottom: "4px" }}>{label}</div>
+                            <div style={{ fontSize: "17px", fontWeight: 700, color: "#0F172A", lineHeight: 1 }}>
+                              <CountUp start={0} end={value} separator="." duration={1} />
+                            </div>
+                          </div>
+                        </div>
+                      </Col>
+                    ))}
+                  </Row>
+                  <div style={{ textAlign: "center", padding: "4px 0" }}>
+                    <span onClick={() => setShowChartBerisiko(true)}
+                      style={{ cursor: "pointer", color: "#1B6FE8", fontSize: "12px", fontWeight: 600 }}>
+                      Lihat Grafik Perbandingan →
+                    </span>
+                  </div>
+                </>
+              )}
 
+              {/* ── Divider ── */}
+              <hr style={{ margin: "5px 0", borderColor: "#E2E8F0", borderWidth: "1px 0 0" }} />
+
+              {/* ── PUS & KB ── */}
               <Row>
-                <Col md={6}>
-                  <Card className="card-animate">
-                    <CardBody>
-                      <div className="d-flex flex-column title-custom-card">
-                        <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                          <span>BUKAN PESERTA KB MODERN</span>
-                        </div>
-                        <div className="d-flex">
-                          {/* <div className="avatar-xs-half flex-shrink-0">
-                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
-                          <i className="ri-women-line text-danger"></i>
-                        </span>
-                      </div> */}
-                          <div className="d-flex justify-content-center align-items-center title-body">
-                            <span>
-                              {(dataStunting?.peserta_kb_modern ?? 0)?.toLocaleString(
-                                "id-ID"
-                              )}
-                            </span>
-                          </div>
+                {[
+                  { label: "Bukan Peserta KB Modern", value: dataStunting?.peserta_kb_modern ?? 0, icon: "ri-women-line", bg: "#ECFDF5", color: "#10B981", key: "kb" },
+                  { label: "Jumlah PUS", value: dataStunting?.jumlah_pus ?? 0, icon: "ri-user-line", bg: "#FFFBEB", color: "#F59E0B", key: "pus" },
+                ].map(({ label, value, icon, bg, color, key }) => (
+                  <Col md={6} key={key}>
+                    <div style={{ background: "#fff", borderRadius: "12px", border: "1px solid #E2E8F0", padding: "16px", display: "flex", alignItems: "center", gap: "12px" }}>
+                      <div style={{ width: "40px", height: "40px", borderRadius: "10px", background: bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <i className={icon} style={{ fontSize: "18px", color }}></i>
+                      </div>
+                      <div>
+                        <div style={{ fontSize: "10px", fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: ".6px", marginBottom: "4px" }}>{label}</div>
+                        <div style={{ fontSize: "17px", fontWeight: 700, color: "#0F172A", lineHeight: 1 }}>
+                          {value.toLocaleString("id-ID")}
                         </div>
                       </div>
-                    </CardBody>
-                  </Card>
-                </Col>
-                <Col md={6}>
-                  <Card className="card-animate">
-                    <CardBody>
-                      <div className="d-flex flex-column title-custom-card">
-                        <div className="d-flex justify-content-between align-items-start mb-1 title-card">
-                          <span>JUMLAH PUS</span>
-                        </div>
-                        <div className="d-flex">
-                          {/* <div className="avatar-xs-half flex-shrink-0">
-                        <span className="avatar-title bg-danger-subtle rounded-4 fs-3">
-                          <i className="ri-women-line text-danger"></i>
-                        </span>
-                      </div> */}
-                          <div className="d-flex justify-content-center align-items-center title-body">
-                            <span>
-                              {(dataStunting?.jumlah_pus ?? 0)?.toLocaleString(
-                                "id-ID"
-                              )}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </CardBody>
-                  </Card>
-                </Col>
+                    </div>
+                  </Col>
+                ))}
               </Row>
+
             </CardBody>
           </Card>
         </Col>
       </Row>
       <Row>
         <Col>
-          <Card>
-            <CardBody>
+          <Card style={{ borderRadius: "16px", boxShadow: "0 2px 12px rgba(0,0,0,0.08)", border: "none" }}>
+            <CardBody style={{ padding: "24px" }}>
               <div className="nav-beranda">
                 <Nav
                   tabs
-                  className="nav nav-tabs nav-success nav-justified mb-3"
+                  className="nav nav-tabs mb-4"
+                  style={{ borderBottom: "2px solid #f0f0f0" }}
                 >
                   <NavItem>
                     <NavLink
-                      style={{ cursor: "pointer" }}
+                      style={{ 
+                        cursor: "pointer",
+                        padding: "12px 24px",
+                        fontWeight: 600,
+                        fontSize: "15px",
+                        border: "none",
+                        borderBottom: "3px solid transparent",
+                        color: "#6c757d",
+                        transition: "all 0.3s ease"
+                      }}
                       className={classnames({
                         active: customActiveTabTabelDaerah === "1",
                       })}
@@ -2575,21 +2476,6 @@ const ContentStunting = () => {
                       {dataKolomNamaDaerah == "Se-Provinsi" ? "NASIONAL" : `Se-${namaDaerahDetail}`}
                     </NavLink>
                   </NavItem>
-                  {/* <NavItem>
-                        <NavLink
-                          style={{ cursor: "pointer" }}
-                          className={classnames({
-                            active:
-                              customActiveTabTabelDaerah ===
-                              "2",
-                          })}
-                          onClick={() => {
-                            toggleCustomTabelDaerah("2");
-                          }}
-                        >
-                          KABUPATEN/KOTA
-                        </NavLink>
-                      </NavItem> */}
                 </Nav>
               </div>
               <TabContent
@@ -3181,38 +3067,64 @@ const ContentStunting = () => {
       </Row>
       <Row>
         <Col>
-          <Card>
-            <CardBody>
+          <Card style={{ borderRadius: "16px", boxShadow: "0 2px 12px rgba(0,0,0,0.08)", border: "none" }}>
+            <CardBody style={{ padding: "24px" }}>
               <div className="nav-beranda">
                 <Nav
                   tabs
-                  className="nav nav-tabs nav-success nav-justified mb-3"
-                  style={{ textTransform: "uppercase" }}
+                  className="nav nav-tabs mb-4"
+                  style={{ 
+                    borderBottom: "2px solid #f0f0f0",
+                    flexWrap: "wrap",
+                    gap: "8px"
+                  }}
                 >
                   <NavItem>
                     <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames("h-100", {
+                      style={{ 
+                        cursor: "pointer",
+                        padding: "10px 16px",
+                        fontWeight: 600,
+                        fontSize: "13px",
+                        border: "none",
+                        borderBottom: "3px solid transparent",
+                        color: "#6c757d",
+                        transition: "all 0.3s ease",
+                        textTransform: "uppercase",
+                        whiteSpace: "nowrap"
+                      }}
+                      className={classnames({
                         active: customActiveTabAll === "1",
                       })}
                       onClick={() => {
                         toggleCustomTabAll("1");
                       }}
                     >
-                      URUSAN PEMERINTAH UNTUK PENANGANAN STUNTING
+                      Anggaran Pemerintah
                     </NavLink>
                   </NavItem>
                   <NavItem>
                     <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames("h-100", {
+                      style={{ 
+                        cursor: "pointer",
+                        padding: "10px 16px",
+                        fontWeight: 600,
+                        fontSize: "13px",
+                        border: "none",
+                        borderBottom: "3px solid transparent",
+                        color: "#6c757d",
+                        transition: "all 0.3s ease",
+                        textTransform: "uppercase",
+                        whiteSpace: "nowrap"
+                      }}
+                      className={classnames({
                         active: customActiveTabAll === "4",
                       })}
                       onClick={() => {
                         toggleCustomTabAll("4");
                       }}
                     >
-                      ANGGARAN SPM
+                      Anggaran SPM
                     </NavLink>
                   </NavItem>
                   {/* <NavItem>
@@ -3231,82 +3143,146 @@ const ContentStunting = () => {
                   </NavItem> */}
                   <NavItem>
                     <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames("h-100", {
+                      style={{ 
+                        cursor: "pointer",
+                        padding: "10px 16px",
+                        fontWeight: 600,
+                        fontSize: "13px",
+                        border: "none",
+                        borderBottom: "3px solid transparent",
+                        color: "#6c757d",
+                        transition: "all 0.3s ease",
+                        textTransform: "uppercase",
+                        whiteSpace: "nowrap"
+                      }}
+                      className={classnames({
                         active: customActiveTabAll === "3",
                       })}
                       onClick={() => {
                         toggleCustomTabAll("3");
                       }}
                     >
-                      Perbandingan Keluarga Sasaran yang Berisiko dan Tidak
-                      Berisiko Stunting
+                      Perbandingan Risiko
                     </NavLink>
                   </NavItem>
                   <NavItem>
                     <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames("h-100", {
+                      style={{ 
+                        cursor: "pointer",
+                        padding: "10px 16px",
+                        fontWeight: 600,
+                        fontSize: "13px",
+                        border: "none",
+                        borderBottom: "3px solid transparent",
+                        color: "#6c757d",
+                        transition: "all 0.3s ease",
+                        textTransform: "uppercase",
+                        whiteSpace: "nowrap"
+                      }}
+                      className={classnames({
                         active: customActiveTabAll === "5",
                       })}
                       onClick={() => {
                         toggleCustomTabAll("5");
                       }}
                     >
-                      KELUARGA SASARAN MENURUT PERINGKAT KESEJAHTERAAN
+                      Peringkat Kesejahteraan
                     </NavLink>
                   </NavItem>
                   <NavItem>
                     <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames("h-100", {
+                      style={{ 
+                        cursor: "pointer",
+                        padding: "10px 16px",
+                        fontWeight: 600,
+                        fontSize: "13px",
+                        border: "none",
+                        borderBottom: "3px solid transparent",
+                        color: "#6c757d",
+                        transition: "all 0.3s ease",
+                        textTransform: "uppercase",
+                        whiteSpace: "nowrap"
+                      }}
+                      className={classnames({
                         active: customActiveTabAll === "6",
                       })}
                       onClick={() => {
                         toggleCustomTabAll("6");
                       }}
                     >
-                      KELUARGA SASARAN MENURUT USIA ANAK DAN PASANGAN USIA SUBUR
-                      (PUS)
+                      Usia Anak & PUS
                     </NavLink>
                   </NavItem>
                   <NavItem>
                     <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames("h-100", {
+                      style={{ 
+                        cursor: "pointer",
+                        padding: "10px 16px",
+                        fontWeight: 600,
+                        fontSize: "13px",
+                        border: "none",
+                        borderBottom: "3px solid transparent",
+                        color: "#6c757d",
+                        transition: "all 0.3s ease",
+                        textTransform: "uppercase",
+                        whiteSpace: "nowrap"
+                      }}
+                      className={classnames({
                         active: customActiveTabAll === "9",
                       })}
                       onClick={() => {
                         toggleCustomTabAll("9");
                       }}
                     >
-                      PASANGAN USIA SUBUR (PUS)
+                      PUS 4T
                     </NavLink>
                   </NavItem>
                   <NavItem>
                     <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames("h-100", {
+                      style={{ 
+                        cursor: "pointer",
+                        padding: "10px 16px",
+                        fontWeight: 600,
+                        fontSize: "13px",
+                        border: "none",
+                        borderBottom: "3px solid transparent",
+                        color: "#6c757d",
+                        transition: "all 0.3s ease",
+                        textTransform: "uppercase",
+                        whiteSpace: "nowrap"
+                      }}
+                      className={classnames({
                         active: customActiveTabAll === "7",
                       })}
                       onClick={() => {
                         toggleCustomTabAll("7");
                       }}
                     >
-                      FASILITAS LINGKUNGAN TIDAK SEHAT
+                      Fasilitas Lingkungan
                     </NavLink>
                   </NavItem>
                   <NavItem>
                     <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames("h-100", {
+                      style={{ 
+                        cursor: "pointer",
+                        padding: "10px 16px",
+                        fontWeight: 600,
+                        fontSize: "13px",
+                        border: "none",
+                        borderBottom: "3px solid transparent",
+                        color: "#6c757d",
+                        transition: "all 0.3s ease",
+                        textTransform: "uppercase",
+                        whiteSpace: "nowrap"
+                      }}
+                      className={classnames({
                         active: customActiveTabAll === "8",
                       })}
                       onClick={() => {
                         toggleCustomTabAll("8");
                       }}
                     >
-                      GRAFIK ALOKASI
+                      Grafik Alokasi
                     </NavLink>
                   </NavItem>
                 </Nav>
@@ -3323,109 +3299,8 @@ const ContentStunting = () => {
                     categoryChart={dataChartTopUrusan[1]}
                   />
                 </TabPane>
-                {/* <TabPane tabId="1">                        
-              {dataShowAkunBelanja ? (
-                <>
-                  <div className="separator">
-                    <h4 className="card-title mb-0">
-                      Top 5 Akun Belanja Terbesar Untuk Penurunan dan Pencegahan
-                      Stunting
-                    </h4>
-                  </div>
-                  <HorizontalBarChart
-                    dataColors='["#FCAD24"]'
-                    valueChart={dataChartTop5AkunBelanja[0]}
-                    categoryChart={dataChartTop5AkunBelanja[1]}
-                  />                  
-                  <span
-                    onClick={() => handleShowDataAkun(false)}
-                    style={{ cursor: "pointer", color: "#2DAED4" }}
-                  >
-                    Lihat Grafik
-                  </span>
-                </>
-              ) : (
-                <>
-                  <div className="separator">
-                    <h4 className="card-title mb-0">
-                      Perbandingan Total Anggaran Pencegahan dan Penurunan
-                      Stunting Berdasarkan Total Belanja Nasional
-                    </h4>
-                  </div>
-                  <div className="nav-beranda">
-                    <Nav
-                      tabs
-                      className="nav nav-tabs nav-success nav-justified mb-3"
-                    >
-                      <NavItem>
-                        <NavLink
-                          style={{ cursor: "pointer" }}
-                          className={classnames("h-100",{
-                            active:
-                              customActiveTabPerbandinganAnggaranKesehatan ===
-                              "1",
-                          })}
-                          onClick={() => {
-                            toggleCustomPerbandinganAnggaranKesehatan("1");
-                          }}
-                        >
-                          KESEHATAN
-                        </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink 
-                          style={{ cursor: "pointer" }}
-                          className={classnames("h-100", {
-                            active:
-                              customActiveTabPerbandinganAnggaranKesehatan ===
-                              "2",
-                          })}
-                          onClick={() => {
-                            toggleCustomPerbandinganAnggaranKesehatan("2");
-                          }}
-                        >
-                          PENCEGAHAN DAN PENURUNAN STUNTING
-                        </NavLink>
-                      </NavItem>
-                    </Nav>
-                  </div>
-                  <TabContent
-                    activeTab={customActiveTabPerbandinganAnggaranKesehatan}
-                    className="text-muted"
-                  >
-                    <TabPane tabId="1" id="provinsi">
-                      <PieChartNew
-                        dataChart={dataChartPerbandinganAnggaranKesehatan}
-                        dataColors={'["#57E7B4", "#2DAED4"]'}
-                        categoryName={[
-                          "Bidang Urusan di Luar Kesehatan",
-                          "Bidang Urusan Kesehatan",
-                        ]}
-                      />
-                    </TabPane>
-                    <TabPane tabId="2" id="kabupaten">
-                      <PieChartNew
-                        dataChart={dataChartPerbandinganAnggaranStunting}
-                        dataColors={'["#57E7B4", "#2DAED4"]'}
-                        categoryName={[
-                          "Anggaran Untuk Lainnya",
-                          "Anggaran Penurunan dan Pencegahan Stunting",
-                        ]}
-                      />
-                      <div className="d-flex justify-content-center align-items-center mt-4">
-                        <span
-                          onClick={() => handleShowDataAkun(true)}
-                          style={{ cursor: "pointer", color: "#2DAED4" }}
-                        >
-                          Lihat Akun Belanja
-                        </span>
-                      </div>
-                    </TabPane>
-                  </TabContent>
-                </>
-              )}
-            
-                        </TabPane> */}
+
+
                 <TabPane tabId="2">
                   <div className="separator mb-5">
                     <h4 className="card-title ">
@@ -3443,50 +3318,54 @@ const ContentStunting = () => {
                   />
                 </TabPane>
                 <TabPane tabId="3">
-                  <div>
-                    <h4 className="card-title">
-                      Perbandingan Keluarga Sasaran yang Berisiko dan Tidak
-                      Berisiko Stunting PROVINSI {titleStack}
+                  <div style={{ 
+                    padding: "20px 24px", 
+                    backgroundColor: "#f8f9fa", 
+                    borderRadius: "12px",
+                    marginBottom: "24px"
+                  }}>
+                    <h4 style={{ 
+                      fontSize: "16px", 
+                      fontWeight: 600, 
+                      color: "#1a1a1a",
+                      margin: 0
+                    }}>
+                      Perbandingan Keluarga Sasaran yang Berisiko dan Tidak Berisiko Stunting
+                      {titleStack && <span style={{ color: "#0d6efd" }}> - Provinsi {titleStack}</span>}
                     </h4>
                   </div>
-                  <div className="nav-beranda">
-                    {/* <Nav
-                      tabs
-                      className="nav nav-tabs-custom card-header-tabs border-bottom-0 ms-2 mb-3"
-                    >
-                      <NavItem>
-                        <NavLink
-                          style={{ cursor: "pointer" }}
-                          className={classnames({
-                            active: customActiveTab === "1",
-                          })}
-                          onClick={() => {
-                            toggleCustom("1");
-                          }}
-                        >
-                        </NavLink>
-                      </NavItem>                      
-                    </Nav> */}
-                  </div>
-                  {/* <TabContent
-                    activeTab={customActiveTab}
-                    className="text-muted"
-                  > */}
-                  {/* <TabPane tabId="1" id="provinsi"> */}
+
                   {dataShowStackKab ? (<>
                     <button
                       style={{
-                        backgroundColor: "#007bff",
+                        backgroundColor: "#0d6efd",
                         color: "white",
-                        padding: "10px 20px",
+                        padding: "11px 20px",
                         border: "none",
-                        borderRadius: "5px",
+                        borderRadius: "10px",
                         cursor: "pointer",
-                        fontSize: "16px",
-                        margin: "8px 0px",
+                        fontSize: "14px",
+                        fontWeight: 500,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        transition: "all 0.2s ease",
+                        boxShadow: "0 2px 4px rgba(13,110,253,0.2)",
+                        marginBottom: "16px"
                       }}
                       onClick={() => { setDataShowStackKab(false); setTitleStack("") }}
+                      onMouseEnter={(e) => {
+                        e.target.style.backgroundColor = "#0b5ed7";
+                        e.target.style.transform = "translateY(-1px)";
+                        e.target.style.boxShadow = "0 4px 8px rgba(13,110,253,0.3)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.backgroundColor = "#0d6efd";
+                        e.target.style.transform = "translateY(0)";
+                        e.target.style.boxShadow = "0 2px 4px rgba(13,110,253,0.2)";
+                      }}
                     >
+                      <i className="bx bx-arrow-back" style={{ fontSize: "16px" }} />
                       Kembali
                     </button>
                     <StackedBarChart
@@ -3510,58 +3389,65 @@ const ContentStunting = () => {
                       legendNames={["Berisiko", "Tidak Berisiko"]}
                       onBarClickProv={handleBarClickStackProv}
                     /></>)}
-                  {/* </TabPane>                     */}
-                  {/* <TabPane tabId="3" id="kecamatan">
-                  <StackedBarChart
-                    dataColors='["#2DAED4", "#57E7B4"]'
-                    valueCharts={dataBeresikoKecamatan}                    
-                    legendNames={['Beresiko', 'Tidak Beresiko']}
-                    categoryChart={dataCategoryChartKecamatan}
-                  />
-                </TabPane>
-                <TabPane tabId="4" id="kelurahan">
-                  <StackedBarChart
-                    dataColors='["#2DAED4", "#57E7B4"]'
-                    valueCharts={dataBeresikoKelurahan}                    
-                    legendNames={['Beresiko', 'Tidak Beresiko']}
-                    categoryChart={dataCategoryChartKelurahan}
-                  />
-                </TabPane> */}
-                  {/* </TabContent> */}
+
                 </TabPane>
                 <TabPane tabId="4">
-                  <div className="separator">
-                    <h4 className="card-title mb-0">
-                      ANGGARAN SPM UNTUK PENURUNAN DAN PENCEGAHAN STUNTING
+                  <div style={{ 
+                    padding: "20px 24px", 
+                    backgroundColor: "#f8f9fa", 
+                    borderRadius: "12px",
+                    marginBottom: "24px"
+                  }}>
+                    <h4 style={{ 
+                      fontSize: "16px", 
+                      fontWeight: 600, 
+                      color: "#1a1a1a",
+                      margin: 0,
+                      textTransform: "uppercase"
+                    }}>
+                      Anggaran SPM untuk Penurunan dan Pencegahan Stunting
                     </h4>
                   </div>
                   <Row>
                     <Col md={4}>
-                      <Card className="card-animate mt-4">
-                        <CardBody>
-                          <div className="d-flex flex-column title-custom-card">
-                            <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                              <span>
+                      <Card style={{ 
+                        borderRadius: "12px", 
+                        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                        border: "none",
+                        marginTop: "16px"
+                      }}>
+                        <CardBody style={{ padding: "24px" }}>
+                          <div className="d-flex flex-column">
+                            <div className="mb-3">
+                              <span style={{
+                                fontSize: "13px",
+                                fontWeight: 500,
+                                color: "#6c757d",
+                                textTransform: "uppercase",
+                                letterSpacing: "0.5px"
+                              }}>
                                 Total SPM
                               </span>
                             </div>
-                            <div className="d-flex">
-                              <div className="d-flex justify-content-center align-items-center title-body">
-                                <span>
-                                  <CountUp
-                                    start={0}
-                                    end={
-                                      dataStunting?.pie_spm_stunting?.jml_rincian_total_anggaran_spm_stunting / 1000000000000
-                                    }
-                                    decimals={2}
-                                    decimal=","
-                                    separator="."
-                                    prefix="Rp "
-                                    suffix=" T"
-                                    duration={1}
-                                  />
-                                </span>
-                              </div>
+                            <div>
+                              <span style={{
+                                fontSize: "28px",
+                                fontWeight: 700,
+                                color: "#1a1a1a"
+                              }}>
+                                <CountUp
+                                  start={0}
+                                  end={
+                                    dataStunting?.pie_spm_stunting?.jml_rincian_total_anggaran_spm_stunting / 1000000000000
+                                  }
+                                  decimals={2}
+                                  decimal=","
+                                  separator="."
+                                  prefix="Rp "
+                                  suffix=" T"
+                                  duration={1}
+                                />
+                              </span>
                             </div>
                           </div>
                         </CardBody>
@@ -3591,26 +3477,54 @@ const ContentStunting = () => {
                   </Row>
                 </TabPane>
                 <TabPane tabId="5">
-                  <div className="separator">
-                    <h4 className="card-title mb-0">
-                      KELUARGA SASARAN MENURUT PERINGKAT KESEJAHTERAAN
+                  <div style={{ 
+                    padding: "20px 24px", 
+                    backgroundColor: "#f8f9fa", 
+                    borderRadius: "12px",
+                    marginBottom: "24px"
+                  }}>
+                    <h4 style={{ 
+                      fontSize: "16px", 
+                      fontWeight: 600, 
+                      color: "#1a1a1a",
+                      margin: 0,
+                      textTransform: "uppercase"
+                    }}>
+                      Keluarga Sasaran Menurut Peringkat Kesejahteraan
                     </h4>
                   </div>
                   {/* <TabPane tabId="1" id="provinsi"> */}
                   {dataShowKesejahteraanStackKab ? (<>
                     <button
                       style={{
-                        backgroundColor: "#007bff",
+                        backgroundColor: "#0d6efd",
                         color: "white",
-                        padding: "10px 20px",
+                        padding: "11px 20px",
                         border: "none",
-                        borderRadius: "5px",
+                        borderRadius: "10px",
                         cursor: "pointer",
-                        fontSize: "16px",
-                        margin: "8px 0px",
+                        fontSize: "14px",
+                        fontWeight: 500,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        transition: "all 0.2s ease",
+                        boxShadow: "0 2px 4px rgba(13,110,253,0.2)",
+                        marginBottom: "16px"
                       }}
                       onClick={() => { setDataShowKesejahteraanStackKab(false); setTitleStack("") }}
+                      onMouseEnter={(e) => {
+                        e.target.style.backgroundColor = "#0b5ed7";
+                        e.target.style.transform = "translateY(-1px)";
+                        e.target.style.boxShadow = "0 4px 8px rgba(13,110,253,0.3)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.backgroundColor = "#0d6efd";
+                        e.target.style.transform = "translateY(0)";
+                        e.target.style.boxShadow = "0 2px 4px rgba(13,110,253,0.2)";
+                      }}
                     >
+                      <i className="bx bx-arrow-back" style={{ fontSize: "16px" }} />
                       Kembali
                     </button>
                     <StackedBarChart
@@ -3645,10 +3559,20 @@ const ContentStunting = () => {
                   /></>)}
                 </TabPane>
                 <TabPane tabId="6">
-                  <div className="separator">
-                    <h4 className="card-title mb-0">
-                      KELUARGA SASARAN MENURUT USIA ANAK DAN PASANGAN USIA SUBUR
-                      (PUS)
+                  <div style={{ 
+                    padding: "20px 24px", 
+                    backgroundColor: "#f8f9fa", 
+                    borderRadius: "12px",
+                    marginBottom: "24px"
+                  }}>
+                    <h4 style={{ 
+                      fontSize: "16px", 
+                      fontWeight: 600, 
+                      color: "#1a1a1a",
+                      margin: 0,
+                      textTransform: "uppercase"
+                    }}>
+                      Keluarga Sasaran Menurut Usia Anak dan Pasangan Usia Subur (PUS)
                     </h4>
                   </div>
                   <ColBarChart
@@ -3659,9 +3583,20 @@ const ContentStunting = () => {
                   />
                 </TabPane>
                 <TabPane tabId="9">
-                  <div className="separator">
-                    <h4 className="card-title mb-0">
-                      PASANGAN USIA SUBUR (PUS) 4T
+                  <div style={{ 
+                    padding: "20px 24px", 
+                    backgroundColor: "#f8f9fa", 
+                    borderRadius: "12px",
+                    marginBottom: "24px"
+                  }}>
+                    <h4 style={{ 
+                      fontSize: "16px", 
+                      fontWeight: 600, 
+                      color: "#1a1a1a",
+                      margin: 0,
+                      textTransform: "uppercase"
+                    }}>
+                      Pasangan Usia Subur (PUS) 4T
                     </h4>
                   </div>
                   <VerticalBarChart
@@ -3671,52 +3606,93 @@ const ContentStunting = () => {
                   />
                 </TabPane>
                 <TabPane tabId="7">
-                  <div className="separator">
-                    <h4 className="card-title mb-0">
-                      FASILITAS LINGKUNGAN TIDAK SEHAT
+                  <div style={{ 
+                    padding: "20px 24px", 
+                    backgroundColor: "#f8f9fa", 
+                    borderRadius: "12px",
+                    marginBottom: "24px"
+                  }}>
+                    <h4 style={{ 
+                      fontSize: "16px", 
+                      fontWeight: 600, 
+                      color: "#1a1a1a",
+                      margin: 0,
+                      textTransform: "uppercase"
+                    }}>
+                      Fasilitas Lingkungan Tidak Sehat
                     </h4>
                   </div>
                   {dataShowChartFasilitasProvinsi ? dataShowChartFasilitasPemda ? (<>
                     <button
                       style={{
-                        backgroundColor: "#007bff",
+                        backgroundColor: "#0d6efd",
                         color: "white",
-                        padding: "10px 20px",
+                        padding: "11px 20px",
                         border: "none",
-                        borderRadius: "5px",
+                        borderRadius: "10px",
                         cursor: "pointer",
-                        fontSize: "16px",
-                        margin: "8px 0px",
+                        fontSize: "14px",
+                        fontWeight: 500,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        transition: "all 0.2s ease",
+                        boxShadow: "0 2px 4px rgba(13,110,253,0.2)",
+                        marginBottom: "16px"
                       }}
                       onClick={() => setShowDataChartFasilitasPemda(false)}
+                      onMouseEnter={(e) => {
+                        e.target.style.backgroundColor = "#0b5ed7";
+                        e.target.style.transform = "translateY(-1px)";
+                        e.target.style.boxShadow = "0 4px 8px rgba(13,110,253,0.3)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.backgroundColor = "#0d6efd";
+                        e.target.style.transform = "translateY(0)";
+                        e.target.style.boxShadow = "0 2px 4px rgba(13,110,253,0.2)";
+                      }}
                     >
+                      <i className="bx bx-arrow-back" style={{ fontSize: "16px" }} />
                       Kembali
                     </button>
                     <Row>
                       <Col md={3}>
-                        <Card className="card-animate mt-4 mb-0">
-                          <CardBody>
-                            <div className="d-flex flex-column title-custom-card">
-                              <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                                <span>
+                        <Card style={{ 
+                          borderRadius: "12px", 
+                          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                          border: "none",
+                          marginTop: "16px",
+                          marginBottom: 0
+                        }}>
+                          <CardBody style={{ padding: "24px" }}>
+                            <div className="d-flex flex-column">
+                              <div className="mb-3">
+                                <span style={{
+                                  fontSize: "13px",
+                                  fontWeight: 500,
+                                  color: "#6c757d",
+                                  textTransform: "uppercase",
+                                  letterSpacing: "0.5px"
+                                }}>
                                   {currentCategoryClicked == "Jamban Tidak Layak" ? "Total Jamban Tidak Layak" : "Total Air Tidak Layak"}
                                 </span>
                               </div>
-                              <div className="d-flex">
-                                <div className="d-flex justify-content-center align-items-center title-body">
-                                  <span>
-                                    <CountUp
-                                      start={0}
-                                      end={
-                                        dataJambanTidakLayakPemda[2]
-                                      }
-                                      separator="."
-                                      // prefix=""
-                                      suffix=""
-                                      duration={1}
-                                    />
-                                  </span>
-                                </div>
+                              <div>
+                                <span style={{
+                                  fontSize: "28px",
+                                  fontWeight: 700,
+                                  color: "#1a1a1a"
+                                }}>
+                                  <CountUp
+                                    start={0}
+                                    end={
+                                      dataJambanTidakLayakPemda[2]
+                                    }
+                                    separator="."
+                                    suffix=""
+                                    duration={1}
+                                  />
+                                </span>
                               </div>
                             </div>
                           </CardBody>
@@ -3735,44 +3711,74 @@ const ContentStunting = () => {
                     </Row>
                   </>) : (<><button
                     style={{
-                      backgroundColor: "#007bff",
+                      backgroundColor: "#0d6efd",
                       color: "white",
-                      padding: "10px 20px",
+                      padding: "11px 20px",
                       border: "none",
-                      borderRadius: "5px",
+                      borderRadius: "10px",
                       cursor: "pointer",
-                      fontSize: "16px",
-                      margin: "8px 0px",
+                      fontSize: "14px",
+                      fontWeight: 500,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      transition: "all 0.2s ease",
+                      boxShadow: "0 2px 4px rgba(13,110,253,0.2)",
+                      marginBottom: "16px"
                     }}
                     onClick={handleBack}
+                    onMouseEnter={(e) => {
+                      e.target.style.backgroundColor = "#0b5ed7";
+                      e.target.style.transform = "translateY(-1px)";
+                      e.target.style.boxShadow = "0 4px 8px rgba(13,110,253,0.3)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.target.style.backgroundColor = "#0d6efd";
+                      e.target.style.transform = "translateY(0)";
+                      e.target.style.boxShadow = "0 2px 4px rgba(13,110,253,0.2)";
+                    }}
                   >
+                    <i className="bx bx-arrow-back" style={{ fontSize: "16px" }} />
                     Kembali
                   </button>
                     <Row>
                       <Col md={3}>
-                        <Card className="card-animate mt-4 mb-0">
-                          <CardBody>
-                            <div className="d-flex flex-column title-custom-card">
-                              <div className="d-flex justify-content-start align-items-start mb-1 title-card">
-                                <span>
+                        <Card style={{ 
+                          borderRadius: "12px", 
+                          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                          border: "none",
+                          marginTop: "16px",
+                          marginBottom: 0
+                        }}>
+                          <CardBody style={{ padding: "24px" }}>
+                            <div className="d-flex flex-column">
+                              <div className="mb-3">
+                                <span style={{
+                                  fontSize: "13px",
+                                  fontWeight: 500,
+                                  color: "#6c757d",
+                                  textTransform: "uppercase",
+                                  letterSpacing: "0.5px"
+                                }}>
                                   {currentCategoryClicked == "Jamban Tidak Layak" ? "Total Jamban Tidak Layak" : "Total Air Tidak Layak"}
                                 </span>
                               </div>
-                              <div className="d-flex">
-                                <div className="d-flex justify-content-center align-items-center title-body">
-                                  <span>
-                                    <CountUp
-                                      start={0}
-                                      end={
-                                        dataChartDetailFasilitasProvinsi[2]
-                                      }
-                                      separator="."
-                                      // prefix=""
-                                      suffix=""
-                                      duration={1}
-                                    />
-                                  </span>
-                                </div>
+                              <div>
+                                <span style={{
+                                  fontSize: "28px",
+                                  fontWeight: 700,
+                                  color: "#1a1a1a"
+                                }}>
+                                  <CountUp
+                                    start={0}
+                                    end={
+                                      dataChartDetailFasilitasProvinsi[2]
+                                    }
+                                    separator="."
+                                    suffix=""
+                                    duration={1}
+                                  />
+                                </span>
                               </div>
                             </div>
                           </CardBody>
@@ -3800,34 +3806,45 @@ const ContentStunting = () => {
                     /></>)}
                 </TabPane>
                 <TabPane tabId="8">
-                  <h4 className="card-title mb-4 d-flex justify-content-center">
-                    persentase anggaran pencegahan dan penurunan stunting
-                    dibandingkan dengan persentase keluarga sasaran yang
-                    berisiko stunting
-                  </h4>
+                  <div style={{ 
+                    padding: "20px 24px", 
+                    backgroundColor: "#f8f9fa", 
+                    borderRadius: "12px",
+                    marginBottom: "24px"
+                  }}>
+                    <h4 style={{ 
+                      fontSize: "16px", 
+                      fontWeight: 600, 
+                      color: "#1a1a1a",
+                      margin: 0,
+                      lineHeight: "1.5"
+                    }}>
+                      Persentase Anggaran Pencegahan dan Penurunan Stunting Dibandingkan dengan Persentase Keluarga Sasaran yang Berisiko Stunting
+                    </h4>
+                  </div>
 
                   <div className="nav-beranda">
                     <Nav
                       tabs
-                      className="nav nav-tabs-custom card-header-tabs border-bottom-0 ms-2 mb-3"
+                      className="nav nav-tabs mb-4"
+                      style={{ 
+                        borderBottom: "2px solid #f0f0f0",
+                        gap: "8px"
+                      }}
                     >
-                      {/* <NavItem>
-                        <NavLink
-                          style={{ cursor: "pointer" }}
-                          className={classnames({
-                            active: customActiveTabChartAnggaran === "1",
-                          })}
-                          onClick={() => {
-                            toggleCustomChartAnggaran("1");
-                            
-                          }}
-                        >
-                          NASIONAL
-                        </NavLink>
-                      </NavItem> */}
                       <NavItem>
                         <NavLink
-                          style={{ cursor: "pointer" }}
+                          style={{ 
+                            cursor: "pointer",
+                            padding: "10px 20px",
+                            fontWeight: 600,
+                            fontSize: "14px",
+                            border: "none",
+                            borderBottom: "3px solid transparent",
+                            color: "#6c757d",
+                            transition: "all 0.3s ease",
+                            borderRadius: "8px 8px 0 0"
+                          }}
                           className={classnames({
                             active: customActiveTabChartAnggaran === "2",
                           })}
@@ -3835,12 +3852,22 @@ const ContentStunting = () => {
                             toggleCustomChartAnggaran("2");
                           }}
                         >
-                          PROVINSI
+                          Provinsi
                         </NavLink>
                       </NavItem>
                       <NavItem>
                         <NavLink
-                          style={{ cursor: "pointer" }}
+                          style={{ 
+                            cursor: "pointer",
+                            padding: "10px 20px",
+                            fontWeight: 600,
+                            fontSize: "14px",
+                            border: "none",
+                            borderBottom: "3px solid transparent",
+                            color: "#6c757d",
+                            transition: "all 0.3s ease",
+                            borderRadius: "8px 8px 0 0"
+                          }}
                           className={classnames({
                             active: customActiveTabChartAnggaran === "3",
                           })}
@@ -3848,7 +3875,7 @@ const ContentStunting = () => {
                             toggleCustomChartAnggaran("3");
                           }}
                         >
-                          KABUPATEN/KOTA
+                          Kabupaten/Kota
                         </NavLink>
                       </NavItem>
                     </Nav>
@@ -3931,45 +3958,6 @@ const ContentStunting = () => {
         </Col>
       </Row>
 
-      {/* <Row>
-        <Col>
-          <Card>
-            <CardBody>
-              <div className="separator">
-                <h4 className="card-title mb-0">
-                  KELUARGA SASARAN MENURUT USIA ANAK DAN PASANGAN USIA SUBUR
-                  (PUS)
-                </h4>
-              </div>
-              <ColBarChart
-                valueChart={dataChartPus[1]}
-                categoryChart={dataChartPus[0]}
-                seriesName={["Baduta", "Balita", "Pus Hamil"]}
-                dataColors='["#2DAED4","#2DAED4C4","#2DAED47B","#2DAED43B"]'
-              />              
-            </CardBody>
-          </Card>
-        </Col>
-      </Row> */}
-
-      {/* <Row>
-        <Col>
-          <Card>
-            <CardBody>
-              <div className="separator">
-                <h4 className="card-title mb-0">
-                  FASILITAS LINGKUNGAN TIDAK SEHAT
-                </h4>
-              </div>           
-              <HorizontalBarChart
-                dataColors='["#FCAD24", "#FCAD248B"]'
-                valueChart={dataChartFasilitasTidakSehat}
-                categoryChart={["Jamban Tidak Layak", "Air Tidak Layak"]}
-              />
-            </CardBody>
-          </Card>
-        </Col>
-      </Row> */}
 
       <Modal
         size="xl"

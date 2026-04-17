@@ -1,45 +1,59 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import ReactEcharts from 'echarts-for-react';
-import * as echarts from 'echarts';
-import { MapChart } from 'echarts/charts';
-import { GeoComponent } from 'echarts/components';
-import geoJsonIndo from '../../data/geoJsonNasional.json';
+import React, { use, useEffect, useMemo, useState } from "react";
+import ReactEcharts from "echarts-for-react";
+import * as echarts from "echarts";
+import { MapChart } from "echarts/charts";
+import { GeoComponent } from "echarts/components";
+import geoJsonIndo from "../../data/geoJsonNasional.json";
 
 echarts.use([MapChart, GeoComponent]);
 
 const API_URI_RBAC = `${process.env.REACT_APP_API_URL_9007}`;
 
-const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, colorData=[], onRegionClick,  onKabKotaClick, daerah=false}) => {  
+const MapIndoChart = ({
+  chartTitle = "",
+  valueSeries = [],
+  maxValue = 0,
+  roam = false,
+  colorData = [],
+  onRegionClick,
+  onKabKotaClick,
+  daerah = false,
+}) => {
   // console.log(valueSeries, 'ini isi value series 1')
   const matchValueSeriesWithGeoJson = (valueSeries, geoJson) => {
-    return valueSeries.map(item => {
-        const matchedFeature = geoJson.features.find(feature => feature.properties.key === item.id);
-        return {
-            ...item,
-            name: matchedFeature ? matchedFeature.properties.name : item.name // Gunakan nama dari geoJSON jika cocok
-        };
+    return valueSeries.map((item) => {
+      const matchedFeature = geoJson.features.find(
+        (feature) => feature.properties.key === item.id,
+      );
+      return {
+        ...item,
+        name: matchedFeature ? matchedFeature.properties.name : item.name, // Gunakan nama dari geoJSON jika cocok
+      };
     });
-};
-  const [namaMap, setNamaMap] = useState("Indonesia")
-  const [dataMapSeProv, setDataMapSeProv] = useState([])
-  const [errorSeProv, setErrorSeProv] = useState(false)
-  const [loadingSeProv, setLoadingSeProv] = useState(false)
+  };
+  const [namaMap, setNamaMap] = useState("Indonesia");
+  const [dataMapSeProv, setDataMapSeProv] = useState([]);
+  const [errorSeProv, setErrorSeProv] = useState(false);
+  const [loadingSeProv, setLoadingSeProv] = useState(false);
 
-  const getDataMapSeProv = ({kodeProv}) => {
+  const getDataMapSeProv = ({ kodeProv }) => {
     const fetchData = async () => {
       try {
-        const token = JSON.parse(sessionStorage.getItem("authUser"))
+        const token = JSON.parse(sessionStorage.getItem("authUser"));
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+          headers: {
+            "Content-Type": "application/json",
+            "x-sipdhub": `${token.token}`,
+          },
           body: JSON.stringify({
-            kode_prov: kodeProv
+            kode_prov: kodeProv,
           }),
         };
 
         const response = await fetch(
           `${API_URI_RBAC}/v2/peta_seprovinsi`,
-          requestOptions
+          requestOptions,
         );
 
         if (!response.ok) {
@@ -48,9 +62,10 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
 
         const dataMapSeProv = await response.json();
         // const updatedGeoJSON = matchValueSeriesWithGeoJson(valueSeries, dataMapSeProv?.data[0]?.geojson);
-        setDataMapSeProv(dataMapSeProv?.data[0]?.geojson)
-        setNamaMap('Daerah')
-        echarts.registerMap('Daerah', dataMapSeProv?.data[0]?.geojson);
+        setDataMapSeProv(dataMapSeProv?.data[0]?.geojson);
+        setNamaMap("Daerah");
+        echarts.registerMap("Daerah", dataMapSeProv?.data[0]?.geojson);
+        setIsMapRegistered(true);
       } catch (errorTabel) {
         setErrorSeProv(errorTabel);
       } finally {
@@ -60,25 +75,32 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
     fetchData();
   };
 
-  const [dataMapKabKota, setDataMapKabKota] = useState([])
-  const [errorKabKota, setErrorKabKota] = useState(false)
-  const [loadingKabKota, setLoadingKabKota] = useState(false)
+  useEffect(() => {
+    console.log(maxValue, "ini max value");
+  }, []);
 
-  const getDataMapKabKota = ({kodeDdn}) => {
+  const [dataMapKabKota, setDataMapKabKota] = useState([]);
+  const [errorKabKota, setErrorKabKota] = useState(false);
+  const [loadingKabKota, setLoadingKabKota] = useState(false);
+
+  const getDataMapKabKota = ({ kodeDdn }) => {
     const fetchData = async () => {
       try {
-        const token = JSON.parse(sessionStorage.getItem("authUser"))
+        const token = JSON.parse(sessionStorage.getItem("authUser"));
         const requestOptions = {
           method: "POST",
-          headers: { "Content-Type": "application/json", "x-sipdhub": `${token.token}` },
+          headers: {
+            "Content-Type": "application/json",
+            "x-sipdhub": `${token.token}`,
+          },
           body: JSON.stringify({
-            kode_ddn: kodeDdn
+            kode_ddn: kodeDdn,
           }),
         };
 
         const response = await fetch(
           `${API_URI_RBAC}/v2/peta_kabkota`,
-          requestOptions
+          requestOptions,
         );
 
         if (!response.ok) {
@@ -87,9 +109,10 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
 
         const dataMapKabKota = await response.json();
         // const updatedGeoJSON = matchValueSeriesWithGeoJson(valueSeries, dataMapKabKota?.data[0]?.geojson);
-        setDataMapKabKota(dataMapKabKota?.data[0]?.geojson)
-        setNamaMap('Daerah')
-        echarts.registerMap('Daerah', dataMapKabKota?.data[0]?.geojson);
+        setDataMapKabKota(dataMapKabKota?.data[0]?.geojson);
+        setNamaMap("Daerah");
+        echarts.registerMap("Daerah", dataMapKabKota?.data[0]?.geojson);
+        setIsMapRegistered(true);
       } catch (errorTabel) {
         setErrorKabKota(errorTabel);
       } finally {
@@ -99,11 +122,10 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
     fetchData();
   };
 
-
   const [isMapRegistered, setIsMapRegistered] = useState(false);
 
   const nameMap = {
-    "Aceh": "ACEH",
+    Aceh: "ACEH",
     "Provinsi Sumatera Utara": "SUMATERA UTARA",
     "Provinsi Sumatera Barat": "SUMATERA BARAT",
     "Provinsi Riau": "RIAU",
@@ -143,48 +165,58 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
     "Provinsi Papua Barat Daya": "PAPUA BARAT DAYA",
   };
 
-
   const adjustedSeries = (valueSeries || []).map((item) => {
-    if(daerah){
-      const matchedFeature = dataMapSeProv?.features?.find(feature => feature.properties.key === item.id);
+
+    if (daerah) {
+      const matchedFeature = dataMapSeProv?.features?.find(
+        (feature) => feature.properties.key === item.id,
+      );
 
       return {
         ...item,
-        name: matchedFeature ? matchedFeature.properties.name : item.name || "N/A" // Ambil name dari geoJSON jika ada
-    };
-    }else{
+        name: matchedFeature
+          ? matchedFeature.properties.name
+          : item.name || "N/A", // Ambil name dari geoJSON jika ada
+      };
+    } else {
       return {
         ...item,
-        name: nameMap[item.name] || item.name || "N/A" // Jika tidak ada di nameMap, tetap gunakan nama asli 
-    };
+        name: nameMap[item.name] || item.name || "N/A", // Jika tidak ada di nameMap, tetap gunakan nama asli
+      };
     }
   });
- 
 
-// Contoh pemanggilan fungsi
+  // Contoh pemanggilan fungsi
 
   const updateGeoJSONWithValues = (geojson, values) => {
     return {
-        ...geojson,
-        features: geojson.features.map(feature => {
-            const matchedValue = values.find(item => item.id === feature.properties.key);
-            return {
-                ...feature,
-                properties: {
-                    ...feature.properties,
-                    value: matchedValue ? matchedValue.value : 0, // Set default 0 jika tidak ditemukan
-                    name: matchedValue ? feature.properties.name : feature.properties.name // Ganti nama dari geoJSON
-                },
-            };
-        }),
+      ...geojson,
+      features: geojson.features.map((feature) => {
+        const matchedValue = values.find(
+          (item) => item.id === feature.properties.key,
+        );
+        return {
+          ...feature,
+          properties: {
+            ...feature.properties,
+            value: matchedValue ? matchedValue.value : 0, // Set default 0 jika tidak ditemukan
+            name: matchedValue
+              ? feature.properties.name
+              : feature.properties.name, // Ganti nama dari geoJSON
+          },
+        };
+      }),
     };
-};
- 
+  };
 
   useEffect(() => {
-    if (geoJsonIndo && geoJsonIndo.type === 'FeatureCollection' && daerah==false) {
-      setNamaMap('Indonesia')
-      echarts.registerMap('Indonesia', geoJsonIndo);
+    if (
+      geoJsonIndo &&
+      geoJsonIndo.type === "FeatureCollection" &&
+      daerah == false
+    ) {
+      setNamaMap("Indonesia");
+      echarts.registerMap("Indonesia", geoJsonIndo);
       setIsMapRegistered(true);
     } else {
       console.error("Invalid geoJSON format:", geoJsonIndo);
@@ -193,86 +225,96 @@ const MapIndoChart = ({chartTitle="", valueSeries=[], maxValue=0, roam=false, co
 
   // const maxPopulation = Math.max(...valueSeries.map(item => item.value));
   const getOption = () => ({
-      title: {
+    title: {
       text: chartTitle,
-      left: 'center'
+      left: "center",
     },
     tooltip: {
-      trigger: 'item',
+      trigger: "item",
       formatter: (params) => {
-        const formattedValue = params.value.toLocaleString('id-ID'); // format dengan titik ribuan
+        const formattedValue = params.value.toLocaleString("id-ID"); // format dengan titik ribuan
         return `${params.name}<br/> Total: ${formattedValue}`;
-      }
+      },
     },
     visualMap: {
-      left: 'left',
-      bottom: '20%',
+      left: "left",
+      bottom: "20%",
       min: 0,
       max: maxValue || 100,
-      orient: 'horizontal',
+      orient: "horizontal",
       inRange: {
         color: colorData || ["#FCAD24", "#57E7B4"], // Default jika tidak valid
       },
-      text: ['Tinggi', 'Rendah'],
-      calculable: true
+      text: ["Tinggi", "Rendah"],
+      calculable: true,
     },
     series: [
       {
-        name: 'Population Density',
-        type: 'map',
+        name: "Population Density",
+        type: "map",
         map: namaMap,
-        layoutCenter: roam ? "" : ['50%', '35%'],
-        layoutSize: daerah? "60%" : "100%",
+        layoutCenter: roam ? "" : ["50%", "35%"],
+        layoutSize: daerah ? "60%" : "100%",
         zoom: roam ? "" : 0,
-        roam: roam,       
+        roam: roam,
+        label: {
+          show: namaMap === "Daerah",
+          color: "#1F2937",
+          fontSize: 8,
+          formatter: ({ name }) => name,
+        },
         data: adjustedSeries,
         emphasis: {
           label: {
             show: true,
-            color: '#000'
-          }
-        }
-      }
-    ]});
+            color: "#000",
+          },
+        },
+      },
+    ],
+  });
 
-    const onEvents = {
-      click: (params) => {
-        if (params?.data?.name) {
-          const clickedFeature = geoJsonIndo?.features?.find(
-            (feature) => feature.properties.name === params.data.name
+  const onEvents = {
+    click: (params) => {
+      if (params?.data?.name) {
+        const clickedFeature = geoJsonIndo?.features?.find(
+          (feature) => feature.properties.name === params.data.name,
+        );
+
+        const clickedFeatureSeprov = dataMapSeProv?.features?.find(
+          (feature) => feature.properties.name === params.data.name,
+        );
+
+        if (clickedFeature) {
+          onRegionClick(
+            clickedFeature.properties.key,
+            clickedFeature.properties.name,
           );
-
-          const clickedFeatureSeprov = dataMapSeProv?.features?.find(
-          (feature) => feature.properties.name === params.data.name
+          getDataMapSeProv({ kodeProv: clickedFeature.properties.key });
+        } else if (clickedFeatureSeprov) {
+          onKabKotaClick(
+            clickedFeatureSeprov.properties.key,
+            clickedFeatureSeprov.properties.name,
           );
-  
-          if (clickedFeature) {
-            onRegionClick(clickedFeature.properties.key, clickedFeature.properties.name)
-            getDataMapSeProv({kodeProv: clickedFeature.properties.key})
-          } else if (clickedFeatureSeprov) {
-            onKabKotaClick(clickedFeatureSeprov.properties.key, clickedFeatureSeprov.properties.name)
-          } else  {
-            console.log("Data wilayah tidak ditemukan!");
-          }
-
-        
-          //  else {
-          //   console.log("Data wilayah tidak ditemukan!");
-          // }
+        } else {
+          console.log("Data wilayah tidak ditemukan!");
         }
-      }
-    };
 
-  return (
-    isMapRegistered ? (
-      <ReactEcharts        
-        option={getOption()}
-        onEvents={onEvents}
-        style={{ height: '600px', width: '100%' }}
-      />
-    ) : (
-      <div>Loading map...</div>
-    )
+        //  else {
+        //   console.log("Data wilayah tidak ditemukan!");
+        // }
+      }
+    },
+  };
+
+  return isMapRegistered ? (
+    <ReactEcharts
+      option={getOption()}
+      onEvents={onEvents}
+      style={{ height: "600px", width: "100%" }}
+    />
+  ) : (
+    <div>Loading map...</div>
   );
 };
 
