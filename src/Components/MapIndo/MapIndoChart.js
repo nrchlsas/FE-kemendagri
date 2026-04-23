@@ -1,9 +1,8 @@
-import React, { use, useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactEcharts from "echarts-for-react";
 import * as echarts from "echarts";
 import { MapChart } from "echarts/charts";
 import { GeoComponent } from "echarts/components";
-import geoJsonIndo from "../../data/geoJsonNasional.json";
 
 echarts.use([MapChart, GeoComponent]);
 
@@ -20,25 +19,14 @@ const MapIndoChart = ({
   daerah = false,
 }) => {
   // console.log(valueSeries, 'ini isi value series 1')
-  const matchValueSeriesWithGeoJson = (valueSeries, geoJson) => {
-    return valueSeries.map((item) => {
-      const matchedFeature = geoJson.features.find(
-        (feature) => feature.properties.key === item.id,
-      );
-      return {
-        ...item,
-        name: matchedFeature ? matchedFeature.properties.name : item.name, // Gunakan nama dari geoJSON jika cocok
-      };
-    });
-  };
   const [namaMap, setNamaMap] = useState("Indonesia");
-  const [dataMapSeProv, setDataMapSeProv] = useState([]);
-  const [errorSeProv, setErrorSeProv] = useState(false);
-  const [loadingSeProv, setLoadingSeProv] = useState(false);
+  const [dataMapSeProv, setDataMapSeProv] = useState(null);
+  const [loadingSeProv, setLoadingSeProv] = useState(true);
 
-  const getDataMapSeProv = ({ kodeProv }) => {
+  const getDataMapSeProv = (kodeProv = null) => {
     const fetchData = async () => {
       try {
+        setLoadingSeProv(true);
         const token = JSON.parse(sessionStorage.getItem("authUser"));
         const requestOptions = {
           method: "POST",
@@ -47,7 +35,7 @@ const MapIndoChart = ({
             "x-sipdhub": `${token.token}`,
           },
           body: JSON.stringify({
-            kode_prov: kodeProv,
+            kode_prov: kodeProv || "33.21",
           }),
         };
 
@@ -61,13 +49,19 @@ const MapIndoChart = ({
         }
 
         const dataMapSeProv = await response.json();
-        // const updatedGeoJSON = matchValueSeriesWithGeoJson(valueSeries, dataMapSeProv?.data[0]?.geojson);
         setDataMapSeProv(dataMapSeProv?.data[0]?.geojson);
-        setNamaMap("Daerah");
-        echarts.registerMap("Daerah", dataMapSeProv?.data[0]?.geojson);
+        
+        if (kodeProv) {
+          setNamaMap("Daerah");
+          echarts.registerMap("Daerah", dataMapSeProv?.data[0]?.geojson);
+        } else {
+          setNamaMap("Indonesia");
+          echarts.registerMap("Indonesia", dataMapSeProv?.data[0]?.geojson);
+        }
+        
         setIsMapRegistered(true);
-      } catch (errorTabel) {
-        setErrorSeProv(errorTabel);
+      } catch (error) {
+        console.error("Error fetching map data:", error);
       } finally {
         setLoadingSeProv(false);
       }
@@ -77,15 +71,20 @@ const MapIndoChart = ({
 
   useEffect(() => {
     console.log(maxValue, "ini max value");
-  }, []);
+    
+    // Load initial map data
+    if (!daerah) {
+      getDataMapSeProv(); // Load peta nasional
+    }
+  }, [daerah]);
 
-  const [dataMapKabKota, setDataMapKabKota] = useState([]);
-  const [errorKabKota, setErrorKabKota] = useState(false);
+  const [dataMapKabKota, setDataMapKabKota] = useState(null);
   const [loadingKabKota, setLoadingKabKota] = useState(false);
 
-  const getDataMapKabKota = ({ kodeDdn }) => {
+  const getDataMapKabKota = (kodeDdn) => {
     const fetchData = async () => {
       try {
+        setLoadingKabKota(true);
         const token = JSON.parse(sessionStorage.getItem("authUser"));
         const requestOptions = {
           method: "POST",
@@ -108,13 +107,12 @@ const MapIndoChart = ({
         }
 
         const dataMapKabKota = await response.json();
-        // const updatedGeoJSON = matchValueSeriesWithGeoJson(valueSeries, dataMapKabKota?.data[0]?.geojson);
         setDataMapKabKota(dataMapKabKota?.data[0]?.geojson);
         setNamaMap("Daerah");
         echarts.registerMap("Daerah", dataMapKabKota?.data[0]?.geojson);
         setIsMapRegistered(true);
-      } catch (errorTabel) {
-        setErrorKabKota(errorTabel);
+      } catch (error) {
+        console.error("Error fetching kab/kota map data:", error);
       } finally {
         setLoadingKabKota(false);
       }
@@ -166,7 +164,6 @@ const MapIndoChart = ({
   };
 
   const adjustedSeries = (valueSeries || []).map((item) => {
-
     if (daerah) {
       const matchedFeature = dataMapSeProv?.features?.find(
         (feature) => feature.properties.key === item.id,
@@ -176,58 +173,22 @@ const MapIndoChart = ({
         ...item,
         name: matchedFeature
           ? matchedFeature.properties.name
-          : item.name || "N/A", // Ambil name dari geoJSON jika ada
+          : item.name || "N/A",
       };
     } else {
       return {
         ...item,
-        name: nameMap[item.name] || item.name || "N/A", // Jika tidak ada di nameMap, tetap gunakan nama asli
+        name: nameMap[item.name] || item.name || "N/A",
       };
     }
   });
-
-  // Contoh pemanggilan fungsi
-
-  const updateGeoJSONWithValues = (geojson, values) => {
-    return {
-      ...geojson,
-      features: geojson.features.map((feature) => {
-        const matchedValue = values.find(
-          (item) => item.id === feature.properties.key,
-        );
-        return {
-          ...feature,
-          properties: {
-            ...feature.properties,
-            value: matchedValue ? matchedValue.value : 0, // Set default 0 jika tidak ditemukan
-            name: matchedValue
-              ? feature.properties.name
-              : feature.properties.name, // Ganti nama dari geoJSON
-          },
-        };
-      }),
-    };
-  };
-
-  useEffect(() => {
-    if (
-      geoJsonIndo &&
-      geoJsonIndo.type === "FeatureCollection" &&
-      daerah == false
-    ) {
-      setNamaMap("Indonesia");
-      echarts.registerMap("Indonesia", geoJsonIndo);
-      setIsMapRegistered(true);
-    } else {
-      console.error("Invalid geoJSON format:", geoJsonIndo);
-    }
-  }, [daerah]);
 
   // const maxPopulation = Math.max(...valueSeries.map(item => item.value));
   const getOption = () => ({
     title: {
       text: chartTitle,
       left: "center",
+      top: 10,
     },
     tooltip: {
       trigger: "item",
@@ -238,7 +199,7 @@ const MapIndoChart = ({
     },
     visualMap: {
       left: "left",
-      bottom: "20%",
+      bottom: "5%",
       min: 0,
       max: maxValue || 100,
       orient: "horizontal",
@@ -248,14 +209,22 @@ const MapIndoChart = ({
       text: ["Tinggi", "Rendah"],
       calculable: true,
     },
+    grid: {
+      top: "10%",
+      bottom: "15%",
+      left: "5%",
+      right: "5%",
+      containLabel: true,
+    },
     series: [
       {
         name: "Population Density",
         type: "map",
         map: namaMap,
-        layoutCenter: roam ? "" : ["50%", "35%"],
-        layoutSize: daerah ? "60%" : "100%",
-        zoom: roam ? "" : 0,
+        layoutCenter: roam ? ["50%", "50%"] : ["50%", "50%"],
+        layoutSize: daerah ? "60%" : "95%",
+        top: "10%",
+        zoom: roam ? 1 : 1,
         roam: roam,
         label: {
           show: namaMap === "Daerah",
@@ -276,8 +245,11 @@ const MapIndoChart = ({
 
   const onEvents = {
     click: (params) => {
-      if (params?.data?.name) {
-        const clickedFeature = geoJsonIndo?.features?.find(
+      console.log("1");
+      if (params?.data?.name && dataMapSeProv) {
+        console.log("2");
+
+        const clickedFeature = dataMapSeProv?.features?.find(
           (feature) => feature.properties.name === params.data.name,
         );
 
@@ -286,12 +258,15 @@ const MapIndoChart = ({
         );
 
         if (clickedFeature) {
+          console.log("3");
+
           onRegionClick(
             clickedFeature.properties.key,
             clickedFeature.properties.name,
           );
-          getDataMapSeProv({ kodeProv: clickedFeature.properties.key });
+          getDataMapSeProv(clickedFeature.properties.key);
         } else if (clickedFeatureSeprov) {
+          console.log("4");
           onKabKotaClick(
             clickedFeatureSeprov.properties.key,
             clickedFeatureSeprov.properties.name,
@@ -299,19 +274,15 @@ const MapIndoChart = ({
         } else {
           console.log("Data wilayah tidak ditemukan!");
         }
-
-        //  else {
-        //   console.log("Data wilayah tidak ditemukan!");
-        // }
       }
     },
   };
 
-  return isMapRegistered ? (
+  return isMapRegistered && !loadingSeProv ? (
     <ReactEcharts
       option={getOption()}
       onEvents={onEvents}
-      style={{ height: "600px", width: "100%" }}
+      style={{ height: "400px", width: "100%", marginTop:"50px" }}
     />
   ) : (
     <div>Loading map...</div>
