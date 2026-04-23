@@ -271,6 +271,7 @@ const MapIndoChart = ({
             clickedFeatureSeprov.properties.key,
             clickedFeatureSeprov.properties.name,
           );
+          getDataMapKabKota(clickedFeatureSeprov.properties.key)
         } else {
           console.log("Data wilayah tidak ditemukan!");
         }
